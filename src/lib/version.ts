@@ -236,6 +236,37 @@
 // NUMERACIÓN: main iba por v405.6 (LA CARTA A LAS MÁQUINAS, de la otra mano),
 // así que esta tanda entra como v405.7. No se toca su entrada ni su bloque.
 
+// v405.9 EL CENTRO DE MAPAS — la casa deja de tener «un mapa» y pasa a tener
+// un SISTEMA de mapas: ocho capas sobre el mismo planeta 3D, y una novena sin
+// tocar el globo.
+//
+// LO QUE HABÍA: el globo de la casa (globe.gl + Natural Earth 110m) sabía
+// pintar 24 territorios de juego y clavar marcadores. Una sola lectura del
+// planeta, y solo para la guerra.
+//
+// LO QUE ENTRA:
+//   · src/components/vanguard/globe-map-3d.tsx — el MISMO globo, extendido sin
+//     romper nada: color por país (id numérico ISO), valor en el tooltip,
+//     polígonos alzados y zoom por altitud. Los paneles que ya lo usan siguen
+//     pintando exactamente igual (las props nuevas son opcionales).
+//   · src/lib/mapas-capas.ts — EL REGISTRO: ocho capas declaradas (mundial,
+//     político, físico, económico, demográfico, temático, histórico y de
+//     acontecimientos), cada una con su pregunta, su fuente real y su escala
+//     calculada de los datos. La novena capa es un objeto más aquí.
+//   · src/lib/geo-paises.ts — 249 países con sus tres identidades (ISO-2,
+//     ISO-3, numérico de Natural Earth) y su centro: la tabla que une el Banco
+//     Mundial, las banderas, las divisas y los acontecimientos del núcleo.
+//   · src/app/mapas/page.tsx + src/components/vanguard/centro-mapas.tsx — la
+//     sala: capas conmutables, buscador de países sin acentos, zoom, giro,
+//     vuelo al tocar el planeta, ficha del país con sus cifras en TODAS las
+//     capas y los acontecimientos del núcleo que lo tocan.
+//
+// CERO MAPAS FALSOS: ninguna capa inventa un dato. Si una fuente no cubre un
+// país, ese país queda sin color y su ficha lo dice con esas palabras.
+//
+// NUMERACIÓN: main iba por v405.8 (LAS PUERTAS DE LAS SALAS, de la otra mano),
+// así que esta tanda entra como v405.9. No se toca su entrada ni su bloque.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5921,8 +5952,8 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.8";
-export const APP_CODENAME = "LAS PUERTAS DE LAS SALAS";
+export const APP_VERSION = "v405.9";
+export const APP_CODENAME = "EL CENTRO DE MAPAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5982,7 +6013,7 @@ export const APP_CODENAME = "LAS PUERTAS DE LAS SALAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.7";
+export const APP_VERSION_ANTERIOR = "v405.8";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

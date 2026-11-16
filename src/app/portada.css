@@ -734,3 +734,71 @@ body:has(.vx) { background: #06080c; }
 .vx-const-sala-ficha:hover{color:#fff}
 .vx-const-sala-titulo{display:flex;flex-direction:column;gap:8px;flex:1;color:inherit;text-decoration:none}
 .vx-const-sala-titulo:hover .vx-const-sala-nombre{color:#e7ecf3}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v405.9 — EL CENTRO DE MAPAS (/mapas)
+   Tira de capas, mandos del globo, buscador, escala y fichas de país.
+   Todo con clases nuevas: .vx-mapas, .vx-capa*, .vx-zoom, .vx-buscador-mapa,
+   .vx-escala, .vx-pais-ficha*, .vx-acon-ficha. No se modifica ninguna regla
+   existente: este bloque solo añade.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-mapas{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.vx-capas{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.vx-capa{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;align-items:flex-start;background:rgba(24,24,27,.7);border:1px solid #27272a;border-radius:6px;padding:7px 11px;cursor:pointer}
+.vx-capa b{font:700 9.5px/1.2 ui-monospace,monospace;letter-spacing:.12em;color:#a1a1aa;white-space:nowrap}
+.vx-capa span{font:400 8.5px/1.2 ui-monospace,monospace;letter-spacing:.08em;color:#52525b}
+.vx-capa:hover{border-color:#3f3f46}
+.vx-capa[aria-selected="true"]{border-color:#5eead4;background:rgba(94,234,212,.10)}
+.vx-capa[aria-selected="true"] b{color:#5eead4}
+.vx-capa[aria-selected="true"] span{color:#99f6e4}
+.vx-mapa-marco{position:relative;border:1px solid #27272a;border-radius:8px;overflow:hidden;background:radial-gradient(circle at 50% 45%,#0b1220,#05070b 70%)}
+.vx-zoom{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:4px;z-index:3}
+.vx-zoom button{width:30px;height:30px;display:grid;place-items:center;border-radius:6px;cursor:pointer;background:rgba(10,10,15,.82);border:1px solid #3f3f46;color:#e4e4e7;font:700 14px/1 ui-monospace,monospace}
+.vx-zoom button:hover{border-color:#5eead4;color:#5eead4}
+.vx-zoom button[aria-pressed="true"]{border-color:#5eead4;color:#5eead4;background:rgba(94,234,212,.14)}
+.vx-buscador-mapa{position:absolute;left:8px;top:8px;width:min(62%,260px);z-index:3}
+.vx-buscador-mapa input{width:100%;padding:7px 10px;border-radius:6px;background:rgba(10,10,15,.86);border:1px solid #3f3f46;color:#f4f4f5;font:400 11px/1.2 ui-monospace,monospace;letter-spacing:.04em}
+.vx-buscador-mapa input::placeholder{color:#71717a}
+.vx-buscador-mapa ul{margin:4px 0 0;padding:0;list-style:none;background:rgba(10,10,15,.95);border:1px solid #3f3f46;border-radius:6px;overflow:hidden;max-height:44vh;overflow-y:auto}
+.vx-buscador-mapa li button{display:flex;flex-direction:column;gap:1px;width:100%;text-align:left;padding:6px 9px;background:none;border:0;cursor:pointer}
+.vx-buscador-mapa li button:hover{background:rgba(94,234,212,.10)}
+.vx-buscador-mapa b{font:700 11px/1.3 ui-monospace,monospace;color:#e4e4e7}
+.vx-buscador-mapa span{font:400 9px/1.3 ui-monospace,monospace;color:#71717a}
+.vx-escala{position:absolute;left:8px;bottom:8px;right:8px;display:flex;align-items:center;gap:8px;z-index:2;padding:5px 9px;border-radius:6px;background:rgba(10,10,15,.78);border:1px solid #27272a}
+.vx-escala i{flex:1;height:6px;border-radius:3px;background:linear-gradient(90deg,rgba(24,58,92,.9),rgba(245,166,35,.95))}
+.vx-escala span,.vx-escala em{font:600 8.5px/1 ui-monospace,monospace;letter-spacing:.1em;color:#a1a1aa;white-space:nowrap}
+.vx-escala em{margin-left:auto;font-style:normal;font-weight:400;color:#71717a}
+.vx-capa-nota h3{margin:0;font:700 11px/1.3 ui-monospace,monospace;letter-spacing:.16em;color:#5eead4}
+.vx-capa-nota p{margin:3px 0 0;font-size:12px;line-height:1.5;color:#a1a1aa}
+.vx-capa-nota small{margin-top:3px;display:block;font:400 9px/1.4 ui-monospace,monospace;color:#52525b}
+.vx-filtros{display:flex;flex-wrap:wrap;gap:5px}
+.vx-filtros button{padding:4px 9px;border-radius:999px;cursor:pointer;background:rgba(24,24,27,.7);border:1px solid #27272a;color:#a1a1aa;font:700 9px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.vx-filtros button[aria-pressed="true"]{border-color:#5eead4;color:#5eead4;background:rgba(94,234,212,.10)}
+.vx-pais-ficha,.vx-acon-ficha{border:1px solid #27272a;border-radius:8px;background:rgba(24,24,27,.6);padding:12px 14px}
+.vx-pais-ficha header span,.vx-acon-ficha header span{font:700 8.5px/1 ui-monospace,monospace;letter-spacing:.14em;color:#5eead4}
+.vx-pais-ficha header h3,.vx-acon-ficha header h3{margin:4px 0 0;font-size:17px;font-weight:800;color:#f4f4f5}
+.vx-pais-ficha header p{margin:2px 0 0;font:400 10px/1.4 ui-monospace,monospace;color:#71717a}
+.vx-pais-ficha dl{margin:10px 0 0;display:grid;gap:5px;grid-template-columns:repeat(auto-fill,minmax(185px,1fr))}
+.vx-pais-ficha dl div{border:1px solid #27272a;border-radius:5px;padding:6px 8px;background:rgba(9,9,11,.5)}
+.vx-pais-ficha dt{font:700 8px/1.4 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#71717a}
+.vx-pais-ficha dd{margin:2px 0 0;font:600 12px/1.3 ui-monospace,monospace;color:#e4e4e7}
+.vx-pais-acon{margin-top:10px}
+.vx-pais-acon h4{margin:0 0 4px;font:700 8.5px/1 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#f5a623}
+.vx-pais-acon ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+.vx-pais-acon li{display:flex;gap:8px;align-items:baseline;font-size:12px}
+.vx-pais-acon li a{color:#e8c56a;text-decoration:none}
+.vx-pais-acon li a:hover{text-decoration:underline}
+.vx-pais-acon li span{font:400 8.5px/1 ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:#71717a}
+.vx-pais-acciones{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vx-pais-acciones button,.vx-acon-ficha button{padding:5px 11px;border-radius:999px;cursor:pointer;background:rgba(94,234,212,.10);border:1px solid rgba(94,234,212,.45);color:#5eead4;font:700 9px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.vx-pais-acciones a{font:600 9.5px/1 ui-monospace,monospace;letter-spacing:.08em;color:#a1a1aa;text-decoration:none}
+.vx-pais-acciones a:hover{color:#5eead4;text-decoration:underline}
+.vx-pais-vacio{margin:0;font-size:12px;line-height:1.6;color:#71717a}
+.vx-acon-ficha header h3{font-size:15px}
+.vx-acon-ficha p{margin:4px 0 0;font-size:12px;line-height:1.5;color:#a1a1aa}
+.vx-acon-paises{font-family:ui-monospace,monospace;font-size:10px;color:#f5a623}
+.vx-mapas-pie{margin:0;font:400 9px/1.5 ui-monospace,monospace;letter-spacing:.08em;color:#52525b}
+@media (max-width:520px){
+  .vx-buscador-mapa{width:calc(100% - 56px)}
+  .vx-escala{flex-wrap:wrap}
+}

@@ -6474,3 +6474,14 @@ Work Log:
 
 Lección: el endpoint de auditoría también se audita. Sin probar la salida real en
 producción habría entregado un archivo que existe y no dice nada.
+
+---
+
+## Task ia3-v405.9 · EL CENTRO DE MAPAS (misión 001: expansión del sistema de mapas)
+
+- PUNTO DE PARTIDA (inspección del sistema existente): el globo de la casa es `globe.gl` + Natural Earth 110m (`world-geo.ts`, 24 territorios de juego), usado por /mundo, /atlas y cuatro paneles. Sabía pintar territorios y marcadores, NO países. No había ninguna capa de datos geográficos conmutable, ni buscador de países, ni conexión país → noticia.
+- LO QUE ENTRA (aditivo, sin duplicar motor): `globe-map-3d.tsx` extendido con cuatro props opcionales — color por país (id numérico ISO), valor en el tooltip, altitud del polígono y `zoom` por altitud —; `geo-paises.ts` (249 países con ISO-2/ISO-3/numérico y centro, generado desde mledoze/countries); `mapas-capas.ts` (registro de 8 capas declarativas con fuente, escala y cobertura); `mapas-payload.ts` (resolución server→cliente); `centro-mapas.tsx` (capas, buscador sin acentos, zoom, giro, vuelo al tocar, ficha de país con sus cifras y sus acontecimientos); `src/app/mapas/page.tsx` (la sala). CSS: bloque `.vx-mapas*` añadido al final de `portada.css`.
+- CONEXIÓN CON LAS NOTICIAS: la ficha de cada país enlaza los acontecimientos del núcleo que lo tocan (por ISO-2) y los teatros del globo encienden en rojo los países implicados al tocarlos.
+- PRUEBAS: `tsc` limpio en el grafo nuevo; prueba de datos en node sobre `construirPayload()` — 8 capas, 249 países, 163 con gasto, 245 con moneda, 9 teatros, 10 guerras, 4 épocas, buscador sin acentos y valores reales verificados (ESP, USA, CHN, UKR, RUS, BRA, IND).
+- NUMERACIÓN: main iba por v405.8 (LAS PUERTAS DE LAS SALAS) → esta tanda entra como v405.9, rebasada sobre `portada.css`, `version.ts`, `bitacora.ts` y `worklog.md` frescos.
+- PENDIENTE: la sala no está en la barra de navegación porque `tab-nav.tsx` / `mapa-salas.ts` son de la otra IA: se propone su registro en el buzón.

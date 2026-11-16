@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.9",
+    nombre: "EL CENTRO DE MAPAS",
+    hitos: [
+      "EL PLANETA DEJA DE SER UNO: ocho capas conmutables sobre el mismo globo 3D — mundial (regiones ISO), político (bloques del Banco Mundial), físico (NASA), económico (gasto militar), demográfico (personal en servicio), temático (divisas), histórico (las guerras del archivo) y de acontecimientos (los teatros vivos del núcleo)",
+      "EL GLOBO SE EXTIENDE, NO SE DUPLICA: el motor de siempre aprende a pintar POR PAÍS (id numérico ISO), a mostrar el valor en el tooltip, a alzar el polígono con dato y a hacer zoom por altitud; los paneles que ya lo usaban siguen igual porque todo lo nuevo es opcional",
+      "LA TABLA QUE UNE LA CASA: 249 países con sus tres identidades (ISO-2, ISO-3 y el numérico de Natural Earth) y su centro — la misma fila sirve al Banco Mundial, a las banderas, a las divisas y a los acontecimientos del núcleo",
+      "DEL PAÍS A LA NOTICIA: tocar un país abre su ficha con sus cifras en todas las capas y los acontecimientos del núcleo que lo tocan; tocar un teatro enciende EN ROJO sus países en el globo",
+      "CERO MAPAS FALSOS: cada capa declara su fuente y su cobertura; el país sin dato queda sin color y su ficha lo dice con esas palabras, en vez de rellenar el hueco",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.8",
     nombre: "LAS PUERTAS DE LAS SALAS",
     hitos: [

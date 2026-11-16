@@ -149,6 +149,21 @@ export interface GlobeMap3DProps {
   viewMode?: GlobeViewMode;
   /** v31 vuelo de camara: cambia nonce -> animacion pointOfView */
   flyTo?: GlobeFlyTo | null;
+  /**
+   * v405.9 CENTRO DE MAPAS — color POR PAÍS (clave = id numérico ISO de la
+   * feature de Natural Earth). Si llega, manda sobre territoryColors; si no
+   * llega, el globo se comporta exactamente como antes: los paneles que ya lo
+   * usan no cambian ni un píxel.
+   */
+  countryColors?: Record<string, string> | null;
+  /** v405.9 — el valor ya formateado de cada país, para el tooltip del globo */
+  countryValores?: Record<string, string> | null;
+  /** v405.9 — altitud de los polígonos cuando hay capa de datos (mancha alzada) */
+  countryAltitude?: number;
+  /** v405.9 — click en un país de la capa (recibe el id numérico y el nombre) */
+  onCountryClick?: (isoNum: string, countryName: string) => void;
+  /** v405.9 — zoom por altitud SIN mover el centro (botones + / − del centro de mapas) */
+  zoom?: { altitude: number; nonce: number } | null;
   className?: string;
   ariaLabel?: string;
 }
@@ -173,6 +188,11 @@ export function GlobeMap3D({
   dimColor = DEFAULT_DIM,
   viewMode = "oscuridad",
   flyTo = null,
+  countryColors = null,
+  countryValores = null,
+  countryAltitude = 0.036,
+  onCountryClick,
+  zoom = null,
   className,
   ariaLabel = "Globo 3D interactivo",
 }: GlobeMap3DProps) {
@@ -180,10 +200,12 @@ export function GlobeMap3D({
   const globeRef = useRef<any>(null); // tipado laxo del API fluido de globe.gl
   const clickRef = useRef(onTerritoryClick);
   const globeClickRef = useRef(onGlobeClick);
+  const countryClickRef = useRef(onCountryClick);
   useEffect(() => {
     clickRef.current = onTerritoryClick;
     globeClickRef.current = onGlobeClick;
-  }, [onTerritoryClick, onGlobeClick]);
+    countryClickRef.current = onCountryClick;
+  }, [onTerritoryClick, onGlobeClick, onCountryClick]);
 
   // ===== init una vez =====
   useEffect(() => {
@@ -316,6 +338,17 @@ export function GlobeMap3D({
     }
   }, [flyTo]);
 
+  // ===== v405.9 zoom por altitud (botones del centro de mapas) =====
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe || !zoom) return;
+    try {
+      globe.pointOfView({ altitude: zoom.altitude }, 420);
+    } catch {
+      /* noop */
+    }
+  }, [zoom]);
+
   // ===== poligonos de paises / territorios =====
   useEffect(() => {
     const globe = globeRef.current as unknown as GlobePolygonsLike | null;
@@ -330,6 +363,9 @@ export function GlobeMap3D({
       .polygonCapColor((d) => {
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
+        // v405.9: la capa del centro de mapas manda sobre el reparto de territorios
+        const porPais = countryColors && f.id != null ? countryColors[String(f.id)] : undefined;
+        if (porPais) return porPais;
         const color = tid && territoryColors ? territoryColors[tid] ?? null : null;
         if (!color) return tid ? hexA("#DCC078", 0.12) : dimColor;
         return tid === highlightTerritory ? hexA(color, 0.92) : hexA(color, 0.58);
@@ -343,12 +379,15 @@ export function GlobeMap3D({
       .polygonStrokeColor((d) => {
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
+        if (countryColors && f.id != null && countryColors[String(f.id)]) return "rgba(255,255,255,0.30)";
         const color = tid && territoryColors ? territoryColors[tid] ?? null : null;
         return color ? hexA(color, 0.95) : "rgba(120, 150, 220, 0.22)";
       })
       .polygonAltitude((d) => {
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
+        // v405.9: con capa puesta, el país con dato se alza como una losa
+        if (countryColors && f.id != null && countryColors[String(f.id)]) return countryAltitude;
         if (tid && tid === highlightTerritory) return 0.085;
         return tid && territoryColors?.[tid] ? 0.038 : 0.005;
       })
@@ -356,17 +395,27 @@ export function GlobeMap3D({
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
         const color = tid && territoryColors ? territoryColors[tid] ?? null : null;
-        const c = color ?? "#E8C56A";
+        const porPais = countryColors && f.id != null ? countryColors[String(f.id)] : undefined;
+        const valor = countryValores && f.id != null ? countryValores[String(f.id)] : undefined;
+        const c = (porPais ? "#F5A623" : color) ?? "#E8C56A";
         const label = tid && territoryNames?.[tid] ? territoryNames[tid] : f.properties.name;
+        if (porPais) {
+          return `<div style="font-family:monospace;background:#0A0A0Fee;border:1px solid ${c};padding:6px 9px;border-radius:2px;max-width:240px">
+            <b style="color:${c}">${label}</b>
+            <br/><span style="color:#F0F0F0">${valor ?? "sin dato en esta capa"}</span>
+          </div>`;
+        }
         return `<div style="font-family:monospace;background:#0A0A0Fee;border:1px solid ${c};padding:6px 9px;border-radius:2px;max-width:240px">
           <b style="color:${c}">${label}</b>${tid ? "" : `<br/><span style="color:#8A90A8">sin control</span>`}
         </div>`;
       })
       .onPolygonClick((d) => {
         const f = d as PolyDatum;
+        // v405.9: si la sala escucha países, el click va al país (con su id ISO)
+        if (countryClickRef.current) countryClickRef.current(String(f.id ?? ""), f.properties.name);
         clickRef.current?.(f.__tid ?? null, f.properties.name);
       });
-  }, [territoryColors, territoryNames, highlightTerritory, dimColor]);
+  }, [territoryColors, territoryNames, highlightTerritory, dimColor, countryColors, countryValores, countryAltitude]);
 
   // ===== marcadores + anillos =====
   useEffect(() => {
