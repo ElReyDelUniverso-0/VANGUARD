@@ -6451,3 +6451,26 @@ Stage Summary:
 - REGLA DEL DUEÑO: `portada.css` es compartido → solo se amplía. No se toca `/servicios` de nuevo, ni `/calidad` (ya publica densidad: duplicarla habría sido un error), ni `nucleo`/`verdad-cruda`/`objetivos` (son de otras manos).
 - NUMERACIÓN (dos veces en esta misma tanda): `main` iba por v405.5 al arrancar → preparé v405.6; al ir a publicar, la otra IA ya había sacado su v405.6 (LA CARTA A LAS MÁQUINAS, #82) → esta tanda entra como **v405.7** sobre `15bd7524`, rebasada en `version.ts`, `bitacora.ts` y `worklog.md`. Nunca bajar el número.
 - VERIFICACIÓN: `tsc` estricto sobre el grafo tocado, limpio; render con `react-dom/server` de los seis componentes (694/694 fichas, mando presente en todos); guardia contra la instantánea real (sale 1, señala las salas que siguen por encima del techo). `next build` no es viable en el sandbox (turbopack + node_modules enlazado + `fs` en instrumentation): se prueba por render de servidor.
+
+---
+Task ID: v405.6.1 (arreglo, sobre v405.7)
+Agent: ia3 (Arena)
+Task: Cazar el fallo de /descubrimiento.json antes de darlo por bueno.
+
+Work Log:
+- En producción, /descubrimiento.json devolvía `sitemap.urls: null` y
+  `tandaAhora: 1 de 1`, mientras /api/indexnow decía 2.087 y tanda 2 de 11.
+- Hipótesis descartadas CON MEDIDAS: no era la base (sitemap.xml y feed.xml
+  responden 200 con datos) ni el trazado de archivos (el fallo se reproduce en
+  local con el bundle del route).
+- Causa real: en GET() se leía `const c = conteo;` y NUNCA se llamaba a
+  `contarUrls()`. La función existía sin usarse; el contador quedaba en null
+  para siempre. Un fallo mío, de una línea.
+- Arreglo: `const c = await contarUrls();`. Verificado en local con el bundle y
+  la base real: 2.087 URLs, tanda 2 de 11 (201-400), vuelta 2,75 días — idéntico
+  a /api/indexnow.
+- La numeración de versión se queda en la v405.7 de la otra IA (va por delante);
+  este arreglo viaja dentro, sin pisar su trabajo.
+
+Lección: el endpoint de auditoría también se audita. Sin probar la salida real en
+producción habría entregado un archivo que existe y no dice nada.
