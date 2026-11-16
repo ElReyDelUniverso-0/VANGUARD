@@ -5809,8 +5809,45 @@
 //    pero son TRES proyectos Vercel: el proyecto `vanguard` (chi-puce y su alias
 //    de equipo) también servía la casa entera con otra base de datos. Entran en
 //    PUERTAS_GEMELAS → 301 a la casa. Y IndexNow avisa a Bing/Yandex al publicar.
-export const APP_VERSION = "v405.4";
-export const APP_CODENAME = "EL ÍNDICE";
+// v405.5 EL FARO QUE GIRA — ia3 (Arena). El aviso a los buscadores deja de ser
+// un curl que alguien recuerda lanzar y pasa a girar solo.
+//
+// MEDIDO EN VIVO ANTES DE TOCAR NADA (16-nov, 20:12 UTC):
+//   · la llave de IndexNow ya vivía en public/ (v405.3) y se sirve 200 — bien.
+//   · AL ANUNCIAR, la llave 4649a31d… dio **403 UserForbiddedToAccessSite** en
+//     api.indexnow.org y en Bing, pero **200 en Yandex**. La causa no era el
+//     archivo (32 bytes exactos, 200 para cualquier UA): Bing CACHEÓ el 404 de
+//     su primera comprobación y sigue negando esa llave. Probadas las cuatro
+//     llaves del repo: las otras tres responden 200. Se usa la verificada.
+//   · con la llave buena: **2.087 URLs aceptadas** por api.indexnow.org (200),
+//     Bing (200), Yandex (202, en cola) y Seznam (200).
+//
+// LO QUE ENTRA (aditivo, tres piezas, cero UI, cero cadenas de idioma):
+// ① `.github/workflows/faro-indexnow.yml` — el faro. Cada 6 h lee el sitemap
+//    vivo y anuncia UNA tanda de 200 URLs. La tanda se elige sin estado y sin
+//    base de datos: floor(segundos/6h) % total_de_tandas → la vuelta completa
+//    (2.087 URLs) tarda 2,75 días y ninguna pasada repite la anterior. Corre en
+//    GitHub Actions a propósito: el plan Hobby de Vercel admite 2 crons y ya
+//    están ocupados (/api/news, /api/agent-ping) — un tercero puede tumbar el
+//    despliegue. Sin llaves secretas: la de IndexNow es pública por diseño.
+// ② `src/app/api/indexnow/route.ts` — la cara legible del faro, SOLO LECTURA:
+//    dice qué tanda toca a esta hora y con qué URLs, para que el Dueño compruebe
+//    que gira sin creerse la palabra de una IA. No escribe ni envía nada: un
+//    endpoint público que dispara avisos es un grifo abusable.
+// ③ `SEO-INDEXNOW.md` — se le añade la sección del faro (el documento de v405.3
+//    no se toca: se amplía, REGLA #1).
+//
+// LA CONEXIÓN CON OTRO MÓDULO (lo que la ronda pedía): el faro NO tiene su propia
+// lista de URLs — llama a `sitemap()` (src/app/sitemap.ts), el mismo mapa que
+// leen los buscadores. Una sola verdad de qué existe en la casa; si mañana el
+// sitemap crece o se cae, el faro crece o se calla con él, sin tocar una línea.
+//
+// NO SE TOCA: base de datos, prisma, salas, textos visibles, i18n, vercel.json.
+// PENDIENTE DECLARADO: Google sigue fuera (no habla IndexNow); necesita Search
+// Console con la cuenta del Dueño.
+
+export const APP_VERSION = "v405.5";
+export const APP_CODENAME = "EL FARO QUE GIRA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,

@@ -1,0 +1,108 @@
+name: FARO — aviso giratorio a los buscadores (IndexNow)
+
+# v405.5 EL FARO QUE GIRA — ia3 (Arena)
+#
+# POR QUÉ EXISTE ESTO:
+# los buscadores que hablan IndexNow (Bing, Yandex, Seznam, Naver) aceptan que el
+# dueño les AVISE de sus URLs en vez de esperar a que las rastreen. La casa tiene
+# 2.087 URLs en su sitemap y las noticias cambian cada hora, pero no había NADA
+# que avisara de forma continua: el aviso dependía de que una persona se sentara
+# a lanzar un curl (ver SEO-INDEXNOW.md).
+#
+# POR QUÉ AQUÍ Y NO EN UN CRON DE VERCEL:
+# el plan Hobby de Vercel admite 2 crons por proyecto y ya están los dos ocupados
+# (/api/news y /api/agent-ping). Un tercero puede tumbar el despliegue. GitHub
+# Actions corre gratis en este repo público, no necesita ninguna llave secreta
+# (la llave de IndexNow es pública por diseño: vive en public/<llave>.txt) y no
+# toca ni una línea del código de la casa.
+#
+# CÓMO GIRA (determinista, sin estado, sin base de datos):
+#   tanda = floor(segundos_desde_1970 / 6 h) % total_de_tandas
+#   desde = tanda * 200
+# Cada pasada anuncia 200 URLs distintas. Con 2.087 URLs el faro da la vuelta
+# completa cada ~2,6 días y vuelve a empezar — nunca machaca las mismas 2.087 en
+# cada pasada (lo que IndexNow considera abuso), y no necesita recordar nada.
+
+on:
+  schedule:
+    - cron: "20 */6 * * *"   # cada 6 horas, en el minuto 20
+  workflow_dispatch: {}       # y a mano cuando el Dueño quiera
+
+permissions:
+  contents: read
+
+jobs:
+  girar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Sacar las URLs del sitemap vivo
+        run: |
+          curl -sS --fail --max-time 60 https://vanguard-kq9r.vercel.app/sitemap.xml \
+            | grep -o '<loc>[^<]*' | sed 's/<loc>//' | sort -u > urls.txt
+          echo "URLs en el sitemap: $(wc -l < urls.txt)"
+
+      - name: Elegir la tanda de esta hora y avisar
+        env:
+          # la llave que los buscadores YA tienen verificada (medido: la otra
+          # llave del repo devuelve 403 porque Bing cacheó el 404 de su primera
+          # comprobación; esta responde 200 en api.indexnow.org, Bing, Yandex y Seznam)
+          LLAVE: "074b8db50cc83f0689a2211e3ff94db1"
+          HOST: "vanguard-kq9r.vercel.app"
+          TAMANO: "200"
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.request, urllib.error
+
+          host  = os.environ["HOST"]
+          llave = os.environ["LLAVE"]
+          tam   = int(os.environ["TAMANO"])
+          urls  = [u.strip() for u in open("urls.txt") if u.strip()]
+
+          tandas = max(1, -(-len(urls) // tam))                 # techo de la división
+          tanda  = int(time.time() // (6 * 3600)) % tandas      # gira solo
+          desde  = tanda * tam
+          lote   = urls[desde:desde + tam]
+
+          print(f"tanda {tanda + 1}/{tandas} · URLs {desde + 1}-{desde + len(lote)} de {len(urls)}")
+
+          cuerpo = json.dumps({
+              "host": host,
+              "key": llave,
+              "keyLocation": f"https://{host}/{llave}.txt",
+              "urlList": lote,
+          }).encode()
+
+          destinos = [
+              "https://api.indexnow.org/indexnow",
+              "https://www.bing.com/indexnow",
+              "https://yandex.com/indexnow",
+          ]
+          fallos = 0
+          for destino in destinos:
+              try:
+                  peticion = urllib.request.Request(
+                      destino, data=cuerpo,
+                      headers={"Content-Type": "application/json; charset=utf-8"})
+                  with urllib.request.urlopen(peticion, timeout=90) as r:
+                      print(f"  {destino} -> {r.status}")
+              except urllib.error.HTTPError as e:
+                  print(f"  {destino} -> HTTP {e.code} {e.read()[:160]!r}")
+                  fallos += 1
+              except Exception as e:
+                  print(f"  {destino} -> ERROR {type(e).__name__}")
+                  fallos += 1
+
+          # Honestidad: si TODOS fallan, la pasada se cae (se ve en la pestaña
+          # Actions). Si solo falla alguno, se avisa y sigue: los demás motores
+          # ya tienen el aviso.
+          if fallos == len(destinos):
+              raise SystemExit("ningún buscador aceptó el aviso")
+          PY
+
+      - name: Resumen en la pestaña Actions
+        if: always()
+        run: |
+          echo "### FARO · tanda anunciada" >> "$GITHUB_STEP_SUMMARY"
+          echo "El faro gira: 200 URLs por pasada, la vuelta completa tarda ~2,6 días." >> "$GITHUB_STEP_SUMMARY"
+          echo "Sitemap: $(wc -l < urls.txt) URLs" >> "$GITHUB_STEP_SUMMARY"
