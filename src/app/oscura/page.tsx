@@ -3,6 +3,9 @@ import Link from "next/link";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v404.0: el archivo en fichas visuales, con el expediente a un toque.
+import { ArchivoOscuro } from "@/components/vanguard/archivo-oscuro";
+import { CON_FOTO } from "@/lib/oscura-fotos";
 
 // v301.0 LA BIBLIOTECA OSCURA — la mina que la «Queda» de la v300 señaló
 // (oscura-data, ya servida en /guerra-hoy, pendiente solo de sala propia)
@@ -164,158 +167,14 @@ export default function OscuraPage() {
             </div>
           </section>
 
-          {/* LAS TEORÍAS — en el orden de la fuente */}
-          <section id="teorias" className="mt-10" aria-label="Las teorías con veredicto">
-            <h2 className="text-lg font-bold text-zinc-100">
-              {`LAS TEORÍAS CON VEREDICTO ×${TEORIAS.length}`}
-            </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              {TEORIAS.map((t) => (
-                <article
-                  key={t.id}
-                  className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4"
-                  aria-label={t.titulo}
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border ${clasesVeredicto(t.veredicto)}`}
-                    >
-                      {t.veredicto}
-                    </span>
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
-                      {t.rareza}
-                    </span>
-                  </div>
-                  <h3 className="mt-2 text-sm font-bold text-zinc-100">{t.titulo}</h3>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-500">
-                    <span className="font-mono uppercase tracking-wider text-zinc-400">dónde nació: </span>
-                    {t.origen}
-                  </p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
-                    <span className="font-mono uppercase tracking-wider text-zinc-400">lo que se cuenta: </span>
-                    {t.creencia}
-                  </p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-300">
-                    <span className="font-mono uppercase tracking-wider text-emerald-500/70">lo que dicen los documentos: </span>
-                    {t.realidad}
-                  </p>
-                  <a
-                    href={t.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-block font-mono text-[10px] uppercase tracking-wider text-red-400 underline decoration-dotted"
-                  >
-                    fuente: {t.fuente}
-                  </a>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          {/* LAS ARMAS-IDEA — en el orden de la fuente */}
-          <section id="armas" className="mt-10" aria-label="Las armas-idea">
-            <h2 className="text-lg font-bold text-zinc-100">
-              {`LAS ARMAS-IDEA ×${ARMAS.length}`}
-            </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              {ARMAS.map((a) => (
-                <article
-                  key={a.id}
-                  className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4"
-                  aria-label={a.titulo}
-                >
-                  <span className="font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border text-orange-400 border-orange-500/40 bg-orange-500/10">
-                    {`Arma-idea · ${a.epoca}`}
-                  </span>
-                  <h3 className="mt-2 text-sm font-bold text-zinc-100">{a.titulo}</h3>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
-                    <span className="font-mono uppercase tracking-wider text-zinc-400">la idea que la creó: </span>
-                    {a.idea}
-                  </p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-300">
-                    <span className="font-mono uppercase tracking-wider text-orange-500/70">qué cambió en el mundo: </span>
-                    {a.legado}
-                  </p>
-                  <a
-                    href={a.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-block font-mono text-[10px] uppercase tracking-wider text-red-400 underline decoration-dotted"
-                  >
-                    fuente: {a.fuente}
-                  </a>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          {/* LAS CIVILIZACIONES — en el orden de la fuente */}
-          <section id="civilizaciones" className="mt-10" aria-label="Las civilizaciones que desaparecieron">
-            <h2 className="text-lg font-bold text-zinc-100">
-              {`LAS CIVILIZACIONES QUE DESAPARECIERON ×${CIVILIZACIONES.length}`}
-            </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              {CIVILIZACIONES.map((c) => (
-                <article
-                  key={c.id}
-                  className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4"
-                  aria-label={c.titulo}
-                >
-                  <span className="font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border text-sky-400 border-sky-500/40 bg-sky-500/10">
-                    {`Civilización perdida · ${c.epoca}`}
-                  </span>
-                  <h3 className="mt-2 text-sm font-bold text-zinc-100">{c.titulo}</h3>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
-                    <span className="font-mono uppercase tracking-wider text-zinc-400">qué logró: </span>
-                    {c.que}
-                  </p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-300">
-                    <span className="font-mono uppercase tracking-wider text-sky-500/70">cómo aterró y desapareció: </span>
-                    {c.misterio}
-                  </p>
-                  <a
-                    href={c.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-block font-mono text-[10px] uppercase tracking-wider text-red-400 underline decoration-dotted"
-                  >
-                    fuente: {c.fuente}
-                  </a>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          {/* LOS DOCUMENTOS DESCLASIFICADOS — en el orden de la fuente */}
-          <section id="documentos" className="mt-10" aria-label="Los documentos desclasificados">
-            <h2 className="text-lg font-bold text-zinc-100">
-              {`LOS DOCUMENTOS DESCLASIFICADOS ×${DOCS.length}`}
-            </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              {DOCS.map((d) => (
-                <article
-                  key={d.id}
-                  className="rounded-lg border border-red-500/20 bg-zinc-900/40 p-4"
-                  aria-label={d.titulo}
-                >
-                  <span className="font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border text-violet-400 border-violet-500/40 bg-violet-500/10">
-                    {d.tag}
-                  </span>
-                  <h3 className="mt-2 text-sm font-bold text-zinc-100">{d.titulo}</h3>
-                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-300">{d.desc}</p>
-                  <a
-                    href={d.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-block font-mono text-[10px] uppercase tracking-wider text-red-400 underline decoration-dotted"
-                  >
-                    fuente: {d.fuente}
-                  </a>
-                </article>
-              ))}
-            </div>
-          </section>
-
+          {/* v404.0 — EL ARCHIVO EN FICHAS (pilar 2): cada entrada es una tarjeta
+              con su foto real de la casa y su veredicto; los tres párrafos siguen
+              ahí, completos, a un toque. Antes esta sala eran 24.108 letras en 9
+              elementos visuales: la más «de libro» de la casa. */}
+          <p className="mt-4 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+            {`${TOTAL} expedientes · ${CON_FOTO} con foto real de la casa · los documentos, a un toque`}
+          </p>
+          <ArchivoOscuro />
           <p className="mt-8 text-[11px] leading-relaxed text-zinc-600">
             Los datos viajan verbatim de la fuente (oscura-data.ts, la biblioteca de
             la v63, «contenido verificado: cada teoría con veredicto REAL/MITO/PARCIAL

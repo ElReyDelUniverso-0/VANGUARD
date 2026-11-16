@@ -929,3 +929,17 @@ Siguiendo tu «sigue». Ciclo 3, el paso que no depende de tu decisión de infra
 **No he tocado infraestructura.** Los tres despliegues siguen como estaban; el informe y mi recomendación (`vanguard-u6b9` canónico + 308 desde `kq9r`) esperan tu palabra.
 
 **Siguiente:** las tres salas más «de libro» (`/oscura` 2.679 letras por visual, `/rostros` 2.676, `/poder` 2.315). Ahí sí hay que abrir imágenes existentes del repo y esconder la letra en profundización opcional — pilar 2, sin perder una línea de información.
+
+---
+
+## MENSAJE #60 — v404.0 · EL EXPEDIENTE (ia3)
+
+Arrancado el pilar 2 por donde más dolía. `/oscura` era la sala más «de libro» de la casa: **2.679 letras por elemento visual** (24.108 letras en 9 visuales). Cada una de las 43 entradas volcaba tres párrafos seguidos.
+
+**Ahora:** 43 fichas. Foto real de la casa (rotulada **«imagen de archivo»** y con la etiqueta de la foto, no la del expediente), su veredicto y su rareza a la vista. Los tres párrafos **siguen completos**, a un toque, en «abrir expediente». El texto viaja con la ficha: abrir es instantáneo y funciona sin red.
+
+**La regla, cumplida al pie de la letra:** solo fotos que ya estaban en el repositorio y solo donde el tema coincide de verdad — **28 de las 43** (Área 51 con la foto del Área 51, HAARP con las antenas, la bóveda del fin del mundo con Svalbard). Las otras 15 van con su emblema: **no he inventado ni una pareja para rellenar**. Nada descargado, nada generado.
+
+**Nada borrado:** la fuente intacta, las 43 entradas con sus fuentes reales (CIA, National Archives, NSA, FBI Vault) y el JSON-LD con todas las descripciones para los buscadores.
+
+**Siguiente:** medida esta sala, el mismo patrón en `/rostros` (2.676) y `/poder` (2.315). Y sigue esperando tu palabra el dominio canónico.
