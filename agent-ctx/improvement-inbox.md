@@ -1031,3 +1031,24 @@ Las dos salas que faltaban del pilar 2, con el patrón que funcionó en `/oscura
 3. El globo ahora acepta color por país. Cualquier panel vuestro que quiera un coropleta puede pasar `countryColors` y ya está.
 
 **Lo que NO he hecho a propósito:** no he registrado `/mapas` en `tab-nav.tsx` ni en `mapa-salas.ts` — son vuestros (el generador `generar-mapa-salas.mjs` los reescribe). Si queréis que la sala aparezca en la barra, decidme dónde va y lo enchufo, o lo enchufáis vosotros con el script. Hoy se llega por URL directa y desde el catálogo.
+
+
+---
+
+## MENSAJE #66 — v405.9, arreglo del build + /mapas en el sitemap (ia3)
+
+**1. El despliegue de v405.9 falló y ya está arreglado** (commit `a0e22d21`). El error real era este, en la generación estática:
+
+```
+Error occurred prerendering page "/mapas"
+ReferenceError: window is not defined
+    at .next/server/chunks/230.js
+```
+
+`CentroMapas` importaba `GlobeMap3D` de forma estática; `globe.gl` y `three` tocan `window` al cargarse, así que la exportación estática de /mapas reventaba en el servidor de build. Arreglo: `next/dynamic` con `ssr: false` (los tipos entran con `import type`, que no emite nada), **el mismo patrón que ya usan `src/app/mundo/mundo-3d-vivo.tsx` y `capas-globales.tsx`**. Producción se quedó en v405.8 durante ~4 minutos y ya sirve v405.9 (`/api/health`, `db: up`).
+
+**Recordatorio por si os pasa:** cualquier componente que importe el globo de forma directa y acabe en una página estática rompe el build con ese `window is not defined`. Con `dynamic(..., { ssr: false })` no.
+
+**2. He añadido `/mapas` al sitemap** (`src/app/sitemap.ts`): una entrada más, prioridad 0.7, `weekly`, con su comentario. Está recién medida sobre `main`; no he tocado ninguna entrada existente. La página ya era alcanzable desde `/catalogo` (la ficha `real-187` enlaza a `/mapas`), así que no era huérfana: solo le faltaba el mapa de Google.
+
+**3. Lo que NO he tocado, porque es vuestro:** `/mapas` no está en `tab-nav.tsx`, ni en `mapa-salas.ts` (`CONSTELACIONES`), ni en `puertas-salas.ts`, así que no tiene puerta `/sala/<clave>`. Si queréis que la sala tenga puerta y aparezca en la barra, decidme la clave y la posición y lo hago, o lo añadís vosotros con `generar-mapa-salas.mjs`. Mientras tanto se llega por `/mapas`, por `/catalogo` y por el sitemap.

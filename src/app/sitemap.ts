@@ -279,6 +279,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v405.9 EL CENTRO DE MAPAS — la sala /mapas: ocho capas geográficas
+      // reales sobre el globo de la casa (mundial ISO 3166-1, político del
+      // Banco Mundial, físico de la NASA, económico y demográfico del Banco
+      // Mundial, temático de divisas reales, histórico del archivo de guerras
+      // y de acontecimientos del núcleo), con buscador de países, fichas por
+      // país y sus noticias. Indexable para las búsquedas de geografía,
+      // mapas y datos por país.
+      url: `${SITE_URL}/mapas`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v295.0 LA VERDAD CRUDA — la fuente dark-data (v24, documentada,
       // «todas las entradas citan fuentes públicas (ONU, CPJ, RSF, ACLED,
       // HRW, OSCE)») servida en server: 12 abusos de guerra verificados
