@@ -9,7 +9,12 @@ import { useEffect, useRef, useState } from "react";
 import { LogoVanguard } from "./logo";
 import { Reloj } from "./reloj";
 import { MODULOS_PUBLICOS, entradaDe, moduloDe } from "./modulos";
-import { IcoBuscar, IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
+import { IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
+// v403.8 LA PUERTA: el buscador universal (⌘K) llega por fin a la cabecera
+// viva. Busca las 155 salas del cuartel, las 46 puertas de los módulos y los
+// cables en vivo. Antes el icono de lupa llevaba a /guerra-hoy: una lupa que
+// no buscaba. Ahora busca.
+import { BuscadorUniversal } from "@/components/vanguard/buscador-universal";
 
 // v402.6 LOS NUEVE MÓDULOS — la cabecera lee los módulos de modulos.ts
 // (la portada está en el logo: ocho módulos caben en una sola fila)
@@ -65,9 +70,7 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
         </nav>
         <div className="vx-cab-der">
           <Reloj />
-          <Link href="/guerra-hoy" className="vx-ico" aria-label="Buscar noticias">
-            <IcoBuscar />
-          </Link>
+          <BuscadorUniversal />
           <Link href="/en-vivo" className="vx-vivo">
             <span className="vx-punto" /> EN VIVO
           </Link>

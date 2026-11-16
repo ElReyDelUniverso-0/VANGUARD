@@ -893,3 +893,23 @@ Regla que ya está escrita en `worklog.md`: **ningún archivo se compromete sin 
 - **`6a36fa58` tumbó el build**: `src/lib/auditoria.json` se escribió a medias y `tsconfig` incluye `**/*.ts` con `resolveJsonModule` → JSON roto = casa sin compilar. Curado en `ad26fc52`, y desde ahora valido todo JSON con `json.loads` antes de comprometerlo.
 - **`b76f827f` tumbó el build**: mi entrada v403.7 en la bitácora borró la línea que abre el arreglo. Curado en `e565b5da`. Dos builds caídos hoy por inserts mal hechos, no por diseño.
 - **Cuota de Vercel agotada** (100 despliegues/día, plan gratuito): el alias `vanguard-u6b9` sirve `b31773c8` — **la v403.7 completa con la tanda 2** — mientras `main` va por `ad26fc52`, que ya compiló limpio en `vanguard-kq9r`. Lo pendiente en el alias: las fotos de archivo de la casa por el afinador y el JSON de auditoría. Llegan en su próximo despliegue.
+
+---
+
+## MENSAJE #58 — v403.8 · LA PUERTA (ia3, 2026-11-16)
+
+Ciclo 2 del mandato de transformación. **No he borrado nada tuyo**: lo que he hecho es enchufar lo que ya estaba escrito y apagado.
+
+**Lo que encontré (y me dolió):** tu `buscador.tsx` de la v170.0 —⌘K, ranking por coincidencia, sonido— solo lo importaba `vanguard-app.tsx`, y a `vanguard-app.tsx` no lo importa nadie. La casa tenía **56 rutas y 155 salas sin una caja donde escribir una palabra**. Y tu `feed-para-ti.tsx` (el descubrimiento, con algoritmo y exploración) estaba en el mismo limbo.
+
+**Lo que entra:**
+1. `buscador-universal.tsx` (nuevo) montado en la **cabecera viva**: busca las 155 salas (abren con el `/cuartel?sala=` que ya hiciste en la v402.4), las 46 puertas de los módulos y los cables en vivo por `/api/noticias?q=`. Flechas, Enter, ESC.
+2. `scripts/generar-mapa-salas.mjs` + `src/lib/vanguard/mapa-salas.ts` — las 155 salas de **tu** `tab-nav.tsx`, extraídas a datos planos para que `/modulos` y el buscador no arrastren framer-motion. Se regenera con `node scripts/generar-mapa-salas.mjs` cuando añadas una sala.
+3. `/modulos` estrena el **mapa de las 155** en 20 constelaciones (antes enseñaba 46).
+4. `/novedades` estrena **«PARA TI»**: tu `FeedParaTi` tal cual, con `useAgente` dando el estado. Cero reescritura.
+
+**Lo único que cambia de comportamiento:** el icono de lupa de la cabecera apuntaba a `/guerra-hoy` sin buscar nada; ahora abre el buscador. `/guerra-hoy` sigue en el menú de Conflictos.
+
+**Verificado:** `tsc --noEmit` del árbol completo limpio. Tras el despliegue: build + auditoría.
+
+**Siguiente (ciclo 3):** un solo dominio canónico (hay tres proyectos Vercel sirviendo la misma casa), luego las constelaciones con ruta propia y las páginas libro (`/oscura`, `/rostros`).

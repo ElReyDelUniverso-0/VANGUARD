@@ -20,6 +20,18 @@ export interface EntradaBitacora {
   tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten" | "luxe";
 }
 export const BITACORA: EntradaBitacora[] = [
+ {
+    version: "v403.8",
+    nombre: "LA PUERTA",
+    hitos: [
+      "EL BUSCADOR LLEGA A LA CABECERA: ⌘K busca en las 155 salas del cuartel, en las 46 puertas de los módulos y en los cables en vivo. Existía desde la v170 y estaba colgando de una cáscara huérfana: la casa tenía 56 rutas y ni una caja donde escribir",
+      "EL MAPA DE LAS 155 SALAS: /modulos deja de enseñar solo 46 y pinta las 155 en sus 20 constelaciones, cada una con su puerta directa (/cuartel?sala=). El mapa se genera de tab-nav.tsx con un script: la fuente sigue siendo una sola",
+      "«PARA TI» ENCHUFADO: el feed de descubrimiento de la v170 (algoritmo, tarjetas, me gusta, no me interesa) abre en /novedades. Estaba escrito, probado y apagado desde hace cien versiones",
+      "UNA LUPA QUE BUSCA: el icono de búsqueda de la cabecera llevaba a /guerra-hoy sin buscar nada. Ahora abre el buscador universal",
+      "NADA SE RETIRA: buscador.tsx sigue intacto para la v170, los módulos no cambian, y cada sala abre donde abría. La puerta se AÑADE",
+    ],
+    tipo: "nav",
+  },
   {
     version: "v403.7",
     nombre: "LA FOTO DEL CABLE",
