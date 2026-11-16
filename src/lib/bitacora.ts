@@ -20,6 +20,18 @@ export interface EntradaBitacora {
   tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten" | "luxe";
 }
 export const BITACORA: EntradaBitacora[] = [
+  {
+    version: "v403.9",
+    nombre: "LA CONSTELACIÓN",
+    hitos: [
+      "CADA CONSTELACIÓN TIENE SU PUERTA: /constelacion/<clave> — 20 rutas estáticas con las 155 salas repartidas en sus 20 constelaciones. Antes el mapa era una sola página larga: quien quería las 18 salas de INTEL bajaba por las 155",
+      "UNA SOLA FUENTE PARA LAS TRES PUERTAS: el mapa de /modulos, el buscador ⌘K y las páginas nuevas leen mapa-salas.ts, generado de tab-nav.tsx. Añadir una sala sigue siendo un comando, no 155 ediciones",
+      "EL BUSCADOR APRENDE UNA CUARTA CAPA: escribir «intel» o «mercado» lleva directo a la constelación, antes que a sus salas",
+      "NINGÚN CALLEJÓN SIN SALIDA: cada constelación enseña las otras 19, y todas vuelven al mapa. El sitemap las anuncia a Google",
+      "NADA SE CREA NI SE RENOMBRA: es la puerta de lo que ya existía. Cada sala abre donde abría",
+    ],
+    tipo: "nav",
+  },
  {
     version: "v403.8",
     nombre: "LA PUERTA",
