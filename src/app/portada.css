@@ -690,3 +690,25 @@ body:has(.vx) { background: #06080c; }
   .vx-paises { grid-template-columns: 1fr; }
 }
 .vx-cat-emblema { flex: none; width: 13px; height: 13px; align-self: center; }
+/* ═══════════════════════════════════════════════════════════════════
+   v405.5 — EL MANDO DEL ARCHIVO Y LA SONDA
+   Dos formas de leer la misma sala (imagen / libro) y la sala midiéndose
+   delante del lector. No se toca ni una clase de las anteriores.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-mando{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:18px 0 4px}
+.vx-mando-btn{background:none;border:1px solid rgba(245,166,35,.4);border-radius:999px;
+  padding:6px 13px;cursor:pointer;font:700 10px/1 ui-monospace,monospace;letter-spacing:.14em;
+  text-transform:uppercase;color:#f5c76a}
+.vx-mando-btn:hover{background:rgba(245,166,35,.12);border-color:rgba(245,166,35,.75)}
+.vx-mando-btn[aria-pressed="true"]{background:rgba(245,166,35,.18);border-color:#f5a623;color:#ffe6ae}
+.vx-mando-btn:focus-visible{outline:1px solid #d4af37;outline-offset:3px}
+.vx-mando-cuenta{font-weight:400;color:#8b98ad}
+.vx-sonda{position:relative;display:inline-flex;align-items:center;gap:8px;
+  min-width:min(100%,270px);height:22px;padding:0 9px;border-radius:6px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);overflow:hidden}
+.vx-sonda i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,rgba(90,220,151,.3),rgba(90,220,151,.08))}
+.vx-sonda b,.vx-sonda em{position:relative;font:600 9.5px/1 ui-monospace,monospace;letter-spacing:.08em;
+  text-transform:uppercase;white-space:nowrap}
+.vx-sonda b{color:#8ee7b6}
+.vx-sonda em{margin-left:auto;font-style:normal;font-weight:400;color:#7e8ca0}
+@media (max-width:520px){.vx-sonda{min-width:100%}}

@@ -14,8 +14,9 @@
 // un toque. Ni un dato se ha borrado y ni una cifra se escribe a mano: todo
 // sale de la captura del Banco Mundial (poder-data.ts).
 // ═══════════════════════════════════════════════════════════════════
-import { useState } from "react";
 import { PODER_FILAS, type FilaPoder } from "@/lib/poder-data";
+// v405.5 — la plantilla compartida de fichas (el markup estaba escrito seis veces).
+import { ArchivoMando, BotonAbrir, Detalle, Tramo, useArchivo } from "./ficha";
 
 // las mismas reglas de formato es-ES de la sala (v297): billones · mil M · M
 function fmtUsd(v: number): string {
@@ -46,8 +47,8 @@ const REGIONES: string[] = [];
 for (const f of RANKING) if (!REGIONES.includes(f.region)) REGIONES.push(f.region);
 
 function Tarjeta({ f, puesto }: { f: FilaPoder; puesto: number }) {
-  const [abierto, setAbierto] = useState(false);
   const idDetalle = `pais-det-${f.iso3}`;
+  const [abierto, setAbierto] = useArchivo(idDetalle);
   const ancho = Math.max(1, Math.round((f.gasto / LIDER.gasto) * 100));
   const cuota = ((f.gasto / TOTAL) * 100).toLocaleString("es-ES", { maximumFractionDigits: 2 });
 
@@ -61,28 +62,22 @@ function Tarjeta({ f, puesto }: { f: FilaPoder; puesto: number }) {
       <div className="vx-peso" role="img" aria-label={`${f.nombre}: ${fmtUsd(f.gasto)} de gasto militar, ${cuota}% del total censado`}>
         <i style={{ width: `${ancho}%` }} />
       </div>
-      <button type="button" className="vx-ficha-abrir" aria-expanded={abierto} aria-controls={idDetalle} onClick={() => setAbierto((v) => !v)}>
-        {abierto ? "Cerrar" : "Ver la cifra"} <span aria-hidden>{abierto ? "▴" : "▾"}</span>
-      </button>
+      <BotonAbrir
+        abierto={abierto}
+        onToggle={setAbierto}
+        controla={idDetalle}
+        texto={["Ver la cifra", "Cerrar"]}
+      />
       {abierto && (
-        <div className="vx-ficha-detalle" id={idDetalle}>
-          <p>
-            <b>gasto militar</b>
-            {fmtUsd(f.gasto)}
-          </p>
-          <p>
-            <b>personal en servicio</b>
-            {f.personal != null ? fmtPersonas(f.personal) : "sin dato en la captura"}
-          </p>
-          <p>
-            <b>esfuerzo (% del PIB)</b>
-            {f.gdpPct != null ? fmtPct(f.gdpPct) : "sin dato en la captura"}
-          </p>
-          <p>
-            <b>cuota del total censado</b>
-            {`${cuota}% · año del dato: ${f.anio} · ${f.region}`}
-          </p>
-        </div>
+        <Detalle
+          id={idDetalle}
+          filas={[
+            ["gasto militar", fmtUsd(f.gasto)],
+            ["personal en servicio", f.personal != null ? fmtPersonas(f.personal) : "sin dato en la captura"],
+            ["esfuerzo (% del PIB)", f.gdpPct != null ? fmtPct(f.gdpPct) : "sin dato en la captura"],
+            ["cuota del total censado", `${cuota}% · año del dato: ${f.anio} · ${f.region}`],
+          ]}
+        />
       )}
     </article>
   );
@@ -90,24 +85,19 @@ function Tarjeta({ f, puesto }: { f: FilaPoder; puesto: number }) {
 
 export function ArchivoPoder() {
   return (
-    <div className="vx-archivo-oscuro">
+    <ArchivoMando>
+      <div className="vx-archivo-oscuro">
       {REGIONES.map((reg) => {
         const filas = RANKING.filter((f) => f.region === reg);
         return (
-          <section key={reg} className="vx-tramo" aria-label={reg}>
-            <h2 className="vx-tramo-titulo">
-              <i style={{ background: "#f5a623" }} aria-hidden />
-              {reg}
-              <b>{filas.length}</b>
-            </h2>
-            <div className="vx-paises">
-              {filas.map((f) => (
-                <Tarjeta key={f.iso3} f={f} puesto={RANKING.indexOf(f) + 1} />
-              ))}
-            </div>
-          </section>
+          <Tramo key={reg} etiqueta={reg} color="#f5a623" cuenta={filas.length}>
+            {filas.map((f) => (
+              <Tarjeta key={f.iso3} f={f} puesto={RANKING.indexOf(f) + 1} />
+            ))}
+          </Tramo>
         );
       })}
-    </div>
+      </div>
+    </ArchivoMando>
   );
 }
