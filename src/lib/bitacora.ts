@@ -19,7 +19,7 @@ export interface EntradaBitacora {
   /** etiqueta de familia para el color */
   tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten" | "luxe";
 }
-
+export const BITACORA: EntradaBitacora[] = [
   {
     version: "v403.7",
     nombre: "LA FOTO DEL CABLE",
