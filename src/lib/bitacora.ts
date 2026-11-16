@@ -20,7 +20,18 @@ export interface EntradaBitacora {
   tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten" | "luxe";
 }
 
-export const BITACORA: EntradaBitacora[] = [
+  {
+    version: "v403.7",
+    nombre: "LA FOTO DEL CABLE",
+    hitos: [
+      "LA FOTO LLEGA A LAS TARJETAS: el canal traía foto real y resumen en 48 de 48 cables y las dos tarjetas de la casa no enseñaban ninguna — el panel de noticias y el héroe del inicio pintaban solo una escena 3D. Ahora la foto del medio abre la tarjeta y el resumen va debajo del titular",
+      "EL AFINADOR DE FOTOS: /api/foto deja la foto del medio en WebP de 320 px. Medido sobre doce fotos reales, fuentes de 34 KB a 3,2 MB salen entre 3,5 y 19,8 KB — mediana 8,5 KB. Doce de doce afinadas, sin guardar copia de nadie",
+      "LA ESCENA 3D NO SE RETIRA: pasa a un botón 3D en la esquina de la tarjeta y sigue siendo la única imagen cuando el medio no trae foto. Cero foto de relleno, cero foto inventada",
+      "EL SELLO HONESTO: cuando la foto es del repositorio y no del medio, la tarjeta lo dice — «imagen de archivo» — porque la casa no presume de lo que no es suyo",
+      "TRES PUERTAS, NUNCA UN HUECO: el afinador, luego la foto original en el navegador y luego la escena. Si el medio cae, la tarjeta sigue contando la noticia",
+    ],
+    tipo: "mundo",
+  },
   {
     version: "v403.6",
     nombre: "LA REPARACIÓN",

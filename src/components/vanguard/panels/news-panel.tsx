@@ -18,6 +18,9 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { TeletipoCinta, TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
 // v110.0 MATRIZ 2100 — PORTADA 3D garantizada en cada cable (nada vacío, nada plano)
 import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
+// v403.7 LA FOTO DEL CABLE — la foto real del medio (afinada a 320 px) y el
+// resumen del medio debajo del titular. La escena 3D no se va: pasa a un toque.
+import { PortadaCable, ResumenCable } from "@/components/vanguard/tarjeta-cable";
 // v116.0 MEGALÓPOLIS — SALA DE LECTURA: los cables se leen DENTRO de Vanguard
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 // v135.0 NEXUS-HYPNOS — CÁMARA DE CONSECUENCIAS: el botón [SIMULAR ESCALADA]
@@ -35,6 +38,8 @@ interface NewsItem {
   conflictTag: string | null;
   sourceCountry?: string | null;
   summary?: string | null;
+  /** v403.7: la foto no es del medio sino del repositorio (se rotula). */
+  imagenArchivo?: boolean;
 }
 
 // v13 — credibilidad por fuente (agencias primarias vs agregadores)
@@ -553,7 +558,13 @@ export function NewsPanel() {
               >
                 <div className="flex items-start gap-3">
                   {/* v110: PORTADA 3D SIEMPRE — cada cable nace con su escena holográfica viva */}
-                  <PortadaNoticia id={item.id} tag={item.tacticalTag} className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-sm hud-corner border-amber-hud/40" />
+                  <PortadaCable
+                    foto={item.imageUrl}
+                    alt={item.title}
+                    archivo={item.imagenArchivo === true}
+                    className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-sm"
+                    escena={<PortadaNoticia id={item.id} tag={item.tacticalTag} className="absolute inset-0" />}
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                       {esUltimaHora(item.publishedAt) && (
@@ -601,6 +612,8 @@ export function NewsPanel() {
                     <h3 className="text-sm font-medium text-foreground group-hover:text-amber transition-colors line-clamp-2">
                       {item.title}
                     </h3>
+                    {/* v403.7: lo que dice el medio, en dos líneas */}
+                    <ResumenCable texto={item.summary} />
                     {/* barra de credibilidad + voto Real/Fake (v13) */}
                     <div className="mt-1.5">
                       <div className="h-1 bg-secondary overflow-hidden max-w-56">

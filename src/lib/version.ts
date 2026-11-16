@@ -76,6 +76,31 @@
 // LECCIÓN (para las dos IA): ningún archivo se compromete sin bajarlo de main
 // justo antes. Una copia local no es el repositorio; es una fotografía del
 // repositorio de hace días.
+// v403.7 LA FOTO DEL CABLE — tanda 2 del diagnóstico de noticias.
+//
+// LO MEDIDO EN v403.6: el canal ya traía foto real del medio y resumen en
+// 48 de 48 cables… y las dos tarjetas de la casa (el panel de noticias y el
+// héroe del panel de inicio) no enseñaban ninguna de las dos cosas. Foto
+// visible: 0 de 48. Resumen: 0 de 48. La casa sabía la noticia y el visitante
+// solo veía una escena 3D bonita que no le contaba nada.
+//
+// LO QUE ENTRA:
+// ① `tarjeta-cable.tsx` — la foto del medio, el resumen de dos líneas y el
+//    sello «IMAGEN DE ARCHIVO» cuando la foto es del repositorio y no del
+//    medio. La ESCENA 3D no se retira: pasa a un botón «3D» en la esquina y
+//    sigue siendo la única imagen cuando el medio no trae foto.
+// ② `/api/foto` — el afinador: la foto entra entera y sale en WebP de 320 px.
+//    Medido hoy sobre 12 fotos reales: fuentes de 34 KB a 3,2 MB, salidas de
+//    3,5 a 19,8 KB (mediana 8,5 KB). Doce de doce afinadas. Si sharp no está
+//    o el medio contesta con HTML en vez de imagen, la tarjeta pinta la foto
+//    original desde el navegador y, si tampoco, la escena. Nunca un hueco.
+// ③ Las dos tarjetas se acogen a lo mismo: panel de noticias (lista de
+//    cables) y panel de inicio (héroe + secundarias).
+//
+// LO QUE NO SE TOCA: las cinco acciones del cable siguen enteras (neurona,
+// simular escalada, veredicto real/fake, leer en la sala, refrescar), el
+// lector y la cámara de consecuencias. Solo cambia lo que se ve.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5637,8 +5662,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.6";
-export const APP_CODENAME = "LA REPARACIÓN";
+export const APP_VERSION = "v403.7";
+export const APP_CODENAME = "LA FOTO DEL CABLE";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5698,7 +5723,7 @@ export const APP_CODENAME = "LA REPARACIÓN";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.5";
+export const APP_VERSION_ANTERIOR = "v403.6";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
