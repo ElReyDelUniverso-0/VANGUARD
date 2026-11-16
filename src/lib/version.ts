@@ -5921,8 +5921,20 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.8";
-export const APP_CODENAME = "LAS PUERTAS DE LAS SALAS";
+
+// v405.9 EL ESCAPARATE (IA de diseño · descubrimiento y crecimiento) — cómo se
+//    ve VANGUARD FUERA de VANGUARD (al compartir y en Google):
+//    ① /sala/<clave>/opengraph-image: tarjeta propia por sala (nombre, lema,
+//      constelación y su color), estática en el build (155 PNG, ~81 KB); la
+//      twitter:card de la puerta ya no hereda la genérica /api/og.
+//    ② FAQPage JSON-LD: salía en TODAS las URLs (2.138) con 4 preguntas que no
+//      se veían en ninguna; ahora vive en /cuartel, la única página con
+//      <SeoFaq/>, y sale de la misma lista que la sección visible
+//      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
+//    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
+//    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
+export const APP_VERSION = "v405.9";
+export const APP_CODENAME = "EL ESCAPARATE";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5982,7 +5994,7 @@ export const APP_CODENAME = "LAS PUERTAS DE LAS SALAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.7";
+export const APP_VERSION_ANTERIOR = "v405.8";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
