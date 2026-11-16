@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v404.0",
+    nombre: "EL EXPEDIENTE",
+    hitos: [
+      "LA PRIMERA SALA QUE DEJA DE SER UN LIBRO: /oscura pasa de 2.679 letras por elemento visual a 43 fichas con su foto y su veredicto, y el expediente entero a un toque. Era la más «de libro» de las 52 rutas medidas",
+      "FOTO REAL, REGLA CUMPLIDA: 28 de las 43 entradas llevan una foto que YA estaba en el repositorio (public/imagenes-reales), rotulada «imagen de archivo» con la etiqueta de la foto, y solo donde el tema coincide. Ninguna pareja inventada: las otras 15 van con su emblema",
+      "EL TEXTO NO SE HA BORRADO: los tres párrafos de cada entrada (origen · lo que se cuenta · lo que dicen los documentos) siguen completos, a un toque, y el JSON-LD conserva todas las descripciones para los buscadores",
+      "CERO CIFRAS A MANO: el censo de expedientes y cuántos tienen foto salen de la fuente y del mapa de fotos, calculados en el render",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v403.9",
     nombre: "LA CONSTELACIÓN",
     hitos: [

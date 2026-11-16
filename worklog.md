@@ -6296,3 +6296,11 @@ Work Log:
 - GOOGLE: las 20 rutas entran al `sitemap.ts` derivadas de la misma fuente (no escritas a mano).
 - VERIFICACIÓN: `tsc` acotado a los 9 archivos tocados + dependencias → limpio; build de producción y `--smoke` tras el despliegue.
 - INFRAESTRUCTURA: **no se ha tocado nada**. La decisión del dominio canónico sigue en manos del dueño (`vanguard-infraestructura-vercel.md`).
+
+## Task ia3-v404.0 · EL EXPEDIENTE (ciclo 4, arranque del pilar 2)
+
+- EL NÚMERO QUE MANDA: auditoría v403.9 en vivo → `/oscura` **2.679 letras por elemento visual** (24.108 letras / 9 visuales). La sala más «de libro» de las 52 medidas, y la más pesada después de `/rostros`.
+- LO QUE ENTRA (aditivo): `src/components/vanguard/archivo-oscuro.tsx` (cliente) — 43 fichas con foto real, veredicto y rareza; los tres párrafos de cada entrada pasan a «abrir expediente» (`aria-expanded`). `src/lib/oscura-fotos.ts` — mapa entrada→foto con la regla editorial escrita en la cabecera: **solo fotos que ya están en el repo y solo donde el tema coincide** (28 de 43; las otras 15 van con emblema, nunca con una pareja inventada).
+- NADA SE BORRA: la fuente `oscura-data.ts` intacta, los 43 expedientes con sus campos y sus fuentes reales, y el JSON-LD con todas las descripciones para los buscadores.
+- VERIFICACIÓN: `tsc` acotado limpio; los 28 archivos de foto existen en `public/imagenes-reales`; medición con la auditoría tras el despliegue.
+- PENDIENTES DEL MISMO CICLO: `/rostros` (2.676) y `/poder` (2.315), con el mismo patrón en cuanto esta sala esté medida.

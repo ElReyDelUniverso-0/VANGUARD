@@ -141,6 +141,26 @@
 // NO SE CREA NI UNA SALA NUEVA, NO SE RENOMBRA NADA: es la puerta de lo que
 // ya existía.
 
+// v404.0 EL EXPEDIENTE — la primera sala que deja de ser un libro.
+//
+// EL NÚMERO QUE MANDA (auditoría v403.9, en vivo): /oscura 2.679 letras por
+// elemento visual — la sala más «de libro» de las 52 medidas. 24.108 letras
+// en 9 visuales: cada una de las 43 entradas volcaba tres párrafos seguidos
+// y el visitante se comía el archivo entero de una sentada.
+//
+// LO QUE ENTRA: cada entrada es una FICHA. Foto real de la casa (rotulada
+// «imagen de archivo», con la etiqueta de la foto, no la del expediente),
+// veredicto, rareza y título. Los tres párrafos NO se borran: están a un
+// toque, en «abrir expediente». El texto sigue completo y viaja con la
+// ficha, así que abrir es instantáneo y funciona sin red.
+//
+// LA REGLA DEL DUEÑO, RESPETADA: solo fotos que ya estaban en el repo
+// (`public/imagenes-reales/`, 14 MB) y solo donde el tema de la foto coincide
+// con el de la entrada — 28 de las 43. Las otras 15 se sostienen con su
+// emblema: ninguna pareja inventada para rellenar.
+//
+// El JSON-LD conserva todas las descripciones para los buscadores.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5702,8 +5722,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.9";
-export const APP_CODENAME = "LA CONSTELACIÓN";
+export const APP_VERSION = "v404.0";
+export const APP_CODENAME = "EL EXPEDIENTE";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5763,7 +5783,7 @@ export const APP_CODENAME = "LA CONSTELACIÓN";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.8";
+export const APP_VERSION_ANTERIOR = "v403.9";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
