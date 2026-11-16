@@ -5722,8 +5722,47 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v404.0";
-export const APP_CODENAME = "EL EXPEDIENTE";
+// v405.0 LA CASA ÚNICA — una sola puerta, una sola canónica, una sola memoria.
+//
+// AUDITORÍA DE LA RONDA (medida en vivo contra v404.0, no supuesta):
+//   · vanguard-kq9r.vercel.app — prj_uJKJQvYBrY8wRtsS82Jl73cmj1lB. Es la puerta
+//     de TODA la campaña (22 enlaces verificados, GitHub Pages, packs). Tiene
+//     DATABASE_URL + NEXT_PUBLIC_REALTIME_URL: es la casa CON memoria.
+//   · vanguard-u6b9.vercel.app — prj_9yaVutiX18Qgb2o2ESwcTRGiHIEf. Mismo
+//     build, misma versión, CERO variables de entorno: sirve la SQLite del
+//     repo. Medido con tres latidos idénticos a /api/presence: `online: 3` en
+//     la casa y `online: 0` en el gemelo. Dos universos con dos contadores.
+//   · vanguard.world — el `homepage` del repo y los textos viejos: NO RESUELVE
+//     (sin DNS, comprobado desde dos resolutores). Una puerta que no existe.
+// Y el código declaraba canónica justo al gemelo vacío (v403.4 puso el respaldo
+// de site.ts en vanguard-u6b9) mientras cada enlace compartido apuntaba a la
+// casa con datos: el sitio le decía a Google «mi casa de verdad es la otra» y
+// la otra enseñaba un contador de jugadores en cero.
+//
+// LO QUE ENTRA (aditivo, tres archivos, cero UI nueva, cero cadenas de idioma):
+// ① src/lib/site.ts — CASA_OFICIAL (la puerta que se comparte), PUERTAS_GEMELAS
+//    (mismo código, otra memoria) y DOMINIOS_SIN_DNS (para que nadie los vuelva
+//    a escribir en un canonical). `SITE_URL` sigue mandando por
+//    NEXT_PUBLIC_SITE_URL: el contrato v403.4 no cambia, cambia el respaldo.
+// ② next.config.ts — cada gemelo responde 301 a la casa con su misma ruta.
+//    Ningún enlace viejo muere; deja de haber una segunda puerta compitiendo
+//    por la misma página. La lista se importa de site.ts (cero dominios a mano).
+// ③ src/app/robots.ts — el robot deja de tener su propia opinión del dominio:
+//    antes era public/robots.txt con «Sitemap: …kq9r…» escrito a mano mientras
+//    el sitemap (v403.6) ya salía de SITE_URL. Ahora los dos se generan de la
+//    MISMA fuente. Las reglas se conservan byte a byte (mismos agentes, mismo
+//    Disallow /api/, mismo comentario del escudo v204).
+//
+// NO SE TOCA: ninguna base de datos, ningún schema, ninguna sala, ninguna
+// cadena visible. Los dos proyectos Vercel siguen existiendo (borrar uno es
+// decisión del Dueño, no de una IA): lo que se cierra es la puerta duplicada.
+// PENDIENTE DECLARADO: la SQLite es efímera por lambda (defecto D1 de v403.4);
+// con una sola casa la memoria deja de partirse en dos, pero sigue borrándose
+// en cada arranque en frío hasta que el Dueño dé una base con llave (Turso,
+// Supabase o Neon). Eso es otra ronda y necesita su autorización.
+
+export const APP_VERSION = "v405.0";
+export const APP_CODENAME = "LA CASA ÚNICA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5783,7 +5822,7 @@ export const APP_CODENAME = "EL EXPEDIENTE";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.9";
+export const APP_VERSION_ANTERIOR = "v404.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

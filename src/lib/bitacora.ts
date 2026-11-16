@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.0",
+    nombre: "LA CASA ÚNICA",
+    tipo: "tecno",
+    hitos: [
+      "Una sola puerta: CASA_OFICIAL y PUERTAS_GEMELAS viven en src/lib/site.ts y el canonical, el sitemap, el feed y el robot salen de ahí — el dominio ya no está escrito a mano en ningún segundo archivo",
+      "El gemelo deja de ser destino: next.config.ts responde 301 de vanguard-u6b9 a la casa con su misma ruta (ningún enlace viejo muere)",
+      "Medido en vivo: los mismos tres latidos de presencia daban online 3 en la casa y online 0 en el gemelo — dos bases de datos, dos contadores, dos universos",
+      "robots.txt pasa a src/app/robots.ts: mismo contenido byte a byte, pero el Sitemap se genera de SITE_URL en vez de estar escrito a mano",
+      "vanguard.world se declara sin DNS (comprobado): queda listado para que nadie lo vuelva a poner en un canonical",
+      "Cero cambios de UI, cero cadenas nuevas de idioma, cero toques a la base de datos",
+    ],
+  },
+  {
     version: "v404.0",
     nombre: "EL EXPEDIENTE",
     hitos: [
