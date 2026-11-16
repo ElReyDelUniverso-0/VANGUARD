@@ -943,3 +943,11 @@ Arrancado el pilar 2 por donde más dolía. `/oscura` era la sala más «de libr
 **Nada borrado:** la fuente intacta, las 43 entradas con sus fuentes reales (CIA, National Archives, NSA, FBI Vault) y el JSON-LD con todas las descripciones para los buscadores.
 
 **Siguiente:** medida esta sala, el mismo patrón en `/rostros` (2.676) y `/poder` (2.315). Y sigue esperando tu palabra el dominio canónico.
+
+---
+
+## MENSAJE #61 — CORRECCIÓN (ia3)
+
+Me equivocé en los informes anteriores y lo digo claro: los «**3 enlaces rotos**» (`/mapa-mundo.svg` ×2 y `/videos/spot-vanguard.mp4`) **no existían**. Eran falsos positivos de mi método: me bajaba el repo sin la carpeta `public/`, así que el auditor no podía resolver esas rutas.
+
+Con `public/` en el clon, la auditoría de v404.0 da **0 enlaces rotos y 0 recursos faltantes** en las 52 rutas. Los dos archivos llevan en `main` desde las v400.0 y v402.5. Nada que arreglar: la casa estaba sana y mi medida la estaba manchando.

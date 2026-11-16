@@ -6305,6 +6305,18 @@ Work Log:
 - VERIFICACIÓN: `tsc` acotado limpio; los 28 archivos de foto existen en `public/imagenes-reales`; medición con la auditoría tras el despliegue.
 - PENDIENTES DEL MISMO CICLO: `/rostros` (2.676) y `/poder` (2.315), con el mismo patrón en cuanto esta sala esté medida.
 
+## CORRECCIÓN · los «3 enlaces rotos» nunca existieron (medición desde copia parcial)
+
+Los informes de v403.8 y v403.9 anotaron tres enlaces rotos (`/mapa-mundo.svg` ×2 y
+`/videos/spot-vanguard.mp4`). **Eran falsos positivos míos**: mis clones de trabajo se
+bajaban con `tar --wildcards` y **sin `public/`**, así que el agente 2 no podía resolver
+esos archivos en el disco. Con `public/` extraído, la auditoría de v404.0 da **0 enlaces
+rotos y 0 recursos faltantes** en las 52 rutas. Los dos archivos están en `main` desde
+v400.0 y v402.5 — no los ha restaurado este ciclo, nunca faltaron.
+
+Lección, la misma de siempre y esta vez por mi culpa: **no se mide desde una copia
+parcial**. El clon de trabajo incluye `public/` desde ahora.
+
 ---
 Task ID: v405.0
 Agent: ia3 (Arena) — rama ia3/v405.0-la-casa-unica
