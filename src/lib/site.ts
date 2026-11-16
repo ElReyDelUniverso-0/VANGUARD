@@ -46,7 +46,14 @@ export const CASA_OFICIAL = "https://vanguard-kq9r.vercel.app";
  * memoria (presencia, contadores, cables) no es la de la casa. No son destino:
  * next.config.ts los redirige 301 a `SITE_URL`.
  */
-export const PUERTAS_GEMELAS = ["vanguard-u6b9.vercel.app"] as const;
+// v405.1 (IA de diseño) — son TRES proyectos Vercel, no dos. Medido el
+// 2026-11-16 como Googlebot: el proyecto `vanguard` (prj_fVFCfOXkltjEBWGQBl5Xtfej6cfE)
+// también responde 200 con el mismo HTML y OTRA DATABASE_URL en sus dos alias.
+export const PUERTAS_GEMELAS = [
+  "vanguard-u6b9.vercel.app",
+  "vanguard-chi-puce.vercel.app",
+  "vanguard-cuevasgabriel371-7536s-projects.vercel.app",
+] as const;
 
 /** Dominios anunciados en textos viejos que hoy no existen. Se listan para que
  *  nadie los vuelva a poner en un canonical: si algún día el Dueño registra el

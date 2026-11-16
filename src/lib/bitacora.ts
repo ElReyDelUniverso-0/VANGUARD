@@ -21,6 +21,16 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.1",
+    nombre: "LOS TRES GEMELOS",
+    hitos: [
+      "ERAN TRES PUERTAS, NO DOS: además de u6b9, el proyecto «vanguard» (vanguard-chi-puce.vercel.app y su alias de equipo) servía la casa entera con otra base de datos. Ahora también redirige a la casa con la misma página",
+      "UNA SOLA CASA PARA LOS BUSCADORES: ninguna copia compite ya con vanguard-kq9r.vercel.app por las mismas páginas",
+      "AVISO AL INSTANTE: IndexNow anuncia las páginas del sitemap a Bing, Yandex y compañía (node scripts/seo/indexnow.mjs)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v405.0",
     nombre: "LA CASA ÚNICA",
     tipo: "tecno",

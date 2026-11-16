@@ -5761,8 +5761,12 @@
 // en cada arranque en frío hasta que el Dueño dé una base con llave (Turso,
 // Supabase o Neon). Eso es otra ronda y necesita su autorización.
 
-export const APP_VERSION = "v405.0";
-export const APP_CODENAME = "LA CASA ÚNICA";
+// v405.1 LOS TRES GEMELOS (IA de diseño) — la v405.0 redirige el gemelo u6b9,
+//    pero son TRES proyectos Vercel: el proyecto `vanguard` (chi-puce y su alias
+//    de equipo) también servía la casa entera con otra base de datos. Entran en
+//    PUERTAS_GEMELAS → 301 a la casa. Y IndexNow avisa a Bing/Yandex al publicar.
+export const APP_VERSION = "v405.1";
+export const APP_CODENAME = "LOS TRES GEMELOS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5822,7 +5826,7 @@ export const APP_CODENAME = "LA CASA ÚNICA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v404.0";
+export const APP_VERSION_ANTERIOR = "v405.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
