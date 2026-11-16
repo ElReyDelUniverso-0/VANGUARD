@@ -143,15 +143,16 @@ export const MODULOS: Modulo[] = [
     corto: "Juego",
     lema: "Misiones, logros y tu carnet",
     nav: "/cuartel",
-    img: "/ilustraciones/salas.jpg",
+    // v405.9: las seis salas de juego comparten UNA portada (la de la casa).
+    img: "/portada-vanguard.jpg",
     gancho: "Misiones diarias, retos, torneos y un carnet de agente que sube de rango contigo.",
     pestanas: [
-      { href: "/cuartel", label: "Cuartel", img: "/ilustraciones/salas.jpg", txt: "El centro de mando del juego." },
-      { href: "/objetivos", label: "Objetivos", img: "/ilustraciones/logros.jpg", txt: "Misiones, retos y torneos: lo que hay que hacer hoy." },
-      { href: "/universo", label: "Colecciones", img: "/ilustraciones/recompensas.jpg", txt: "Créditos, colecciones y tu base personal." },
-      { href: "/mision", label: "Misión 100", img: "/ilustraciones/recluta.jpg", txt: "Reparte Vanguard y suma reclutas." },
-      { href: "/perfil", label: "Mi perfil", img: "/ilustraciones/perfil.jpg", txt: "Tu carnet de agente, tu código y tus permisos." },
-      { href: "/modo", label: "Modo y cuenta", img: "/ilustraciones/registro.jpg", txt: "Elige cómo juegas y entra con tu alias." },
+      { href: "/cuartel", label: "Cuartel", img: "/portada-vanguard.jpg", txt: "El centro de mando del juego." },
+      { href: "/objetivos", label: "Objetivos", img: "/portada-vanguard.jpg", txt: "Misiones, retos y torneos: lo que hay que hacer hoy." },
+      { href: "/universo", label: "Colecciones", img: "/portada-vanguard.jpg", txt: "Créditos, colecciones y tu base personal." },
+      { href: "/mision", label: "Misión 100", img: "/portada-vanguard.jpg", txt: "Reparte Vanguard y suma reclutas." },
+      { href: "/perfil", label: "Mi perfil", img: "/portada-vanguard.jpg", txt: "Tu carnet de agente, tu código y tus permisos." },
+      { href: "/modo", label: "Modo y cuenta", img: "/portada-vanguard.jpg", txt: "Elige cómo juegas y entra con tu alias." },
     ],
   },
   {

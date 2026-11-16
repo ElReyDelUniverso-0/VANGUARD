@@ -104,6 +104,24 @@ export default async function Sala({ params }: { params: Promise<{ clave: string
   return (
     <main className="vx vx-sala-pagina">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
+      {/* v405.9 UNA SOLA PORTADA — orden del Dueño: «las salas de juego fusiónalas
+          con el VANGUARD de portada». Las 155 puertas de sala visten la MISMA
+          portada de la casa (foto real de la NASA, 3840×1920). No es adorno: es
+          la identidad — al entrar aquí ya se sabe en qué casa estás. La copia de
+          1920 px la elige el navegador por srcSet: el móvil no baja los 3840. */}
+      <figure className="vx-sala-portada">
+        <img
+          src="/portada-vanguard-1920.jpg"
+          srcSet="/portada-vanguard-1920.jpg 1920w, /portada-vanguard.jpg 3840w"
+          sizes="100vw"
+          width={3840}
+          height={1920}
+          alt="Portada de VANGUARD: la Tierra de noche desde la Estación Espacial Internacional, con la aurora y las luces de las ciudades"
+          fetchPriority="high"
+          decoding="async"
+        />
+        <figcaption>VANGUARD · portada de la casa</figcaption>
+      </figure>
       <section className="vx-sec">
         <div className="vx-wrap">
           <p className="vx-migas">

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/entrar" },
   // v402.11: puerta de paso (casi sin texto propio): se sigue, no se indexa, y no va al sitemap
   robots: { index: false, follow: true },
-  openGraph: { title: "VANGUARD · Elige tu mundo", description: "Noticias en tiempo real o el Cuartel de juego. Tú eliges.", images: ["/ilustraciones/noticias.jpg"] },
+  openGraph: { title: "VANGUARD · Elige tu mundo", description: "Noticias en tiempo real o el Cuartel de juego. Tú eliges.", images: [{ url: "/og-vanguard.jpg", width: 1200, height: 630, alt: "VANGUARD — una sola portada: inteligencia abierta y juego global" }] },
 };
 
 export default function Entrar() {

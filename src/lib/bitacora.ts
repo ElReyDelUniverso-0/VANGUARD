@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.9",
+    nombre: "LAS FOTOS DE VERDAD Y UNA SOLA PORTADA",
+    hitos: [
+      "ADIÓS A LOS DIBUJOS DE IA: las 107 ilustraciones de la casa eran de 1408×704 (un megapíxel) y se estiraban 2,7 veces en pantalla grande. Ahora son 107 FOTOGRAFÍAS REALES de 3840×1920",
+      "CERO PÁGINAS TOCADAS: cada foto conserva su nombre de archivo, así que ninguna sala cambió una línea; la procedencia de las 107 (URL, autor y licencia) queda en FUENTES-4K.json",
+      "SOLO DOMINIO PÚBLICO Y CC0: nada de CC BY-SA, que obliga a poner créditos en cada página. NASA, ejército de EE. UU., museos y archivos: foto real, no generada",
+      "UNA SOLA PORTADA: la Tierra de noche desde la Estación Espacial Internacional (NASA) es ahora la portada de la casa — las dos puertas de /entrar, el módulo Juego y sus seis salas, y las 155 puertas de sala",
+      "EL DE NOTICIAS, EN UN SOLO VANGUARD: la puerta de Noticias ya no lleva su ilustración aparte; comparte la misma portada que el Juego",
+      "LA PORTADA DEL ENLACE: og-vanguard.jpg (1200×630) con el nombre y el lema para WhatsApp, X y Telegram, y una copia de 1920 px que eligen los móviles por srcSet",
+      "19 fotos son de tema aproximado (Commons no tiene foto de agencia de cada tema moderno): se declara, no se disimula — mejor una foto real cercana que un dibujo de IA exacto",
+    ],
+    tipo: "luxe",
+  },
+  {
     version: "v405.8",
     nombre: "LAS PUERTAS DE LAS SALAS",
     hitos: [

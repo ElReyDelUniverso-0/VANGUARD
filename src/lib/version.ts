@@ -5921,8 +5921,40 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.8";
-export const APP_CODENAME = "LAS PUERTAS DE LAS SALAS";
+// v405.9 LAS FOTOS DE VERDAD Y UNA SOLA PORTADA (ia3 · Arena) — orden del Dueño,
+//    textual: «quita las fotos de IA de Vanguard, ponles fotos 4K mejores que
+//    nunca, y las salas de juego fusiónalas con el Vanguard de portada, el de
+//    noticias en un solo Vanguard».
+//    EL DEFECTO, MEDIDO: las 107 ilustraciones de public/ilustraciones eran
+//    DIBUJOS DE IA de 1408×704 (104 de ellas; 3 de 1344×768) — 0,99 megapíxeles.
+//    En una pantalla de 3840 px eso se estira 2,7 veces: el «se ven mal» no era
+//    el diseño, era la resolución y el origen. Y estaban citadas 276 veces en el
+//    código, 104 archivos desde regla-oro.ts.
+//    ① LAS 107 SON AHORA FOTOGRAFÍAS REALES DE 3840×1920 (2,00:1, el mismo
+//       encuadre que usaba la casa), descargadas de Wikimedia Commons con
+//       scripts/ilustraciones-4k.py: SOLO dominio público y CC0 — las CC BY-SA
+//       quedan fuera a propósito porque obligan a atribuir en cada página y la
+//       casa no tiene hueco de créditos. Procedencia de las 107, con URL, autor
+//       y licencia, en public/ilustraciones/FUENTES-4K.json.
+//    ② CERO CAMBIOS DE PÁGINA: cada archivo conserva SU nombre, así que ninguna
+//       sala, ningún componente y ninguna línea de regla-oro.ts se tocaron. El
+//       sitio entero sube de 1 MP a 7,4 MP por imagen sin tocar el sitio.
+//    ③ UNA SOLA PORTADA: public/portada-vanguard.jpg (3840×1920, la Tierra de
+//       noche desde la ISS, NASA, dominio público) + og-vanguard.jpg (1200×630
+//       con el nombre, para cuando la enseña un enlace) + la copia de 1920 px que
+//       eligen los móviles. Las DOS puertas de /entrar (Noticias y Juego), la
+//       tarjeta del módulo Juego y sus seis salas y las 155 puertas /sala/<clave>
+//       visten ya la MISMA portada: la identidad no se parte en dos al entrar.
+//    ④ LA VERDAD DE LAS DIMENSIONES: PortadaSala declaraba 1408×704 por defecto
+//       (lección v247: nunca mentir de tamaño). Ahora declara 3840×1920, que es
+//       lo que el archivo mide de verdad.
+//    PENDIENTE DECLARADO: 19 de las 107 fotos son de tema genérico-adyacente
+//    (apuestas = casino, arcade = máquina de pinball, encuestas = papeleta):
+//    Commons no tiene foto de agencia de cada tema moderno y la casa prefiere una
+//    foto real aproximada a un dibujo de IA exacto. Se declara aquí.
+
+export const APP_VERSION = "v405.9";
+export const APP_CODENAME = "LAS FOTOS DE VERDAD Y UNA SOLA PORTADA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5982,7 +6014,7 @@ export const APP_CODENAME = "LAS PUERTAS DE LAS SALAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.7";
+export const APP_VERSION_ANTERIOR = "v405.8";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

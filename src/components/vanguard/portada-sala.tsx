@@ -14,8 +14,9 @@
 // (las 120 portadas de /public/ilustraciones, que viajan en el repositorio
 // desde versiones atrás) y las cifras que cada sala ya calcula. Su único
 // trabajo es poner arriba, en una sola banda:
-//   ① una PORTADA grande (1408×704 reales, declarados: nunca se miente de
-//      dimensiones — lección v247),
+//   ① una PORTADA grande. Desde la v405.9 las ilustraciones de la casa son
+//      FOTOGRAFÍAS REALES de 3840×1920 (antes 1408×704): el ancho y el alto por
+//      defecto lo dicen, porque nunca se miente de dimensiones — lección v247.
 //   ② el título y un SUMARIO de dos líneas (el resto del texto queda debajo,
 //      intacto: profundización opcional),
 //   ③ las CIFRAS de la sala en tarjetas (resumen visual en vez de párrafo),
@@ -87,8 +88,8 @@ export function PortadaSala({
   anclas = [],
   acento = "#e8c56a",
   nota,
-  ancho = 1408,
-  alto = 704,
+  ancho = 3840,
+  alto = 1920,
   prioritaria = true,
   nivel = "h1",
 }: PortadaSalaProps) {

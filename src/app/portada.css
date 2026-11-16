@@ -718,6 +718,15 @@ body:has(.vx) { background: #06080c; }
    Solo se suman clases nuevas (.vx-sala-*, .vx-const-sala-ficha): ninguna
    regla anterior se toca. Hereda migas, sello y navegación de v403.9.
    ═══════════════════════════════════════════════════════════════════ */
+/* v405.9 UNA SOLA PORTADA — la banda que visten las 155 puertas de sala.
+   Solo clases nuevas: no toca ninguna regla de antes. */
+.vx-sala-portada{position:relative;margin:0;overflow:hidden;border-bottom:1px solid var(--pl-linea,rgba(232,197,106,.14))}
+.vx-sala-portada img{display:block;width:100%;height:clamp(150px,26vw,380px);object-fit:cover;object-position:center 68%}
+.vx-sala-portada::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(6,8,12,.18) 0%,rgba(6,8,12,0) 38%,rgba(6,8,12,.94) 100%)}
+.vx-sala-portada figcaption{position:absolute;left:18px;bottom:10px;z-index:1;
+  font-family:var(--vx-dato,ui-monospace,monospace);font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(232,197,106,.9)}
 .vx-sala-lema{max-width:62ch;margin:6px 0 0;font-size:16px;line-height:1.5;color:#e7ecf3}
 .vx-sala-cuerpo{max-width:70ch;margin-top:18px}
 .vx-sala-textos p{margin:0 0 10px;font-size:14px;line-height:1.6;color:var(--vx-tenue,#8b98ad)}

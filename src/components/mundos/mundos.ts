@@ -1,4 +1,10 @@
 // ============================================================
+// v405.9 UNA SOLA PORTADA — orden del Dueño: «las salas de juego fusiónalas con
+// el VANGUARD de portada, el de noticias en un solo VANGUARD». Las dos puertas
+// (Noticias y Juego) ya no llevan ilustraciones distintas: las dos enseñan la
+// MISMA portada de la casa (public/portada-vanguard.jpg, foto real de la NASA
+// en 3840x1920). La identidad no se parte en dos al entrar.
+//
 // v403.1 LOS DOS MUNDOS — orden del Dueño: «Vanguard tiene dos mundos, el de
 // los juegos y el mundo de noticias: crear intro para entrar a esos mundos de
 // manera épica». Fuente única de qué ruta pertenece a qué mundo: el módulo
@@ -28,7 +34,7 @@ export const FICHA_MUNDOS = {
     nombre: "Noticias",
     lema: "Lo que pasa en el planeta, ahora",
     texto: "Conflictos en vivo, el globo 3D, conocimiento, secretos, arsenal, datos vivos y medios. Todo con su fuente.",
-    img: "/ilustraciones/noticias.jpg",
+    img: "/portada-vanguard.jpg",
     destino: "/",
     chips: NOTICIAS.map((m) => m.corto),
     modulos: NOTICIAS.length,
@@ -40,7 +46,7 @@ export const FICHA_MUNDOS = {
     nombre: "Juego",
     lema: "Misiones, rango y gloria",
     texto: "El Cuartel, misiones diarias, retos, torneos, colecciones y un carnet de agente que sube de rango contigo.",
-    img: "/ilustraciones/ranking.jpg",
+    img: "/portada-vanguard.jpg",
     destino: "/cuartel",
     chips: (JUEGO?.pestanas ?? []).map((p) => p.label),
     modulos: 1,
