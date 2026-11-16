@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.7",
+    nombre: "LA PLANTILLA Y EL MANDO",
+    hitos: [
+      "LA PLANTILLA: las seis salas del pilar 2 (/oscura, /rostros, /poder, /divisas, /catalogo, /servicios) comparten una sola ficha —tramo, botón y expediente—; el mismo markup escrito seis veces baja de 971 a 832 líneas sin perder ni una ficha ni una clase",
+      "EL MANDO DEL ARCHIVO: un clic alterna modo imagen y modo libro — abre de golpe los 167, 247, 185… expedientes de la sala, con la cuenta de fichas al lado. La profundización opcional, completa",
+      "LA SONDA: el navegador del lector mide la sala que acaba de recibir y la compara con la mediana real de la casa. La página ya no pide que se le crea: se mide delante del visitante",
+      "LA FICHA CON PUERTA: cada ficha se abre sola si la dirección trae su ancla y la dirección se actualiza al abrirla — el expediente se puede enlazar y compartir",
+      "LA GUARDIA (scripts/densidad.mjs): la regla del pilar 2 pasa a ser ejecutable — sale con error si una sala supera las 800 letras por elemento visual. Hoy señala las salas que siguen por encima del techo, ninguna de ellas mía",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.6",
     nombre: "LA CARTA A LAS MÁQUINAS",
     tipo: "tecno",

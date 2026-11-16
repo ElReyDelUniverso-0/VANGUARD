@@ -11,9 +11,10 @@
 // su tipo y su ruta. El lema —qué es y por qué existe— sigue ahí, entero, a un
 // toque. Ni una pieza se ha quitado: son las mismas de catalogo-real.ts.
 // ═══════════════════════════════════════════════════════════════════
-import { useState } from "react";
 import Link from "next/link";
 import { cosasPorTipo, type CosaReal, type TipoCosa } from "@/lib/catalogo-real";
+// v405.5 — la plantilla compartida de fichas.
+import { ArchivoMando, BotonAbrir, Detalle, Tramo, useArchivo } from "./ficha";
 
 const COLOR: Record<TipoCosa, string> = {
   sala: "#3ddc97",
@@ -67,8 +68,8 @@ const navegable = (c: CosaReal) =>
   Boolean(c.ruta && !c.ruta.includes("[") && !c.ruta.startsWith("/api/"));
 
 function Ficha({ c }: { c: CosaReal }) {
-  const [abierto, setAbierto] = useState(false);
   const id = `cat-${c.id}`;
+  const [abierto, setAbierto] = useArchivo(id);
   const color = COLOR[c.tipo];
   return (
     <article className={`vx-pais${abierto ? " vx-pais-abierto" : ""}`}>
@@ -88,27 +89,21 @@ function Ficha({ c }: { c: CosaReal }) {
         </h3>
       </div>
       <p className="vx-cat-ruta">{c.ruta ?? c.archivo}</p>
-      <button
-        type="button"
-        className="vx-ficha-abrir"
-        aria-expanded={abierto}
-        aria-controls={id}
-        onClick={() => setAbierto((v) => !v)}
-        style={{ color }}
-      >
-        {abierto ? "Cerrar" : "Qué es"} <span aria-hidden>{abierto ? "▴" : "▾"}</span>
-      </button>
+      <BotonAbrir
+        abierto={abierto}
+        onToggle={setAbierto}
+        controla={id}
+        color={color}
+        texto={["Qué es", "Cerrar"]}
+      />
       {abierto && (
-        <div className="vx-ficha-detalle" id={id}>
-          <p>
-            <b>qué es</b>
-            {c.lema ?? "pieza del catálogo sin lema declarado en la fuente"}
-          </p>
-          <p>
-            <b>dónde vive</b>
-            {`${c.ruta ?? "sin ruta navegable"} · ${c.archivo}`}
-          </p>
-        </div>
+        <Detalle
+          id={id}
+          filas={[
+            ["qué es", c.lema ?? "pieza del catálogo sin lema declarado en la fuente"],
+            ["dónde vive", `${c.ruta ?? "sin ruta navegable"} · ${c.archivo}`],
+          ]}
+        />
       )}
     </article>
   );
@@ -117,26 +112,26 @@ function Ficha({ c }: { c: CosaReal }) {
 export function FichasCatalogo() {
   const tipos: TipoCosa[] = ["sala", "panel", "motor", "api"];
   return (
-    <div className="vx-archivo-oscuro">
+    <ArchivoMando>
+      <div className="vx-archivo-oscuro">
       {tipos.map((tipo) => {
         const lista = cosasPorTipo(tipo);
         if (lista.length === 0) return null;
         return (
-          <section key={tipo} className="vx-tramo" aria-label={TITULO[tipo]}>
-            <h2 className="vx-tramo-titulo">
-              <i style={{ background: COLOR[tipo] }} aria-hidden />
-              {TITULO[tipo]}
-              <b>{lista.length}</b>
-            </h2>
-            <p className="vx-tramo-leyenda">{NOTA[tipo]}</p>
-            <div className="vx-paises">
-              {lista.map((c) => (
-                <Ficha key={c.id} c={c} />
-              ))}
-            </div>
-          </section>
+          <Tramo
+            key={tipo}
+            etiqueta={TITULO[tipo]}
+            color={COLOR[tipo]}
+            cuenta={lista.length}
+            leyenda={NOTA[tipo]}
+          >
+            {lista.map((c) => (
+              <Ficha key={c.id} c={c} />
+            ))}
+          </Tramo>
         );
       })}
-    </div>
+      </div>
+    </ArchivoMando>
   );
 }

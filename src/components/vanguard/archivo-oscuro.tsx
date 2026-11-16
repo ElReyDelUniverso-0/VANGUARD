@@ -18,9 +18,10 @@
 // NADA DE LA FUENTE SE HA TOCADO: los 43 expedientes llevan los mismos
 // campos y las mismas fuentes (CIA, National Archives, NSA, FBI Vault…).
 // ═══════════════════════════════════════════════════════════════════
-import { useState } from "react";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 import { fotoDe } from "@/lib/oscura-fotos";
+// v405.5 — la plantilla compartida de fichas.
+import { ArchivoMando, BotonAbrir, Detalle, Tramo, useArchivo } from "./ficha";
 
 type Clase = "teoria" | "arma" | "civilizacion" | "documento";
 
@@ -109,9 +110,9 @@ const TRAMOS: { clase: Clase; titulo: string; href: string }[] = [
 ];
 
 function Tarjeta({ f }: { f: Ficha }) {
-  const [abierto, setAbierto] = useState(false);
   const foto = fotoDe(f.clave);
   const idDetalle = `exp-${f.clave}`;
+  const [abierto, setAbierto] = useArchivo(idDetalle);
 
   return (
     <article className={`vx-ficha${abierto ? " vx-ficha-abierta" : ""}`} style={{ borderColor: `${f.color}33` }}>
@@ -134,28 +135,23 @@ function Tarjeta({ f }: { f: Ficha }) {
           {f.etiqueta}
         </span>
         <h3>{f.titulo}</h3>
-        <button
-          type="button"
-          className="vx-ficha-abrir"
-          aria-expanded={abierto}
-          aria-controls={idDetalle}
-          onClick={() => setAbierto((v) => !v)}
-          style={{ color: f.color }}
-        >
-          {abierto ? "Cerrar expediente" : "Abrir expediente"} <span aria-hidden>{abierto ? "▴" : "▾"}</span>
-        </button>
+        <BotonAbrir
+          abierto={abierto}
+          onToggle={setAbierto}
+          controla={idDetalle}
+          color={f.color}
+          texto={["Abrir expediente", "Cerrar expediente"]}
+        />
         {abierto && (
-          <div className="vx-ficha-detalle" id={idDetalle}>
-            {f.lineas.map((l) => (
-              <p key={l.rotulo}>
-                <b>{l.rotulo}</b>
-                {l.texto}
-              </p>
-            ))}
-            <a href={f.url} target="_blank" rel="noopener noreferrer" className="vx-ficha-fuente">
-              fuente: {f.fuente} ↗
-            </a>
-          </div>
+          <Detalle
+            id={idDetalle}
+            filas={f.lineas.map((l) => [l.rotulo, l.texto] as [string, string])}
+            extra={
+              <a href={f.url} target="_blank" rel="noopener noreferrer" className="vx-ficha-fuente">
+                fuente: {f.fuente} ↗
+              </a>
+            }
+          />
         )}
       </div>
     </article>
@@ -164,24 +160,26 @@ function Tarjeta({ f }: { f: Ficha }) {
 
 export function ArchivoOscuro() {
   return (
-    <div className="vx-archivo-oscuro">
+    <ArchivoMando>
+      <div className="vx-archivo-oscuro">
       {TRAMOS.map((t) => {
         const fichas = FICHAS.filter((f) => f.clase === t.clase);
         return (
-          <section key={t.clase} id={t.href} className="vx-tramo" aria-label={t.titulo}>
-            <h2 className="vx-tramo-titulo">
-              <i style={{ background: ACENTO[t.clase] }} aria-hidden />
-              {t.titulo}
-              <b>{fichas.length}</b>
-            </h2>
-            <div className="vx-fichas">
-              {fichas.map((f) => (
-                <Tarjeta key={f.clave} f={f} />
-              ))}
-            </div>
-          </section>
+          <Tramo
+            key={t.clase}
+            id={t.href}
+            etiqueta={t.titulo}
+            color={ACENTO[t.clase]}
+            cuenta={fichas.length}
+            rejilla="vx-fichas"
+          >
+            {fichas.map((f) => (
+              <Tarjeta key={f.clave} f={f} />
+            ))}
+          </Tramo>
         );
       })}
-    </div>
+      </div>
+    </ArchivoMando>
   );
 }

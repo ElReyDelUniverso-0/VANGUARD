@@ -17,8 +17,9 @@
 // No hay retratos en el repositorio, así que no se inventa ninguno: el
 // emblema de cada ficha es su monograma, y el peso del poder va dibujado.
 // ═══════════════════════════════════════════════════════════════════
-import { useState } from "react";
 import { ROSTROS, CATEGORIAS_ROSTRO, type Rostro } from "@/lib/personas-data";
+// v405.5 — la plantilla compartida de fichas.
+import { ArchivoMando, BotonAbrir, Detalle, Tramo, useArchivo } from "./ficha";
 
 /** Iniciales del nombre, sin artículos ni cargos: «Luis Alberto Arce» → LA. */
 function monograma(nombre: string): string {
@@ -32,8 +33,8 @@ function monograma(nombre: string): string {
 const MAYOR_PODER = Math.max(...ROSTROS.map((r) => r.poder));
 
 function Ficha({ r, color }: { r: Rostro; color: string }) {
-  const [abierto, setAbierto] = useState(false);
   const idDetalle = `rostro-det-${r.id}`;
+  const [abierto, setAbierto] = useArchivo(idDetalle);
   const ancho = Math.round((r.poder / MAYOR_PODER) * 100);
 
   return (
@@ -57,60 +58,30 @@ function Ficha({ r, color }: { r: Rostro; color: string }) {
           <b style={{ color }}>{r.poder}</b>
         </div>
 
-        <button
-          type="button"
-          className="vx-ficha-abrir"
-          aria-expanded={abierto}
-          aria-controls={idDetalle}
-          onClick={() => setAbierto((v) => !v)}
-          style={{ color }}
-        >
-          {abierto ? "Cerrar ficha" : "Ver ficha completa"} <span aria-hidden>{abierto ? "▴" : "▾"}</span>
-        </button>
+        <BotonAbrir
+          abierto={abierto}
+          onToggle={setAbierto}
+          controla={idDetalle}
+          color={color}
+          texto={["Ver ficha completa", "Cerrar ficha"]}
+        />
 
         {abierto && (
-          <div className="vx-ficha-detalle" id={idDetalle}>
-            <p>
-              <b>organización</b>
-              {r.organizacion}
-            </p>
-            <p>
-              <b>dónde se le encuentra</b>
-              {`${r.sede} · ${r.ciudad} · ${r.pais}`}
-            </p>
-            <p>
-              <b>mandato</b>
-              {r.mandato}
-            </p>
-            <p>
-              <b>alcance</b>
-              {r.alcance}
-            </p>
-            <p>
-              <b>la ruta al poder</b>
-              {r.ruta}
-            </p>
-            <p>
-              <b>la frase que manda</b>
-              «{r.frase}»
-            </p>
-            <p>
-              <b>rasgos de mando</b>
-              {r.senas.join(" · ")}
-            </p>
-            <p>
-              <b>guardia</b>
-              {r.guardia}
-            </p>
-            <p>
-              <b>sucesión</b>
-              {r.sucesion}
-            </p>
-            <p>
-              <b>fichas del expediente</b>
-              {r.notas.join(" · ")}
-            </p>
-          </div>
+          <Detalle
+            id={idDetalle}
+            filas={[
+              ["organización", r.organizacion],
+              ["dónde se le encuentra", `${r.sede} · ${r.ciudad} · ${r.pais}`],
+              ["mandato", r.mandato],
+              ["alcance", r.alcance],
+              ["la ruta al poder", r.ruta],
+              ["la frase que manda", `«${r.frase}»`],
+              ["rasgos de mando", r.senas.join(" · ")],
+              ["guardia", r.guardia],
+              ["sucesión", r.sucesion],
+              ["fichas del expediente", r.notas.join(" · ")],
+            ]}
+          />
         )}
       </div>
     </article>
@@ -120,26 +91,28 @@ function Ficha({ r, color }: { r: Rostro; color: string }) {
 export function FichasRostros() {
   const categorias = [...new Set(ROSTROS.map((r) => r.categoria))];
   return (
-    <div className="vx-archivo-oscuro">
+    <ArchivoMando>
+      <div className="vx-archivo-oscuro">
       {categorias.map((cat) => {
         const { etiqueta, color, leyenda } = CATEGORIAS_ROSTRO[cat];
         const items = ROSTROS.filter((r) => r.categoria === cat);
         return (
-          <section key={cat} id={`rostro-${cat}`} className="vx-tramo" aria-label={etiqueta}>
-            <h2 className="vx-tramo-titulo">
-              <i style={{ background: color }} aria-hidden />
-              {etiqueta}
-              <b>{items.length}</b>
-            </h2>
-            <p className="vx-tramo-leyenda">{leyenda}</p>
-            <div className="vx-fichas">
-              {items.map((r) => (
-                <Ficha key={r.id} r={r} color={color} />
-              ))}
-            </div>
-          </section>
+          <Tramo
+            key={cat}
+            id={`rostro-${cat}`}
+            etiqueta={etiqueta}
+            color={color}
+            cuenta={items.length}
+            leyenda={leyenda}
+            rejilla="vx-fichas"
+          >
+            {items.map((r) => (
+              <Ficha key={r.id} r={r} color={color} />
+            ))}
+          </Tramo>
         );
       })}
-    </div>
+      </div>
+    </ArchivoMando>
   );
 }
