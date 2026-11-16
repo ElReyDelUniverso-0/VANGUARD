@@ -5846,7 +5846,7 @@
 // PENDIENTE DECLARADO: Google sigue fuera (no habla IndexNow); necesita Search
 // Console con la cuenta del Dueño.
 
-// v405.6 LA CARTA A LAS MÁQUINAS — ia3 (Arena). La casa deja de existir solo
+// v405.7 LA CARTA A LAS MÁQUINAS — ia3 (Arena). La casa deja de existir solo
 // para quien ya la conoce: se describe a sí misma para cualquier máquina que
 // llegue sin contexto, y lo hace desde sus propias fuentes.
 //
@@ -5882,8 +5882,16 @@
 // PENDIENTE DECLARADO: Google (Search Console, cuenta del Dueño) y la memoria
 // durable de la presencia (Turso/Supabase) — siguen siendo la siguiente.
 
-export const APP_VERSION = "v405.6";
-export const APP_CODENAME = "LA CARTA A LAS MÁQUINAS";
+// v405.7 LAS PUERTAS DE LAS SALAS (IA de diseño) — las 155 salas vivían solo
+//    dentro de /cuartel (paneles ssr:false, canónica /cuartel): invisibles para
+//    Google. Cada sala gana su puerta de servidor /sala/<clave> con el texto que
+//    la casa ya usa (rótulo + tarjetas que abren ESA sala, generado por
+//    scripts/generar-puertas-salas.mjs), migas, JSON-LD BreadcrumbList, enlaces
+//    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
+//    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
+//    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
+export const APP_VERSION = "v405.7";
+export const APP_CODENAME = "LAS PUERTAS DE LAS SALAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5943,7 +5951,7 @@ export const APP_CODENAME = "LA CARTA A LAS MÁQUINAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.2";
+export const APP_VERSION_ANTERIOR = "v405.6";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

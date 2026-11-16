@@ -9,6 +9,9 @@
 // de mapa-salas.ts — la misma fuente del mapa y del buscador ⌘K). Cada sala
 // sigue abriendo donde siempre: /cuartel?sala=<clave>. No se crea ni una sala
 // nueva, no se renombra nada: solo se le da puerta a lo que ya estaba.
+//
+// v405.7 LAS PUERTAS DE LAS SALAS: cada sala enlaza además a su puerta pública
+// /sala/<clave> — así Google descubre las 155 desde aquí.
 // ═══════════════════════════════════════════════════════════════════
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -65,15 +68,27 @@ export default async function Constelacion({ params }: { params: Promise<{ clave
           <ul className="vx-const-salas">
             {c.salas.map((s) => (
               <li key={s.clave}>
-                <Link href={`/cuartel?sala=${s.clave}`} className="vx-const-sala">
-                  <span className="vx-const-sala-corto" style={{ borderColor: `${color}55` }}>
-                    {s.corto}
+                {/* v405.7: el nombre lleva a la puerta pública de la sala
+                    (/sala/<clave>, la que Google puede leer); «Abrir» sigue
+                    entrando directo al cuartel, como siempre. */}
+                <div className="vx-const-sala">
+                  <Link href={`/sala/${s.clave}`} className="vx-const-sala-titulo">
+                    <span className="vx-const-sala-corto" style={{ borderColor: `${color}55` }}>
+                      {s.corto}
+                    </span>
+                    <span className="vx-const-sala-nombre">
+                      {s.nombre}
+                    </span>
+                  </Link>
+                  <span className="vx-const-sala-pie">
+                    <Link href={`/sala/${s.clave}`} className="vx-const-sala-ficha">
+                      Qué es
+                    </Link>
+                    <Link href={`/cuartel?sala=${s.clave}`} className="vx-const-sala-abrir" style={{ color, textDecoration: "none" }}>
+                      Abrir <span aria-hidden>→</span>
+                    </Link>
                   </span>
-                  <span className="vx-const-sala-nombre">{s.nombre}</span>
-                  <span className="vx-const-sala-abrir" style={{ color }}>
-                    Abrir <span aria-hidden>→</span>
-                  </span>
-                </Link>
+                </div>
               </li>
             ))}
           </ul>

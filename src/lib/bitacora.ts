@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.7",
+    nombre: "LAS PUERTAS DE LAS SALAS",
+    hitos: [
+      "CADA SALA TIENE SU PUERTA: /sala/<clave> para las 155 salas — qué es, a qué constelación pertenece, sus salas hermanas y el botón que la abre en el cuartel",
+      "GOOGLE YA PUEDE ENCONTRARLAS: las salas vivían solo dentro de /cuartel y los buscadores no veían ni una línea. 51 salas con descripción real entran al sitemap",
+      "CERO TEXTO INVENTADO: cada puerta usa las palabras que la casa ya enseña (el rótulo de la sala y sus tarjetas). Las salas sin descripción tienen puerta, pero no se ofrecen a Google hasta tenerla",
+      "Las constelaciones enlazan a la puerta de cada sala («Qué es») y «Abrir» sigue entrando directo, como siempre",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.6",
     nombre: "LA CARTA A LAS MÁQUINAS",
     tipo: "tecno",
