@@ -4,9 +4,11 @@ import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
-import { COSAS_REALES, TOTAL_REAL, cuentaPorTipo, cosasPorTipo, type TipoCosa } from "@/lib/catalogo-real";
+import { TOTAL_REAL, cuentaPorTipo } from "@/lib/catalogo-real";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v405.4 — las 184 piezas, en fichas.
+import { FichasCatalogo } from "@/components/vanguard/fichas-catalogo";
 
 // ============================================================
 // v367.4 EL CATÁLOGO DE LO QUE YA EXISTE — /catalogo
@@ -36,20 +38,6 @@ export const metadata: Metadata = {
   description:
     `Índice real de ${TOTAL_REAL} piezas que ya están construidas en VANGUARD: salas navegables, paneles, motores y puntos de datos, cada una con su ruta o su archivo de origen.`,
   alternates: { canonical: `${SITE_URL}/catalogo` },
-};
-
-const TITULO_TIPO: Record<TipoCosa, string> = {
-  sala: "SALAS NAVEGABLES",
-  panel: "PANELES YA CONSTRUIDOS",
-  motor: "MOTORES DE LA CASA",
-  api: "PUNTOS DE DATOS",
-};
-
-const NOTA_TIPO: Record<TipoCosa, string> = {
-  sala: "puertas que ya existen: se abren con un clic",
-  panel: "piezas ya escritas que viven dentro de las salas",
-  motor: "código de la casa que hace el trabajo pesado",
-  api: "endpoints reales que sirven datos a la casa",
 };
 
 const PUERTAS: EnlaceContextual[] = [
@@ -152,51 +140,10 @@ export default function CatalogoPage() {
             <span className="rounded-sm border border-zinc-700 px-2 py-1">{cuenta.api} puntos de datos</span>
           </div>
 
-          {(["sala", "panel", "motor", "api"] as TipoCosa[]).map((tipo) => {
-            const lista = cosasPorTipo(tipo);
-            if (lista.length === 0) return null;
-            return (
-              <section key={tipo} className="mt-8">
-                <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-amber-300">
-                  {TITULO_TIPO[tipo]} · {lista.length}
-                </h2>
-                <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-600">
-                  {NOTA_TIPO[tipo]}
-                </p>
-                <ol className="mt-3 grid gap-1.5 sm:grid-cols-2">
-                  {lista.map((c) => (
-                    <li
-                      key={c.id}
-                      className="rounded-sm border border-zinc-800 bg-zinc-900/40 px-2.5 py-1.5"
-                    >
-                      <div className="flex items-baseline justify-between gap-2">
-                        <p className="min-w-0 truncate font-mono text-[10px] uppercase tracking-widest text-zinc-200">
-                          {c.ruta && !c.ruta.includes("[") && !c.ruta.startsWith("/api/") ? (
-                            <Link href={c.ruta} className="hover:text-amber">
-                              {c.nombre}
-                            </Link>
-                          ) : (
-                            c.nombre
-                          )}
-                        </p>
-                        <span className="shrink-0 font-mono text-[8px] uppercase tracking-[0.1em] text-zinc-600">
-                          {c.tipo}
-                        </span>
-                      </div>
-                      <p className="truncate font-mono text-[8px] leading-relaxed text-zinc-600" title={c.archivo}>
-                        {c.ruta ?? c.archivo}
-                      </p>
-                      {c.lema ? (
-                        <p className="truncate font-mono text-[8px] text-zinc-700" title={c.lema}>
-                          {c.lema}
-                        </p>
-                      ) : null}
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            );
-          })}
+          {/* v405.4 — LAS PIEZAS, EN FICHAS (pilar 2): nombre, tipo y ruta a la
+              vista; el lema de cada pieza sigue entero, a un toque. Antes el
+              índice eran 22.985 letras en 11 visuales: 2.090 por visual. */}
+          <FichasCatalogo />
 
           <FuenteYFecha
             fuente="el árbol del repositorio (src/app, src/components/vanguard/panels, src/lib)"

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { WORLD_CURRENCIES_FULL } from "@/lib/world-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v405.4 — las 247 fichas de divisas, con su tasa dibujada.
+import { ArchivoDivisas } from "@/components/vanguard/archivo-divisas";
 // v402.4 — EL CAMBIO DE HOY: la sala deja de depender solo de la captura de la
 // fuente y trae el tipo de referencia que el Banco Central Europeo publica hoy
 // (vía Frankfurter). Si la fuente no contesta, el bloque lo declara: la tasa
@@ -205,33 +207,11 @@ export default async function DivisasPage() {
           {/* EL ARCHIVO POR REGIONES — en el orden de la fuente */}
           <section id="regiones" className="mt-10" aria-label="El archivo por regiones">
             <h2 className="text-lg font-bold text-zinc-100">EL ARCHIVO POR REGIONES</h2>
-            {REGIONES.map((reg) => (
-              <div key={reg} className="mt-5">
-                <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-                  {`${reg} ×${WORLD_CURRENCIES_FULL.filter((c) => c.region === reg).length}`}
-                </p>
-                <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                  {WORLD_CURRENCIES_FULL.filter((c) => c.region === reg).map((c) => (
-                    <article
-                      key={c.code}
-                      className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3"
-                      aria-label={c.name}
-                    >
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-                        {c.code}
-                      </p>
-                      <h3 className="mt-1 text-sm font-semibold text-zinc-100">{c.name}</h3>
-                      <p className="mt-1 font-mono text-[11px] text-cyan-hud">
-                        {c.curCode} {c.symbol} · {c.curName}
-                      </p>
-                      <p className="mt-1 text-[11px] text-zinc-500">
-                        tasa: {fmtTasa(c.rate)} por 1 USD
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            ))}
+            {/* v405.4 — LOS 247 PAÍSES, EN TARJETAS (pilar 2): país, moneda y la
+                tasa dibujada en escala logarítmica contra el extremo de la serie.
+                El nombre de la moneda y su símbolo siguen enteros, a un toque.
+                Antes esta sala eran 17.969 letras en 8 visuales: 1.997 por visual. */}
+            <ArchivoDivisas />
           </section>
 
           <p className="mt-8 text-[11px] leading-relaxed text-zinc-600">
