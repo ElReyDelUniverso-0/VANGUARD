@@ -51,13 +51,24 @@ export async function GET(req: Request) {
 
   if (!crudo) return NextResponse.json({ error: "falta u" }, { status: 400 });
 
+  // Dos formas de nombrar una foto: la URL del medio, o una ruta de la propia
+  // casa (/assets/real/tanks-1.jpg: las fotos de archivo del repositorio, que
+  // pesan 177–311 KB y en una tarjeta de 80 px son un derroche).
+  const origenPropio = new URL(req.url).origin;
   let destino: URL;
-  try {
-    destino = new URL(crudo);
-  } catch {
-    return NextResponse.json({ error: "u no es una URL" }, { status: 400 });
+  if (crudo.startsWith("/")) {
+    destino = new URL(crudo, origenPropio);
+    if (destino.origin !== origenPropio) return NextResponse.json({ error: "ruta no permitida" }, { status: 400 });
+  } else {
+    try {
+      destino = new URL(crudo);
+    } catch {
+      return NextResponse.json({ error: "u no es una URL" }, { status: 400 });
+    }
+    if (destino.origin !== origenPropio && !urlPermitida(destino)) {
+      return NextResponse.json({ error: "u no permitida" }, { status: 400 });
+    }
   }
-  if (!urlPermitida(destino)) return NextResponse.json({ error: "u no permitida" }, { status: 400 });
 
   const llave = `${ancho}|${destino.toString()}`;
   const guardada = cache.get(llave);

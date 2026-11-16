@@ -24,13 +24,14 @@ import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * La URL de la foto que se pinta. Las del repositorio se sirven tal cual
- * (son locales y ya pesan poco); las del medio pasan por el afinador de
- * /api/foto, que las deja en WebP de 320 px.
+ * La URL de la foto que se pinta: siempre por el afinador de /api/foto,
+ * que la deja en WebP de 320 px (y acepta tanto la URL del medio como la
+ * ruta de una foto del repositorio).
  */
 export function urlFoto(u: string | null | undefined, w = 320): string | null {
   if (!u) return null;
-  if (!/^https?:\/\//i.test(u)) return u;
+  // Del medio o del propio repositorio: las dos pasan por el afinador, porque
+  // las de archivo de la casa pesan 177–311 KB y aquí se piden a 320 px.
   return `/api/foto?w=${w}&u=${encodeURIComponent(u)}`;
 }
 
