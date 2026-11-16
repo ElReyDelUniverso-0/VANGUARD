@@ -1,33 +1,5 @@
 {
   "fecha": "2026-11-16",
-  "agentes": {
-    "rutas": {
-      "paginas": 56,
-      "apis": 94,
-      "dinamicas": 4
-    },
-    "enlaces": {
-      "revisados": 186,
-      "rotos": 0,
-      "anclasRotas": 0,
-      "aRutaDinamicaEnServer": 0
-    },
-    "idioma": {
-      "clavesDiccionario": 599,
-      "clavesUsadas": 402,
-      "faltantes": 0
-    },
-    "recursos": {
-      "revisados": 129,
-      "faltantes": 0,
-      "contra": "manifiesto real de main (417 archivos en public/, ref 3b32e215)"
-    },
-    "botones": {
-      "sinAccion": 0,
-      "hrefAlmohadilla": 0,
-      "pendientes": 0
-    }
-  },
   "humo": {
     "base": "https://vanguard-u6b9.vercel.app",
     "fecha": "2026-11-16T01:31:39",
@@ -649,14 +621,39 @@
       }
     ]
   },
-  "detalle": {
+  "agentes": {
+    "rutas": {
+      "paginas": 56,
+      "apis": 94,
+      "dinamicas": 4
+    },
+    "enlaces": {
+      "revisados": 186,
+      "rotos": 0,
+      "anclasRotas": 0,
+      "aRutaDinamicaEnServer": 0
+    },
+    "idioma": {
+      "clavesDiccionario": 599,
+      "clavesUsadas": 402,
+      "faltantes": 0
+    },
+    "recursos": {
+      "revisados": 129,
+      "faltantes": 0,
+      "contra": "manifiesto real de main (417 archivos en public/, ref 3b32e215)"
+    },
+    "botones": {
+      "sinAccion": 0,
+      "hrefAlmohadilla": 0,
+      "pendientes": 0
+    }
+  },
+  "defectos": {
     "enlacesRotos": [],
-    "anclasRotas": [],
-    "enlacesRutaDinamicaEnServer": [],
-    "clavesFaltantes": [],
     "recursosFaltantes": [],
     "botonesVacios": [],
-    "hrefAlmohadilla": [],
+    "clavesFaltantes": [],
     "pendientes": []
   }
 }
