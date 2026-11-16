@@ -17,9 +17,10 @@
 // de EE. UU., 18 agencias) y agencias-mundo-data.ts (la Red Mundial, 18
 // servicios). Cero fechas ni cifras escritas a mano.
 // ═══════════════════════════════════════════════════════════════════
-import { useState } from "react";
 import { AGENCIAS, CATEGORIA_META } from "@/lib/agencias-data";
 import { SERVICIOS, CATEGORIA_RED_META } from "@/lib/agencias-mundo-data";
+// v405.5 — la plantilla compartida (aquí vivía una copia local de Tramo).
+import { ArchivoMando, BotonAbrir, Detalle, Tramo, useArchivo } from "./ficha";
 
 type FichaServicio = {
   id: string;
@@ -95,8 +96,8 @@ const MAS_NUEVO = Math.max(...TODAS.map((t) => t.fundacion));
 const RANGO = Math.max(1, MAS_NUEVO - MAS_ANTIGUO);
 
 function Ficha({ s }: { s: FichaServicio }) {
-  const [abierto, setAbierto] = useState(false);
   const id = `svc-${s.red}-${s.id}`;
+  const [abierto, setAbierto] = useArchivo(id);
   // barra = cuánto lleva existiendo el oficio (del más antiguo al más nuevo)
   const ancho = Math.max(4, Math.round(((MAS_NUEVO - s.fundacion) / RANGO) * 100));
   const edad = MAS_NUEVO - s.fundacion;
@@ -118,87 +119,30 @@ function Ficha({ s }: { s: FichaServicio }) {
         <i style={{ width: `${ancho}%`, background: s.color }} />
         <b>{s.fundacion}</b>
       </div>
-      <button
-        type="button"
-        className="vx-ficha-abrir"
-        aria-expanded={abierto}
-        aria-controls={id}
-        onClick={() => setAbierto((v) => !v)}
-        style={{ color: s.color }}
-      >
-        {abierto ? "Cerrar expediente" : "Abrir expediente"} <span aria-hidden>{abierto ? "▴" : "▾"}</span>
-      </button>
+      <BotonAbrir
+        abierto={abierto}
+        onToggle={setAbierto}
+        controla={id}
+        color={s.color}
+        texto={["Abrir expediente", "Cerrar expediente"]}
+      />
       {abierto && (
-        <div className="vx-ficha-detalle" id={id}>
-          <p>
-            <b>nombre oficial</b>
-            {s.nombre}
-          </p>
-          {s.linaje ? (
-            <p>
-              <b>linaje</b>
-              {s.linaje}
-            </p>
-          ) : null}
-          <p>
-            <b>sede</b>
-            {`${s.sede} · ${s.pais}`}
-          </p>
-          <p>
-            <b>personal</b>
-            {s.personal}
-          </p>
-          <p>
-            <b>especialidad</b>
-            {s.especialidad}
-          </p>
-          <p>
-            <b>dominios</b>
-            {s.dominio.join(" · ")}
-          </p>
-          <p>
-            <b>lema</b>
-            «{s.lema}»
-          </p>
-          <p>
-            <b>la misión</b>
-            {s.mision}
-          </p>
-          <p>
-            <b>el expediente</b>
-            {s.fichas.join(" · ")}
-          </p>
-        </div>
+        <Detalle
+          id={id}
+          filas={[
+            ["nombre oficial", s.nombre],
+            ["linaje", s.linaje],
+            ["sede", `${s.sede} · ${s.pais}`],
+            ["personal", s.personal],
+            ["especialidad", s.especialidad],
+            ["dominios", s.dominio.join(" · ")],
+            ["lema", `«${s.lema}»`],
+            ["la misión", s.mision],
+            ["el expediente", s.fichas.join(" · ")],
+          ]}
+        />
       )}
     </article>
-  );
-}
-
-function Tramo({
-  titulo,
-  color,
-  nota,
-  lista,
-}: {
-  titulo: string;
-  color: string;
-  nota?: string;
-  lista: FichaServicio[];
-}) {
-  return (
-    <section className="vx-tramo" aria-label={titulo}>
-      <h2 className="vx-tramo-titulo">
-        <i style={{ background: color }} aria-hidden />
-        {titulo}
-        <b>{lista.length}</b>
-      </h2>
-      {nota ? <p className="vx-tramo-leyenda">{nota}</p> : null}
-      <div className="vx-paises">
-        {lista.map((s) => (
-          <Ficha key={`${s.red}-${s.id}`} s={s} />
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -207,19 +151,20 @@ export function FichasComunidad() {
   const cats: string[] = [];
   for (const a of TODAS) if (a.red === "comunidad" && !cats.includes(a.categoria)) cats.push(a.categoria);
   return (
-    <div className="vx-archivo-oscuro">
+    <ArchivoMando>
+      <div className="vx-archivo-oscuro">
       {cats.map((cat) => {
         const lista = TODAS.filter((s) => s.red === "comunidad" && s.categoria === cat);
         return (
-          <Tramo
-            key={cat}
-            titulo={lista[0].categoriaEtiqueta}
-            color={lista[0].color}
-            lista={lista}
-          />
+          <Tramo key={cat} etiqueta={lista[0].categoriaEtiqueta} color={lista[0].color} cuenta={lista.length}>
+            {lista.map((s) => (
+              <Ficha key={`${s.red}-${s.id}`} s={s} />
+            ))}
+          </Tramo>
         );
       })}
-    </div>
+      </div>
+    </ArchivoMando>
   );
 }
 
@@ -232,12 +177,11 @@ export function FichasRed() {
       {cats.map((cat) => {
         const lista = TODAS.filter((s) => s.red === "mundo" && s.categoria === cat);
         return (
-          <Tramo
-            key={cat}
-            titulo={lista[0].categoriaEtiqueta}
-            color={lista[0].color}
-            lista={lista}
-          />
+          <Tramo key={cat} etiqueta={lista[0].categoriaEtiqueta} color={lista[0].color} cuenta={lista.length}>
+            {lista.map((s) => (
+              <Ficha key={`${s.red}-${s.id}`} s={s} />
+            ))}
+          </Tramo>
         );
       })}
     </div>

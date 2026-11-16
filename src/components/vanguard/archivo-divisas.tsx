@@ -16,36 +16,8 @@
 // catalogo-real (las piezas ya construidas) y agencias-data /
 // agencias-mundo-data (los expedientes de inteligencia). Cero cifras a mano.
 // ═══════════════════════════════════════════════════════════════════
-import { useState } from "react";
-
-/** El botón de abrir/cerrar, con su estado de accesibilidad. */
-export function BotonAbrir({
-  abierto,
-  onToggle,
-  controla,
-  color,
-  texto,
-}: {
-  abierto: boolean;
-  onToggle: () => void;
-  controla: string;
-  color?: string;
-  texto?: [string, string];
-}) {
-  const [abrir, cerrar] = texto ?? ["Ver el detalle", "Cerrar"];
-  return (
-    <button
-      type="button"
-      className="vx-ficha-abrir"
-      aria-expanded={abierto}
-      aria-controls={controla}
-      onClick={onToggle}
-      style={color ? { color } : undefined}
-    >
-      {abierto ? cerrar : abrir} <span aria-hidden>{abierto ? "▴" : "▾"}</span>
-    </button>
-  );
-}
+// v405.5 — la plantilla compartida (aquí vivía una copia local de BotonAbrir).
+import { ArchivoMando, BotonAbrir, Detalle, Tramo, useArchivo } from "./ficha";
 
 // ── DIVISAS ────────────────────────────────────────────────────────────
 // La barra mide la tasa en ESCALA LOGARÍTMICA (las monedas fuertes valen menos
@@ -65,8 +37,8 @@ const MAX_LOG = Math.log10(Math.max(...TASAS) + 1);
 const MIN_LOG = Math.log10(Math.min(...TASAS));
 
 function TarjetaDivisa({ c }: { c: WorldCountry }) {
-  const [abierto, setAbierto] = useState(false);
   const id = `div-${c.code}`;
+  const [abierto, setAbierto] = useArchivo(id);
   const pos = (Math.log10(c.rate) - MIN_LOG) / (MAX_LOG - MIN_LOG);
   const ancho = Math.max(3, Math.round(pos * 100));
 
@@ -87,26 +59,20 @@ function TarjetaDivisa({ c }: { c: WorldCountry }) {
       </div>
       <BotonAbrir
         abierto={abierto}
-        onToggle={() => setAbierto((v) => !v)}
+        onToggle={setAbierto}
         controla={id}
         color="#5eead4"
         texto={["Ver la moneda", "Cerrar"]}
       />
       {abierto && (
-        <div className="vx-ficha-detalle" id={id}>
-          <p>
-            <b>moneda oficial</b>
-            {`${c.curName} (${c.curCode}) · símbolo ${c.symbol}`}
-          </p>
-          <p>
-            <b>tasa de la captura</b>
-            {`${fmtTasa(c.rate)} ${c.curCode} por 1 dólar estadounidense`}
-          </p>
-          <p>
-            <b>región</b>
-            {c.region}
-          </p>
-        </div>
+        <Detalle
+          id={id}
+          filas={[
+            ["moneda oficial", `${c.curName} (${c.curCode}) · símbolo ${c.symbol}`],
+            ["tasa de la captura", `${fmtTasa(c.rate)} ${c.curCode} por 1 dólar estadounidense`],
+            ["región", c.region],
+          ]}
+        />
       )}
     </article>
   );
@@ -116,24 +82,19 @@ export function ArchivoDivisas() {
   const regiones: string[] = [];
   for (const c of WORLD_CURRENCIES_FULL) if (!regiones.includes(c.region)) regiones.push(c.region);
   return (
-    <div className="vx-archivo-oscuro">
+    <ArchivoMando>
+      <div className="vx-archivo-oscuro">
       {regiones.map((reg) => {
         const filas = WORLD_CURRENCIES_FULL.filter((c) => c.region === reg);
         return (
-          <section key={reg} className="vx-tramo" aria-label={reg}>
-            <h2 className="vx-tramo-titulo">
-              <i style={{ background: "#5eead4" }} aria-hidden />
-              {reg}
-              <b>{filas.length}</b>
-            </h2>
-            <div className="vx-paises">
-              {filas.map((c) => (
-                <TarjetaDivisa key={c.code} c={c} />
-              ))}
-            </div>
-          </section>
+          <Tramo key={reg} etiqueta={reg} color="#5eead4" cuenta={filas.length}>
+            {filas.map((c) => (
+              <TarjetaDivisa key={c.code} c={c} />
+            ))}
+          </Tramo>
         );
       })}
-    </div>
+      </div>
+    </ArchivoMando>
   );
 }

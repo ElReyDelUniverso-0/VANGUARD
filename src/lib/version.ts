@@ -200,11 +200,37 @@
 // NADA SE BORRA: los campos viajan verbatim de world-data, catalogo-real,
 // agencias-data y agencias-mundo-data. Cero cifras escritas a mano.
 
+// v405.6 LA PLANTILLA Y EL MANDO — la densidad visual deja de depender de mi
+// memoria y pasa a tener plantilla, mando y guardia.
 //
-// NOTA DE NUMERACIÓN: la otra IA publicó el commit #78 (LA LLAVE DE LOS
-// BUSCADORES) etiquetado «v405.3» sin mover version.ts, que seguía en v405.2.
-// Para que ninguna cifra de la casa signifique dos cosas, esta tanda entra
-// como v405.4 y deja el v405.3 en la bitácora de esa otra mano.
+// LA AUDITORÍA DE MI PROPIO MÓDULO (no de la casa): las seis salas del pilar 2
+// ya estaban por debajo de 300 letras por elemento visual, pero el código que
+// las dejó así repetía el mismo markup seis veces —971 líneas con el botón, la
+// cabecera de tramo y el bloque de detalle clonados a mano—. Eso es la
+// redundancia que el Dueño prohíbe, cometida por mí.
+//
+// LO QUE ENTRA:
+//   · src/components/vanguard/ficha.tsx — UNA plantilla (<Tramo>, <BotonAbrir>,
+//     <Detalle>) para las seis salas. Misma salida HTML, mismas clases: los seis
+//     componentes pasan de 971 a 832 líneas y ninguna ficha se pierde.
+//   · EL MANDO DEL ARCHIVO — un clic alterna «modo imagen» y «modo libro»: abre
+//     de golpe los 167, 247, 185… expedientes de la sala, con la cuenta de
+//     fichas al lado. La profundización opcional, por fin completa.
+//   · LA SONDA — el navegador del lector cuenta letras y elementos visuales de
+//     la página que acaba de recibir y la compara con la mediana real de la casa
+//     (auditoria.json). La sala se mide delante del lector; no se lo pedimos.
+//   · LA FICHA CON PUERTA — cada ficha se abre sola si la dirección trae su
+//     ancla y la dirección se actualiza al abrirla: el expediente se puede
+//     enlazar y compartir.
+//   · scripts/densidad.mjs — la guardia del pilar 2: sale con código 1 si una
+//     sala pasa de 800 letras por elemento visual. La regla, ejecutable.
+//
+// NADA SE BORRA: ni un campo, ni una clase, ni una línea de la fuente. El CSS
+// solo se amplía al final (23 líneas: .vx-mando*, .vx-sonda*).
+//
+// NUMERACIÓN: main iba por v405.5 (EL FARO QUE GIRA, de la otra mano), así que
+// esta tanda entra como v405.6. No se toca su entrada ni su bloque.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5846,8 +5872,8 @@
 // PENDIENTE DECLARADO: Google sigue fuera (no habla IndexNow); necesita Search
 // Console con la cuenta del Dueño.
 
-export const APP_VERSION = "v405.5";
-export const APP_CODENAME = "EL FARO QUE GIRA";
+export const APP_VERSION = "v405.6";
+export const APP_CODENAME = "LA PLANTILLA Y EL MANDO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5907,7 +5933,7 @@ export const APP_CODENAME = "EL FARO QUE GIRA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.2";
+export const APP_VERSION_ANTERIOR = "v405.5";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

@@ -6411,3 +6411,15 @@ Stage Summary:
 - Pruebas: YAML + Python del workflow compilados y simulados (11 tandas, lote de
   200, rotación verificada a +0/+6/+12/+24/+100 h); tsc -p del nuevo route = 0;
   el build de Vercel de la rama es el juez final.
+
+---
+
+## Task ia3-v405.6 · LA PLANTILLA Y EL MANDO (ciclo 7: el pilar 2 con plantilla, mando y guardia)
+
+- PUNTO DE PARTIDA (auditoría de mi propio módulo, no de la casa): las seis salas del pilar 2 ya estaban por debajo de 300 letras por elemento visual (/servicios 301, /oscura 225, /rostros 205, /poder 65, /divisas 55, /catalogo 35), pero el código que las dejó así repetía el mismo markup seis veces: 971 líneas con el botón, la cabecera de tramo y el bloque de detalle clonados a mano. Redundancia propia, señalada y corregida.
+- LO QUE ENTRA: `src/components/vanguard/ficha.tsx` — plantilla única (`<Tramo>`, `<BotonAbrir>`, `<Detalle>`) + `<ArchivoMando>`/`useArchivo()`; el MANDO DEL ARCHIVO (un clic alterna modo imagen ↔ modo libro y abre de golpe los 167/247/185… expedientes); la SONDA (el navegador del lector mide la sala y la compara con la mediana real de `auditoria.json`); la FICHA CON PUERTA (ancla en la dirección: la ficha se abre sola y la URL la refleja); `scripts/densidad.mjs` — guardia que sale con 1 si una sala pasa de 800 letras por visual.
+- LOS SEIS COMPONENTES (míos): archivo-oscuro 187→185, fichas-rostros 145→118, archivo-poder 113→103, archivo-divisas 139→100, fichas-catalogo 142→137, archivo-servicios 245→189. Total 971 → 832 líneas, misma salida HTML y mismas clases; ninguna ficha perdida (694 verificadas).
+- CSS: 23 líneas AÑADIDAS al final de `portada.css` (`.vx-mando*`, `.vx-sonda*`). Cero líneas modificadas o borradas (verificado con diff).
+- REGLA DEL DUEÑO: `portada.css` es compartido → solo se amplía. No se toca `/servicios` de nuevo, ni `/calidad` (ya publica densidad: duplicarla habría sido un error), ni `nucleo`/`verdad-cruda`/`objetivos` (son de otras manos).
+- NUMERACIÓN: `main` iba por v405.5 (EL FARO QUE GIRA, de la otra mano) → esta tanda entra como v405.6.
+- VERIFICACIÓN: `tsc` estricto sobre el grafo tocado, limpio; render con `react-dom/server` de los seis componentes (694/694 fichas, mando presente en todos); guardia contra la instantánea real (sale 1, señala las salas que siguen por encima del techo). `next build` no es viable en el sandbox (turbopack + node_modules enlazado + `fs` en instrumentation): se prueba por render de servidor.
