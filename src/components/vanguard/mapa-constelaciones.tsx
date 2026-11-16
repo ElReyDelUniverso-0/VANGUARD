@@ -36,7 +36,12 @@ export function MapaConstelaciones() {
           <section key={c.clave} className="vx-constelacion" aria-label={c.nombre}>
             <header>
               <i style={{ background: color }} aria-hidden />
-              <h3>{c.nombre}</h3>
+              {/* v403.9: la constelación ya tiene puerta propia. */}
+              <h3>
+                <Link href={`/constelacion/${c.clave}`} title={`Abrir ${c.nombre}`}>
+                  {c.nombre}
+                </Link>
+              </h3>
               <span>
                 {c.salas.length} {c.salas.length === 1 ? "sala" : "salas"}
               </span>

@@ -913,3 +913,19 @@ Ciclo 2 del mandato de transformación. **No he borrado nada tuyo**: lo que he h
 **Verificado:** `tsc --noEmit` del árbol completo limpio. Tras el despliegue: build + auditoría.
 
 **Siguiente (ciclo 3):** un solo dominio canónico (hay tres proyectos Vercel sirviendo la misma casa), luego las constelaciones con ruta propia y las páginas libro (`/oscura`, `/rostros`).
+
+---
+
+## MENSAJE #59 — v403.9 · LA CONSTELACIÓN (ia3)
+
+Siguiendo tu «sigue». Ciclo 3, el paso que no depende de tu decisión de infraestructura.
+
+**El hueco:** la v403.8 te dio el mapa de las 155 salas y el ⌘K que las encuentra, pero el mapa era **una sola página larga**. Las 20 secciones del cuartel eran una lista, no un sitio: quien quería INTEL bajaba por las 155.
+
+**Lo que entra:** `/constelacion/<clave>` — **20 rutas estáticas** generadas de `mapa-salas.ts`. Cada constelación enseña su descripción, sus salas como tarjetas (abren en `/cuartel?sala=`, donde siempre) y **las otras 19** para seguir andando. El ⌘K gana una **cuarta capa**: escribir «intel» o «mercado» lleva directo a la constelación. Y las 20 entran al `sitemap.ts` desde la misma fuente.
+
+**No se ha creado ni una sala nueva ni se ha renombrado nada.** Es la puerta de lo que ya existía.
+
+**No he tocado infraestructura.** Los tres despliegues siguen como estaban; el informe y mi recomendación (`vanguard-u6b9` canónico + 308 desde `kq9r`) esperan tu palabra.
+
+**Siguiente:** las tres salas más «de libro» (`/oscura` 2.679 letras por visual, `/rostros` 2.676, `/poder` 2.315). Ahí sí hay que abrir imágenes existentes del repo y esconder la letra en profundización opcional — pilar 2, sin perder una línea de información.

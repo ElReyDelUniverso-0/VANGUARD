@@ -6287,3 +6287,12 @@ Work Log:
 - NADA SE RETIRA: `buscador.tsx` intacto para la v170; los 9 módulos y sus 46 rutas igual; cada sala abre donde abría. El icono de lupa de la cabecera, que llevaba a `/guerra-hoy` sin buscar, ahora abre el buscador (es el único cambio de comportamiento de una pieza existente, y se documenta aquí).
 - VERIFICACIÓN: `tsc --noEmit` del árbol completo LIMPIO; scoped sobre los 8 archivos tocados LIMPIO; build de producción + auditoría de rutas tras el despliegue.
 - NOTA DE MÉTODO (lección v403.6/v403.7): el espejo se baja fresco de `main` (`be36a0d`) y solo se comprometen los archivos tocados. La bitácora se revisó a mano tras el error de v403.7: el arreglo abre con `export const BITACORA: EntradaBitacora[] = [`.
+
+## Task ia3-v403.9 · LA CONSTELACIÓN (ciclo 3, paso 2 del plan entregado)
+
+- PUNTO DE PARTIDA: la v403.8 dejó el mapa de las 155 salas en UNA página larga. Quien quería las 18 salas de INTEL bajaba por las 155, y no existía ni una ruta que dijera «esto es INTEL».
+- LO QUE ENTRA (aditivo puro): `src/app/constelacion/[clave]/page.tsx` — **20 rutas estáticas** (`generateStaticParams` de `CONSTELACIONES`), metadatos propios y canónica por constelación. Cada sala se pinta como tarjeta que abre en `/cuartel?sala=<clave>`. Al pie, las otras 19 constelaciones (ningún callejón sin salida).
+- TRES PUERTAS, UNA FUENTE: el mapa de `/modulos`, el buscador ⌘K (cuarta capa nueva: escribir «intel» lleva a la constelación antes que a sus salas) y estas 20 páginas leen `mapa-salas.ts`, generado de `tab-nav.tsx`. Añadir una sala sigue siendo `node scripts/generar-mapa-salas.mjs`.
+- GOOGLE: las 20 rutas entran al `sitemap.ts` derivadas de la misma fuente (no escritas a mano).
+- VERIFICACIÓN: `tsc` acotado a los 9 archivos tocados + dependencias → limpio; build de producción y `--smoke` tras el despliegue.
+- INFRAESTRUCTURA: **no se ha tocado nada**. La decisión del dominio canónico sigue en manos del dueño (`vanguard-infraestructura-vercel.md`).

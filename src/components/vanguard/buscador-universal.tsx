@@ -25,11 +25,11 @@
 // ═══════════════════════════════════════════════════════════════════
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SALAS_MAPA, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
+import { CONSTELACIONES, SALAS_MAPA, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 
 type Cable = { id: string; t: string; f: string; fecha?: string };
-type Grupo = "salas" | "rutas" | "cables";
+type Grupo = "constelaciones" | "salas" | "rutas" | "cables";
 type Hit = { grupo: Grupo; clave: string; titulo: string; sub: string; destino: string; color?: string };
 
 const sinTildes = (s: string) =>
@@ -105,6 +105,15 @@ export function BuscadorUniversal({ compacto = false }: { compacto?: boolean }) 
       destino: `/cuartel?sala=${s.clave}`,
       color: s.color,
     }));
+    // v403.9: las 20 constelaciones, buscables por nombre y por su descripción.
+    const constelaciones: Hit[] = CONSTELACIONES.map((c) => ({
+      grupo: "constelaciones" as const,
+      clave: `const:${c.clave}`,
+      titulo: c.corto,
+      sub: `${c.salas.length} ${c.salas.length === 1 ? "sala" : "salas"} · ${c.desc}`,
+      destino: `/constelacion/${c.clave}`,
+      color: c.color,
+    }));
     const rutas: Hit[] = RUTAS.map((r) => ({
       grupo: "rutas",
       clave: `ruta:${r.destino}`,
@@ -121,7 +130,7 @@ export function BuscadorUniversal({ compacto = false }: { compacto?: boolean }) 
       ];
       return arranque;
     }
-    return [...salas, ...rutas]
+    return [...constelaciones, ...salas, ...rutas]
       .map((h) => ({ h, p: puntuar(q, h.titulo, h.sub) }))
       .filter((x) => x.p > 0)
       .sort((a, b) => b.p - a.p)
@@ -194,11 +203,12 @@ export function BuscadorUniversal({ compacto = false }: { compacto?: boolean }) 
   };
 
   const tituloGrupo: Record<Grupo, string> = {
+    constelaciones: "CONSTELACIONES",
     salas: "SALAS DE LA CASA",
     rutas: "PUERTAS",
     cables: buscandoCables ? "BUSCANDO EN LOS CABLES…" : "CABLES EN VIVO",
   };
-  const grupos: Grupo[] = ["salas", "rutas", "cables"];
+  const grupos: Grupo[] = ["constelaciones", "salas", "rutas", "cables"];
 
   return (
     <>

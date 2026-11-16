@@ -124,6 +124,23 @@
 // NADA SE RETIRA: `buscador.tsx` sigue intacto para la v170, los módulos y sus
 // rutas no cambian, y cada sala abre donde abría. Solo se añade la puerta.
 
+// v403.9 LA CONSTELACIÓN — cada constelación tiene su puerta.
+//
+// LO QUE FALTABA: la v403.8 le dio al visitante un mapa de las 155 salas y un
+// buscador que las encuentra. Pero el mapa era UNA página larga: quien quería
+// las 18 salas de INTEL bajaba por las 155. Las 20 constelaciones eran una
+// lista, no un sitio. No había ni una ruta que dijera «esto es INTEL».
+//
+// LO QUE ENTRA: `/constelacion/<clave>` — 20 rutas estáticas generadas de
+// `mapa-salas.ts` (la misma fuente del mapa y del buscador ⌘K: una sola
+// verdad). Cada una enseña su descripción, sus salas como tarjetas que abren
+// en /cuartel?sala=<clave> y las otras 19 constelaciones para seguir andando
+// (nunca un callejón sin salida). El buscador las conoce como cuarta capa, el
+// mapa enlaza a ellas y el sitemap las anuncia a Google.
+//
+// NO SE CREA NI UNA SALA NUEVA, NO SE RENOMBRA NADA: es la puerta de lo que
+// ya existía.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5685,8 +5702,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.8";
-export const APP_CODENAME = "LA PUERTA";
+export const APP_VERSION = "v403.9";
+export const APP_CODENAME = "LA CONSTELACIÓN";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5746,7 +5763,7 @@ export const APP_CODENAME = "LA PUERTA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.7";
+export const APP_VERSION_ANTERIOR = "v403.8";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
