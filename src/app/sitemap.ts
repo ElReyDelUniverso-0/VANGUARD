@@ -11,6 +11,7 @@ import { MODULOS, SALAS_INTERNAS } from "@/components/portada/modulos";
 // v207.0 INFINITO: 50 → 500 puertas — Google puede entrar a TODO el archivo. Si la BD falla, las puertas estáticas quedan intactas.
 import { SITE_URL } from "@/lib/site"; // v403.6: una sola puerta
 import { CONSTELACIONES } from "@/lib/vanguard/mapa-salas"; // v403.9: las 20 puertas
+import { PUERTAS_SALAS } from "@/lib/vanguard/puertas-salas"; // v405.6: las puertas de las salas
 
 // v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
 // «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
@@ -536,6 +537,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.65,
     })),
+    // v405.6 LAS PUERTAS DE LAS SALAS: cada sala con texto real tiene su
+    // puerta /sala/<clave> (las que no, llevan noindex y NO entran: regla ②).
+    // Derivado de la fuente: una sala que gana descripción entra sola.
+    ...CONSTELACIONES.flatMap((c) => c.salas)
+      .filter((s) => PUERTAS_SALAS[s.clave]?.indexable)
+      .map((s) => ({
+        url: `${SITE_URL}/sala/${s.clave}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      })),
     ...MODULOS.filter((m) => m.id !== "estado").map((m) => ({
       url: `${SITE_URL}/modulo/${m.id}`,
       lastModified: new Date(),
