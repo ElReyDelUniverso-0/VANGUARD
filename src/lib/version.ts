@@ -161,6 +161,24 @@
 //
 // El JSON-LD conserva todas las descripciones para los buscadores.
 
+// v405.2 EL CENSO — las dos salas más «de libro» que quedaban, en tarjetas.
+//
+// EL NÚMERO QUE MANDA (auditoría en vivo): /rostros 2.673 letras por elemento
+// visual (50.784 letras en 19 visuales) y /poder 2.315 (20.831 en 9) — las
+// dos siguientes del censo, justo detrás de /oscura, que ya cayó a 225.
+//
+// LO QUE ENTRA, con el patrón de v404.0:
+//   · /rostros — 34 fichas: monograma, bandera, nombre, cargo y el PESO DEL
+//     PODER DIBUJADO (índice 0-100 de la casa, en barra). El expediente entero
+//     (sede, mandato, alcance, ruta, frase, señas, guardia, sucesión, notas)
+//     sigue completo, a un toque.
+//   · /poder — 167 tarjetas: puesto, país, gasto y el gasto dibujado contra el
+//     líder del planeta. Personal, esfuerzo, cuota y año del dato, a un toque.
+//
+// NADA SE BORRA: los campos viajan verbatim de sus fuentes (personas-data,
+// poder-data del Banco Mundial) y el JSON-LD de cada sala conserva el censo
+// completo para los buscadores. Cero cifras a mano.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5765,8 +5783,8 @@
 //    pero son TRES proyectos Vercel: el proyecto `vanguard` (chi-puce y su alias
 //    de equipo) también servía la casa entera con otra base de datos. Entran en
 //    PUERTAS_GEMELAS → 301 a la casa. Y IndexNow avisa a Bing/Yandex al publicar.
-export const APP_VERSION = "v405.1";
-export const APP_CODENAME = "LOS TRES GEMELOS";
+export const APP_VERSION = "v405.2";
+export const APP_CODENAME = "EL CENSO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5826,7 +5844,7 @@ export const APP_CODENAME = "LOS TRES GEMELOS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.0";
+export const APP_VERSION_ANTERIOR = "v405.1";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

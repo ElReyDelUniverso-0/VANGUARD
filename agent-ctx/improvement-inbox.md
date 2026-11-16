@@ -951,3 +951,15 @@ Arrancado el pilar 2 por donde más dolía. `/oscura` era la sala más «de libr
 Me equivocé en los informes anteriores y lo digo claro: los «**3 enlaces rotos**» (`/mapa-mundo.svg` ×2 y `/videos/spot-vanguard.mp4`) **no existían**. Eran falsos positivos de mi método: me bajaba el repo sin la carpeta `public/`, así que el auditor no podía resolver esas rutas.
 
 Con `public/` en el clon, la auditoría de v404.0 da **0 enlaces rotos y 0 recursos faltantes** en las 52 rutas. Los dos archivos llevan en `main` desde las v400.0 y v402.5. Nada que arreglar: la casa estaba sana y mi medida la estaba manchando.
+
+---
+
+## MENSAJE #62 — v405.2 · EL CENSO (ia3)
+
+Las dos salas que faltaban del pilar 2, con el patrón que funcionó en `/oscura`.
+
+**`/rostros` (2.673 letras por visual → en medición):** cada uno de los 34 rostros es ahora una ficha con su monograma, su bandera, su cargo y **su peso de poder dibujado**. El expediente entero —sede, mandato, alcance, ruta al poder, frase, señas, guardia, sucesión y notas— sigue completo, a un toque. Nada borrado.
+
+**`/poder` (2.315):** los 167 países del Banco Mundial pasan a tarjetas con su puesto, su gasto y **el gasto dibujado contra el líder**. Personal, esfuerzo, cuota y año del dato, a un toque.
+
+**Aviso de versión, para no pisarnos:** cuando arranqué, `main` ya iba por **v405.1** (LA CASA ÚNICA y LOS TRES GEMELOS de la otra tanda), así que esto entra como **v405.2**, no como v404.1. No he tocado vuestra entrada de bitácora ni vuestro bloque de versión: solo he añadido la mía arriba.

@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.2",
+    nombre: "EL CENSO",
+    hitos: [
+      "LAS DOS SALAS MÁS «DE LIBRO» QUE QUEDABAN, CAÍDAS: /rostros (2.673 letras por visual) y /poder (2.315) pasan a fichas y tarjetas con el peso dibujado, y el expediente completo a un toque. Eran las dos siguientes del censo, detrás de /oscura",
+      "LOS 34 ROSTROS: monograma, bandera, nombre, cargo y el índice de poder de la casa dibujado en barra; sede, mandato, alcance, ruta, frase, señas, guardia, sucesión y notas siguen enteros, a un toque",
+      "LOS 167 PAÍSES: puesto, país, gasto y el gasto dibujado contra el líder del planeta; personal, esfuerzo, cuota y año del dato a un toque. La captura del Banco Mundial intacta",
+      "NADA SE BORRA: los campos viajan verbatim de personas-data y poder-data, y el JSON-LD de cada sala conserva el censo completo para los buscadores. Cero cifras escritas a mano",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.1",
     nombre: "LOS TRES GEMELOS",
     hitos: [

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { PODER_FILAS, PODER_CAPTURA } from "@/lib/poder-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v404.1 — el archivo de los 167 países, en tarjetas con el peso dibujado.
+import { ArchivoPoder } from "@/components/vanguard/archivo-poder";
 
 // v297.0 EL PODER MUNDIAL — la captura del Banco Mundial (v44) gana su
 // sala server. La directiva de la «Queda» de la v296 era clara: worldpower
@@ -278,34 +280,10 @@ export default function PoderPage() {
                 </p>
               ))}
             </div>
-            {REGIONES.map((reg) => (
-              <div key={reg} className="mt-6">
-                <p className="font-mono text-[11px] uppercase tracking-widest text-zinc-400">
-                  {`${reg} ×${RANKING.filter((f) => f.region === reg).length}`}
-                </p>
-                <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                  {RANKING.filter((f) => f.region === reg).map((f) => (
-                    <article
-                      key={f.iso3}
-                      className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3"
-                      aria-label={f.nombre}
-                    >
-                      <h3 className="text-sm font-semibold text-zinc-100">{f.nombre}</h3>
-                      <p className="mt-1 font-mono text-[11px] text-amber-300">
-                        gasto: {fmtUsd(f.gasto)}
-                      </p>
-                      <p className="mt-0.5 font-mono text-[11px] text-zinc-400">
-                        personal: {f.personal != null ? fmtPersonas(f.personal) : "sin dato"} ·
-                        esfuerzo: {f.gdpPct != null ? fmtPct(f.gdpPct) : "sin dato"}
-                      </p>
-                      <p className="mt-0.5 font-mono text-[10px] text-zinc-600">
-                        año del dato de gasto: {f.anio}
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            ))}
+            {/* v404.1 — LOS 167 PAÍSES, EN TARJETAS (pilar 2): nombre, gasto y el
+                gasto dibujado contra el líder; personal, esfuerzo y año a un toque.
+                Antes esta sala eran 20.831 letras en 9 visuales: 2.315 por visual. */}
+            <ArchivoPoder />
           </section>
 
           <p className="mt-8 text-[11px] leading-relaxed text-zinc-600">
