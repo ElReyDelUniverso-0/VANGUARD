@@ -689,3 +689,4 @@ body:has(.vx) { background: #06080c; }
 @media (max-width: 480px) {
   .vx-paises { grid-template-columns: 1fr; }
 }
+.vx-cat-emblema { flex: none; width: 13px; height: 13px; align-self: center; }
