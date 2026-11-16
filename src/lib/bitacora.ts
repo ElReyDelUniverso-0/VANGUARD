@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v404.1",
+    nombre: "UNA SOLA CASA",
+    hitos: [
+      "GOOGLE YA SABE DÓNDE VIVE LA CASA: el mapa del sitio anunciaba sus 2.087 páginas en otra dirección (u6b9, una copia sin base de datos) y cada sala decía una dirección distinta. Ahora todas dicen vanguard-kq9r.vercel.app",
+      "UNA SOLA PUERTA: las otras dos direcciones de Vercel redirigen (308) a la casa, conservando la página. Se acaban las tres copias que competían entre sí en los buscadores",
+      "EL ROBOTS LEE LA MISMA FUENTE: robots.txt, sitemap, canonical y enlaces para compartir (WhatsApp, Telegram, QR, tarjeta viral) salen de un solo sitio: src/lib/site.ts",
+      "AVISO AL INSTANTE: IndexNow anuncia las páginas a Bing, Yandex y compañía en cuanto se publican",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v404.0",
     nombre: "EL EXPEDIENTE",
     hitos: [

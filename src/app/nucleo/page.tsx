@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
@@ -35,8 +36,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "EL NÚCLEO — el mapa que conecta todo Vanguard",

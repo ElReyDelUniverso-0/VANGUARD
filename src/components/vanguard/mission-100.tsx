@@ -10,6 +10,7 @@
 //      así se sabe QUÉ enlace trae gente de verdad.
 // Sin emojis (regla del proyecto); iconos lucide + tipografía monoespaciada HUD.
 
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,7 @@ const PLATFORMS: Platform[] = [
 const LINKS_PER_PLATFORM = 10;
 const USED_KEY = "vanguard_m100_used";
 // QR de reclutamiento — URL canónica de producción (determinista, sin mismatch SSR)
-const QR_URL = "https://vanguard-kq9r.vercel.app/?ref=VGD-QRCODE";
+const QR_URL = `${SITE_URL_CASA}/?ref=VGD-QRCODE`; // v404.1
 
 interface MissionData {
   mission: number;

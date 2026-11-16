@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -24,7 +25,7 @@ import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 // real, el reloj que la mueve vive en el aparato — la sala declara la
 // puerta honesta.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "ARCHIVO MUNDIAL — curiosidades verídicas, eras, guerras y carteles",

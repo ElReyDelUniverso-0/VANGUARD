@@ -477,7 +477,7 @@ export default function CalidadPage() {
         <pre className="overflow-x-auto rounded-lg border border-slate-800 bg-black/60 p-4 font-mono text-[12px] leading-relaxed text-slate-300">
 {`node scripts/auditoria.mjs                                  # informe legible
 node scripts/auditoria.mjs --json                            # + agent-ctx/auditoria.json
-node scripts/auditoria.mjs --smoke https://vanguard-u6b9.vercel.app --json`}
+node scripts/auditoria.mjs --smoke https://vanguard-kq9r.vercel.app --json`}
         </pre>
         <p className="mt-3 text-[12px] leading-relaxed text-slate-500">
           Recursos comprobados contra: {INFORME.agentes.recursos.contra}. Si el manifiesto no está, el auditor lo dice

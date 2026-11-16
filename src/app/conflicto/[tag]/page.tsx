@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
@@ -28,8 +29,7 @@ import { puntosDelNucleo, idPunto } from "@/lib/nucleo/puntos";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 // v238.0 EL VELOCÍMETRO — la medición móvil mandó: los 6 fallbacks
 // originales pesaban 1,2 MB en la red para un hueco de 120×90 px (el

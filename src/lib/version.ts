@@ -5722,8 +5722,16 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v404.0";
-export const APP_CODENAME = "EL EXPEDIENTE";
+// v404.1 UNA SOLA CASA (IA de diseño) — orden del Dueño: «casi no entran
+//    personas; hay muchos mini sitios que no están indexados». Medido: el
+//    sitemap de kq9r anunciaba 2.087 URL en OTRO host (u6b9, sin base de datos),
+//    la portada/módulos/noticias decían canonical u6b9 y 41 salas decían kq9r,
+//    y los tres proyectos Vercel servían la casa entera tres veces. Google
+//    recibía señales contradictorias y no indexaba. Ahora: un dominio (kq9r,
+//    decisión del Dueño) en site.ts, robots dinámico, enlaces de compartir por
+//    @/lib/site, los otros dos hosts → 308 a kq9r (redireccion-casa/), IndexNow.
+export const APP_VERSION = "v404.1";
+export const APP_CODENAME = "UNA SOLA CASA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5783,7 +5791,7 @@ export const APP_CODENAME = "EL EXPEDIENTE";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.9";
+export const APP_VERSION_ANTERIOR = "v404.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

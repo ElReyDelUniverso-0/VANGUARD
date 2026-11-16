@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HISTORICAL_WARS, WAR_BETS } from "@/lib/game-data";
@@ -61,8 +62,7 @@ import { efemeridesDelDia, efemeridesEnLista } from "@/lib/herramientas-externas
 // planeta vuela hasta sus coordenadas reales (lat/lng EN la fuente).
 // Las puertas son enlaces server-rendered: funcionan sin JavaScript.
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "El archivo de la historia — las guerras que enseñaron a leer las de hoy",

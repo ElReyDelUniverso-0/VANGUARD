@@ -9,6 +9,7 @@
 // (3) RADAR DE ALERTAS AUTOMÁTICAS (v85): tensión global, noticias
 //     críticas y nómina lista para cobrar — con anti-spam por regla.
 // ============================================================
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
@@ -77,7 +78,7 @@ function huella(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9áéíóúñü ]/g, "").split(/\s+/).slice(0, 9).join(" ");
 }
 
-const APP_URL = "https://vanguard-kq9r.vercel.app";
+const APP_URL = SITE_URL_CASA; // v404.1
 
 export function TelegramPanel() {
   const [status, setStatus] = useState<TgStatus | null>(null);

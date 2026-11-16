@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PODER_FILAS, PODER_CAPTURA } from "@/lib/poder-data";
@@ -24,7 +25,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 // /verdad-cruda v295 · /divisas v296): prerenderizada ○, sin cliente, sin
 // BD, indexable para Google.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "PODER — el ranking militar real del planeta, datos del Banco Mundial",

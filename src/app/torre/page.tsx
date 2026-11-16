@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
@@ -25,7 +26,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // · Toda cifra lleva su CADENA DE LA VERDAD: fuente + fecha del corte.
 // ============================================================
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "La Torre de Control — salud real del arranque",

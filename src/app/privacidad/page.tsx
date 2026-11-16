@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
@@ -24,8 +25,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 //   100% server-rendered y funciona entera sin JavaScript — fingir una
 //   carencia sería mentir (ley de la casa: la honestidad como técnica).
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "Política de Privacidad",
@@ -62,7 +62,7 @@ const SECCIONES: { titulo: string; parrafos: string[] }[] = [
   {
     titulo: "1. Quiénes somos",
     parrafos: [
-      "VANGUARD (en adelante, «la Casa») es una plataforma web de seguimiento de conflictos mundiales en tiempo real, accesible en español desde vanguard-kq9r.vercel.app. Reúne noticias verificadas por fuente, un mapa de inteligencia en vivo y modos de juego comunitarios. Esta política explica qué información se maneja, por qué y con qué límites.",
+      `VANGUARD (en adelante, «la Casa») es una plataforma web de seguimiento de conflictos mundiales en tiempo real, accesible en español desde ${SITE_URL_CASA.replace(/^https?:\/\//, "")}. Reúne noticias verificadas por fuente, un mapa de inteligencia en vivo y modos de juego comunitarios. Esta política explica qué información se maneja, por qué y con qué límites.`,
     ],
   },
   {
@@ -178,7 +178,7 @@ export default function PrivacidadPage() {
               href="/"
               className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
             >
-              vanguard-kq9r.vercel.app
+              {SITE_URL_CASA.replace(/^https?:\/\//, "")}
             </Link>
             .
           </div>

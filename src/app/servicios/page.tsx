@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -90,8 +91,7 @@ import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 //    pacto viaja VERBATIM de la fuente (directiva v266). Cero años a
 //    mano — la guardia del arco v282/v288 crece a (19|20)\d\d.
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "La sala de los servicios — los 36 expedientes de la inteligencia mundial",

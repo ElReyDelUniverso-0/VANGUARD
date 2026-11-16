@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { WORLD_CURRENCIES_FULL } from "@/lib/world-data";
@@ -30,7 +31,7 @@ import { tipoDeCambio } from "@/lib/herramientas-externas";
 // v293 · /atlas v294 · /verdad-cruda v295): prerenderizada ○, sin
 // cliente, sin BD, indexable para Google.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "DIVISAS — las 247 monedas oficiales del planeta con su tasa real",

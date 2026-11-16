@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
@@ -37,7 +38,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 // contra la BD fría al abrir: 6 de 6 guerras citadas por 398 titulares
 // (Oriente 190 · Ucrania 119 · Taiwán 61...).
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const dynamic = "force-dynamic";
 

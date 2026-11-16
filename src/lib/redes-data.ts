@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 // Vanguard v195.0 TU LADO — REDES DE VANGUARD: la vitrina de la casa en el
 // mundo y los enlaces para compartir la plataforma HOY MISMO.
 //
@@ -70,7 +71,7 @@ export const REDES_VANGUARD: RedVanguard[] = [
 
 // ====== COMPARTIR VANGUARD: enlaces REALES que funcionan hoy ======
 
-export const APP_URL = "https://vanguard-kq9r.vercel.app";
+export const APP_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio
 export const TEXTO_COMPARTIR = "Estoy dentro de VANGUARD — la agencia del mundo en vivo: noticias reales, mapa 3D, TV en vivo, apuestas y más. Entra conmigo:";
 
 export interface EnlaceCompartir {

@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
@@ -20,8 +21,7 @@ const MODULO_ESTADO = MODULOS.find((m) => m.id === "estado")?.pestanas ?? [];
 // (estado-latido.tsx, cliente mínimo sin efectos — ley v335).
 // ═══════════════════════════════════════════════════════════════════════════
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "El Estado de la Casa — Latido Público",

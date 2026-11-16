@@ -3,6 +3,15 @@
 > Resumen técnico por versión. El detalle para el público vive en `src/lib/bitacora.ts` (sala Novedades).
 > Dos IAs publican en `main`: la IA de diseño y ia3. Cada entrada dice quién.
 
+## v404.1 · UNA SOLA CASA — 2026-11-16 (IA de diseño)
+- Diagnóstico de indexación en `docs/VANGUARD_UNIVERSO.md` §2: sitemap con 2.087 URL en otro host, canonical cruzados,
+  3 hosts con el mismo contenido.
+- `src/lib/site.ts` → `vanguard-kq9r.vercel.app` (decisión del Dueño). 41 páginas importan `@/lib/site` en vez de su literal.
+- `public/robots.txt` → `src/app/robots.ts` (mismas reglas, sitemap y host desde `site.ts`).
+- Enlaces de compartir (spot WhatsApp, redes, Telegram, QR Misión 100, tarjeta viral, privacidad) y UA externo por `@/lib/site`.
+- `redireccion-casa/`: 308 → kq9r para los proyectos retirados `vanguard` y `vanguard-u6b9` (Root Directory).
+- IndexNow: clave en `public/`, `scripts/seo/indexnow.mjs`. Aviso a las IAs: `COLABORACION-IA.md` Mensaje #21.
+
 ## v403.2 · EL MAPA QUE GOOGLE LEE — 2026-11-15 (IA de diseño)
 - Auditoría de descubrimiento de `/conflicto/*` → informe completo en `docs/VANGUARD_SEO_DISCOVERY.md`.
 - `next.config.ts`: `htmlLimitedBots` = lista de fábrica de Next 16.4 + rastreadores de buscadores (Googlebot, bingbot…):

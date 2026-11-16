@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { HISTORICAL_WARS } from "@/lib/game-data";
@@ -39,8 +40,7 @@ import { Mundo3DVivo } from "./mundo-3d-vivo";
 
 export const revalidate = 60;
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "EL MUNDO 3D — las guerras del planeta en vivo",

@@ -6,6 +6,7 @@
 // Cada tarjeta lleva la firma VANGUARD + el código de referido del agente:
 // todo meme exportado es una invitación disfrazada de contenido.
 
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { Button } from "@/components/ui/button";
@@ -127,7 +128,7 @@ export function ViralCard() {
   };
 
   const compartir = async () => {
-    const url = typeof window !== "undefined" ? `${window.location.origin}/?ref=${referral}` : "https://vanguard-kq9r.vercel.app";
+    const url = typeof window !== "undefined" ? `${window.location.origin}/?ref=${referral}` : SITE_URL_CASA;
     const texto = `${t.titulo} — ${t.sub(nameA, nameB)} · Simúlalo tú mismo en VANGUARD: ${url}`;
     if (navigator.share) {
       try {
@@ -281,7 +282,7 @@ export function ViralCard() {
             <div className="text-[11px] sm:text-xs text-white/70 mt-1 leading-snug">{t.sub(nameA, nameB)}</div>
           </div>
           <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between text-[9px] font-mono tracking-widest uppercase" style={{ color: "#5B6478" }}>
-            <span>vanguard-kq9r.vercel.app</span>
+            <span>{SITE_URL_CASA.replace(/^https?:\/\//, "")}</span>
             <span style={{ color: "#FFB800" }}>{referral}</span>
           </div>
         </div>

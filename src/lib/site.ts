@@ -11,7 +11,13 @@
 // respaldo es el dominio de producción real, no un alias de preview.
 // ============================================================
 
-const CRUDO = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-u6b9.vercel.app";
+// v404.1 — DECISIÓN DEL DUEÑO (2026-11-16): la casa es vanguard-kq9r.vercel.app.
+// Medido: es el proyecto del Dueño (COORDINACION.md: «app viva»), el ÚNICO de
+// los tres proyectos Vercel con base de datos Y tiempo real, el enlace de la
+// bio y de 79 archivos del repo. u6b9 no tiene ninguna variable de entorno.
+// Los otros dos proyectos se retiran y sus direcciones redirigen aquí (308):
+// ver redireccion-casa/ y docs/VANGUARD_UNIVERSO.md.
+const CRUDO = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const SITE_URL = CRUDO.replace(/\/+$/, "");
 

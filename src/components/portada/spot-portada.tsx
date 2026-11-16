@@ -1,9 +1,9 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 // v402.4 «VANGUARD EN 30 SEGUNDOS» — el spot vertical (voz real, capturas
 // reales de la casa) vive en la portada. Componente de SERVIDOR, cero JS:
 // <video preload="none"> con póster, así no pesa nada hasta que alguien
 // pulsa ▶. El botón de WhatsApp convierte a cada visitante en mensajero.
-const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://vanguard-kq9r.vercel.app";
+const SITE = SITE_URL_CASA; // v404.1: una sola fuente del dominio
 
 const MENSAJE = `El mundo está en guerra ahora mismo y casi nadie lo cuenta completo. Mira esto 👉 ${SITE}/?origen=whatsapp`;
 

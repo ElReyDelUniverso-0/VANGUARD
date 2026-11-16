@@ -1,0 +1,9 @@
+{
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "redirects": [
+    { "source": "/:path*", "destination": "https://vanguard-kq9r.vercel.app/:path*", "permanent": true }
+  ]
+}

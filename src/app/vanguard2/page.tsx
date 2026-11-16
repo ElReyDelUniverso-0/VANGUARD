@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata, Viewport } from "next";
 // v307.0 LA ISLA DEL UNIVERSO — la cura medida por EL CENSO DE VELOCIDAD
 // (tercera cuchilla del mandato del Dueño): el import ESTÁTICO de Vanguard2
@@ -40,8 +41,7 @@ export const viewport: Viewport = {
 //   visitante sin JS y el crawler reciben las PUERTAS REALES del universo,
 //   server-rendered con EnlacesNucleo reutilizado. Con JS encendido este
 //   bloque no existe: el canvas sigue siendo todo lo que hay.
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 // Las puertas son rutas REALES del censo v218 — cero invención.
 const PUERTAS_DEL_UNIVERSO: EnlaceContextual[] = [

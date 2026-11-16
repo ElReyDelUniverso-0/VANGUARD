@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
@@ -25,7 +26,7 @@ import { CON_FOTO } from "@/lib/oscura-fotos";
 // /atlas v294 · /verdad-cruda v295 · /divisas v296 · /poder v297 ·
 // /galeria v298): prerenderizada, sin cliente, sin BD, indexable.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "BIBLIOTECA OSCURA — 43 secretos con veredicto y documentos desclasificados",

@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import { BannerIlustracion } from "@/components/vanguard/banner-ilustracion";
 import Link from "next/link";
@@ -38,7 +39,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 // v274 · /armeria v283 · /archivo-mundial v293 · /atlas v294):
 // prerenderizada ○, sin cliente, sin BD, indexable para Google.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: "VERDAD CRUDA — los abusos documentados de las guerras, con su fuente",

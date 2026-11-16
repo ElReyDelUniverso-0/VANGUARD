@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ARSENAL } from "@/lib/arsenal-data";
@@ -16,7 +17,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // la lección v324: un número duro en una cadena es un número que miente
 // en silencio).
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 export const metadata: Metadata = {
   title: `ARMERÍA — las ${ARSENAL.length} armas que explican los conflictos de hoy`,

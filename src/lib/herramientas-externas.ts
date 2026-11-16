@@ -22,6 +22,7 @@
 // Es un módulo de SERVIDOR: solo lo importa el server component de /herramientas.
 // ============================================================
 
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import { PAISES_ATLAS } from "@/lib/atlas-data";
 
 export type Herramienta = {
@@ -238,7 +239,7 @@ async function respuesta(url: string): Promise<Response | null> {
       next: { revalidate: REVALIDATE_S },
       signal: AbortSignal.timeout(TIMEOUT_MS),
       headers: {
-        "user-agent": "VANGUARD/centro-de-informacion-mundial (+https://vanguard-u6b9.vercel.app)",
+        "user-agent": `VANGUARD/centro-de-informacion-mundial (+${SITE_URL_CASA})`,
         accept: "application/json, application/xml, text/xml, */*",
       },
     });

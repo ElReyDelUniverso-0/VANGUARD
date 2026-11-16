@@ -1,3 +1,4 @@
+import { SITE_URL as SITE_URL_CASA } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
@@ -27,8 +28,7 @@ import { DetectorClient, type FamiliaCatalogo } from "./detector-client";
 
 export const dynamic = "force-static";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = SITE_URL_CASA; // v404.1: una sola fuente del dominio (@/lib/site)
 
 function hornearCatalogo(): FamiliaCatalogo[] | null {
   const script = join(process.cwd(), "scripts", "busca-apikeys.mjs");
