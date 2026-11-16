@@ -13,7 +13,27 @@
 // ═══════════════════════════════════════════════════════════════════
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { GlobeMap3D, type Globe3DMarker, type GlobeFlyTo } from "./globe-map-3d";
+import dynamic from "next/dynamic";
+import type { Globe3DMarker, GlobeFlyTo } from "./globe-map-3d";
+
+// El globo entra SOLO en el navegador: three.js y globe.gl tocan `window` al
+// cargarse, así que si /mapas se prerenderiza en el build el proceso revienta.
+// Es el mismo patrón que /mundo (mundo-3d-vivo.tsx) y capas-globales.tsx.
+const GlobeMap3D = dynamic(
+  () => import("./globe-map-3d").then((m) => m.GlobeMap3D),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        style={{ height: "min(58vh, 520px)", minHeight: 300, display: "grid", placeItems: "center" }}
+      >
+        <p className="vx-mapas-pie" style={{ animation: "pulse 1.6s ease-in-out infinite" }}>
+          DESPLEGANDO EL PLANETA…
+        </p>
+      </div>
+    ),
+  },
+);
 import { buscarPaises, normalizar, POR_ISO3, type PaisGeo } from "@/lib/geo-paises";
 import type { CapaCliente, FichaPais, PayloadMapas } from "@/lib/mapas-payload";
 
