@@ -30,34 +30,34 @@
   },
   "humo": {
     "base": "https://vanguard-kq9r.vercel.app",
-    "fecha": "2026-11-16T15:33:21",
+    "fecha": "2026-11-16T19:32:46",
     "total": 52,
     "ok": 52,
     "fallos": [],
     "densidad": [
       {
+        "ruta": "/",
+        "kb": 309,
+        "letras": 12630,
+        "imagenes": 41,
+        "videos": 1,
+        "lienzos": 0,
+        "svgs": 10,
+        "graficos": 1,
+        "visuales": 53,
+        "ratio": 238
+      },
+      {
         "ruta": "/calidad",
         "kb": 167,
-        "letras": 5840,
+        "letras": 5848,
         "imagenes": 0,
         "videos": 0,
         "lienzos": 0,
         "svgs": 8,
         "graficos": 0,
         "visuales": 8,
-        "ratio": 730
-      },
-      {
-        "ruta": "/archivo-mundial",
-        "kb": 204,
-        "letras": 15058,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 6,
-        "visuales": 15,
-        "ratio": 1004
+        "ratio": 731
       },
       {
         "ruta": "/atlas",
@@ -84,45 +84,57 @@
         "ratio": 574
       },
       {
+        "ruta": "/archivo-mundial",
+        "kb": 204,
+        "letras": 15058,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 6,
+        "visuales": 15,
+        "ratio": 1004
+      },
+      {
         "ruta": "/catalogo",
-        "kb": 428,
-        "letras": 22744,
+        "kb": 430,
+        "letras": 22985,
         "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
         "svgs": 9,
         "graficos": 1,
         "visuales": 11,
-        "ratio": 2068
+        "ratio": 2090
       },
       {
-        "ruta": "/",
-        "kb": 315,
-        "letras": 12534,
-        "imagenes": 41,
-        "videos": 1,
+        "ruta": "/audios",
+        "kb": 138,
+        "letras": 4584,
+        "imagenes": 1,
+        "videos": 0,
         "lienzos": 0,
-        "svgs": 10,
-        "graficos": 1,
-        "visuales": 53,
-        "ratio": 236
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 9,
+        "ratio": 509
       },
       {
         "ruta": "/cruce",
         "kb": 193,
-        "letras": 6834,
+        "letras": 6806,
         "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
         "svgs": 8,
         "graficos": 20,
         "visuales": 29,
-        "ratio": 236
+        "ratio": 235
       },
       {
         "ruta": "/cuartel",
         "kb": 357,
-        "letras": 11975,
+        "letras": 11965,
         "imagenes": 0,
         "videos": 0,
         "lienzos": 0,
@@ -130,6 +142,18 @@
         "graficos": 5,
         "visuales": 179,
         "ratio": 67
+      },
+      {
+        "ruta": "/centinela",
+        "kb": 142,
+        "letras": 2157,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 9,
+        "ratio": 240
       },
       {
         "ruta": "/divisas",
@@ -145,15 +169,15 @@
       },
       {
         "ruta": "/en-vivo",
-        "kb": 348,
-        "letras": 26910,
-        "imagenes": 55,
+        "kb": 347,
+        "letras": 27676,
+        "imagenes": 50,
         "videos": 0,
         "lienzos": 0,
         "svgs": 10,
         "graficos": 2,
-        "visuales": 67,
-        "ratio": 402
+        "visuales": 62,
+        "ratio": 446
       },
       {
         "ruta": "/entrar",
@@ -168,30 +192,6 @@
         "ratio": 283
       },
       {
-        "ruta": "/audios",
-        "kb": 138,
-        "letras": 4566,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 9,
-        "ratio": 507
-      },
-      {
-        "ruta": "/escudo",
-        "kb": 127,
-        "letras": 3458,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 9,
-        "ratio": 384
-      },
-      {
         "ruta": "/escudo/detector",
         "kb": 135,
         "letras": 2380,
@@ -202,18 +202,6 @@
         "graficos": 1,
         "visuales": 10,
         "ratio": 238
-      },
-      {
-        "ruta": "/conflictos",
-        "kb": 200,
-        "letras": 11176,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 9,
-        "ratio": 1242
       },
       {
         "ruta": "/conflicto",
@@ -228,6 +216,42 @@
         "ratio": 385
       },
       {
+        "ruta": "/escenarios",
+        "kb": 224,
+        "letras": 13909,
+        "imagenes": 5,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 9,
+        "graficos": 1,
+        "visuales": 15,
+        "ratio": 927
+      },
+      {
+        "ruta": "/escudo",
+        "kb": 127,
+        "letras": 3458,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 9,
+        "ratio": 384
+      },
+      {
+        "ruta": "/conflictos",
+        "kb": 200,
+        "letras": 11176,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 9,
+        "ratio": 1242
+      },
+      {
         "ruta": "/estado",
         "kb": 139,
         "letras": 3092,
@@ -238,18 +262,6 @@
         "graficos": 1,
         "visuales": 11,
         "ratio": 281
-      },
-      {
-        "ruta": "/espia",
-        "kb": 216,
-        "letras": 6229,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 10,
-        "graficos": 2,
-        "visuales": 13,
-        "ratio": 479
       },
       {
         "ruta": "/galeria",
@@ -266,7 +278,7 @@
       {
         "ruta": "/herramientas",
         "kb": 186,
-        "letras": 8854,
+        "letras": 8853,
         "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
@@ -300,6 +312,30 @@
         "ratio": 580
       },
       {
+        "ruta": "/cronica",
+        "kb": 156,
+        "letras": 5457,
+        "imagenes": 11,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 19,
+        "ratio": 287
+      },
+      {
+        "ruta": "/espia",
+        "kb": 216,
+        "letras": 6315,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 10,
+        "graficos": 2,
+        "visuales": 13,
+        "ratio": 486
+      },
+      {
         "ruta": "/modo",
         "kb": 122,
         "letras": 2282,
@@ -310,54 +346,6 @@
         "graficos": 0,
         "visuales": 11,
         "ratio": 207
-      },
-      {
-        "ruta": "/modulos",
-        "kb": 207,
-        "letras": 6435,
-        "imagenes": 0,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 8,
-        "ratio": 804
-      },
-      {
-        "ruta": "/musica",
-        "kb": 162,
-        "letras": 8013,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 27,
-        "graficos": 0,
-        "visuales": 28,
-        "ratio": 286
-      },
-      {
-        "ruta": "/centinela",
-        "kb": 142,
-        "letras": 2157,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 9,
-        "ratio": 240
-      },
-      {
-        "ruta": "/cronica",
-        "kb": 157,
-        "letras": 5385,
-        "imagenes": 11,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 19,
-        "ratio": 283
       },
       {
         "ruta": "/mundo",
@@ -372,16 +360,52 @@
         "ratio": 345
       },
       {
-        "ruta": "/offline",
-        "kb": 121,
-        "letras": 556,
+        "ruta": "/modulos",
+        "kb": 207,
+        "letras": 6435,
         "imagenes": 0,
         "videos": 0,
         "lienzos": 0,
-        "svgs": 2,
-        "graficos": 1,
-        "visuales": 3,
-        "ratio": 185
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 8,
+        "ratio": 804
+      },
+      {
+        "ruta": "/guerra-hoy",
+        "kb": 352,
+        "letras": 20387,
+        "imagenes": 6,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 9,
+        "graficos": 0,
+        "visuales": 15,
+        "ratio": 1359
+      },
+      {
+        "ruta": "/novedades",
+        "kb": 115,
+        "letras": 949,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 9,
+        "ratio": 105
+      },
+      {
+        "ruta": "/musica",
+        "kb": 162,
+        "letras": 8013,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 27,
+        "graficos": 0,
+        "visuales": 28,
+        "ratio": 286
       },
       {
         "ruta": "/oscura",
@@ -396,6 +420,30 @@
         "ratio": 225
       },
       {
+        "ruta": "/poder",
+        "kb": 280,
+        "letras": 11432,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 167,
+        "visuales": 176,
+        "ratio": 65
+      },
+      {
+        "ruta": "/offline",
+        "kb": 121,
+        "letras": 556,
+        "imagenes": 0,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 2,
+        "graficos": 1,
+        "visuales": 3,
+        "ratio": 185
+      },
+      {
         "ruta": "/perfil",
         "kb": 122,
         "letras": 1945,
@@ -406,54 +454,6 @@
         "graficos": 0,
         "visuales": 9,
         "ratio": 216
-      },
-      {
-        "ruta": "/poder",
-        "kb": 389,
-        "letras": 20831,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 9,
-        "ratio": 2315
-      },
-      {
-        "ruta": "/privacidad",
-        "kb": 130,
-        "letras": 5836,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 9,
-        "ratio": 648
-      },
-      {
-        "ruta": "/guerra-hoy",
-        "kb": 359,
-        "letras": 20575,
-        "imagenes": 6,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 9,
-        "graficos": 0,
-        "visuales": 15,
-        "ratio": 1372
-      },
-      {
-        "ruta": "/pulso-mundial",
-        "kb": 376,
-        "letras": 6428,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 9,
-        "graficos": 1,
-        "visuales": 11,
-        "ratio": 584
       },
       {
         "ruta": "/objetivos",
@@ -470,98 +470,38 @@
       {
         "ruta": "/nucleo",
         "kb": 292,
-        "letras": 19998,
+        "letras": 19993,
         "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
         "svgs": 10,
         "graficos": 1,
         "visuales": 12,
-        "ratio": 1667
+        "ratio": 1666
       },
       {
-        "ruta": "/novedades",
-        "kb": 115,
-        "letras": 954,
+        "ruta": "/privacidad",
+        "kb": 130,
+        "letras": 5836,
         "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
         "svgs": 8,
         "graficos": 0,
         "visuales": 9,
-        "ratio": 106
+        "ratio": 648
       },
       {
-        "ruta": "/traductor",
-        "kb": 161,
-        "letras": 3115,
+        "ruta": "/pulso-mundial",
+        "kb": 376,
+        "letras": 6455,
         "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 10,
-        "graficos": 2,
-        "visuales": 13,
-        "ratio": 240
-      },
-      {
-        "ruta": "/escenarios",
-        "kb": 224,
-        "letras": 13914,
-        "imagenes": 5,
         "videos": 0,
         "lienzos": 0,
         "svgs": 9,
         "graficos": 1,
-        "visuales": 15,
-        "ratio": 928
-      },
-      {
-        "ruta": "/vanguard2",
-        "kb": 110,
-        "letras": 579,
-        "imagenes": 0,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 1,
-        "graficos": 0,
-        "visuales": 1,
-        "ratio": 579
-      },
-      {
-        "ruta": "/rostros",
-        "kb": 388,
-        "letras": 50853,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 10,
-        "visuales": 19,
-        "ratio": 2676
-      },
-      {
-        "ruta": "/verdad-cruda",
-        "kb": 224,
-        "letras": 20307,
-        "imagenes": 5,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 13,
-        "ratio": 1562
-      },
-      {
-        "ruta": "/torre",
-        "kb": 127,
-        "letras": 3058,
-        "imagenes": 1,
-        "videos": 0,
-        "lienzos": 0,
-        "svgs": 8,
-        "graficos": 0,
-        "visuales": 9,
-        "ratio": 340
+        "visuales": 11,
+        "ratio": 587
       },
       {
         "ruta": "/teatro-3d",
@@ -576,16 +516,16 @@
         "ratio": 88
       },
       {
-        "ruta": "/voz",
-        "kb": 131,
-        "letras": 3697,
+        "ruta": "/torre",
+        "kb": 127,
+        "letras": 3053,
         "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
-        "svgs": 13,
+        "svgs": 8,
         "graficos": 0,
-        "visuales": 14,
-        "ratio": 264
+        "visuales": 9,
+        "ratio": 339
       },
       {
         "ruta": "/universo",
@@ -600,28 +540,28 @@
         "ratio": 99
       },
       {
-        "ruta": "/ver-guerra",
-        "kb": 193,
-        "letras": 10272,
+        "ruta": "/traductor",
+        "kb": 161,
+        "letras": 3115,
         "imagenes": 1,
         "videos": 0,
-        "lienzos": 1,
-        "svgs": 11,
-        "graficos": 0,
+        "lienzos": 0,
+        "svgs": 10,
+        "graficos": 2,
         "visuales": 13,
-        "ratio": 790
+        "ratio": 240
       },
       {
-        "ruta": "/vertigo",
-        "kb": 284,
-        "letras": 22741,
-        "imagenes": 48,
+        "ruta": "/rostros",
+        "kb": 207,
+        "letras": 10866,
+        "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
-        "svgs": 3,
-        "graficos": 2,
+        "svgs": 8,
+        "graficos": 44,
         "visuales": 53,
-        "ratio": 429
+        "ratio": 205
       },
       {
         "ruta": "/servicios",
@@ -636,16 +576,76 @@
         "ratio": 1915
       },
       {
+        "ruta": "/vanguard2",
+        "kb": 110,
+        "letras": 579,
+        "imagenes": 0,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 1,
+        "graficos": 0,
+        "visuales": 1,
+        "ratio": 579
+      },
+      {
+        "ruta": "/vertigo",
+        "kb": 284,
+        "letras": 22741,
+        "imagenes": 48,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 3,
+        "graficos": 2,
+        "visuales": 53,
+        "ratio": 429
+      },
+      {
+        "ruta": "/verdad-cruda",
+        "kb": 224,
+        "letras": 20307,
+        "imagenes": 5,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 8,
+        "graficos": 0,
+        "visuales": 13,
+        "ratio": 1562
+      },
+      {
+        "ruta": "/ver-guerra",
+        "kb": 193,
+        "letras": 10280,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 1,
+        "svgs": 11,
+        "graficos": 0,
+        "visuales": 13,
+        "ratio": 791
+      },
+      {
+        "ruta": "/voz",
+        "kb": 131,
+        "letras": 3697,
+        "imagenes": 1,
+        "videos": 0,
+        "lienzos": 0,
+        "svgs": 13,
+        "graficos": 0,
+        "visuales": 14,
+        "ratio": 264
+      },
+      {
         "ruta": "/zona-cero",
         "kb": 170,
-        "letras": 9399,
+        "letras": 9407,
         "imagenes": 1,
         "videos": 0,
         "lienzos": 0,
         "svgs": 15,
         "graficos": 0,
         "visuales": 16,
-        "ratio": 587
+        "ratio": 588
       }
     ]
   },
