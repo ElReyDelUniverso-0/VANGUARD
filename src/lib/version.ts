@@ -101,6 +101,29 @@
 // simular escalada, veredicto real/fake, leer en la sala, refrescar), el
 // lector y la cámara de consecuencias. Solo cambia lo que se ve.
 
+// v403.8 LA PUERTA — ciclo 2: el universo se puede buscar y recorrer.
+//
+// LO QUE HABÍA (medido, no supuesto): 56 rutas, 155 salas en el cuartel y
+// NINGUNA caja donde escribir una palabra. El buscador de la casa existía
+// (`buscador.tsx`, v170.0, ⌘K) y su único importador era `vanguard-app.tsx`,
+// que no importaba nadie. El feed de descubrimiento «Para ti» existía igual de
+// apagado. Y las 155 salas vivían detrás de una sola ruta: /modulos enseñaba
+// 46 y las otras 109 no tenían puerta.
+//
+// LO QUE ENTRA:
+// ① `buscador-universal.tsx` — ⌘K en la cabecera viva. Busca en las TRES
+//    capas: las 155 salas (abren en /cuartel?sala=<clave>), las 46 puertas de
+//    los módulos y los cables en vivo (/api/noticias?q=). Teclado completo.
+// ② `mapa-salas.ts` — las 155 salas en sus 20 constelaciones, GENERADO de
+//    tab-nav.tsx por `scripts/generar-mapa-salas.mjs` (fuente única; sin
+//    arrastrar framer-motion a /modulos). Se regenera al añadir una sala.
+// ③ `/modulos` estrena el mapa completo: las 46 de siempre MÁS las 155 con su
+//    puerta. Nada se mueve de sitio.
+// ④ `/novedades` estrena «PARA TI»: el feed de la v170, enchufado por fin.
+//
+// NADA SE RETIRA: `buscador.tsx` sigue intacto para la v170, los módulos y sus
+// rutas no cambian, y cada sala abre donde abría. Solo se añade la puerta.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5662,8 +5685,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.7";
-export const APP_CODENAME = "LA FOTO DEL CABLE";
+export const APP_VERSION = "v403.8";
+export const APP_CODENAME = "LA PUERTA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5723,7 +5746,7 @@ export const APP_CODENAME = "LA FOTO DEL CABLE";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.6";
+export const APP_VERSION_ANTERIOR = "v403.7";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
