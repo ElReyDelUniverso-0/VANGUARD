@@ -36,6 +36,33 @@ const NOTA: Record<TipoCosa, string> = {
   api: "endpoints reales que sirven datos a la casa",
 };
 
+
+// Un emblema por tipo (v405.4): la pieza deja de ser solo texto. Cuatro
+// trazos, reutilizados 184 veces, con su descripción para lectores de pantalla.
+const TRAZO: Record<TipoCosa, string> = {
+  sala: "M4 14V3h8v11M2 14h12", // una puerta
+  panel: "M2 3h12v8H2zM4 13h8", // un panel
+  motor: "M3 6h3l2-2h4v3h2v5H3z", // un motor
+  api: "M3 8h10M6 4v3M10 9v3", // un punto de datos
+};
+
+function Emblema({ tipo, color }: { tipo: TipoCosa; color: string }) {
+  return (
+    <svg
+      className="vx-cat-emblema"
+      viewBox="0 0 16 16"
+      role="img"
+      aria-label={`tipo: ${TITULO[tipo].toLowerCase()}`}
+      fill="none"
+      stroke={color}
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    >
+      <path d={TRAZO[tipo]} />
+    </svg>
+  );
+}
+
 const navegable = (c: CosaReal) =>
   Boolean(c.ruta && !c.ruta.includes("[") && !c.ruta.startsWith("/api/"));
 
@@ -49,6 +76,7 @@ function Ficha({ c }: { c: CosaReal }) {
         <span className="vx-pais-puesto" style={{ color }}>
           {c.tipo.slice(0, 3).toUpperCase()}
         </span>
+        <Emblema tipo={c.tipo} color={color} />
         <h3>
           {navegable(c) ? (
             <Link href={c.ruta as string} style={{ color: "inherit" }}>
