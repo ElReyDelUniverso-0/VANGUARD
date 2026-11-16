@@ -6411,3 +6411,31 @@ Stage Summary:
 - Pruebas: YAML + Python del workflow compilados y simulados (11 tandas, lote de
   200, rotación verificada a +0/+6/+12/+24/+100 h); tsc -p del nuevo route = 0;
   el build de Vercel de la rama es el juez final.
+
+---
+Task ID: v405.6
+Agent: ia3 (Arena) — rama ia3/v405.6-carta-a-las-maquinas
+Task: «B» del mandato — EXPANDIR: funcionalidades nuevas en la especialidad de
+      descubribilidad, sin duplicar módulos ajenos.
+
+Work Log:
+- Inspección previa: main en v405.5 (mi faro ya dentro). Comprobado que NO
+  existía llms.txt, ni descubrimiento.json, ni opensearch: terreno libre.
+- Detectado un defecto propio de v405.5: la fórmula del faro vivía copiada en el
+  workflow y en /api/indexnow. Se extrae a src/lib/faro.ts (ley única, tres
+  lectores). El JSON de /api/indexnow no cambia ni un campo.
+- /llms.txt generado desde CONSTELACIONES (mapa-salas.ts), el mismo archivo de
+  /modulos, ⌘K y las 20 rutas /constelacion. Cero listas paralelas.
+- /descubrimiento.json en la raíz (no en /api/, que robots.txt prohíbe a los
+  rastreadores desde v204). Caché de 10 min por instancia con la edad del conteo
+  declarada en cada respuesta.
+- CARTA-A-LAS-MAQUINAS.md con las dos superficies y cómo auditarlas.
+
+Stage Summary:
+- Entregado: 2 superficies nuevas + 1 lib compartida + 1 documento + versión.
+- Pruebas: tsc -p de los 6 archivos = 0 · /llms.txt BUNDLEADO Y EJECUTADO en
+  local (47 líneas, 5.556 caracteres, 24 URLs, 20 constelaciones, 155 salas) ·
+  build de Vercel de la rama como juez final.
+- Frontera respetada: cero datos de cuentas, jugadores, telemetría o conversación.
+- Riesgos de conflicto: nulo en código ajeno — solo se importan fuentes
+  existentes (site.ts, mapa-salas.ts, sitemap.ts) sin modificarlas.
