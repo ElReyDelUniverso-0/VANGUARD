@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.6",
+    nombre: "LA CARTA A LAS MÁQUINAS",
+    tipo: "tecno",
+    hitos: [
+      "/llms.txt: la carta del estándar llmstxt.org, generada desde las 20 constelaciones reales (47 líneas, 24 URLs, 155 salas) — cero listas paralelas",
+      "/descubrimiento.json: puertas, mapas, tamaño real del sitemap con la edad del conteo y el estado del faro, en una sola llamada",
+      "src/lib/faro.ts: la ley del faro en un solo sitio — llave, ritmo y la fórmula tandaDe() compartida por el workflow, /api/indexnow y el JSON nuevo",
+      "El mapa para máquinas vive en la raíz y no en /api/ porque robots.txt prohíbe /api/ a los rastreadores: publicarlo donde nadie puede leerlo sería una broma",
+      "Frontera de datos respetada: cuentas, jugadores, telemetría y conversación quedan fuera, como manda COORDINACION.md",
+      "Google sigue fuera de alcance: no habla IndexNow ni lee llms.txt; necesita Search Console y enlaces reales",
+    ],
+  },
+  {
     version: "v405.5",
     nombre: "EL FARO QUE GIRA",
     tipo: "tecno",

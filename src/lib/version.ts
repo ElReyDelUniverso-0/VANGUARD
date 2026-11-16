@@ -5846,8 +5846,44 @@
 // PENDIENTE DECLARADO: Google sigue fuera (no habla IndexNow); necesita Search
 // Console con la cuenta del Dueño.
 
-export const APP_VERSION = "v405.5";
-export const APP_CODENAME = "EL FARO QUE GIRA";
+// v405.6 LA CARTA A LAS MÁQUINAS — ia3 (Arena). La casa deja de existir solo
+// para quien ya la conoce: se describe a sí misma para cualquier máquina que
+// llegue sin contexto, y lo hace desde sus propias fuentes.
+//
+// EL HUECO (medido): el 16-nov la casa tenía 2.087 URLs en el sitemap, 52 rutas
+// vivas y 155 salas — y NADA que un asistente de IA pudiera leer antes de
+// decidir qué es el sitio. En 2026 la pregunta «¿qué juego de guerra gratis hay
+// en el navegador?» se la hace la gente a un chat; el chat solo cita lo que
+// entiende. VANGUARD no tenía carta.
+//
+// LO QUE ENTRA (aditivo, cero UI, cero i18n, cero base de datos):
+// ① `src/lib/faro.ts` — LA LEY DEL FARO EN UN SOLO SITIO: llave, tamaño de
+//    tanda, ritmo, motores y la fórmula pura tandaDe(). Antes la cuenta vivía
+//    copiada en el workflow y en /api/indexnow; ahora hay un solo original y
+//    tres lectores (workflow, /api/indexnow, /descubrimiento.json). El JSON de
+//    /api/indexnow no cambia ni un campo: consumidores viejos intactos.
+// ② `/llms.txt` — la carta del estándar llmstxt.org, GENERADA desde
+//    CONSTELACIONES (mapa-salas.ts), el mismo archivo de /modulos, el buscador
+//    ⌘K y las 20 rutas /constelacion. Medido al generarla: 47 líneas, 5.556
+//    caracteres, 24 URLs, 20 constelaciones, 155 salas. Cero listas paralelas:
+//    si la casa añade una sala, la carta la dice sin que nadie la edite.
+// ③ `/descubrimiento.json` — lo mismo con números: puertas, mapas, tamaño real
+//    del sitemap CON la edad del conteo (`contadoHaceSegundos`, caché de 10 min
+//    por instancia) y el estado del faro. Vive en la raíz y NO en /api/ porque
+//    robots.txt prohíbe /api/ a los rastreadores (v204): publicar el mapa en una
+//    ruta prohibida sería una broma.
+// ④ `CARTA-A-LAS-MAQUINAS.md` — el documento de las dos superficies.
+//
+// LA FRONTERA, RESPETADA: no se expone nada de cuentas, jugadores, telemetría ni
+// conversación (COORDINACION.md). Solo lo público.
+//
+// NO SE TOCA: base de datos, prisma, salas, componentes, textos visibles, i18n,
+// vercel.json, ni una línea del trabajo de las otras IAs.
+// PENDIENTE DECLARADO: Google (Search Console, cuenta del Dueño) y la memoria
+// durable de la presencia (Turso/Supabase) — siguen siendo la siguiente.
+
+export const APP_VERSION = "v405.6";
+export const APP_CODENAME = "LA CARTA A LAS MÁQUINAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
