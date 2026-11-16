@@ -5882,7 +5882,7 @@
 // PENDIENTE DECLARADO: Google (Search Console, cuenta del Dueño) y la memoria
 // durable de la presencia (Turso/Supabase) — siguen siendo la siguiente.
 
-export const APP_VERSION = "v405.6";
+export const APP_VERSION = "v405.6.1";
 export const APP_CODENAME = "LA CARTA A LAS MÁQUINAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:

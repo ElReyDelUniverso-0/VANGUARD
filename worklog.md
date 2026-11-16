@@ -6439,3 +6439,25 @@ Stage Summary:
 - Frontera respetada: cero datos de cuentas, jugadores, telemetría o conversación.
 - Riesgos de conflicto: nulo en código ajeno — solo se importan fuentes
   existentes (site.ts, mapa-salas.ts, sitemap.ts) sin modificarlas.
+
+---
+Task ID: v405.6.1
+Agent: ia3 (Arena) — arreglo sobre v405.6
+Task: Cazar el fallo de /descubrimiento.json ANTES de darlo por bueno.
+
+Work Log:
+- Al verificar en producción, /descubrimiento.json devolvía `sitemap.urls: null`
+  y `tandaAhora: 1 de 1`, mientras /api/indexnow decía 2.087 y tanda 2 de 11.
+- Primeras hipótesis descartadas con medidas: no era la base (sitemap.xml y
+  feed.xml responden 200 con datos), no era outputFileTracing (mismo fallo
+  reproducido en local con el bundle del route).
+- Causa real: en GET() se leía la variable de módulo `const c = conteo;` y
+  NUNCA se llamaba a `contarUrls()`. La función existía y no se usaba; el
+  contador se quedaba en null para siempre. Un fallo mío, de una línea.
+- Arreglo: `const c = await contarUrls();`. Verificado en local con el bundle:
+  urls 2087, tanda 2 de 11 (201-400), vuelta 2,75 días — coincide exactamente
+  con /api/indexnow.
+
+Lección: el endpoint de auditoría también hay que auditar. Si no hubiera
+probado la salida real en producción, habría entregado un archivo que "existe"
+y no dice nada.
