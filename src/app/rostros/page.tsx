@@ -12,6 +12,8 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 // v403.3 — el pilar 2 entra en la segunda sala más «de libro»: casi 50.000 letras
 // y nueve visuales. Se añaden sus propias cifras dibujadas, sin tocar el texto.
 import { GraficoBarras } from "@/components/vanguard/grafico-barras";
+// v404.1 — el expediente de cada rostro, a un toque.
+import { FichasRostros } from "@/components/vanguard/fichas-rostros";
 
 // v286.0 LOS ROSTROS DEL PODER — la galería de los rostros sube a
 // server (patrón /historia v274 · /servicios v281 · /armeria v283):
@@ -239,62 +241,10 @@ export default async function RostrosPage() {
           {`Cada expediente viaja con SUS datos de la fuente (personas-data.ts): el nombre, el cargo, la sede, la ruta, la frase y las notas tal como la fuente los declara — nada aquí es inventado. El expediente vive en la fuente, no en esta sala.`}
         </p>
 
-        {censoRostros.map((c) => {
-          const items = ROSTROS.filter((r) => r.categoria === c.cat);
-          if (items.length === 0) return null;
-          return (
-            <section key={c.cat} id={`rostro-${c.cat}`} className="mt-10" aria-label={c.etiqueta}>
-              <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
-                <span style={{ color: c.color }}>{`${c.icono} ${c.etiqueta}`}</span>
-                <span className="text-zinc-600">{` · ${items.length} ${items.length === 1 ? "ficha" : "fichas"}`}</span>
-              </h2>
-              <p className="mt-2 text-xs text-zinc-500 leading-relaxed">{c.leyenda}</p>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                {items.map((r) => (
-                  <article
-                    key={r.id}
-                    id={r.id}
-                    className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60 scroll-mt-20"
-                  >
-                    <div className="flex items-baseline justify-between gap-2">
-                      <h3 className="text-sm font-bold leading-snug text-zinc-100">
-                        <span className="font-mono text-[10px] text-zinc-500">{`${placa(r.num)} · `}</span>
-                        <span aria-hidden="true">{`${r.bandera} `}</span>
-                        {r.nombre}
-                      </h3>
-                      <span className="font-mono text-[10px] text-zinc-500 whitespace-nowrap">{`poder: ${r.poder}`}</span>
-                    </div>
-                    <p className="mt-1 text-xs text-zinc-300">{r.cargo}</p>
-                    <p className="mt-0.5 font-mono text-[10px] text-zinc-500">{r.organizacion}</p>
-                    <p className="mt-1.5 font-mono text-[10px] text-zinc-500">
-                      {`${r.sede} · ${r.ciudad} · ${r.pais}`}
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-400">{`mandato: ${r.mandato}`}</p>
-                    <p className="mt-1 text-xs text-zinc-400">{`alcance: ${r.alcance}`}</p>
-                    <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{`ruta: ${r.ruta}`}</p>
-                    <div className="mt-2 font-mono text-[10px] text-cyan-hud">{r.frase}</div>
-                    <ul className="mt-2 space-y-1">
-                      {r.senas.map((s, i) => (
-                        <li key={`sena-${i}`} className="text-xs text-zinc-500 leading-relaxed">
-                          {`— ${s}`}
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">{`guardia: ${r.guardia}`}</p>
-                    <p className="mt-1 text-xs text-zinc-500 leading-relaxed">{`sucesión: ${r.sucesion}`}</p>
-                    <ul className="mt-1.5 space-y-1">
-                      {r.notas.map((na, i) => (
-                        <li key={`nota-${i}`} className="text-xs text-zinc-500 leading-relaxed">
-                          {`· ${na}`}
-                        </li>
-                      ))}
-                    </ul>
-                  </article>
-                ))}
-              </div>
-            </section>
-          );
-        })}
+        {/* v404.1 — LAS 34 FICHAS, EN TARJETAS (pilar 2): el nombre, el cargo y el
+            peso del poder dibujado; el expediente completo sigue entero, a un toque.
+            Antes esta sala eran 50.784 letras en 19 visuales: 2.673 por visual. */}
+        <FichasRostros />
 
         {/* v287.0 — EL PULSO DEL ARCHIVO POR ROSTRO: los keywords de la
             fuente cruzan el archivo real con el algoritmo del panel

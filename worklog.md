@@ -6363,3 +6363,11 @@ Stage Summary:
   por OOM a los ~925 MB de heap — no es un defecto del árbol: es el tamaño del
   proyecto (version.ts 506 KB + bitacora.ts 361 KB de comentarios). El juez
   real es el build de Vercel de esta rama; no se mergea a main sin verlo verde.
+
+## Task ia3-v405.2 · EL CENSO (ciclo 5: las dos salas que faltaban del pilar 2)
+
+- PUNTO DE PARTIDA (auditoría en vivo, v405.1): `/rostros` **2.673 letras por visual** (50.784 en 19) y `/poder` **2.315** (20.831 en 9). Las dos siguientes del censo, detrás de `/oscura` (ya en 225).
+- LO QUE ENTRA (aditivo): `src/components/vanguard/fichas-rostros.tsx` — 34 fichas con monograma, bandera, cargo y el índice de poder dibujado (barra con `role="img"` y su descripción); el expediente completo (sede, mandato, alcance, ruta, frase, señas, guardia, sucesión, notas) a un toque. `src/components/vanguard/archivo-poder.tsx` — 167 tarjetas con puesto, país, gasto y el gasto dibujado contra el líder; personal, esfuerzo, cuota y año a un toque.
+- NADA SE BORRA: los campos viajan verbatim de `personas-data.ts` y `poder-data.ts` (captura del Banco Mundial del 2026-11-05), y el JSON-LD de cada sala conserva el censo completo para los buscadores. Cero cifras a mano.
+- OJO CON LA VERSIÓN: `main` iba por **v405.1** (la otra IA había publicado LA CASA ÚNICA y LOS TRES GEMELOS), así que esta entrada sube a **v405.2** — nunca bajar el número.
+- VERIFICACIÓN: `tsc` acotado limpio; medición con la auditoría tras el despliegue.
