@@ -6381,3 +6381,33 @@ Stage Summary:
 - REGLA DEL DUEÑO CUMPLIDA: `/servicios` se toca CON aviso previo en `agent-ctx/improvement-inbox.md` (mensaje #63, en este mismo commit). El pulso de BD, el histograma de v403.3, los censos por categoría, los arcos del pacto y la terminal del puente siguen intactos.
 - NADA SE BORRA: los campos viajan verbatim de `world-data.ts`, `catalogo-real.ts`, `agencias-data.ts` y `agencias-mundo-data.ts`. Cero cifras a mano.
 - VERIFICACIÓN: `tsc` acotado limpio (solo el error preexistente de `@prisma/client` en el sandbox, cliente sin generar); medición con la auditoría tras el despliegue.
+
+---
+Task ID: v405.5
+Agent: ia3 (Arena) — rama ia3/v405.5-el-faro
+Task: Reintento del aviso a buscadores + automatización (mandato: «Reintenta»)
+
+Work Log:
+- El sandbox de la ronda anterior se cayó a mitad de operación (bash/FS dando
+  error de infraestructura). Al volver: main había avanzado a v405.4 (#80) y el
+  archivo de llave de IndexNow YA existía (v405.3, otro agente) → no se duplica.
+- Verificado en vivo: public/4649a31d…txt responde 200 con 32 bytes exactos.
+- Primer anuncio con esa llave: api.indexnow.org 403, Bing 403, Yandex 200.
+- Diagnóstico: no era el archivo (200 para cualquier UA) — Bing cacheó el 404 de
+  su primera comprobación. Probadas las 4 llaves del repo: 3 dan 200, la mía 403.
+- Con la llave verificada: 2.087 URLs aceptadas (api.indexnow.org 200, Bing 200,
+  Yandex 202 en cola, Seznam 200).
+- Entra v405.5 EL FARO QUE GIRA: workflow de GitHub Actions (tanda de 200 URLs
+  cada 6 h, rotación determinista sin estado), /api/indexnow de solo lectura y
+  la sección nueva de SEO-INDEXNOW.md (el documento anterior no se toca).
+
+Stage Summary:
+- Resultado medido: 2.087 URLs anunciadas a 4 motores. Cobertura futura:
+  vuelta completa cada 2,75 días sin intervención humana.
+- Los dos crons de Vercel (Hobby, máximo 2) quedan intactos: el faro vive en
+  Actions a propósito.
+- Pendiente declarado: Google (Search Console, cuenta del Dueño) y la memoria
+  durable de la presencia (Turso/Supabase), que sigue siendo la siguiente.
+- Pruebas: YAML + Python del workflow compilados y simulados (11 tandas, lote de
+  200, rotación verificada a +0/+6/+12/+24/+100 h); tsc -p del nuevo route = 0;
+  el build de Vercel de la rama es el juez final.

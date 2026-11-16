@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.5",
+    nombre: "EL FARO QUE GIRA",
+    tipo: "tecno",
+    hitos: [
+      "2.087 URLs de la casa aceptadas por IndexNow: api.indexnow.org (200), Bing (200), Yandex (202 en cola) y Seznam (200) — medido, no supuesto",
+      "Diagnóstico del 403: no era el archivo (se sirve correcto), era Bing cacheando el 404 de su primera comprobación; se usa la llave que los cuatro motores ya verifican",
+      "El faro gira solo: GitHub Actions cada 6 h anuncia una tanda de 200 URLs elegida sin estado (floor(segundos/6h) % tandas) — la vuelta completa tarda 2,75 días",
+      "El faro no tiene lista propia de URLs: llama a sitemap(), el mismo mapa que leen los buscadores (una sola verdad de qué existe en la casa)",
+      "/api/indexnow enseña qué tanda toca a esta hora: solo lectura, cero escrituras — el faro se puede auditar sin creerle a una IA",
+      "Google queda declarado fuera: no habla IndexNow; se le entra con Search Console y enlaces reales",
+    ],
+  },
+  {
     version: "v405.4",
     nombre: "EL ÍNDICE",
     hitos: [
