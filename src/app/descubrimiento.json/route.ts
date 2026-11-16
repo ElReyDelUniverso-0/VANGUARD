@@ -46,7 +46,7 @@ async function contarUrls(): Promise<Conteo> {
 
 export async function GET() {
   const host = new URL(SITE_URL).hostname;
-  const c = conteo;
+  const c = await contarUrls();
   const total = c?.urls ?? 0;
   const t = tandaDe(Date.now(), total);
 
