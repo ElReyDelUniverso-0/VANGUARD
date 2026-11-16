@@ -6271,3 +6271,13 @@ Work Log:
 - QUÉ SE RETIRÓ DE LO MÍO: `canalVivo()` (duplicaba `filasVivas`), `getCableVivo()`/`urlDesdeId()` (duplicaban el redirect a `/lectura`), `imagenDeRss()` (duplicaba `imagenDe` de notas.ts).
 - Registro: version.ts v403.6 «LA REPARACIÓN» (anterior v403.5), bitacora v403.6, catalogo-real real-179 (179 piezas).
 - LECCIÓN: **ningún archivo se compromete sin bajarlo de `main` justo antes**. Las copias locales del workspace son fotografías viejas del repositorio. Es el mismo error de la entrada 415 (worklog) con otra ropa.
+
+## Task ia3-v403.7 · LA FOTO DEL CABLE (tanda 2 del diagnóstico de noticias)
+
+- PUNTO DE PARTIDA MEDIDO (v403.6): `/api/news` ya servía 48/48 cables con resumen y 45/48 con foto real del medio. Las dos tarjetas de la casa —`panels/news-panel.tsx` (lista de cables) y el héroe + secundarias de `home-panel.tsx`— pintaban **solo la escena 3D**. Foto visible: **0 de 48**. Resumen: **0 de 48**.
+- DECISIÓN DE CASA: la escena 3D **no se retira** (v110.0, trabajo de la otra IA). Pasa a un botón «3D» en la esquina de la tarjeta y sigue siendo la única imagen cuando el medio no trae foto. Lo nuevo se suma.
+- ARCHIVOS: nuevo `src/components/vanguard/tarjeta-cable.tsx` (`PortadaCable` + `ResumenCable`), nuevo `src/app/api/foto/route.ts` (afinador), y dos tarjetas acogidas: `panels/news-panel.tsx`, `home-panel.tsx`. **Cero acciones retiradas**: neurona, simular escalada, veredicto real/fake, leer en la sala y refrescar siguen intactas.
+- EL AFINADOR, MEDIDO: 12 fotos reales de `/api/news` → fuentes de 34 KB a 3,2 MB; salidas WebP 320 px de 3,5 a 19,8 KB, **mediana 8,5 KB**, 12/12 afinadas desde IP de datacenter (el bloqueo de medios se resolvió con UA de navegador + `Referer` del propio medio; sin esas cabeceras, 6 de 12 devolvían HTML).
+- DEFENSA: sin `sharp`, sin imagen válida (content-type + primeros bytes) o con el medio caído, `/api/foto` contesta 415/502 y la tarjeta pinta la foto original desde el navegador; si tampoco, la escena. Tres puertas, ningún hueco.
+- PROCEDIMIENTO (lección de v403.6 aplicada al pie de la letra): espejo completo de `main` (`e3d6d07`) en `/tmp/espia` por tarball; los cambios se aplican **sobre el espejo**, no sobre copias viejas; `tsc --noEmit` del árbol entero **limpio**; se comprometen solo los seis archivos tocados, nunca un parche parcial.
+- LO QUE NO SE TOCA (y queda para sus tandas): el lector (`lector-noticia.tsx`, tanda 5) sigue abriendo con la escena 3D; el mapa y el vídeo (tanda 4) siguen como estaban.

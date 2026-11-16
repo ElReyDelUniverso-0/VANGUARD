@@ -46,6 +46,9 @@ import { Escena3D, escenaDePanel, hashDe } from "@/components/vanguard/escenas-3
 import type { CableLectura } from "@/components/vanguard/lector-noticia";
 // v116.0 — portada 3D viva para el héroe (adiós al <img> plano)
 import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
+// v403.7 LA FOTO DEL CABLE — la foto del medio y su resumen en el héroe y en
+// las secundarias; la escena 3D queda a un toque (no se pierde).
+import { PortadaCable, ResumenCable } from "@/components/vanguard/tarjeta-cable";
 import dynamic from "next/dynamic";
 // v198.0 LA CASA LIGERA — los bloques de ambiente de la portada viajan en SU
 // propio chunk y bajan cuando toca pintarlos: el esqueleto holo cubre el
@@ -107,6 +110,10 @@ interface NewsItem {
   tacticalTag: string | null;
   conflictTag: string | null;
   sourceCountry?: string | null;
+  /** v403.7: lo que dice el medio, en dos líneas. */
+  summary?: string | null;
+  /** v403.7: la foto no es del medio sino del repositorio (se rotula). */
+  imagenArchivo?: boolean;
 }
 
 const TAG_HEX: Record<string, string> = {
@@ -827,7 +834,14 @@ export function HomePanel() {
               {/* v116: la portada del héroe es una escena 3D VIVA derivada del
                   propio cable — cero <img>, cero píxeles externos (mandato) */}
               <div className="relative h-40 sm:h-52 rounded-sm overflow-hidden mb-3 border border-border/50 bg-black/40">
-                <PortadaNoticia id={hero.id} tag={hero.tacticalTag} className="absolute inset-0" />
+                <PortadaCable
+                  foto={hero.imageUrl}
+                  alt={hero.title}
+                  archivo={hero.imagenArchivo === true}
+                  marco={false}
+                  className="absolute inset-0"
+                  escena={<PortadaNoticia id={hero.id} tag={hero.tacticalTag} className="absolute inset-0" />}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent pointer-events-none" />
               </div>
               <div>
@@ -850,6 +864,7 @@ export function HomePanel() {
                 <h3 className="text-base sm:text-lg font-semibold leading-snug text-foreground">
                   {hero.title}
                 </h3>
+                <ResumenCable texto={hero.summary} />
               </div>
               <div className="mt-3 flex items-center justify-between">
                 <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">
@@ -878,8 +893,15 @@ export function HomePanel() {
                   <div className="flex items-start gap-2.5">
                     {n.imageUrl ? (
                       <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 overflow-hidden border border-border/60 bg-secondary">
-                        {/* v116: miniatura 3D viva — nada de imágenes planas */}
-                        <PortadaNoticia id={n.id} tag={n.tacticalTag} className="w-full h-full" />
+                        {/* v403.7: la foto del medio; la escena 3D, a un toque */}
+                        <PortadaCable
+                          foto={n.imageUrl}
+                          alt={n.title}
+                          archivo={n.imagenArchivo === true}
+                          marco={false}
+                          className="w-full h-full"
+                          escena={<PortadaNoticia id={n.id} tag={n.tacticalTag} className="absolute inset-0" />}
+                        />
                       </div>
                     ) : (
                       <span
