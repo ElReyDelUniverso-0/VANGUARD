@@ -6316,3 +6316,50 @@ v400.0 y v402.5 — no los ha restaurado este ciclo, nunca faltaron.
 
 Lección, la misma de siempre y esta vez por mi culpa: **no se mide desde una copia
 parcial**. El clon de trabajo incluye `public/` desde ahora.
+
+---
+Task ID: v405.0
+Agent: ia3 (Arena) — rama ia3/v405.0-la-casa-unica
+Task: Auditoría del estado real + unificación de puertas (mandato del Dueño:
+      «VANGUARD debe ser UN SOLO UNIVERSO DIGITAL», 2026-11-16)
+
+Work Log:
+- Investigación (no supuesta, medida): repo ElReyDelUniverso-0/VANGUARD clonado
+  en superficial (main = 2c9bc2b, v404.0, 844 archivos en src, 3.083 entradas
+  en el árbol); leídos AGENTS.md, COLABORACION-IA.md, COORDINACION.md,
+  HANDOFF-VANGUARD.md, INSTRUCCIONES-DE-FUSION.md y src/lib/regla-oro.ts.
+- Censo de rutas en vivo contra vanguard-kq9r.vercel.app: 52 rutas, 51×200 y
+  /clasico 308 (redirect declarado en v402.0). Cero páginas caídas.
+- /api/health en las dos puertas: v404.0 en ambas (el v403.9 que devolvieron al
+  principio era una instancia tibia en caché; con ?qa= fresco, v404.0).
+- Despliegues Vercel: dpl_9iZbhqpYaGPKbHjeSHvimjbkwudn (producción, commit
+  2c9bc2b, PROMOTED, READY). Proyectos: vanguard-kq9r (DATABASE_URL +
+  NEXT_PUBLIC_REALTIME_URL) y vanguard-u6b9 (env: [] — sin variables).
+- Prueba de los dos universos: tres POST idénticos a /api/presence
+  → {online:1,2,3} en kq9r y {online:0, peak:0} en u6b9. Dos memorias.
+- DNS: vanguard.world y www.vanguard.world NO resuelven (getent + resolutor
+  público). El dominio del `homepage` del repo no existe.
+- Tercera puerta viva: elreydeluniverso-0.github.io/VANGUARD (200, 2.959 b)
+  enlaza a kq9r — coherente con la casa, se conserva.
+- Servidor multijugador de Render (vanguard-games.onrender.com): el handshake
+  socket.io responde 200 en 1,09 s → vivo. (Su /health no responde: el
+  blueprint declara healthCheckPath /health pero la ruta no existe.)
+
+Stage Summary:
+- Diagnóstico: el producto no tiene un problema de código ni de contenido
+  (52/52 rutas sirven, build de main desplegado). Tiene un problema de
+  IDENTIDAD: tres puertas, dos memorias, una de ellas inexistente, y la
+  canónica declarada apuntando al gemelo sin datos mientras toda la campaña
+  empuja al gemelo con datos.
+- Entra v405.0 LA CASA ÚNICA (aditivo puro): site.ts (CASA_OFICIAL +
+  PUERTAS_GEMELAS + DOMINIOS_SIN_DNS), 301 del gemelo en next.config.ts,
+  robots.ts generado de SITE_URL (se retira public/robots.txt, contenido
+  conservado byte a byte) y entradas en version.ts + bitacora.ts.
+- NO se toca: base de datos, schema, prisma, salas, cadenas de idioma.
+- Pendiente declarado: base de datos efímera por lambda (defecto D1 v403.4) —
+  unificar puertas deja de partir la memoria en dos, pero no la hace durable.
+  Necesita llave del Dueño (Turso / Supabase / Neon).
+- Verificación: en este entorno (2 GB de RAM, 2 núcleos) `tsc --noEmit` muere
+  por OOM a los ~925 MB de heap — no es un defecto del árbol: es el tamaño del
+  proyecto (version.ts 506 KB + bitacora.ts 361 KB de comentarios). El juez
+  real es el build de Vercel de esta rama; no se mergea a main sin verlo verde.

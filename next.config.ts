@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+// v405.0 LA CASA ÚNICA — la puerta y sus gemelos se leen de UNA fuente
+// (src/lib/site.ts). Aquí no se escribe ni un dominio a mano: si el Dueño
+// pone dominio propio, se cambia NEXT_PUBLIC_SITE_URL y este archivo obedece.
+import { SITE_URL, PUERTAS_GEMELAS } from "./src/lib/site";
 
 // v402.11 EL MAPA QUE GOOGLE LEE — METADATOS EN EL <head> PARA LOS BUSCADORES.
 // Next 16 «transmite» los metadatos (title, description, canonical, robots) y los
@@ -123,6 +127,20 @@ const nextConfig: NextConfig = {
   //   (/modo NO: es el selector de modo + la cuenta; vive como pestaña de Juego)
   async redirects() {
     return [
+      // v405.0 LA CASA ÚNICA — LOS GEMELOS DEJAN DE SER DESTINO.
+      // Medido en vivo (auditoría v404.0): el código declaraba canónica a
+      // vanguard-u6b9 y la campaña entera empujaba a vanguard-kq9r; los dos
+      // proyectos Vercel sirven el mismo build pero con OTRA base de datos
+      // (los mismos latidos de presencia: 3 en la casa, 0 en el gemelo).
+      // Dos destinos = dos memorias = dos universos. Aquí el gemelo responde
+      // 301 a la casa con su misma ruta, así que ningún enlace viejo muere y
+      // no queda una segunda puerta compitiendo por la misma página.
+      ...PUERTAS_GEMELAS.map((host) => ({
+        source: "/:path*",
+        has: [{ type: "host" as const, value: host }],
+        destination: `${SITE_URL}/:path*`,
+        permanent: true,
+      })),
       { source: "/clasico", destination: "/cuartel", permanent: true },
       // v402.4 — salas que vivieron sueltas y hoy son pestañas del Cuartel:
       // el enlace viejo (y el botón del Teatro Total) aterriza en su sala.
