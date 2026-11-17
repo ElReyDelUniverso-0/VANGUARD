@@ -24,7 +24,8 @@ export type ClaveEspacio =
   | "crear"      // talleres y herramientas
   | "jugar"      // juego y progreso
   | "social"     // comunidad y perfil
-  | "sistema";   // la casa por dentro
+  | "sistema"    // la casa por dentro
+  | "miespacio"; // tu mesa: proyectos, sesiones e historial (v405.11)
 
 /** De dónde sale cada destino: ninguna lista se escribe dos veces. */
 export type OrigenDestino = "mapa-salas" | "modulos" | "constelaciones" | "rutas-vivas";
