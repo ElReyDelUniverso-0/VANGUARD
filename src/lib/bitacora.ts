@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.12",
+    nombre: "LOS MUNDOS CONECTADOS",
+    hitos: [
+      "AUDITORÍA: nueve puertas geográficas sin índice, el mismo país en cinco tablas que no se hablaban, el planeta en cuatro mapas que no se conocían y nueve naciones ficticias llamándose «mundo» como el planeta real",
+      "LA FICHA ÚNICA (/mundos/<iso>): 249 países con geografía, economía, política, cultura, historia y fronteras, uniendo geo-paises + atlas-data + world-data + poder-data + acontecimientos por identidad ISO y declarando «sin dato» donde no hay",
+      "EL MAPA DE LOS MUNDOS (/mundos): 177 países con polígono real de Natural Earth, 72 microestados como punto, nueve capas conmutables con su fuente y su cobertura, leyenda por cuantiles y los 24 macroterritorios de la casa como filtro",
+      "FRONTERAS REALES: los vecinos salen de los arcos compartidos de la topología (156 países con frontera, simétricas: si A toca B, B toca A); República Dominicana solo tiene una, Haití",
+      "LOS QUINCE MUNDOS EN UNA TABLA con su clase (real · 3D · simulación · juego declarado · puerta · espacio), su fuente y su cifra: ninguno se cierra y la ficción deja de mezclarse con el planeta",
+      "SEIS FUSIONES Y DOCE PUENTES: cada país lleva sus coordenadas al teatro táctico, su moneda a divisas, sus conflictos a conflictos y su ficha a la mesa de trabajo (/espacio) con un botón",
+      "NAVEGABLE SIN JAVASCRIPT y en la barra adaptativa: herramienta nueva en Geografía, dos rutas en el catálogo y 249 puertas nuevas en el sitemap",
+      "REPARACIÓN DE HERENCIA: worklog.md viajaba envuelto en el JSON de la API de blobs (3,4 MB de basura); se reconstruye el archivo real de 1,75 MB con todas sus entradas",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v405.11",
     nombre: "TU ESPACIO DE TRABAJO",
     hitos: [

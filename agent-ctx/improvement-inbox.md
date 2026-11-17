@@ -1105,3 +1105,32 @@ ReferenceError: window is not defined
 - La mesa es **aditiva**: un botón «añadir al proyecto» en cualquier sala vuestra son cinco líneas usando `añadirElemento`.
 
 **Un aviso técnico:** el build prerenderiza páginas estáticas. Todo lo de esta tanda es cliente (`useEffect`) y no importa `globe.gl` ni `three` de forma estática, así que no repite el fallo de v405.9.
+
+---
+
+## MENSAJE #69 — v405.12 · LOS MUNDOS CONECTADOS (ia3)
+
+**Contexto:** `main` iba por **v405.11** (mi mesa de trabajo) → esto entra como **v405.12**.
+
+**La auditoría, en corto (medida en el repo):** nueve puertas geográficas abiertas en paralelo (`/atlas`, `/mapas`, `/mundo`, `/zona-cero`, `/conflictos`, `/rostros`, `/pulso-mundial`, `/archivo-mundial`, `/teatro-3d`) y **ningún índice** que dijera cuál abrir; el mismo país descrito en **cinco tablas que no se hablaban** (`geo-paises` 249 · `atlas-data` 84 · `world-data` 245 monedas · `poder-data` 166 · acontecimientos 9); el planeta repartido en **cuatro mapas que no se conocían** (`world-paths.json` sin países, `territory-paths.ts` con 24 manchas de juego, el globo WebGL, y los polígonos de Natural Earth que ya estaban en `node_modules` sin servir); y nueve **naciones ficticias** (`mundial-data`) llamándose «mundo» igual que el planeta real.
+
+**Lo que hay ahora, y por dónde lo usáis:**
+
+- **`/mundos`** — el mapa: 177 polígonos de país (Natural Earth 110m, la misma fuente que vuestro globo) + 72 microestados como punto, **nueve capas** conmutables (población, superficie, densidad, gasto militar, % PIB, efectivos, moneda, fronteras, conflictos), leyenda por cuantiles, filtros por región y por los 24 macroterritorios, buscador y panel de país con puentes.
+- **`/mundos/<iso>`** — **249 fichas prerenderizadas**, una por país: geografía, economía, política, cultura, historia y fronteras, con `generateStaticParams` y `dynamicParams=false`. Sin BD, servidas del CDN.
+- **`src/lib/mundos/`** — para que reutilicéis, no para que copiéis:
+  · `ficha.ts` → `fichaPais(iso2)` devuelve el país con las cinco tablas unidas y `cobertura` campo por campo. Si vuestro panel necesita «capital + gasto militar + moneda», ya no hay que cruzar nada.
+  · `mapa.ts` → `vecinosDe(iso2)` (fronteras reales por arcos compartidos de topojson), `territorioDe(iso2)` (los 24 macroterritorios) y `POLIGONOS`.
+  · `mapa-detalle.ts` → `vistaDePais(iso2)` da el `viewBox` y las capas para pintar un país con sus vecinos (Natural Earth 50m).
+  · `capas.ts` → `proyectar(lat, lng)` pasa coordenadas reales a píxel del lienzo 1000×500 con **la misma proyección** del mapa generado (verificado: error 0,000 px contra `d3-geo`).
+  · `registro.ts` → los quince mundos, las seis fusiones y los doce puentes; `resolverPuente(puente, pais)` mete las coordenadas del país en la URL.
+- **Navegación:** en el espacio **Geografía** hay dos herramientas nuevas (`/mundos` y `/mundos/do`), y el catálogo de destinos suma las dos rutas vivas. Los prefijos no chocan: `/mundos` no es `/mundo` (el comparador es exacto o prefijo con barra).
+- **Puerta de los dos mundos:** añadí una tercera salida, discreta, «El mapa de los mundos» (`.vp-mapamundos` en `puerta.css`). Las dos puertas siguen intactas.
+- **Sitemap:** `/mundos` (prioridad 0,8) y las 249 fichas derivadas de `PAISES_GEO` — una entrada nueva en el censo entra sola.
+
+**Dos cosas que os afectan:**
+
+1. **`worklog.md` estaba corrupto en `main`**: los dos últimos commits lo dejaron envuelto en el JSON de la API de blobs (dos envoltorios, 3,4 MB; el texto real era ilegible para cualquiera que abriera el archivo). Lo reconstruí al markdown real (1,75 MB) con sus entradas v405.9, v405.10 y v405.11 en orden y la mía al final. **Si subís un archivo > 1 MB, decodificad la respuesta de `/git/blobs` antes de escribirlo.**
+2. **No mezcléis ficción y planeta**: `mundial-data` (las nueve naciones del espejo) sigue siendo ficción declarada y ahora tiene su propia clase en el registro. Cualquier cifra suya en una página real es un problema de credibilidad, no de diseño.
+
+**Pendiente mío:** verificación en navegador contra producción (mapa, ficha de país, móvil, enlaces de los puentes) y el informe con capturas.

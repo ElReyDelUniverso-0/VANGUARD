@@ -143,6 +143,38 @@ export default function AtlasPage() {
         nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
       />
 
+      {/* v405.12 — LA FICHA UNIFICADA: el atlas enseña la ficha larga de 84
+          naciones; el mapa de los mundos la cruza con la identidad ISO, las
+          fronteras reales, la moneda con su tasa y el gasto militar, y abre
+          una ficha por país con sus vecinos. Ninguna de las dos cierra. */}
+      <div style={{ maxWidth: 1408, margin: "0 auto", padding: "18px 14px 0" }}>
+        <a
+          href="/mundos"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px 18px",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            border: "1px solid rgba(94,234,212,0.32)",
+            borderLeft: "3px solid #5eead4",
+            borderRadius: 12,
+            padding: "13px 16px",
+            background: "rgba(8,20,28,0.7)",
+            color: "#dceef5",
+            textDecoration: "none",
+          }}
+        >
+          <span style={{ fontFamily: "var(--font-orbitron, Orbitron), sans-serif", fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: "#5eead4" }}>
+            El mapa de los mundos ▸
+          </span>
+          <span style={{ fontSize: 13, lineHeight: 1.55, maxWidth: "70ch" }}>
+            Cada nación de este atlas tiene su ficha completa en el mapa: fronteras reales con sus vecinos, moneda con su
+            tasa, gasto militar del Banco Mundial, su conflicto abierto y el puente al simulador.
+          </span>
+        </a>
+      </div>
+
       <GraficoBarras
         id="grafico-poblacion"
         volanta="EL ATLAS · EL PESO HUMANO"
