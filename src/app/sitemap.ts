@@ -12,6 +12,7 @@ import { MODULOS, SALAS_INTERNAS } from "@/components/portada/modulos";
 import { SITE_URL } from "@/lib/site"; // v403.6: una sola puerta
 import { CONSTELACIONES } from "@/lib/vanguard/mapa-salas"; // v403.9: las 20 puertas
 import { PUERTAS_SALAS } from "@/lib/vanguard/puertas-salas"; // v405.8: las puertas de las salas
+import { PAISES_GEO } from "@/lib/geo-paises"; // v405.12: el mapa de los mundos
 
 // v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
 // «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
@@ -303,6 +304,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v405.12 EL MAPA DE LOS MUNDOS — el índice geográfico de la casa: 249
+      // países con ficha unificada (identidad ISO, capital, población,
+      // superficie, moneda, gobierno, líder, gasto militar del Banco Mundial y
+      // fronteras topológicas reales) y el registro de los quince mundos.
+      url: `${SITE_URL}/mundos`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       // v295.0 LA VERDAD CRUDA — la fuente dark-data (v24, documentada,
       // «todas las entradas citan fuentes públicas (ONU, CPJ, RSF, ACLED,
       // HRW, OSCE)») servida en server: 12 abusos de guerra verificados
@@ -577,6 +588,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
+    })),
+    // v405.12 LA FICHA DE CADA PAÍS: 249 puertas /mundos/<iso>, derivadas del
+    // censo geográfico (una entrada nueva en geo-paises entra sola). Cada una
+    // es una página prerenderizada con datos reales y enlaces a sus vecinos:
+    // es la puerta que Google necesita para «capital de X», «fronteras de X».
+    ...PAISES_GEO.map((g) => ({
+      url: `${SITE_URL}/mundos/${g.iso2}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.55,
     })),
   ];
 

@@ -268,6 +268,20 @@ export function Puerta({ onElegir, onSaltar }: { onElegir: (m: Mundo) => void; o
         </button>
       )}
 
+      {/* v405.12 — EL MAPA DE LOS MUNDOS: la Puerta declara lo que hay detrás.
+          No sustituye a las dos puertas (noticias y juego siguen intactas):
+          añade la tercera salida que faltaba, el índice de todo el planeta. */}
+      {fase !== "warp" && (
+        <a
+          className="vp-mapamundos"
+          href="/mundos"
+          onClick={(e) => e.stopPropagation()}
+          aria-label="Abrir el mapa de los mundos: todos los países y todos los módulos"
+        >
+          <span aria-hidden>◎</span> El mapa de los mundos
+        </a>
+      )}
+
       {elegido && (
         <div className="vp-warp" data-m={elegido} role="status">
           <span className="vp-warp-rayo" aria-hidden />
@@ -384,6 +398,7 @@ export function PuertaPagina() {
       <div className="vp-sinjs">
         <a href={FICHA_MUNDOS.noticias.destino}>Entrar al mundo Noticias →</a>
         <a href={FICHA_MUNDOS.juego.destino}>Entrar al mundo Juego →</a>
+        <a href="/mundos">El mapa de los mundos →</a>
       </div>
     );
   return <Puerta onElegir={elegir} />;

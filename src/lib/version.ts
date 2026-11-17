@@ -1,3 +1,54 @@
+// v405.12 LOS MUNDOS CONECTADOS — orden del Dueño, textual: «evolución total de
+// los mundos: inspecciona todos los mundos que ya existen, identifica los
+// repetidos, incompletos o separados que puedan fusionarse, fusiona los módulos
+// relacionados sin perder funcionalidades, mejora la exploración geográfica
+// (países, regiones, territorios y fronteras), añade más información
+// geográfica, histórica, económica, política y cultural, mejora las imágenes y
+// los mapas, conecta los mundos con los módulos de información y simulación
+// correspondientes, y haz que los mundos sean navegables y funcionales —
+// IMPORTANTE: no construyas un mundo aislado que no se comunique con el resto».
+// ① LA AUDITORÍA (medida en el repo, no estimada): nueve puertas geográficas
+//    abiertas en paralelo (/atlas, /mapas, /mundo, /zona-cero, /conflictos,
+//    /rostros, /pulso-mundial, /archivo-mundial, /teatro-3d) SIN un índice que
+//    dijera cuál abrir; el país descrito en CINCO tablas que no se hablaban
+//    (geo-paises 249 · atlas-data 84 · world-data 245 monedas · poder-data 166 ·
+//    acontecimientos 9); el planeta en CUATRO mapas que no se conocían
+//    (world-paths.json sin países · territory-paths.ts con 24 manchas de juego ·
+//    el globo WebGL · los polígonos de Natural Earth sin servir); y nueve
+//    naciones FICTICIAS (mundial-data) llamándose «mundo» igual que el planeta.
+// ② LA FICHA ÚNICA (/mundos/<iso>, 249 páginas prerenderizadas): las cinco
+//    tablas unidas por identidad ISO con cobertura declarada campo por campo —
+//    geografía, economía (moneda + tasa + gasto militar + % PIB), política
+//    (gobierno, líder, puesto militar mundial), cultura (idiomas, personas del
+//    poder con sede real), historia (acontecimientos reales con fecha + guerras
+//    del archivo por distancia declarada) y fronteras. Donde no hay dato se
+//    escribe «sin dato»: ni un cero, ni una estimación.
+// ③ EL MAPA DE LOS MUNDOS (/mundos): 177 países con polígono real de Natural
+//    Earth (la MISMA fuente del globo 3D) + 72 microestados como punto; NUEVE
+//    capas conmutables (población, superficie, densidad, gasto militar,
+//    esfuerzo militar, efectivos, moneda, fronteras y conflictos), cada una con
+//    su fuente, su cobertura y su leyenda por cuantiles calculada del propio
+//    dato; y los 24 macroterritorios de la casa como filtro, intactos.
+// ④ FRONTERAS DE VERDAD: los vecinos salen de los ARCOS COMPARTIDOS de la
+//    topología (topojson `neighbors`), no de una lista escrita a mano — prueba:
+//    si A toca B, B toca A (249 países, 156 con frontera). República Dominicana
+//    solo tiene una: Haití.
+// ⑤ LOS QUINCE MUNDOS EN UNA TABLA: la Puerta de los dos mundos, el atlas, el
+//    centro de mapas, el mundo 3D, zona cero, conflictos, los rostros, los datos
+//    vivos, el archivo, el simulador, los escenarios, VANGUARD-2, las naciones
+//    del espejo (declaradas FICCIÓN) y la mesa del operador. Ninguno se cierra:
+//    cada uno declara su clase, su fuente, su cifra y su puerta.
+// ⑥ SEIS FUSIONES DECLARADAS y doce PUENTES: cada país lleva sus coordenadas
+//    reales al teatro táctico (`/teatro-3d?lat&lng&nombre`), su moneda a
+//    /divisas, sus conflictos a /conflictos, su archivo a /archivo-mundial y su
+//    ficha a la mesa de trabajo (/espacio) con un botón.
+// ⑦ NAVEGABLE SIN JAVASCRIPT: los 249 países listados por región en la propia
+//    sala; el mapa es la mejora, no la única puerta. Y en la barra adaptativa:
+//    herramienta nueva en el espacio Geografía + dos rutas vivas en el catálogo.
+// ⑧ REPARACIÓN DE HERENCIA: `worklog.md` viajaba envuelto en el JSON de la API
+//    de blobs (dos envoltorios, 3,4 MB de basura y el texto real ilegible para
+//    cualquiera). Se reconstruye el archivo real (1,75 MB de markdown) con sus
+//    entradas v405.9, v405.10 y v405.11 en orden.
 // v403.3 EL SIGLO DEL OFICIO — las dos salas que quedaban «de libro» reciben
 // sus propias escalas. No se ha borrado una línea de texto: solo se han
 // dibujado cifras que ya estaban en la fuente.
@@ -6011,8 +6062,8 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.11";
-export const APP_CODENAME = "TU ESPACIO DE TRABAJO";
+export const APP_VERSION = "v405.12";
+export const APP_CODENAME = "LOS MUNDOS CONECTADOS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6072,7 +6123,7 @@ export const APP_CODENAME = "TU ESPACIO DE TRABAJO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.10";
+export const APP_VERSION_ANTERIOR = "v405.11";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

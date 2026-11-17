@@ -35,6 +35,15 @@ export const metadata: Metadata = {
 
 const PUERTAS: EnlaceContextual[] = [
   {
+    // v405.12 — EL MAPA DE LOS MUNDOS: el índice de países de la casa. Esta
+    // sala pinta el planeta en 3D por capas; /mundos es su tabla de países
+    // (ficha unificada, fronteras y puentes) en 2D sobre Natural Earth.
+    etiqueta: "EL MAPA DE LOS MUNDOS ▸",
+    ruta: "/mundos",
+    motivo: "los 249 países con ficha, 177 con polígono y fronteras reales, y el registro de los quince mundos",
+    tipoRelacion: "pertenece_a",
+  },
+  {
     etiqueta: "EL MUNDO 3D ▸",
     ruta: "/mundo",
     motivo: "el globo de las guerras vivas: los mismos teatros que aquí se encienden por país",
