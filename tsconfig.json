@@ -43,6 +43,7 @@
     "examples",
     "mini-services",
     "nexo-src",
-    "tmp"
+    "tmp",
+    "tools"
   ]
 }

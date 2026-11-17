@@ -4,7 +4,7 @@
 // verticales (foto + titular + una línea), se pasan con un toque o solas a
 // los 6 s. Anillo de color = hay novedades · gris = ya lo viste.
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { haceTexto } from "@/lib/portada/clasificar";
 import { IcoCerrar, IcoFlecha } from "./iconos";
 
@@ -33,6 +33,8 @@ export function Historias({ grupos }: { grupos: GrupoHistoria[] }) {
   const [vistas, setVistas] = useState<Record<string, string>>({});
   const [abierto, setAbierto] = useState<number | null>(null);
   const [paso, setPaso] = useState(0);
+  const cerrarRef = useRef<HTMLButtonElement>(null);
+  const previoFoco = useRef<Element | null>(null);
 
   useEffect(() => setVistas(leerVistas()), []);
 
@@ -66,12 +68,24 @@ export function Historias({ grupos }: { grupos: GrupoHistoria[] }) {
     }
   }, [abierto, paso]);
 
-  // avance automático
+  // avance automático — en prefers-reduced-motion NO avanza solo: la persona manda
   useEffect(() => {
     if (abierto === null) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
     const t = window.setTimeout(siguiente, 6000);
     return () => window.clearTimeout(t);
   }, [abierto, paso, siguiente]);
+
+  // foco: al abrir entra al visor; al cerrar vuelve al círculo de frente que lo abrió
+  useEffect(() => {
+    if (abierto === null) return;
+    previoFoco.current = document.activeElement;
+    cerrarRef.current?.focus();
+    return () => {
+      (previoFoco.current as HTMLElement | null)?.focus?.();
+      previoFoco.current = null;
+    };
+  }, [abierto]);
 
   // teclado + bloqueo de scroll
   useEffect(() => {
@@ -156,7 +170,7 @@ export function Historias({ grupos }: { grupos: GrupoHistoria[] }) {
               <span className="vx-tag" style={{ color: "#fff" }}>
                 <i style={{ background: g.color }} /> {g.nombre} · CABLE {paso + 1}/{g.notas.length}
               </span>
-              <button className="vx-ico" onClick={cerrar} aria-label="Cerrar historias">
+              <button className="vx-ico" onClick={cerrar} aria-label="Cerrar historias" ref={cerrarRef}>
                 <IcoCerrar />
               </button>
             </div>

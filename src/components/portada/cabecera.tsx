@@ -63,7 +63,7 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
         </Link>
         <nav className="vx-nav" aria-label="Secciones">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} data-on={activo(ruta, n.href) ? "1" : "0"}>
+            <Link key={n.href} href={n.href} data-on={activo(ruta, n.href) ? "1" : "0"} aria-current={activo(ruta, n.href) ? "page" : undefined}>
               {n.label}
             </Link>
           ))}
@@ -95,7 +95,7 @@ export function BarraMovil({ ruta: rutaFija }: { ruta?: string } = {}) {
   return (
     <nav className="vx-tabbar" aria-label="Navegación principal">
       {TABS.map(({ href, label, Ico, vivo }) => (
-        <Link key={href} href={href} data-on={activo(ruta, href) ? "1" : "0"} data-vivo={vivo ? "1" : "0"}>
+        <Link key={href} href={href} data-on={activo(ruta, href) ? "1" : "0"} data-vivo={vivo ? "1" : "0"} aria-current={activo(ruta, href) ? "page" : undefined}>
           <Ico />
           {label}
         </Link>
