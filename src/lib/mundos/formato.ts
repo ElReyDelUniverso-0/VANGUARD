@@ -74,7 +74,7 @@ export function aniosDesde(anio: number, hoy = new Date().getFullYear()): string
 }
 
 /** El «tipo» de formato que viaja al cliente (sin funciones: serializable). */
-export type FormatoMedida = "poblacion" | "superficie" | "densidad" | "usd" | "pct" | "personal" | "tasa" | "conteo";
+export type FormatoMedida = "poblacion" | "superficie" | "densidad" | "usd" | "pct" | "personal" | "tasa" | "conteo" | "anios";
 
 /** Aplica el formato por su nombre. La usan servidor y cliente: mismo texto. */
 export function formatear(tipo: FormatoMedida, n: number | null | undefined): string {
@@ -96,6 +96,8 @@ export function formatear(tipo: FormatoMedida, n: number | null | undefined): st
       return miles(n, 2) + " por US$";
     case "conteo":
       return miles(n, 0);
+    case "anios":
+      return miles(n, 1) + " años";
     default:
       return miles(n, 1);
   }

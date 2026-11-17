@@ -79,6 +79,10 @@ export interface PayloadMundos {
       conMoneda: number;
       conMilitar: number;
       conPersonas: number;
+      conPoblacion: number;
+      conSuperficie: number;
+      conPib: number;
+      conVida: number;
       personas: number;
       regiones: { clave: string; nombre: string; paises: number; conAtlas: number; conMilitar: number }[];
     };

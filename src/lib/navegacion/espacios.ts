@@ -34,7 +34,7 @@ export const ESPACIOS: Espacio[] = [
       constelaciones: ["teatro3d"],
     },
     herramientas: [
-      { id: "mundos", nombre: "El mapa de los mundos", href: "/mundos", icono: "globe-2", desc: "249 países con ficha unificada, 177 con polígono y fronteras reales, nueve capas de datos y el registro de los quince mundos de la casa", desde: "v405.12" },
+      { id: "mundos", nombre: "El mapa de los mundos", href: "/mundos", icono: "globe-2", desc: "249 países con ficha unificada, 177 con polígono y fronteras reales, doce capas de datos y el registro de los quince mundos de la casa", desde: "v405.12" },
       { id: "mundos-pais", nombre: "Ficha de país", href: "/mundos/do", icono: "map-pin", desc: "Geografía, economía, política, historia y cultura de un país, con sus fronteras, sus vecinos y el puente al simulador", desde: "v405.12" },
       { id: "centro-mapas", nombre: "Centro de mapas", href: "/mapas", icono: "layers", desc: "Ocho capas geográficas sobre el globo: mundial, político, físico, económico, demográfico, temático, histórico y de acontecimientos", desde: "v405.9" },
       { id: "atlas", nombre: "Atlas mundial", href: "/atlas", icono: "book-open", desc: "84 naciones con capital, población, moneda y líder real" },

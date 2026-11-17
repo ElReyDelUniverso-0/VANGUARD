@@ -22,7 +22,7 @@ export const RAMPAS: Record<string, string[]> = {
 
 export function rampaDe(medida: Medida): string[] {
   if (medida.id === "gasto" || medida.id === "personal" || medida.id === "gastoPib") return RAMPAS.militar;
-  if (medida.id === "tasa") return RAMPAS.dinero;
+  if (medida.id === "tasa" || medida.id === "pib" || medida.id === "pibPC") return RAMPAS.dinero;
   return RAMPAS.defecto;
 }
 
@@ -82,8 +82,8 @@ export function construirPayload(ctx: ContextoConflictos): PayloadMundos {
       subregion: f.subregion,
       territorio: t ? t.nombre : null,
       capital: f.atlas ? f.atlas.capital : null,
-      poblacion: f.atlas ? formatear("poblacion", f.atlas.poblacion) : null,
-      superficie: f.atlas ? formatear("superficie", f.atlas.superficie) : null,
+      poblacion: f.poblacion === null ? null : formatear("poblacion", f.poblacion / 1_000_000),
+      superficie: f.superficie === null ? null : formatear("superficie", f.superficie),
       vecinos: listaVecinos.get(f.iso2)?.length ?? null,
       vecinosIso: listaVecinos.get(f.iso2) ?? [],
       conflictos: ctx.porPais[f.iso2] ?? 0,

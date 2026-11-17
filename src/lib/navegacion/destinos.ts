@@ -28,7 +28,7 @@ const RUTAS_VIVAS: { href: string; nombre: string; corto: string; sub: string; d
   { href: "/mapas", nombre: "Centro de mapas", corto: "MAPA", sub: "Las ocho capas geográficas sobre el globo", desde: "v405.9" },
   { href: "/navegacion", nombre: "Navegación adaptativa", corto: "NAV", sub: "Los once espacios, sus herramientas y sus fusiones", desde: "v405.10" },
   { href: "/espacio", nombre: "Espacio de trabajo", corto: "MI MESA", sub: "Proyectos con piezas, paneles, sesiones, historial y papelera", desde: "v405.11" },
-  { href: "/mundos", nombre: "El mapa de los mundos", corto: "MUNDOS", sub: "249 países con ficha, 177 con polígono y fronteras, nueve capas y los quince mundos de la casa", desde: "v405.12" },
+  { href: "/mundos", nombre: "El mapa de los mundos", corto: "MUNDOS", sub: "249 países con ficha, 177 con polígono y fronteras, doce capas y los quince mundos de la casa", desde: "v405.12" },
   { href: "/mundos/do", nombre: "Ficha de país", corto: "PAÍS", sub: "Geografía, economía, política, historia y cultura de un país con sus vecinos y sus puentes", desde: "v405.12" },
 ];
 

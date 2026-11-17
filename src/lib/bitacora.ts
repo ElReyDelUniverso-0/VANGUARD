@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.13",
+    nombre: "EL CENSO COMPLETO",
+    hitos: [
+      "EL HUECO MEDIDO: la capa de población del mapa apagaba 165 de los 249 países porque atlas-data solo la tenía para 84, y la ficha confesaba que no había PIB ni renta por habitante",
+      "EL CENSO DEL BANCO MUNDIAL: un generador reproducible pregunta seis indicadores y escribe el JSON con el año de cada cifra y el día de la captura — ni un número a mano",
+      "LA COBERTURA: población 84 → 215, superficie 84 → 215, PIB 0 → 212, renta por habitante 0 → 212, esperanza de vida 0 → 215; las capas del mapa pasan de nueve a doce",
+      "LA REGLA INTACTA: la tabla de la casa manda y el Banco Mundial es la red; donde no hay dato se escribe «sin dato» (el Vaticano no tiene cifras, Corea del Norte no publica PIB) y cada cifra lleva su año al lado",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v405.12",
     nombre: "LOS MUNDOS CONECTADOS",
     hitos: [

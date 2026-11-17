@@ -20,7 +20,7 @@ import { MapaMundos } from "@/components/mundos/mapa-mundos";
 // todo con los módulos de información y simulación de la casa.
 //
 // Lo que hace esta sala, en orden de lectura:
-//   ① el mapa: 177 países con polígono real + 249 con ficha, nueve medidas
+//   ① el mapa: 177 países con polígono real + 249 con ficha, doce medidas
 //     reales, fronteras topológicas y los 24 macroterritorios de la casa;
 //   ② el registro de los 15 mundos que ya existían, con su clase (real,
 //      simulación, juego declarado, 3D, puerta, espacio) — para que nadie
@@ -41,11 +41,11 @@ import { MapaMundos } from "@/components/mundos/mapa-mundos";
 export const metadata: Metadata = {
   title: "MUNDOS — el mapa de los países, sus fronteras y sus mundos | VANGUARD",
   description:
-    "El índice geográfico de VANGUARD: 249 países con ficha unificada, 177 con polígono y fronteras reales, nueve capas de datos (población, superficie, densidad, gasto militar, esfuerzo militar, efectivos, moneda, fronteras y conflictos), 24 macroterritorios y las puertas a los módulos de información y simulación.",
+    "El índice geográfico de VANGUARD: 249 países con ficha unificada, 177 con polígono y fronteras reales, doce capas de datos (población, superficie, densidad, PIB, renta por habitante, gasto militar, esfuerzo militar, efectivos, esperanza de vida, moneda, fronteras y conflictos), 24 macroterritorios y las puertas a los módulos de información y simulación.",
   alternates: { canonical: `${SITE_URL}/mundos` },
   openGraph: {
     title: "MUNDOS — el mapa de los países de VANGUARD",
-    description: "Países, fronteras reales, nueve capas de datos y un puente directo al simulador de cada país.",
+    description: "Países, fronteras reales, doce capas de datos y un puente directo al simulador de cada país.",
     url: `${SITE_URL}/mundos`,
     type: "website",
   },
@@ -80,7 +80,7 @@ export default function MundosPage() {
     name: "Mundos de VANGUARD",
     url: `${SITE_URL}/mundos`,
     description:
-      "Mapa de países con fronteras reales, nueve capas de datos y el registro de todos los mundos de VANGUARD.",
+      "Mapa de países con fronteras reales, doce capas de datos y el registro de todos los mundos de VANGUARD.",
     isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
     about: { "@type": "Thing", name: "Geografía política del planeta" },
     numberOfItems: todas.length,
@@ -95,7 +95,7 @@ export default function MundosPage() {
         alt="El planeta visto desde la órbita, con las luces de las costas encendidas"
         volanta="Geografía · Los mundos"
         titulo="El mapa de los mundos"
-        sumario="Todos los países con su polígono real y sus fronteras, nueve capas de datos con su fuente, los 24 macroterritorios de la casa y el registro de los quince mundos que ya existían — cada uno con su puerta y su clase."
+        sumario="Todos los países con su polígono real y sus fronteras, doce capas de datos con su fuente, los 24 macroterritorios de la casa y el registro de los quince mundos que ya existían — cada uno con su puerta y su clase."
         cifras={[
           { valor: todas.length, etiqueta: "países con ficha", nota: "identidad ISO unificada" },
           { valor: mapa.conPoligono, etiqueta: "con polígono real", nota: "Natural Earth 110m" },
@@ -124,7 +124,7 @@ export default function MundosPage() {
         {/* ① EL MAPA */}
         <section id="mapa" className="vx-mo-seccion" style={{ marginTop: 8 }}>
           <h2 className="vx-mo-titulo">
-            El tablero <span>nueve medidas · fronteras reales · 24 macroterritorios</span>
+            El tablero <span>doce medidas · fronteras reales · 24 macroterritorios</span>
           </h2>
           <p className="vx-mo-parrafo">
             Un solo mapa para todo el planeta. Cada capa es una columna real de la ficha del país y declara cuántos
@@ -270,8 +270,10 @@ export default function MundosPage() {
             </li>
             <li>
               Las {payload.cobertura.global.paises} fichas no son {payload.cobertura.global.conAtlas}: la ficha larga
-              (capital, gobierno, líder) existe en {payload.cobertura.global.conAtlas} países; la identidad ISO y la
-              moneda, en {payload.cobertura.global.conMoneda}. El mapa nunca rellena un hueco inventando.
+              (capital, gobierno, líder) existe en {payload.cobertura.global.conAtlas} países; la moneda, en{" "}
+              {payload.cobertura.global.conMoneda}. La población y la superficie las tiene el censo del Banco Mundial
+              para {payload.cobertura.global.conPoblacion} países, el PIB para {payload.cobertura.global.conPib} y la
+              esperanza de vida para {payload.cobertura.global.conVida}. El mapa nunca rellena un hueco inventando.
             </li>
             <li>
               Los {TERRITORIOS.length} macroterritorios son los del <strong>mapa de guerra de la casa</strong> (24
