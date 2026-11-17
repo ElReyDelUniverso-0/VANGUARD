@@ -26,7 +26,8 @@ import type { ClaveEspacio, Destino, Fusion } from "./tipos";
  *  navegación adaptativa debe poder ofrecer igual. Cada entrada es real. */
 const RUTAS_VIVAS: { href: string; nombre: string; corto: string; sub: string; desde: string }[] = [
   { href: "/mapas", nombre: "Centro de mapas", corto: "MAPA", sub: "Las ocho capas geográficas sobre el globo", desde: "v405.9" },
-  { href: "/navegacion", nombre: "Navegación adaptativa", corto: "NAV", sub: "Los diez espacios, sus herramientas y sus fusiones", desde: "v405.10" },
+  { href: "/navegacion", nombre: "Navegación adaptativa", corto: "NAV", sub: "Los once espacios, sus herramientas y sus fusiones", desde: "v405.10" },
+  { href: "/espacio", nombre: "Espacio de trabajo", corto: "MI MESA", sub: "Proyectos con piezas, paneles, sesiones, historial y papelera", desde: "v405.11" },
 ];
 
 /** Familias que son el mismo asunto con dos puertas. Se declaran UNA vez.

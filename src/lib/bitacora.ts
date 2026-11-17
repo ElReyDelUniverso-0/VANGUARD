@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.11",
+    nombre: "TU ESPACIO DE TRABAJO",
+    hitos: [
+      "AUDITORÍA: lo guardado y lo personal vivía en cuatro almacenes que no se hablaban (favoritos del riel, uso real de las salas, orden de herramientas de la navegación y el perfil/progreso) — y no existía ni un sitio donde guardar un TRABAJO con sus mapas, escenarios y notas",
+      "LA MESA: proyectos con piezas de siete clases (mapas, simulaciones, escenarios, herramientas, investigaciones, notas y enlaces) que se añaden desde el registro de la casa o a mano, se fijan arriba y se filtran",
+      "PANELES REORGANIZABLES: seis paneles por proyecto — el trabajo, los accesos, las sesiones, la actividad, el deshacer y la papelera — que se suben, se bajan y se apagan, con su orden guardado",
+      "SESIONES E HISTORIAL: guardar congela el proyecto como está y «Continuar» lo devuelve tal cual; cada acción queda fechada en la actividad y deja una instantánea para deshacer",
+      "NADA SE PIERDE: quitar manda a la papelera (que restaura), archivar saca de la lista sin borrar y el trabajo se exporta e importa en JSON sin pisar lo que ya hay",
+      "LO QUE YA TENÍAS, DENTRO: los favoritos del riel y las salas más usadas siembran el primer proyecto al entrar, sin tocar los almacenes viejos; y la barra adaptativa gana su undécimo espacio",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.10",
     nombre: "LA NAVEGACIÓN ADAPTATIVA",
     hitos: [

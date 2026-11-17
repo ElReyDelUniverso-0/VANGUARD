@@ -186,6 +186,7 @@ export const ESPACIOS: Espacio[] = [
       { id: "nucleo", nombre: "El Núcleo", href: "/nucleo", icono: "cpu", desc: "La IA que vive en tu navegador: sin claves, sin servidores" },
       { id: "voz", nombre: "La Voz", href: "/voz", icono: "mic", desc: "Habla con la casa y deja que la casa hable" },
       { id: "novedades", nombre: "Lo nuevo", href: "/novedades", icono: "sparkles", desc: "Todo lo recién añadido, con su enlace directo" },
+      { id: "espacio-crear", nombre: "Tu espacio", href: "/espacio", icono: "briefcase", desc: "Lleva lo que crees a un proyecto con sus piezas y sus sesiones", desde: "v405.11" },
     ],
     vecinos: ["jugar", "mercado", "sistema"],
   },
@@ -258,6 +259,27 @@ export const ESPACIOS: Espacio[] = [
       { id: "agentes", nombre: "Agentes", href: "/cuartel?sala=agentes", icono: "bot", desc: "Los agentes automáticos que mantienen la casa viva" },
     ],
     vecinos: ["crear", "social", "geo"],
+  },
+  // ────────────────────────────────────────────────────────── MI ESPACIO
+  {
+    clave: "miespacio",
+    nombre: "Mi espacio",
+    lema: "Tu mesa de trabajo",
+    color: "#c084fc",
+    icono: "briefcase",
+    detecta: {
+      rutas: ["/espacio"],
+      salas: [],
+    },
+    herramientas: [
+      { id: "espacio-trabajo", nombre: "Espacio de trabajo", href: "/espacio", icono: "briefcase", desc: "Proyectos con sus mapas, simulaciones, escenarios y notas; paneles reorganizables, sesiones e historial", desde: "v405.11" },
+      { id: "perfil-mio", nombre: "Tu carnet", href: "/perfil", icono: "user-check", desc: "Identidad, progreso y personalización del operador" },
+      { id: "modo-mio", nombre: "Modo y cuenta", href: "/modo", icono: "user-cog", desc: "El selector de modo de la casa" },
+      { id: "navegacion-mia", nombre: "La arquitectura", href: "/navegacion", icono: "compass", desc: "Los once espacios y sus herramientas: de dónde sale cada acceso" },
+      { id: "catalogo-mio", nombre: "El catálogo", href: "/catalogo", icono: "file-stack", desc: "Todo lo construido, pieza por pieza, con su ruta" },
+      { id: "obras-mio", nombre: "El muro", href: "/cuartel?sala=obras", icono: "layout-grid", desc: "La vitrina de la comunidad, para remezclar" },
+    ],
+    vecinos: ["crear", "jugar", "sistema"],
   },
 ];
 

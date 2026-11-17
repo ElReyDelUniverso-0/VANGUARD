@@ -33,15 +33,29 @@ export function navegarConTransicion(router: RouterLike, href: string, actual?: 
   const raiz = document.documentElement;
   raiz.setAttribute("data-viajando", "1");
   const limpiar = () => window.setTimeout(() => raiz.removeAttribute("data-viajando"), 420);
+  // Una sola vez por clic, pase lo que pase.
+  let hecho = false;
+  const empujar = () => {
+    if (hecho) return;
+    hecho = true;
+    router.push(href);
+  };
+
+  // La View Transition API NO ejecuta su callback si la pestaña está oculta ni
+  // si ya hay otra transición en curso. Se usa solo con la página visible y se
+  // deja una red de seguridad: perder una navegación es mucho peor que perder
+  // el adorno de la transición.
+  const visible = document.visibilityState !== "hidden";
   try {
-    if (typeof doc.startViewTransition === "function") {
-      doc.startViewTransition(() => router.push(href));
+    if (visible && typeof doc.startViewTransition === "function") {
+      doc.startViewTransition(empujar);
+      window.setTimeout(empujar, 180);
       limpiar();
       return;
     }
   } catch {
     /* si la transición falla, se navega igual: la casa no se queda quieta */
   }
-  router.push(href);
+  empujar();
   limpiar();
 }

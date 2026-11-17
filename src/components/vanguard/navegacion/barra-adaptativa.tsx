@@ -42,6 +42,12 @@ export function BarraAdaptativa() {
   const [config, setConfig] = useState<ConfigPaneles>(panelesPorDefecto);
   const [montada, setMontada] = useState(false);
   const [hoja, setHoja] = useState(false);
+  // usePathname NO trae la consulta, y /cuartel?sala=mente es otro espacio que
+  // /cuartel. Se lee del navegador (sin useSearchParams, que volvería dinámicas
+  // todas las páginas) y se escucha el evento interno con el que el cuartel
+  // cambia de pestaña.
+  const [consulta, setConsulta] = useState("");
+  const [salaTab, setSalaTab] = useState<string | null>(null);
 
   // La configuración vive en el aparato: se lee al montar (nunca en el
   // servidor, para no romper la hidratación) y se escucha si cambia en otra
@@ -57,12 +63,33 @@ export function BarraAdaptativa() {
     return () => window.removeEventListener("vanguard:paneles", sync);
   }, []);
 
+  useEffect(() => {
+    const leer = () => {
+      const busqueda = window.location.search;
+      setConsulta(busqueda);
+      setSalaTab(new URLSearchParams(busqueda).get("sala"));
+    };
+    leer();
+    const alNavegar = (ev: Event) => {
+      const d = (ev as CustomEvent<unknown>).detail;
+      if (typeof d === "string") setSalaTab(d);
+    };
+    window.addEventListener("popstate", leer);
+    window.addEventListener("vanguard:navigate", alNavegar);
+    return () => {
+      window.removeEventListener("popstate", leer);
+      window.removeEventListener("vanguard:navigate", alNavegar);
+    };
+  }, [ruta]);
+
   const actualizar = useCallback((c: ConfigPaneles) => {
     setConfig(c);
     guardarPaneles(c);
   }, []);
 
-  const espacio = espacioDe(ruta);
+  // la entrada completa: ruta + consulta (y la sala que el cuartel tenga abierta)
+  const entrada = ruta === "/cuartel" && salaTab ? `/cuartel?sala=${salaTab}` : ruta + consulta;
+  const espacio = espacioDe(entrada);
   const def = ESPACIO_POR_CLAVE[espacio];
   const herramientas = herramientasVisibles(config, espacio);
   const vecinos = transicionesDe(espacio);
@@ -96,7 +123,7 @@ export function BarraAdaptativa() {
   if (SIN_BARRA.some((r) => ruta === r || ruta.startsWith(r + "/"))) return null;
 
   const plegada = config.plegado;
-  const activa = herramientas.find((h) => herramientaActiva(h, ruta));
+  const activa = herramientas.find((h) => herramientaActiva(h, entrada));
 
   return (
     <>
@@ -134,7 +161,7 @@ export function BarraAdaptativa() {
 
         <nav className="vx-nav-herr" aria-label={`Herramientas de ${def.nombre}`}>
           {herramientas.map((h) => {
-            const on = herramientaActiva(h, ruta);
+            const on = herramientaActiva(h, entrada);
             return (
               <a
                 key={h.id}

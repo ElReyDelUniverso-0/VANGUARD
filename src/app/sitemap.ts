@@ -292,6 +292,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v405.11 TU ESPACIO DE TRABAJO — la mesa del operador: proyectos con
+      // piezas (mapas, simulaciones, escenarios, herramientas, investigaciones
+      // y notas), paneles reorganizables, sesiones e historial. El trabajo se
+      // guarda en el aparato del visitante, así que la página es pública pero
+      // no hay datos personales que rastrear.
+      url: `${SITE_URL}/espacio`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v295.0 LA VERDAD CRUDA — la fuente dark-data (v24, documentada,
       // «todas las entradas citan fuentes públicas (ONU, CPJ, RSF, ACLED,
       // HRW, OSCE)») servida en server: 12 abusos de guerra verificados
