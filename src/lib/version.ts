@@ -267,6 +267,36 @@
 // NUMERACIÓN: main iba por v405.8 (LAS PUERTAS DE LAS SALAS, de la otra mano),
 // así que esta tanda entra como v405.9. No se toca su entrada ni su bloque.
 
+// v405.10 LA NAVEGACIÓN ADAPTATIVA — la casa deja de tener seis navegaciones
+// que no se hablan y pasa a tener UNA que sabe en qué estás trabajando.
+//
+// LO QUE HABÍA (auditoría de esta tanda): seis sistemas de navegación vivos a
+// la vez — la barra de 155 pestañas del cuartel (tab-nav.tsx), el menú grande
+// (mega-menu.tsx), la brújula de nueve intenciones (navegador.tsx), los nueve
+// módulos de rutas (modulos.ts), las 20 constelaciones (mapa-salas.ts) y las
+// 155 puertas /sala/<clave> (puertas-salas.ts) — sobre 56 rutas públicas. Los
+// mismos sitios con nombres distintos en cada una: el mapa 3D era sala Y ruta;
+// el atlas, sala Y ruta; las salas eran 155 pestañas Y 20 constelaciones Y 9
+// módulos Y 155 puertas. Y ninguna sabía qué estaba haciendo el operador.
+//
+// LO QUE ENTRA (todo aditivo, nada se borra):
+//   · src/lib/navegacion/ — el registro de DIEZ espacios de trabajo con sus
+//     herramientas (espacios.ts), el contexto como función pura de la URL
+//     (contexto.ts), los paneles configurables por espacio guardados en el
+//     aparato (paneles.ts) y el catálogo de destinos DERIVADO de las fuentes
+//     existentes, con su tabla de fusiones (destinos.ts).
+//   · src/components/vanguard/navegacion/ — la barra contextual que se monta
+//     una sola vez en el layout y la hoja de espacios que la configura.
+//   · /navegacion — la sala donde la arquitectura se ve entera y se prueba.
+//   · El buscador ⌘K obedece al contexto: lo del espacio en el que estás sube.
+//
+// NADA SE CIERRA: las seis navegaciones siguen funcionando. Donde había tres
+// puertas para el mismo sitio se declara la canónica (una ruta propia gana a
+// una sala del cuartel) y las demás quedan como alias navegables.
+//
+// NUMERACIÓN: main iba por v405.9 (mi centro de mapas), así que esta tanda
+// entra como v405.10.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5952,8 +5982,8 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.9";
-export const APP_CODENAME = "EL CENTRO DE MAPAS";
+export const APP_VERSION = "v405.10";
+export const APP_CODENAME = "LA NAVEGACIÓN ADAPTATIVA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6013,7 +6043,7 @@ export const APP_CODENAME = "EL CENTRO DE MAPAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.8";
+export const APP_VERSION_ANTERIOR = "v405.9";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
