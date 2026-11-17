@@ -42,8 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!f) return { title: "País no encontrado | VANGUARD" };
   const donde = f.atlas ? `${f.atlas.capital}, ${regionEnEspanol(f.region)}` : regionEnEspanol(f.region);
   const datos = [
-    f.atlas ? `población ${formatear("poblacion", f.atlas.poblacion)}` : null,
-    f.atlas ? `superficie ${formatear("superficie", f.atlas.superficie)}` : null,
+    f.poblacion !== null ? `población ${formatear("poblacion", f.poblacion / 1_000_000)}` : null,
+    f.superficie !== null ? `superficie ${formatear("superficie", f.superficie)}` : null,
+    f.censo && f.censo.pib !== null ? `PIB ${formatear("usd", f.censo.pib)}` : null,
     f.moneda ? `moneda ${f.moneda.nombre}` : null,
     f.militar ? `gasto militar ${formatear("usd", f.militar.gasto)}` : null,
   ].filter(Boolean);
@@ -205,11 +206,19 @@ export default async function PaisPage({ params }: Props) {
                 </div>
                 <div>
                   <dt>Superficie</dt>
-                  <dd>{f.atlas ? formatear("superficie", f.atlas.superficie) : <em>sin dato</em>}</dd>
+                  <dd>
+                    {f.superficie === null ? <em>sin dato</em> : formatear("superficie", f.superficie)}
+                    {f.censo && f.censo.anios.sup && !f.atlas ? <span className="vx-mp-cuando"> ({f.censo.anios.sup})</span> : null}
+                  </dd>
                 </div>
                 <div>
                   <dt>Población</dt>
-                  <dd>{f.atlas ? formatear("poblacion", f.atlas.poblacion) : <em>sin dato</em>}</dd>
+                  <dd>
+                    {f.poblacion === null ? <em>sin dato</em> : formatear("poblacion", f.poblacion / 1_000_000)}
+                    {f.censo && f.censo.anios.pob && f.cobertura.poblacion === "banco-mundial" ? (
+                      <span className="vx-mp-cuando"> ({f.censo.anios.pob})</span>
+                    ) : null}
+                  </dd>
                 </div>
                 <div>
                   <dt>Densidad</dt>
@@ -244,6 +253,17 @@ export default async function PaisPage({ params }: Props) {
                   <dd>{f.moneda ? formatear("tasa", f.moneda.tasa) : <em>sin dato</em>}</dd>
                 </div>
                 <div>
+                  <dt>PIB</dt>
+                  <dd>
+                    {f.censo && f.censo.pib !== null ? formatear("usd", f.censo.pib) : <em>sin dato</em>}
+                    {f.censo && f.censo.anios.pib ? <span className="vx-mp-cuando"> ({f.censo.anios.pib})</span> : null}
+                  </dd>
+                </div>
+                <div>
+                  <dt>PIB por habitante</dt>
+                  <dd>{f.censo && f.censo.pibPC !== null ? formatear("usd", f.censo.pibPC) : <em>sin dato</em>}</dd>
+                </div>
+                <div>
                   <dt>Gasto militar</dt>
                   <dd>{f.militar ? formatear("usd", f.militar.gasto) : <em>sin dato</em>}</dd>
                 </div>
@@ -257,9 +277,9 @@ export default async function PaisPage({ params }: Props) {
                 </div>
               </dl>
               <p className="vx-mp-nota">
-                El gasto militar sale del Banco Mundial (gasto en US$ corrientes del último año con dato); el tipo de
-                cambio, del dataset de monedas de la casa. No hay PIB ni renta per cápita en las tablas de VANGUARD: no
-                se inventan.
+                El gasto militar, el PIB y el PIB por habitante salen del Banco Mundial (US$ corrientes del último año
+                con dato, y cada cifra lleva su año); el tipo de cambio, del dataset de monedas de la casa. Donde el
+                Banco Mundial no publica, la ficha dice «sin dato»: no se estima.
               </p>
             </div>
 
@@ -296,6 +316,13 @@ export default async function PaisPage({ params }: Props) {
                 <div>
                   <dt>Moneda como cultura</dt>
                   <dd>{f.moneda ? f.moneda.nombre : <em>sin dato</em>}</dd>
+                </div>
+                <div>
+                  <dt>Esperanza de vida</dt>
+                  <dd>
+                    {f.censo && f.censo.esperanzaVida !== null ? formatear("anios", f.censo.esperanzaVida) : <em>sin dato</em>}
+                    {f.censo && f.censo.anios.vida ? <span className="vx-mp-cuando"> ({f.censo.anios.vida})</span> : null}
+                  </dd>
                 </div>
               </dl>
               {f.personas.length > 0 ? (

@@ -1,3 +1,23 @@
+// v405.13 EL CENSO COMPLETO — la medida que el mapa no podía enseñar.
+// El mapa de los mundos estrenó nueve capas, pero la capa que más importa
+// —Población— apagaba 165 de los 249 países porque `atlas-data` solo la tenía
+// para 84: el lector veía un planeta casi entero en gris «sin dato». Y la ficha
+// del país lo confesaba por escrito: «No hay PIB ni renta per cápita en las
+// tablas de VANGUARD: no se inventan».
+// ① LA FUENTE QUE LA CASA YA USABA: el Banco Mundial, la misma que alimenta
+//    `poder-data` para el gasto militar. `scripts/generar-censo-banco-mundial.mjs`
+//    pregunta seis indicadores (población, superficie, PIB, PIB por habitante,
+//    gasto militar y esperanza de vida) y escribe el JSON con el año de CADA
+//    cifra y el día de la captura. No se escribe ni un número a mano.
+// ② LA COBERTURA, MEDIDA: población 84 → 215 países; superficie 84 → 215;
+//    PIB 0 → 212; PIB por habitante 0 → 212; esperanza de vida 0 → 215. Las
+//    capas del mapa pasan de nueve a DOCE y el planeta deja de estar apagado.
+// ③ LA REGLA DE SIEMPRE, INTACTA: la tabla de la casa manda y el Banco Mundial
+//    es la red (la ficha dice de dónde sale cada población); donde no hay dato
+//    se escribe «sin dato» — el Vaticano no tiene cifras del Banco Mundial y se
+//    queda sin ellas, Corea del Norte no publica PIB y su PIB no aparece.
+// ④ CADA CIFRA LLEVA SU AÑO: no todos los países publican el mismo (España
+//    2025 en población y 2024 en superficie); la ficha lo enseña al lado.
 // v405.12 LOS MUNDOS CONECTADOS — orden del Dueño, textual: «evolución total de
 // los mundos: inspecciona todos los mundos que ya existen, identifica los
 // repetidos, incompletos o separados que puedan fusionarse, fusiona los módulos
@@ -6062,8 +6082,8 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.12";
-export const APP_CODENAME = "LOS MUNDOS CONECTADOS";
+export const APP_VERSION = "v405.13";
+export const APP_CODENAME = "EL CENSO COMPLETO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6123,7 +6143,7 @@ export const APP_CODENAME = "LOS MUNDOS CONECTADOS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.11";
+export const APP_VERSION_ANTERIOR = "v405.12";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

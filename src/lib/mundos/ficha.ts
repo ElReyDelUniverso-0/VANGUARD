@@ -4,7 +4,7 @@
 // LA AUDITORÍA, EN UNA FRASE: el mismo país vivía en cinco tablas que no se
 // conocían entre sí y cada pantalla enseñaba una —
 //   ① geo-paises.ts   (249) → identidad ISO-2 / ISO-3 / numérico + centro
-//   ② atlas-data.ts   (162) → capital, zona horaria, población, superficie,
+//   ② atlas-data.ts   (84)  → capital, zona horaria, población, superficie,
 //                             idiomas, moneda, gobierno y líder REAL
 //   ③ world-data.ts   (249) → moneda oficial con su tasa por dólar
 //   ④ poder-data.ts   (167) → gasto militar, efectivos y % del PIB (Banco Mundial)
@@ -22,7 +22,30 @@ import { PAISES_GEO, POR_ISO2, type PaisGeo } from "@/lib/geo-paises";
 import { PAISES_ATLAS, PERSONAS_ATLAS, type PaisAtlas, type PersonaAtlas } from "@/lib/atlas-data";
 import { WORLD_CURRENCIES_FULL, type WorldCountry } from "@/lib/world-data";
 import { PODER_FILAS, type FilaPoder } from "@/lib/poder-data";
+import CENSO_BM from "./censo-banco-mundial.json";
 import type { FormatoMedida } from "./formato";
+
+// ── EL CENSO DEL BANCO MUNDIAL (v405.13) ──────────────────────────────
+// La tabla que tapa los huecos que dejaban las cinco de la casa: población y
+// superficie para 215 de los 249 (atlas-data solo las tenía para 84), más tres
+// columnas que no existían — PIB, PIB por habitante y esperanza de vida —.
+// Lo genera `scripts/generar-censo-banco-mundial.mjs`; aquí solo se lee, y
+// cada cifra viaja con SU año, porque no todos los países publican el mismo.
+interface FilaCenso {
+  pob?: number;
+  sup?: number;
+  pib?: number;
+  pibPC?: number;
+  mil?: number;
+  vida?: number;
+  anios?: Record<string, number>;
+}
+const CENSO = CENSO_BM as unknown as {
+  fuente: string;
+  captura: string;
+  actualizado: Record<string, string | null>;
+  paises: Record<string, FilaCenso>;
+};
 
 // ── índices (una sola pasada al cargar; el resto son búsquedas O(1)) ──
 const ATLAS_POR_ISO = new Map<string, PaisAtlas>(PAISES_ATLAS.map((p) => [p.id, p]));
@@ -65,16 +88,58 @@ export interface FichaPais {
   militar: { gasto: number; personal: number | null; gdpPct: number | null; anio: number; puesto: number; de: number } | null;
   /** personas del poder con sede real (atlas-data) */
   personas: { id: string; nombre: string; cargo: string; categoria: string; sede: string; ciudad: string; desde: number | string }[];
+  /** el censo del Banco Mundial: la red que tapa los huecos (con su año) */
+  censo: {
+    poblacion: number | null;
+    superficie: number | null;
+    pib: number | null;
+    pibPC: number | null;
+    gastoMilitar: number | null;
+    esperanzaVida: number | null;
+    anios: Record<string, number>;
+    fuente: string;
+    captura: string;
+  } | null;
+  /** resueltas: la tabla de la casa primero, el Banco Mundial después.
+   *  Una sola cifra para toda la casa (mapa, ficha y leyenda). */
+  poblacion: number | null; // personas
+  superficie: number | null; // km²
   /** derivado honesto: habitantes por km² */
   densidad: number | null;
   /** qué hay y qué no, campo por campo */
-  cobertura: { atlas: boolean; moneda: boolean; militar: boolean; personas: number };
+  cobertura: {
+    atlas: boolean;
+    moneda: boolean;
+    militar: boolean;
+    personas: number;
+    /** de dónde sale la población cuando el atlas no la tiene */
+    poblacion: "atlas" | "banco-mundial" | null;
+    pib: boolean;
+    vida: boolean;
+  };
 }
 
 function construir(g: PaisGeo): FichaPais {
   const a = ATLAS_POR_ISO.get(g.iso2) ?? null;
   const m = MONEDA_POR_ISO.get(g.iso2) ?? null;
   const poder = PODER_POR_ISO3.get(g.iso3) ?? null;
+  const crudo = CENSO.paises[g.iso3] ?? null;
+  const censo = crudo
+    ? {
+        poblacion: crudo.pob ?? null,
+        superficie: crudo.sup ?? null,
+        pib: crudo.pib ?? null,
+        pibPC: crudo.pibPC ?? null,
+        gastoMilitar: crudo.mil ?? null,
+        esperanzaVida: crudo.vida ?? null,
+        anios: crudo.anios ?? {},
+        fuente: CENSO.fuente,
+        captura: CENSO.captura,
+      }
+    : null;
+  // la casa manda: el atlas es su tabla; el Banco Mundial, la red
+  const poblacion = a ? a.poblacion * 1_000_000 : (censo?.poblacion ?? null);
+  const superficie = a && a.superficie > 0 ? a.superficie : (censo?.superficie ?? null);
   const personas = (PERSONAS_POR_ISO.get(g.iso2) ?? []).map((p) => ({
     id: p.id,
     nombre: p.nombre,
@@ -118,8 +183,20 @@ function construir(g: PaisGeo): FichaPais {
         }
       : null,
     personas,
-    densidad: a && a.superficie > 0 ? (a.poblacion * 1_000_000) / a.superficie : null,
-    cobertura: { atlas: !!a, moneda: !!m, militar: !!poder, personas: personas.length },
+    censo,
+    poblacion,
+    superficie,
+    densidad:
+      poblacion !== null && superficie !== null && superficie > 0 ? poblacion / superficie : null,
+    cobertura: {
+      atlas: !!a,
+      moneda: !!m,
+      militar: !!poder,
+      personas: personas.length,
+      poblacion: poblacion === null ? null : a ? "atlas" : "banco-mundial",
+      pib: !!censo?.pib,
+      vida: !!censo?.esperanzaVida,
+    },
   };
 }
 
@@ -177,6 +254,10 @@ export function coberturaGlobal() {
     conMoneda: todas.filter((f) => f.moneda).length,
     conMilitar: todas.filter((f) => f.militar).length,
     conPersonas: todas.filter((f) => f.personas.length > 0).length,
+    conPoblacion: todas.filter((f) => f.poblacion !== null).length,
+    conPib: todas.filter((f) => f.cobertura.pib).length,
+    conVida: todas.filter((f) => f.cobertura.vida).length,
+    conSuperficie: todas.filter((f) => f.superficie !== null).length,
     personas: PERSONAS_ATLAS.length,
     regiones,
   };
@@ -205,27 +286,45 @@ export const MEDIDAS: Medida[] = [
     nombre: "Población",
     pregunta: "¿Dónde vive la gente?",
     formato: "poblacion",
-    fuente: "atlas-data (población en millones, censo de la casa)",
+    fuente: "atlas-data de la casa + Banco Mundial SP.POP.TOTL (el atlas manda; el Banco Mundial tapa los 165 huecos)",
     sentido: "mayor",
-    valor: (f) => (f.atlas ? f.atlas.poblacion : null),
+    valor: (f) => (f.poblacion === null ? null : f.poblacion / 1_000_000),
   },
   {
     id: "superficie",
     nombre: "Superficie",
     pregunta: "¿Cuánto territorio ocupa cada país?",
     formato: "superficie",
-    fuente: "atlas-data (km²)",
+    fuente: "atlas-data de la casa + Banco Mundial AG.SRF.TOTL.K2",
     sentido: "mayor",
-    valor: (f) => (f.atlas ? f.atlas.superficie : null),
+    valor: (f) => f.superficie,
   },
   {
     id: "densidad",
     nombre: "Densidad",
     pregunta: "¿Dónde está apretada la población?",
     formato: "densidad",
-    fuente: "derivada: población ÷ superficie de atlas-data",
+    fuente: "derivada: población ÷ superficie (misma pareja de fuentes que las dos capas anteriores)",
     sentido: "mayor",
     valor: (f) => f.densidad,
+  },
+  {
+    id: "pib",
+    nombre: "PIB",
+    pregunta: "¿Cuánto produce cada economía?",
+    formato: "usd",
+    fuente: "Banco Mundial NY.GDP.MKTP.CD (US$ corrientes, último año con dato)",
+    sentido: "mayor",
+    valor: (f) => f.censo?.pib ?? null,
+  },
+  {
+    id: "pibPC",
+    nombre: "Renta por habitante",
+    pregunta: "¿Cuánto produce por persona?",
+    formato: "usd",
+    fuente: "Banco Mundial NY.GDP.PCAP.CD (US$ por habitante)",
+    sentido: "mayor",
+    valor: (f) => f.censo?.pibPC ?? null,
   },
   {
     id: "gasto",
@@ -253,6 +352,15 @@ export const MEDIDAS: Medida[] = [
     fuente: "poder-data · Banco Mundial MS.MIL.TOTL.P1 (captura 2026-11-05)",
     sentido: "mayor",
     valor: (f) => (f.militar ? f.militar.personal : null),
+  },
+  {
+    id: "vida",
+    nombre: "Esperanza de vida",
+    pregunta: "¿Cuántos años vive la gente?",
+    formato: "anios",
+    fuente: "Banco Mundial SP.DYN.LE00.IN (años al nacer)",
+    sentido: "mayor",
+    valor: (f) => f.censo?.esperanzaVida ?? null,
   },
   {
     id: "tasa",
