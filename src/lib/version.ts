@@ -5982,8 +5982,26 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.10";
-export const APP_CODENAME = "LA NAVEGACIÓN ADAPTATIVA";
+// v405.10 LA NAVEGACIÓN ADAPTATIVA (otra IA) quedó como versión anterior.
+// v406.0 LA TRAVESÍA — orden del Dueño: «reconstruir la experiencia de entrada
+// de VANGUARD… no quiero otro dashboard convencional ni otro centro de mando».
+// /entrar deja de ser un índice y pasa a ser un recorrido: llegada → brújula
+// (eliges qué te trae) → diez espacios a pantalla completa (Tu hilo, los 8
+// módulos y Lo desconocido) que se deslizan como un viaje, con transición de
+// puerta al entrar a cada sala. Nada se borra: NAV, BarraMovil, la Puerta de
+// los Mundos, la portada, /modulos y /perfil ganan su acceso a la Travesía.
+// ① EL RASTRO (src/lib/travesia/rastro.ts): un Registrador en el layout anota
+//    en el propio aparato (vg-rastro-v1, 80 pasos, nunca sale al servidor) cada
+//    sala visitada y la clasifica en investigación · simulación · proyecto.
+// ② TU HILO: «retoma tu proyecto» y la lista por actividad leen ese rastro y
+//    las claves que la casa YA guardaba (modo, favoritos, sala del cuartel).
+// ③ CONTEXTO: cada espacio enseña sus puertas reales, cables vivos donde los
+//    hay y «a mano en este espacio» con las herramientas que le tocan.
+// ④ Se borra desde la Travesía o el perfil; /privacidad lo declara.
+// ⑤ Probado en móvil (390×844) y escritorio; scripts/pruebas-travesia.mjs
+//    fija las funciones puras (9 pruebas).
+export const APP_VERSION = "v406.0";
+export const APP_CODENAME = "LA TRAVESÍA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6043,7 +6061,7 @@ export const APP_CODENAME = "LA NAVEGACIÓN ADAPTATIVA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.9";
+export const APP_VERSION_ANTERIOR = "v405.10";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

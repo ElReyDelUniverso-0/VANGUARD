@@ -161,6 +161,8 @@ html[data-vp-abierta="1"] { overflow: hidden; }
   color: rgba(244,241,232,.85); font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; cursor: pointer;
 }
 .vp-saltar:hover, .vp-saltar:focus-visible { color: #fff; border-color: var(--vp-oro); outline: none; }
+/* v406.0 LA TRAVESÍA: la tercera salida, a la izquierda */
+.vp-travesia { right: auto; left: 14px; color: var(--vp-oro); border-color: rgba(232,197,106,.45); text-decoration: none; }
 
 /* ── el warp: el mundo elegido se traga la pantalla ── */
 .vp[data-fase="warp"] .vp-mundo { flex: 0 0 0; padding: 0; opacity: 0; }

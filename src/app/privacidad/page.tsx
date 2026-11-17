@@ -68,7 +68,7 @@ const SECCIONES: { titulo: string; parrafos: string[] }[] = [
   {
     titulo: "2. Lo que se guarda en tu aparato (y nunca sale de él)",
     parrafos: [
-      "Tu identidad de juego básica (alias, preferencias de vista, interruptores de sonido y voz) se guarda localmente en tu navegador mediante almacenamiento local del navegador. Estos datos no se envían a nuestros servidores: viven en tu aparato y desaparecen si borras los datos del sitio.",
+      "Tu identidad de juego básica (alias, preferencias de vista, interruptores de sonido y voz) se guarda localmente en tu navegador mediante almacenamiento local del navegador. Estos datos no se envían a nuestros servidores: viven en tu aparato y desaparecen si borras los datos del sitio. Desde v406.0, La Travesía guarda también ahí tu rastro (las últimas 80 páginas que abriste, para que puedas continuar donde lo dejaste) y tu brújula (los espacios que elegiste poner delante); los dos se borran con un toque desde La Travesía o tu perfil.",
       "También se guarda localmente una copia temporal de imágenes y sonidos de la Casa (caché) para que Vanguard cargue más rápido. La caché no contiene datos personales.",
     ],
   },

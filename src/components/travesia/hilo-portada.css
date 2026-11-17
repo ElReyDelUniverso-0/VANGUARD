@@ -1,0 +1,23 @@
+/* v406.0 LA TRAVESÍA — el hilo de la portada (una línea, dentro del flujo) */
+.tv-hp { display: flex; align-items: stretch; gap: 8px; margin: 10px 0 4px; }
+.tv-hp-seguir {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 8px 14px;
+  border-radius: 10px; border: 1px solid rgba(232, 197, 106, 0.35);
+  background: linear-gradient(90deg, rgba(232, 197, 106, 0.14), rgba(13, 17, 24, 0.9));
+  color: #f3eee2; text-decoration: none;
+}
+.tv-hp-k { flex: none; font: 700 9.5px/1 ui-monospace, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: #e8c56a; }
+.tv-hp-t { flex: 1; min-width: 0; font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tv-hp-h { flex: none; font: 500 11px/1 ui-monospace, monospace; color: #8f8a7c; }
+.tv-hp-tv {
+  flex: none; display: inline-flex; align-items: center; min-height: 46px; padding: 0 14px; border-radius: 10px;
+  background: linear-gradient(180deg, #f2d98c, #d4af37); color: #120e04; text-decoration: none;
+  font: 700 10.5px/1 var(--font-orbitron), sans-serif; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.tv-hp-boton {
+  display: inline-flex; align-items: center; min-height: 46px; padding: 0 18px; border-radius: 999px;
+  border: 1px solid rgba(232, 197, 106, 0.45); color: #e8c56a; text-decoration: none;
+  font: 700 11px/1 var(--font-orbitron), sans-serif; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.tv-hp-boton:hover { background: rgba(232, 197, 106, 0.1); }
+@media (max-width: 520px) { .tv-hp-k, .tv-hp-h { display: none; } }

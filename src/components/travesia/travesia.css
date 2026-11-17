@@ -1,0 +1,317 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v406.0 LA TRAVESÍA — piel de la entrada nueva.
+   Móvil primero: 100dvh, zonas seguras, scroll-snap nativo horizontal,
+   scroll vertical dentro de cada espacio. Solo transform/opacity en las
+   animaciones (60 fps). «Reducir movimiento» apaga todo lo que se mueve.
+   ═══════════════════════════════════════════════════════════════════ */
+.tv {
+  --oro: #e8c56a;
+  --oro2: #d4af37;
+  --tx: #f4efe2;
+  --tx2: rgba(244, 239, 226, 0.72);
+  --tx3: rgba(244, 239, 226, 0.5);
+  --linea: rgba(232, 197, 106, 0.16);
+  --cab: 56px;
+  --nav: 58px;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #06080c;
+  color: var(--tx);
+  font-family: var(--font-inter, system-ui), system-ui, sans-serif;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.tv *,
+.tv *::before,
+.tv *::after { box-sizing: border-box; }
+.tv a { color: inherit; text-decoration: none; }
+.tv button { font: inherit; color: inherit; }
+
+/* ───── cabecera */
+.tv-cab {
+  position: absolute; z-index: 5; top: 0; left: 0; right: 0;
+  height: calc(var(--cab) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(6, 8, 12, 0.9);
+  border-bottom: 1px solid var(--linea);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+.tv-cab > * { pointer-events: auto; }
+.tv-marca { display: inline-flex; align-items: center; gap: 8px; font: 700 13px/1 var(--font-orbitron), sans-serif; letter-spacing: 0.22em; }
+.tv-marca-emb { width: 26px; height: 26px; }
+.tv-donde { margin: 0 auto 0 0; display: flex; flex-direction: column; gap: 3px; padding-left: 12px; border-left: 1px solid var(--linea); min-width: 0; }
+.tv-donde span { font: 600 9px/1 ui-monospace, monospace; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tx3); }
+.tv-donde b { font: 700 12px/1 var(--font-orbitron), sans-serif; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
+.tv-cab-der { display: flex; align-items: center; gap: 6px; }
+@media (max-width: 420px) { .tv-marca span { display: none; } }
+
+/* ───── la pista de espacios */
+.tv-pista {
+  position: absolute; inset: 0;
+  display: flex;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.tv-pista::-webkit-scrollbar { display: none; }
+.tv-esp {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%; height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  isolation: isolate;
+}
+.tv-fondo { position: absolute; inset: -4% -12%; z-index: -2; will-change: transform, opacity; transform: scale(1.08); }
+.tv-fondo img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.9) contrast(1.05); }
+.tv-velo {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(120% 70% at 50% 0%, transparent 0%, rgba(6, 8, 12, 0.35) 45%, rgba(6, 8, 12, 0.9) 75%),
+    linear-gradient(180deg, rgba(6, 8, 12, 0.35) 0%, rgba(6, 8, 12, 0.7) 38%, #06080c 72%);
+}
+.tv-esp-in {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding: calc(var(--cab) + env(safe-area-inset-top) + 18vh) max(18px, env(safe-area-inset-right)) calc(var(--nav) + env(safe-area-inset-bottom) + 28px) max(18px, env(safe-area-inset-left));
+  max-width: 1080px; margin: 0 auto;
+  scrollbar-width: thin;
+}
+.tv-num { margin: 0 0 10px; font: 600 10px/1 ui-monospace, monospace; letter-spacing: 0.24em; text-transform: uppercase; color: var(--c, var(--oro)); }
+.tv-verbo {
+  margin: 0; font: 700 clamp(44px, 13vw, 104px)/0.92 var(--font-orbitron), sans-serif; letter-spacing: -0.01em; text-transform: uppercase;
+  background: linear-gradient(180deg, #fff 10%, var(--c, var(--oro)) 130%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 0 transparent;
+}
+/* los nombres largos (LO DESCONOCIDO, EMPIEZA AQUÍ) bajan de cuerpo para caber en un móvil */
+.tv-verbo[data-largo="1"] { font-size: clamp(30px, 9.2vw, 84px); }
+.tv-lema { margin: 12px 0 0; font-size: clamp(17px, 4.6vw, 22px); font-weight: 650; line-height: 1.25; max-width: 32ch; }
+.tv-gancho { margin: 8px 0 0; color: var(--tx2); font-size: 15px; line-height: 1.5; max-width: 52ch; }
+.tv-sub { margin: 28px 0 10px; font: 700 11px/1 ui-monospace, monospace; letter-spacing: 0.2em; text-transform: uppercase; color: var(--tx2); display: flex; justify-content: space-between; gap: 10px; }
+.tv-sub span { color: var(--c, var(--oro)); letter-spacing: 0.12em; }
+.tv-mini { margin: 0 0 8px; font: 600 10px/1.2 ui-monospace, monospace; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tx3); display: flex; align-items: center; gap: 7px; }
+.tv-punto { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ff3b30; box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.6); animation: tv-latido 1.6s infinite; flex: none; }
+@keyframes tv-latido { 70% { box-shadow: 0 0 0 7px rgba(255, 59, 48, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
+
+/* ───── botones */
+.tv-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 46px; padding: 0 18px; border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+  background: linear-gradient(180deg, #f2d98c, var(--oro2)); color: #120e04 !important;
+  font: 700 12px/1 var(--font-orbitron), sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+  transition: transform 0.15s, filter 0.2s;
+}
+.tv-btn:active { transform: scale(0.97); }
+.tv-btn:disabled { filter: grayscale(1) brightness(0.6); cursor: default; }
+.tv-btn-fantasma { background: rgba(6, 8, 12, 0.55); color: var(--tx) !important; border-color: rgba(244, 239, 226, 0.22); backdrop-filter: blur(6px); }
+.tv-hilo-acc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.tv-privado { margin: 14px 0 0; color: var(--tx3); font-size: 12px; }
+
+/* ───── continuar */
+.tv-seguir {
+  position: relative; display: grid; gap: 6px; margin-top: 22px; padding: 18px 64px 18px 18px;
+  border-radius: 18px; border: 1px solid color-mix(in srgb, var(--c, var(--oro)) 55%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c, var(--oro)) 22%, rgba(10, 13, 19, 0.85)), rgba(10, 13, 19, 0.82));
+  box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--c, var(--oro)) 60%, transparent);
+  backdrop-filter: blur(8px);
+}
+.tv-seguir-k { display: inline-flex; align-items: center; gap: 7px; font: 700 10px/1 ui-monospace, monospace; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c, var(--oro)); }
+.tv-seguir-k svg { width: 15px; height: 15px; }
+.tv-seguir-t { font-size: clamp(18px, 5vw, 24px); font-weight: 750; line-height: 1.2; }
+.tv-seguir-h { color: var(--tx2); font-size: 13px; }
+.tv-seguir-ir { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--c, var(--oro)); color: #0b0904; }
+.tv-seguir-mini { margin-top: 18px; padding: 14px 60px 14px 16px; }
+.tv-seguir-mini .tv-seguir-t { font-size: 17px; }
+
+/* ───── carriles del hilo */
+.tv-carriles { display: grid; gap: 12px; margin-top: 16px; }
+@media (min-width: 760px) { .tv-carriles { grid-template-columns: repeat(3, 1fr); } }
+.tv-carril { padding: 14px; border-radius: 14px; background: rgba(10, 13, 19, 0.72); border: 1px solid var(--linea); backdrop-filter: blur(6px); }
+.tv-carril-t { margin: 0 0 8px; display: flex; align-items: center; gap: 7px; font: 700 10px/1 ui-monospace, monospace; letter-spacing: 0.2em; text-transform: uppercase; color: var(--oro); }
+.tv-carril-t svg { width: 14px; height: 14px; }
+.tv-paso { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding: 8px 0; border-top: 1px solid rgba(244, 239, 226, 0.07); font-size: 14px; font-weight: 600; }
+.tv-paso:first-of-type { border-top: 0; }
+.tv-paso span { overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.tv-paso time { flex: none; color: var(--tx3); font: 500 11px/1 ui-monospace, monospace; }
+.tv-paso-vacio { color: var(--tx2); font-weight: 500; }
+.tv-paso-vacio svg { flex: none; color: var(--oro); width: 16px; }
+
+/* ───── arranques (primera vez) */
+.tv-arranques { display: grid; gap: 10px; margin-top: 20px; }
+@media (min-width: 760px) { .tv-arranques { grid-template-columns: repeat(3, 1fr); } }
+.tv-arranque { display: grid; gap: 4px; padding: 16px; border-radius: 16px; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--c) 18%, rgba(10, 13, 19, 0.85)), rgba(10, 13, 19, 0.85)); }
+.tv-arranque-v { font: 700 10px/1 ui-monospace, monospace; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c); }
+.tv-arranque-t { font-size: 19px; font-weight: 750; }
+.tv-arranque-x { color: var(--tx2); font-size: 13.5px; line-height: 1.4; }
+
+/* ───── lo tuyo */
+.tv-lotuyo { margin-top: 22px; }
+.tv-lotuyo-l { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; touch-action: pan-x; }
+.tv-tuyo { flex: 0 0 auto; display: grid; gap: 3px; min-width: 150px; max-width: 220px; padding: 12px 14px; border-radius: 14px; background: rgba(10, 13, 19, 0.75); border: 1px solid var(--linea); }
+.tv-tuyo b { font: 700 9.5px/1.2 ui-monospace, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: var(--oro); }
+.tv-tuyo span { font-size: 14px; font-weight: 650; line-height: 1.25; }
+
+/* ───── cables vivos */
+.tv-ahora, .tv-cables { margin-top: 22px; }
+.tv-cable { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; row-gap: 4px; padding: 12px 0; border-top: 1px solid rgba(244, 239, 226, 0.08); }
+.tv-cable time { grid-row: span 2; font: 700 12px/1.3 ui-monospace, monospace; color: #ff6b74; padding-top: 2px; }
+.tv-cable span { font-size: 15px; font-weight: 650; line-height: 1.35; }
+.tv-cable em { font-style: normal; color: var(--tx3); font-size: 12px; }
+
+/* ───── progreso */
+.tv-progreso { display: grid; gap: 12px; margin-top: 24px; }
+@media (min-width: 760px) { .tv-progreso { grid-template-columns: 1fr 1fr; } }
+.tv-barra p { margin: 0 0 6px; display: flex; justify-content: space-between; font: 600 10.5px/1 ui-monospace, monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tx2); }
+.tv-barra p b { color: var(--oro); }
+.tv-barra div { height: 6px; border-radius: 6px; background: rgba(244, 239, 226, 0.1); overflow: hidden; }
+.tv-barra i { display: block; height: 100%; min-width: 2px; border-radius: 6px; background: linear-gradient(90deg, var(--oro2), #f6e3a1); transition: width 0.6s; }
+
+/* ───── puertas de un espacio */
+.tv-puertas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 760px) { .tv-puertas { grid-template-columns: repeat(3, 1fr); } }
+.tv-door {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
+  min-height: 150px; padding: 12px; border-radius: 16px; overflow: hidden; isolation: isolate;
+  border: 1px solid rgba(244, 239, 226, 0.12); background: #0d1118;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.tv-door img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: transform 0.6s; }
+.tv-door::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(6, 8, 12, 0.05) 0%, rgba(6, 8, 12, 0.6) 45%, rgba(6, 8, 12, 0.96) 100%); }
+.tv-door:hover { border-color: var(--c); }
+.tv-door:hover img { transform: scale(1.06); }
+.tv-door:active { transform: scale(0.98); }
+.tv-door-t { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 750; line-height: 1.15; }
+.tv-door-x { color: var(--tx2); font-size: 12.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tv-door-v { position: absolute; top: 10px; right: 10px; padding: 4px 8px; border-radius: 999px; background: rgba(6, 8, 12, 0.8); border: 1px solid var(--c); color: var(--c); font: 700 9.5px/1 ui-monospace, monospace; letter-spacing: 0.06em; }
+.tv-door[data-visto="1"] { border-color: color-mix(in srgb, var(--c) 45%, transparent); }
+
+/* ───── herramientas contextuales */
+.tv-herr { display: grid; gap: 10px; }
+@media (min-width: 620px) { .tv-herr { grid-template-columns: repeat(3, 1fr); } }
+.tv-herr-b { display: grid; gap: 3px; min-height: 44px; padding: 12px 14px; border-radius: 14px; background: rgba(10, 13, 19, 0.78); border: 1px dashed color-mix(in srgb, var(--c, var(--oro)) 50%, transparent); }
+.tv-herr-b b { font-size: 14.5px; font-weight: 750; color: var(--c, var(--oro)); }
+.tv-herr-b span { color: var(--tx2); font-size: 12.5px; line-height: 1.35; }
+
+/* ───── lo desconocido */
+.tv-azar { margin-top: 22px; padding: 20px; border-radius: 18px; background: rgba(10, 13, 19, 0.82); border: 1px solid rgba(185, 194, 208, 0.35); backdrop-filter: blur(8px); }
+.tv-azar-n { margin: 4px 0 0; font: 700 clamp(22px, 6.4vw, 34px)/1.1 var(--font-orbitron), sans-serif; text-transform: uppercase; }
+.tv-azar-c { margin: 8px 0 0; color: var(--tx2); font-size: 13px; }
+.tv-azar-acc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.tv-modos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+@media (min-width: 760px) { .tv-modos { grid-template-columns: repeat(3, 1fr); } }
+.tv-modo { display: grid; gap: 4px; padding: 14px; border-radius: 14px; background: rgba(10, 13, 19, 0.8); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); border-left: 3px solid var(--c); }
+.tv-modo[data-tuyo="1"] { box-shadow: 0 0 0 1px var(--c) inset; }
+.tv-modo[data-tuyo="1"] .tv-modo-n::after { content: " · TU MODO"; color: var(--tx3); font-size: 9px; }
+.tv-modo-n { font: 700 12px/1.2 var(--font-orbitron), sans-serif; letter-spacing: 0.06em; color: var(--c); }
+.tv-modo-l { color: var(--tx2); font-size: 12.5px; line-height: 1.35; }
+
+/* ───── la constelación (navegación inferior) */
+.tv-nav {
+  position: absolute; z-index: 5; left: 0; right: 0; bottom: 0;
+  height: calc(var(--nav) + env(safe-area-inset-bottom));
+  padding: 0 max(6px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(6px, env(safe-area-inset-left));
+  display: flex; align-items: center; gap: 4px;
+  background: linear-gradient(0deg, rgba(6, 8, 12, 0.97) 40%, rgba(6, 8, 12, 0.75));
+  border-top: 1px solid var(--linea);
+  backdrop-filter: blur(10px);
+}
+.tv-nav-f { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; color: var(--oro); cursor: pointer; border-radius: 50%; }
+.tv-nav-f:disabled { opacity: 0.25; }
+.tv-nav-lista { flex: 1; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
+.tv-nav-lista::-webkit-scrollbar { display: none; }
+.tv-nav-lista button {
+  flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: none; cursor: pointer;
+  font: 600 11px/1 ui-monospace, monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3); white-space: nowrap; transition: color 0.25s, background 0.25s;
+}
+.tv-nav-lista button i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); opacity: 0.45; transition: transform 0.25s, opacity 0.25s; }
+.tv-nav-lista button[data-on="1"] { color: var(--tx); background: color-mix(in srgb, var(--c) 16%, transparent); }
+.tv-nav-lista button[data-on="1"] i { opacity: 1; transform: scale(1.35); box-shadow: 0 0 10px var(--c); }
+
+/* ───── ① la llegada */
+.tv-llegada {
+  position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px;
+  background: radial-gradient(60% 45% at 50% 50%, rgba(232, 197, 106, 0.14), transparent 70%), #05070a; cursor: pointer;
+  animation: tv-sale 0.5s 2.2s both;
+}
+.tv-anillos { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.tv-anillos i { position: absolute; width: 140px; height: 140px; border-radius: 50%; border: 1px solid rgba(232, 197, 106, 0.55); animation: tv-anillo 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) infinite; }
+.tv-anillos i:nth-child(2) { animation-delay: 0.5s; }
+.tv-anillos i:nth-child(3) { animation-delay: 1s; }
+@keyframes tv-anillo { from { transform: scale(0.4); opacity: 0.9; } to { transform: scale(5); opacity: 0; } }
+.tv-llegada-emb { width: 84px; height: 84px; animation: tv-emb 1s cubic-bezier(0.2, 0.9, 0.2, 1.2) both; filter: drop-shadow(0 0 24px rgba(232, 197, 106, 0.55)); }
+@keyframes tv-emb { from { transform: scale(0.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.tv-llegada-l1 { margin: 6px 0 0; font: 700 clamp(22px, 6.5vw, 40px)/1.1 var(--font-orbitron), sans-serif; text-transform: uppercase; letter-spacing: 0.02em; animation: tv-sube 0.7s 0.45s both; }
+.tv-llegada-l2 { margin: 0; font-size: clamp(17px, 4.8vw, 24px); color: var(--tx2); animation: tv-sube 0.7s 0.95s both; max-width: 30ch; }
+.tv-llegada-l2 b { color: var(--oro); font-weight: 800; }
+.tv-llegada-toca { position: absolute; bottom: calc(28px + env(safe-area-inset-bottom)); font: 600 10px/1 ui-monospace, monospace; letter-spacing: 0.28em; text-transform: uppercase; color: var(--tx3); animation: tv-sube 0.6s 1.4s both; }
+@keyframes tv-sube { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes tv-sale { to { opacity: 0.0; } }
+
+/* ───── ② la brújula */
+.tv-brujula { position: absolute; inset: 0; z-index: 19; overflow-y: auto; background: radial-gradient(80% 50% at 50% 0%, rgba(232, 197, 106, 0.12), transparent 70%), #05070a; animation: tv-aparece 0.4s both; }
+@keyframes tv-aparece { from { opacity: 0; } to { opacity: 1; } }
+.tv-brujula-in { max-width: 980px; margin: 0 auto; padding: calc(28px + env(safe-area-inset-top)) 18px calc(120px + env(safe-area-inset-bottom)); }
+.tv-volanta { margin: 0; font: 700 10px/1 ui-monospace, monospace; letter-spacing: 0.26em; text-transform: uppercase; color: var(--oro); }
+.tv-brujula h2 { margin: 10px 0 0; font: 700 clamp(26px, 7.4vw, 46px)/1.05 var(--font-orbitron), sans-serif; text-transform: uppercase; }
+.tv-brujula-sub { margin: 10px 0 0; color: var(--tx2); font-size: 15px; line-height: 1.5; max-width: 50ch; }
+.tv-brujula-rejilla { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 22px; }
+@media (min-width: 760px) { .tv-brujula-rejilla { grid-template-columns: repeat(4, 1fr); } }
+.tv-rumbo {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; min-height: 132px; padding: 12px; text-align: left; cursor: pointer;
+  border-radius: 16px; overflow: hidden; isolation: isolate; border: 1px solid rgba(244, 239, 226, 0.14); background: #0d1118; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.tv-rumbo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: 0.75; }
+.tv-rumbo::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 10%, rgba(6, 8, 12, 0.95)); }
+.tv-rumbo[data-on="1"] { border-color: var(--c); box-shadow: 0 0 0 2px var(--c) inset, 0 12px 30px -12px var(--c); transform: translateY(-2px); }
+.tv-rumbo-n { font: 700 13px/1.15 var(--font-orbitron), sans-serif; text-transform: uppercase; color: var(--c); }
+.tv-rumbo-l { font-size: 12px; line-height: 1.3; color: var(--tx2); }
+.tv-rumbo-orden { position: absolute; top: 10px; right: 10px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #0b0904; font: 800 12px/1 var(--font-orbitron), sans-serif; }
+.tv-brujula-acc {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; justify-content: flex-end; gap: 10px;
+  padding: 14px max(18px, env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background: linear-gradient(0deg, #05070a 55%, transparent);
+}
+
+/* ───── ④ la puerta que se abre */
+.tv-puerta {
+  position: fixed; z-index: 30; left: 0; top: 0; overflow: hidden; border-radius: 16px; background: #06080c;
+  width: var(--w); height: var(--h); transform: translate3d(var(--x), var(--y), 0);
+  border: 1px solid var(--c);
+  transition: transform 0.42s cubic-bezier(0.7, 0, 0.2, 1), width 0.42s cubic-bezier(0.7, 0, 0.2, 1), height 0.42s cubic-bezier(0.7, 0, 0.2, 1), border-radius 0.42s;
+}
+.tv-puerta[data-lleno="1"] { width: 100vw; height: 100dvh; transform: translate3d(0, 0, 0); border-radius: 0; }
+.tv-puerta img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
+.tv-puerta::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 55%, transparent, rgba(6, 8, 12, 0.92) 70%); }
+.tv-puerta-t { position: absolute; z-index: 1; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; gap: 8px; text-align: center; width: min(90vw, 640px); opacity: 0; transition: opacity 0.25s 0.2s; }
+.tv-puerta[data-lleno="1"] .tv-puerta-t { opacity: 1; }
+.tv-puerta-t span { font: 700 10px/1 ui-monospace, monospace; letter-spacing: 0.3em; text-transform: uppercase; color: var(--c); }
+.tv-puerta-t b { font: 700 clamp(22px, 6vw, 40px)/1.1 var(--font-orbitron), sans-serif; text-transform: uppercase; }
+
+/* el hilo empieza un poco más arriba: es el que más contenido tiene */
+.tv-hilo .tv-esp-in { padding-top: calc(var(--cab) + env(safe-area-inset-top) + 10vh); }
+
+@media (min-width: 900px) {
+  .tv-esp-in { padding-left: 48px; padding-right: 48px; }
+}
+
+/* ───── reducir movimiento: todo quieto */
+@media (prefers-reduced-motion: reduce) {
+  .tv *, .tv *::before, .tv *::after { animation: none !important; transition: none !important; }
+  .tv-pista { scroll-behavior: auto; }
+}
+
+/* el buscador ⌘K de la casa, vestido para la Travesía */
+.tv .vx-ico { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; height: 44px; padding: 0 12px; border-radius: 999px; color: var(--oro); border: 1px solid var(--linea); background: rgba(6, 8, 12, 0.55); cursor: pointer; }
+.tv .vx-ico svg { width: 18px; height: 18px; }
+
+/* v406.0 — el pulso automático de la casa (pulso-auto.tsx, abajo-izquierda) sigue
+   vivo dentro de la Travesía, pero se apoya ENCIMA de la barra de espacios en vez de taparla. */
+body:has(.tv-nav) [data-vg-retencion="pulso"] { bottom: calc(var(--tv-nav-alto, 64px) + 10px + env(safe-area-inset-bottom)) !important; }
+body:has(.tv-brujula) [data-vg-retencion="pulso"] { display: none !important; }

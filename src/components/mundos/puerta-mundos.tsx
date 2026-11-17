@@ -254,6 +254,20 @@ export function Puerta({ onElegir, onSaltar }: { onElegir: (m: Mundo) => void; o
         </span>
       </div>
 
+      {/* v406.0 LA TRAVESÍA: una tercera salida — recorrer toda la casa, espacio a espacio */}
+      {fase === "eleccion" && (
+        <a
+          href="/entrar"
+          className="vp-saltar vp-travesia"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSaltar?.();
+          }}
+        >
+          Explorar toda la casa <span aria-hidden>›</span>
+        </a>
+      )}
+
       {onSaltar && fase !== "warp" && (
         <button
           type="button"
