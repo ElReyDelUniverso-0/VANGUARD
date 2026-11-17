@@ -5982,8 +5982,31 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.10";
-export const APP_CODENAME = "LA NAVEGACIÓN ADAPTATIVA";
+// v405.10 LA NAVEGACIÓN ADAPTATIVA (otra IA) quedó como versión anterior.
+// (La v406.0 LA TRAVESÍA va en su propia rama/PR; esta rama sale de main y
+// no la contiene: quien entre segunda se rebasa sobre la otra.)
+// v406.1 LA FORJA — orden del Dueño, «ECOSISTEMA DE CREADORES»: «convertir a
+// los usuarios en creadores de contenido dentro de VANGUARD». Se fusiona lo que
+// ya existía (UgcItem v26, votos, comentarios, moderateUgc, muro de fortaleza,
+// cuentas, /api/creadores/fama) en un solo sistema en /creadores:
+// ① CINCO CLASES DE OBRA: mapa · escenario · investigación · simulación ·
+//    proyecto, cada una con su esquema validado en el servidor
+//    (src/lib/creadores/tipos.ts) y su sala de herramientas real enlazada.
+// ② PÁGINAS DE CREADOR (/creadores/perfil/[alias]): obras, colecciones, fama,
+//    rango e insignias calculados de datos reales (reconocimiento.ts).
+// ③ VERSIONES: cada edición guarda una versión con nota; se puede volver atrás.
+// ④ COMENTARIOS (pasan por moderateUgc) y VALORACIONES 1-5, una por cuenta.
+// ⑤ COLECCIONES: listas públicas o privadas de obras de cualquier autor.
+// ⑥ PERMISOS por rol (lector · creador · verificado · moderador · dueño) que
+//    fallan cerrados; MODERACIÓN con cola, reportes (umbral → retenida),
+//    retirada/republicación, roles y una BITÁCORA donde toda decisión exige
+//    motivo. Nadie se modera a sí mismo salvo el dueño.
+// ⑦ El muro y los feeds de /api/ugc excluyen las obras de la Forja (otro
+//    esquema). /privacidad lo declara. Obras, perfiles y colecciones van
+//    noindex mientras la base de producción sea efímera (SQLite en /tmp).
+// ⑧ scripts/pruebas-forja.mjs fija las funciones puras.
+export const APP_VERSION = "v406.1";
+export const APP_CODENAME = "LA FORJA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6043,7 +6066,7 @@ export const APP_CODENAME = "LA NAVEGACIÓN ADAPTATIVA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.9";
+export const APP_VERSION_ANTERIOR = "v405.10";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

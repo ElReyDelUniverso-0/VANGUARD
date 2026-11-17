@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
@@ -103,6 +104,20 @@ export default function PerfilPage() {
         </article>
 
         <PerfilJugadorCarga />
+
+        {/* v406.1 LA FORJA — de jugador a creador: tu página pública de obras */}
+        <article className="mx-auto max-w-4xl px-5 pb-6">
+          <Link
+            href="/creadores"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300/30 bg-amber-300/5 px-5 py-4 text-zinc-100 no-underline transition-colors hover:border-amber-300/60"
+          >
+            <span>
+              <span className="block font-mono text-[11px] uppercase tracking-[0.16em] text-amber-300">La Forja · creadores</span>
+              <span className="text-sm text-zinc-300">Publica mapas, escenarios, investigaciones, simulaciones y proyectos con tu alias.</span>
+            </span>
+            <span className="font-mono text-xs uppercase tracking-[0.12em] text-amber-300">Abrir →</span>
+          </Link>
+        </article>
 
         <article className="mx-auto max-w-4xl px-5 pb-10">
           <FuenteYFecha

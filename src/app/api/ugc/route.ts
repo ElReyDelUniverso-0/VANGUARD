@@ -54,6 +54,10 @@ export async function GET(req: Request) {
     if (mine && author) where.author = author;
     else where.status = "APROBADO";
     if (kind && KINDS.includes(kind)) where.kind = kind;
+    // v406.1 LA FORJA: las obras de creadores (specs.forja = 1) viven en
+    // /creadores con su propio formato; el muro y los feeds no deben
+    // intentar pintarlas como un mapa/escenario del Taller (otro esquema).
+    where.NOT = { specs: { contains: '"forja":1' } };
 
     let orderBy;
     if (sort === "top") orderBy = [{ likes: "desc" as const }, { createdAt: "desc" as const }];
