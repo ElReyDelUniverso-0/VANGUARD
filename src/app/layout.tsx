@@ -20,6 +20,9 @@ import "./portada.css";
 import "./piel.css";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
+// v405.10 · LA BARRA ADAPTATIVA: las herramientas del espacio en el que estás.
+// Se monta una sola vez aquí y aparece en todas las salas que no son inmersivas.
+import { BarraAdaptativa } from "@/components/vanguard/navegacion/barra-adaptativa";
 import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -930,6 +933,8 @@ try{
             pantalla salta la cabecera y el teletipo de una vez (WCAG 2.4.1). */}
         <a href="#vg-contenido" className="vx-saltar">Saltar al contenido</a>
         <Carcasa />
+        {/* v405.10: el muelle contextual — se adapta a la sala en la que estás */}
+        <BarraAdaptativa />
         {/* v403.1 LOS DOS MUNDOS: la Puerta (primera visita) y el Cruce entre mundos */}
         <PuertaMundos />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />

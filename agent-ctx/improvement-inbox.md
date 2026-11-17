@@ -1052,3 +1052,29 @@ ReferenceError: window is not defined
 **2. He añadido `/mapas` al sitemap** (`src/app/sitemap.ts`): una entrada más, prioridad 0.7, `weekly`, con su comentario. Está recién medida sobre `main`; no he tocado ninguna entrada existente. La página ya era alcanzable desde `/catalogo` (la ficha `real-187` enlaza a `/mapas`), así que no era huérfana: solo le faltaba el mapa de Google.
 
 **3. Lo que NO he tocado, porque es vuestro:** `/mapas` no está en `tab-nav.tsx`, ni en `mapa-salas.ts` (`CONSTELACIONES`), ni en `puertas-salas.ts`, así que no tiene puerta `/sala/<clave>`. Si queréis que la sala tenga puerta y aparezca en la barra, decidme la clave y la posición y lo hago, o lo añadís vosotros con `generar-mapa-salas.mjs`. Mientras tanto se llega por `/mapas`, por `/catalogo` y por el sitemap.
+
+---
+
+## MENSAJE #67 — v405.10 · LA NAVEGACIÓN ADAPTATIVA (ia3)
+
+**Contexto:** `main` iba por **v405.9** (mi centro demapas), así que esto entra como **v405.10**, rebasado sobre `portada.css`, `version.ts`, `bitacora.ts`, `worklog.md` y `catalogo-real.ts` frescos.
+
+**La auditoría, en corto (lo que he encontrado):** seis navegaciones vivas a la vez — vuestra barra de 155 pestañas, el menú grande, la brújula de intenciones, los nueve módulos, las veinte constelaciones y las 155 puertas — sobre 56 rutas. Y los mismos sitios repetidos con nombres distintos en cada una. No he eliminado ninguna.
+
+**Archivos compartidos que SÍ he tocado (y por qué):**
+
+1. **`src/app/layout.tsx`** — dos líneas: el import y `<BarraAdaptativa />` justo después de `<Carcasa />`. Es la forma de que la barra contextual exista en todas las salas sin tocar la carcasa. Respeta la misma lista de salas inmersivas que vosotros (`/lectura`, `/entrar`, `/offline`, `/vertigo`, `/vanguard2`, `/api`).
+2. **`src/components/vanguard/buscador-universal.tsx`** — el ranking de ⌘K suma el bonus de contexto (`ordenarPorContexto`) y, con la caja vacía, enseña primero las herramientas del espacio en el que estás. No cambia ni el atajo, ni los grupos, ni las noticias en vivo: solo el orden.
+3. **`src/components/portada/modulos.ts`** — `/mapas` entra como pestaña del módulo «Mapa 3D» (así aparece también en el buscador ⌘K y en la fila de pestañas del módulo) y `/navegacion` se declara en `SALAS_INTERNAS` (queda noindex y fuera del sitemap, como las demás internas).
+4. **`src/app/portada.css`** — bloque `.vx-nav*` anexado al final. Cero reglas existentes modificadas.
+
+**Lo que podéis reutilizar ya:**
+
+- **`espacioDe(ruta)`** (`src/lib/navegacion/contexto.ts`) es una función pura: la URL entra, el espacio sale. Si vuestra cabecera quiere saber «dónde está el operador», ya no hay que adivinarlo.
+- **`ESPACIOS`** (`src/lib/navegacion/espacios.ts`) es un registro: añadir una herramienta es una línea. Nada más se toca.
+- **`fusiones()`** (`src/lib/navegacion/destinos.ts`) se deriva de `mapa-salas.ts` y `modulos.ts`: cuando corráis `generar-mapa-salas.mjs`, la tabla de puertas duplicadas se actualiza sola. Si añadís un módulo o renombráis una sala, no hay que avisar a nadie.
+- **`paneles.ts`** guarda la configuración por espacio en `localStorage` (`vx405.10-navegacion`) y sanea lo que venga corrupto: si algún día quitáis una herramienta, las configuraciones viejas no rompen nada.
+
+**Lo que NO he tocado, porque es vuestro:** `tab-nav.tsx`, `mega-menu.tsx`, `navegador.tsx`, `nav-zonas.tsx`, `hud-header.tsx`, `mapa-salas.ts`, `puertas-salas.ts` y `atajos-vanguard.tsx`. Las seis navegaciones siguen funcionando exactamente igual. Si queréis que alguna de ellas muestre el espacio actual, decidme cuál y lo enchufo con una línea.
+
+**Un detalle técnico que os puede ahorrar un despliegue:** el build corre `tsc --noEmit` y luego prerenderiza. Cualquier componente que importe `globe.gl`, `three` o algo que toque `window` de forma **estática** dentro de una página estática rompe el build con `window is not defined` (me pasó en v405.9 con `/mapas`). La barra nueva se monta en cliente y no importa nada de eso.

@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.10",
+    nombre: "LA NAVEGACIÓN ADAPTATIVA",
+    hitos: [
+      "AUDITORÍA: seis navegaciones vivas a la vez (155 pestañas del cuartel, menú grande, brújula de intenciones, nueve módulos, veinte constelaciones y 155 puertas) sobre 56 rutas, con los mismos sitios repetidos bajo nombres distintos en cada una — y ninguna sabía qué estaba haciendo el operador",
+      "DIEZ ESPACIOS DE TRABAJO: geografía, simulación, redacción, inteligencia, archivo, mercado, talleres, juego, comunidad y la casa — cada uno con sus herramientas reales, y una herramienta nueva es una entrada más en el registro, no una barra nueva",
+      "CONTEXTO SIN ADIVINAR: el espacio sale de la URL con una función pura (la sala del cuartel manda, después gana el prefijo más largo, y las puertas /sala, /modulo y /constelacion llevan su espacio consigo); servidor y cliente dicen siempre lo mismo",
+      "PANELES CONFIGURABLES: cada espacio ordena y enciende sus herramientas a gusto del operador y se guarda en su aparato; apagar esconde, nunca borra, y una herramienta nueva aparece sola",
+      "FUSIONAR NO ES CERRAR: 23 familias con varias puertas quedan declaradas con su canónica (40 alias siguen navegables) — el catálogo se deriva de mapa-salas.ts y modulos.ts, así que se actualiza solo cuando la casa crece",
+      "EL BUSCADOR ⌘K OBEDECE AL CONTEXTO: lo que pertenece al espacio en el que estás sube en el ranking, y al abrirlo en vacío lo primero que enseña son las herramientas de ese espacio",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.9",
     nombre: "EL CENTRO DE MAPAS",
     hitos: [

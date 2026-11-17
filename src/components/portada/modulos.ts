@@ -55,6 +55,9 @@ export const MODULOS: Modulo[] = [
     img: "/ilustraciones/mundo.jpg",
     gancho: "Gira el globo, entra al frente y recorre la casa en tres dimensiones.",
     pestanas: [
+      // v405.10: el centro de mapas (v405.9) entra donde le toca — el módulo del
+      // mapa. No crea módulo nuevo ni sustituye a nadie: es una pestaña más.
+      { href: "/mapas", label: "Centro de mapas", img: "/ilustraciones/planeta.jpg", txt: "Ocho capas geográficas sobre un solo globo: mundial, político, físico, económico, demográfico, temático, histórico y de acontecimientos." },
       { href: "/mundo", label: "Globo vivo", img: "/ilustraciones/mundo.jpg", txt: "El globo 3D con los teatros encendidos y sus cables." },
       { href: "/ver-guerra", label: "Frente en directo", img: "/ilustraciones/frente.jpg", txt: "El frente en directo: despachos reales y el parque militar." },
       { href: "/zona-cero", label: "Teatro global", img: "/ilustraciones/warsim.jpg", txt: "La mesa de guerra mundial con teatros y unidades." },
@@ -190,7 +193,8 @@ export function moduloDe(ruta: string | null): Modulo | null {
 }
 
 /** salas internas: fuera del buscador y del sitemap */
-export const SALAS_INTERNAS = ["/calidad", "/torre", "/catalogo", "/nucleo", "/escudo", "/novedades", "/mision"];
+// v405.10: la sala de la arquitectura de navegación es interna (lleva noindex)
+export const SALAS_INTERNAS = ["/calidad", "/torre", "/catalogo", "/nucleo", "/escudo", "/novedades", "/mision", "/navegacion"];
 
 /** la portada propia de cada módulo */
 export const portadaDe = (m: Modulo) => `/modulo/${m.id}`;

@@ -24,9 +24,14 @@
 // se puede encontrar escribiéndolo, es que no existe.
 // ═══════════════════════════════════════════════════════════════════
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { CONSTELACIONES, SALAS_MAPA, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
+// v405.10 · EL CONTEXTO: el buscador deja de ser una lista plana. Lo que
+// pertenece al espacio en el que estás sube hasta arriba (y al abrir en
+// vacío, lo primero que enseña son las herramientas de ese espacio).
+import { espacioDe, ordenarPorContexto } from "@/lib/navegacion/contexto";
+import { ESPACIO_POR_CLAVE } from "@/lib/navegacion/espacios";
 
 type Cable = { id: string; t: string; f: string; fecha?: string };
 type Grupo = "constelaciones" | "salas" | "rutas" | "cables";
@@ -64,6 +69,8 @@ export function BuscadorUniversal({ compacto = false }: { compacto?: boolean }) 
   const [cables, setCables] = useState<Cable[]>([]);
   const [buscandoCables, setBuscandoCables] = useState(false);
   const [sel, setSel] = useState(0);
+  // v405.10: el contexto sale de la URL, no de un almacén
+  const rutaActual = usePathname() ?? "/";
   const inputRef = useRef<HTMLInputElement>(null);
   const ctrl = useRef<AbortController | null>(null);
 
@@ -122,7 +129,17 @@ export function BuscadorUniversal({ compacto = false }: { compacto?: boolean }) 
       destino: r.destino,
     }));
     if (!q.trim()) {
-      const arranque: Hit[] = [
+      // v405.10: primero, las herramientas del espacio en el que estás.
+      const espacioAhora = espacioDe(rutaActual);
+      const delEspacio: Hit[] = ESPACIO_POR_CLAVE[espacioAhora].herramientas.slice(0, 4).map((h) => ({
+        grupo: "rutas" as const,
+        clave: `espacio:${h.id}`,
+        titulo: h.nombre,
+        sub: `${ESPACIO_POR_CLAVE[espacioAhora].nombre} · ${h.desc}`,
+        destino: h.href,
+        color: ESPACIO_POR_CLAVE[espacioAhora].color,
+      }));
+      const arranque: Hit[] = [...delEspacio, 
         { grupo: "rutas", clave: "ruta:/", titulo: "Portada", sub: "El mundo en tiempo real", destino: "/" },
         { grupo: "rutas", clave: "ruta:/modulos", titulo: "Mapa de la casa", sub: `Las ${TOTAL_SALAS} salas, por constelaciones`, destino: "/modulos" },
         { grupo: "rutas", clave: "ruta:/cuartel", titulo: "El cuartel", sub: "Todas las salas de juego y simulación", destino: "/cuartel" },
@@ -130,13 +147,20 @@ export function BuscadorUniversal({ compacto = false }: { compacto?: boolean }) 
       ];
       return arranque;
     }
-    return [...constelaciones, ...salas, ...rutas]
-      .map((h) => ({ h, p: puntuar(q, h.titulo, h.sub) }))
-      .filter((x) => x.p > 0)
-      .sort((a, b) => b.p - a.p)
+    // v405.10: puntuación por texto + bonus de contexto (misma función pura
+    // que usa la barra adaptativa: una sola idea de «dónde estás»).
+    return ordenarPorContexto(
+      [...constelaciones, ...salas, ...rutas].map((h) => ({
+        h,
+        puntos: puntuar(q, h.titulo, h.sub),
+        espacio: espacioDe(h.destino),
+      })),
+      espacioDe(rutaActual),
+    )
+      .filter((x) => x.puntos > 0)
       .slice(0, 12)
       .map((x) => x.h);
-  }, [q]);
+  }, [q, rutaActual]);
 
   // Las noticias vivas: /api/noticias?q= (la búsqueda real de la casa), con
   // retardo para no disparar una petición por tecla.
