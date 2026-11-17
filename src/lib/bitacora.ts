@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v406.2",
+    nombre: "LA PORTADA NUEVA",
+    hitos: [
+      "AUDITORÍA: la portada abría directamente con un titular — ni una línea decía qué es Vanguard ni qué se puede hacer aquí, y las áreas de la casa quedaban a varios desplazamientos",
+      "EL HÉROE DE LA CASA: qué es Vanguard en una frase, tres acciones (última hora, mapas y elegir mundo), cuatro cifras reales y un índice rápido a cada sección de la portada",
+      "LAS OCHO PUERTAS: noticias, mapas, simuladores, mundos, información, historia, educación y documentales — cada una a su módulo real, con sus atajos",
+      "DESCUBRE HOY: seis hallazgos del archivo (país, curiosidad, guerra, arma, era y sala del día) que cambian cada medianoche y llevan a su ficha exacta",
+      "LO NUEVO EN LA CASA: las tres últimas entregas de la bitácora, a la vista desde la portada",
+      "NADA SE PIERDE: historias, noticia grande, última hora, destacadas, módulos, spot, mapa vivo, teatros y salas siguen en su sitio, con la jerarquía ordenada y el móvil a dos columnas",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.13",
     nombre: "EL CENSO COMPLETO",
     hitos: [

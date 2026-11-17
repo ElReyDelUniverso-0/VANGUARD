@@ -81,7 +81,8 @@ export default function ArmeriaPage() {
             {ARSENAL.map((w) => (
               <article
                 key={w.id}
-                className="flex flex-col overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/40"
+                id={`arma-${w.id}`}
+                className="flex scroll-mt-24 flex-col overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/40"
                 aria-label={w.name}
               >
                 {/* la foto real de la fuente (Wikimedia) — la casa no inventa imágenes */}

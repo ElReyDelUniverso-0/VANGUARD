@@ -397,6 +397,35 @@
 //
 // NUMERACIÓN: main iba por v405.10 (navegación adaptativa) → v405.11.
 
+// v406.2 LA PORTADA NUEVA — MISIÓN 2 del Dueño: la portada (/) es la primera
+// experiencia de cada visitante y tiene que decir QUÉ ES Vanguard y QUÉ se puede
+// hacer en ella. Nada de la portada v400 se quita (historias, noticia grande,
+// última hora, destacadas, nueve módulos, spot, mapa vivo, teatros y salas):
+// se evoluciona y se SUMA.
+//   · EL HÉROE DE LA CASA (h1): «El mundo entero, en tiempo real y a tu
+//     alcance» + qué reúne Vanguard + tres acciones (última hora, mapas, elegir
+//     mundo) + cuatro cifras de la fuente (cables vivos, naciones del atlas,
+//     curiosidades, salas) + índice rápido a las secciones de la portada.
+//     El titular de la noticia grande pasa a h2 con el mismo aspecto.
+//   · LAS OCHO PUERTAS (src/components/portada/areas.ts): noticias, mapas,
+//     simuladores, mundos, información, historia, educación y documentales,
+//     cada una a su módulo REAL con sus atajos (Mundos abre /mundos, el índice
+//     de v405.12) — todas las rutas comprobadas
+//     con 200 y contenido (nada de páginas vacías).
+//   · DESCUBRE HOY (src/lib/portada/descubre.ts): seis hallazgos del archivo
+//     real que rotan a medianoche de Santo Domingo — país del atlas, curiosidad,
+//     guerra de la historia, pieza del arsenal, una era y la sala del día (de las
+//     51 puertas indexables) — cada uno a SU ficha exacta (el país, a su ficha
+//     única /mundos/<iso>). Además /atlas y
+//     /armeria ganan anclas por ficha (#pais-xx, #arma-xx), sin tocar su texto.
+//   · LO NUEVO EN LA CASA: las tres últimas entregas de la bitácora.
+//   · Jerarquía renumerada (Sección 01–07), anclas con scroll-margin bajo la
+//     cabecera, móvil a dos columnas y todo en componentes de servidor (cero JS
+//     extra). CSS solo AÑADIDO al final de portada.css (prefijo .vxp-).
+//
+// NUMERACIÓN: main va por v405.13; v406.0 (La Travesía) y v406.1 (La Forja)
+// esperan en sus PR → esta entra como v406.2.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -6082,8 +6111,8 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.13";
-export const APP_CODENAME = "EL CENSO COMPLETO";
+export const APP_VERSION = "v406.2";
+export const APP_CODENAME = "LA PORTADA NUEVA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6143,7 +6172,7 @@ export const APP_CODENAME = "EL CENSO COMPLETO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.12";
+export const APP_VERSION_ANTERIOR = "v405.13";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
