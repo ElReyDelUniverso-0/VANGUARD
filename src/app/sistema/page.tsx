@@ -55,6 +55,8 @@ export default async function SistemaPage() {
         que otro equipo pueda consumirlo sin leer el código.
       </p>
 
+      <Link href="/sistema/departamentos" className="mt-6 inline-block rounded border border-amber/40 px-4 py-3 text-sm text-amber">Los 22 departamentos · inventario, dependencias y plan de expansión ▸</Link>
+
       {/* ── DIAGNÓSTICO ── */}
       <section className="mt-8">
         <div className="flex flex-wrap items-baseline justify-between gap-2">

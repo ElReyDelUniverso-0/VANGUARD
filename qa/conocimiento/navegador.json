@@ -1,0 +1,38 @@
+{
+  "passed": 22,
+  "checks": [
+    "Portada: nueve centros, treinta áreas y métricas reales",
+    "Enciclopedia: búsqueda sin tildes y sin resultados",
+    "Filtros temáticos y lecturas guardadas localmente",
+    "Ficha profunda con fuentes, límites, anclas y conexiones",
+    "Centro de recursos: método y expedientes asociados",
+    "Las treinta áreas tienen ruta navegable",
+    "País: selector, comparador y país sin datos",
+    "Comparador de civilizaciones cambia contenido real",
+    "Cronología filtrada abre contexto del acontecimiento",
+    "Explorador de acontecimientos representa localizaciones",
+    "Organizaciones: búsqueda y mecanismo institucional",
+    "Indicadores: mapa real, año comparable y series",
+    "CSV descargable conserva año, unidad y fuente",
+    "Estadísticas muestra cobertura y tabla ordenada",
+    "Red de relaciones cambia con el concepto",
+    "Glosario muestra definiciones y abre expedientes",
+    "Fuentes explicita importaciones fallidas y límites",
+    "Sin excepciones JavaScript en el recorrido",
+    "Móvil sin desbordamiento: /conocimiento",
+    "Móvil sin desbordamiento: /conocimiento?modo=paises",
+    "Móvil sin desbordamiento: /conocimiento?modo=indicadores",
+    "Móvil sin desbordamiento: /conocimiento/tema/pib"
+  ],
+  "errors": [],
+  "viewport": {
+    "desktop": [
+      1440,
+      1000
+    ],
+    "mobile": [
+      390,
+      844
+    ]
+  }
+}

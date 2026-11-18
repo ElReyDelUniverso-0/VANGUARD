@@ -1,0 +1,226 @@
+[
+  {
+    "id": "wb",
+    "nombre": "Indicadores del Desarrollo Mundial",
+    "organismo": "Banco Mundial",
+    "url": "https://data.worldbank.org/",
+    "tipo": "datos",
+    "nota": "Metadatos y series: revisar unidad, año y cobertura institucional."
+  },
+  {
+    "id": "un",
+    "nombre": "Carta de las Naciones Unidas",
+    "organismo": "Naciones Unidas",
+    "url": "https://www.un.org/en/about-us/un-charter",
+    "tipo": "primaria",
+    "nota": "Texto constitutivo; no equivale a cumplimiento efectivo."
+  },
+  {
+    "id": "imf",
+    "nombre": "Finance & Development · Back to Basics",
+    "organismo": "Fondo Monetario Internacional",
+    "url": "https://www.imf.org/en/Publications/fandd/issues/Series/Back-to-Basics",
+    "tipo": "manual",
+    "nota": "Explicaciones económicas; contrastar supuestos y ámbito de aplicación."
+  },
+  {
+    "id": "wto",
+    "nombre": "Understanding the WTO",
+    "organismo": "Organización Mundial del Comercio",
+    "url": "https://www.wto.org/english/thewto_e/whatis_e/tif_e/tif_e.htm",
+    "tipo": "primaria",
+    "nota": "Reglas e instituciones del comercio; no mide por sí solo sus efectos distributivos."
+  },
+  {
+    "id": "ipcc",
+    "nombre": "Climate Change 2023 · Synthesis Report",
+    "organismo": "IPCC",
+    "url": "https://www.ipcc.ch/report/ar6/syr/",
+    "tipo": "sintesis",
+    "nota": "Síntesis evaluada; conservar distinción entre escenarios, proyecciones y observaciones."
+  },
+  {
+    "id": "bio",
+    "nombre": "Biology 2e",
+    "organismo": "OpenStax · Rice University",
+    "url": "https://openstax.org/details/books/biology-2e",
+    "tipo": "manual",
+    "nota": "Manual universitario abierto; síntesis conceptual, no consejo médico."
+  },
+  {
+    "id": "fis",
+    "nombre": "University Physics",
+    "organismo": "OpenStax · Rice University",
+    "url": "https://openstax.org/details/books/university-physics-volume-1",
+    "tipo": "manual",
+    "nota": "Física introductoria: comprobar condiciones de validez de cada modelo."
+  },
+  {
+    "id": "quim",
+    "nombre": "Chemistry 2e",
+    "organismo": "OpenStax · Rice University",
+    "url": "https://openstax.org/details/books/chemistry-2e",
+    "tipo": "manual",
+    "nota": "Manual de química general; no incluye protocolos experimentales en esta expansión."
+  },
+  {
+    "id": "astro",
+    "nombre": "Astronomy 2e",
+    "organismo": "OpenStax · Rice University",
+    "url": "https://openstax.org/details/books/astronomy-2e",
+    "tipo": "manual",
+    "nota": "Modelos y evidencia astronómica; las distancias y edades llevan incertidumbre."
+  },
+  {
+    "id": "nasa",
+    "nombre": "Science · Solar System",
+    "organismo": "NASA",
+    "url": "https://science.nasa.gov/solar-system/",
+    "tipo": "primaria",
+    "nota": "Recursos de astronomía y exploración espacial de la agencia."
+  },
+  {
+    "id": "unesco",
+    "nombre": "Lista del Patrimonio Mundial",
+    "organismo": "UNESCO",
+    "url": "https://whc.unesco.org/en/list/",
+    "tipo": "primaria",
+    "nota": "Fichas patrimoniales; inscripción no es fecha de origen de una civilización."
+  },
+  {
+    "id": "hist",
+    "nombre": "World History Volume 1",
+    "organismo": "OpenStax · Rice University",
+    "url": "https://openstax.org/details/books/world-history-volume-1",
+    "tipo": "manual",
+    "nota": "Síntesis histórica abierta; periodizaciones interpretativas y regionales."
+  },
+  {
+    "id": "hist2",
+    "nombre": "World History Volume 2",
+    "organismo": "OpenStax · Rice University",
+    "url": "https://openstax.org/details/books/world-history-volume-2",
+    "tipo": "manual",
+    "nota": "Historia moderna y contemporánea; no reemplaza contraste de archivos."
+  },
+  {
+    "id": "fao",
+    "nombre": "FAOSTAT · definiciones y estadísticas",
+    "organismo": "FAO",
+    "url": "https://www.fao.org/faostat/en/",
+    "tipo": "datos",
+    "nota": "Agricultura, alimentación y uso del suelo; categorías estadísticas específicas."
+  },
+  {
+    "id": "iea",
+    "nombre": "Energy system",
+    "organismo": "Agencia Internacional de la Energía",
+    "url": "https://www.iea.org/energy-system",
+    "tipo": "sintesis",
+    "nota": "Balances y tecnologías energéticas; algunos productos tienen acceso restringido."
+  },
+  {
+    "id": "usgs",
+    "nombre": "Water Science School",
+    "organismo": "USGS",
+    "url": "https://www.usgs.gov/special-topics/water-science-school",
+    "tipo": "manual",
+    "nota": "Procesos hidrológicos y métodos de medición."
+  },
+  {
+    "id": "undp",
+    "nombre": "Human Development Reports · Data Center",
+    "organismo": "PNUD",
+    "url": "https://hdr.undp.org/data-center",
+    "tipo": "datos",
+    "nota": "Desarrollo humano e índices compuestos; leer notas técnicas."
+  },
+  {
+    "id": "unpop",
+    "nombre": "World Population Prospects",
+    "organismo": "ONU · División de Población",
+    "url": "https://population.un.org/wpp/",
+    "tipo": "datos",
+    "nota": "Estimaciones y proyecciones demográficas; no son censos continuos."
+  },
+  {
+    "id": "habitat",
+    "nombre": "World Cities Report",
+    "organismo": "ONU-Hábitat",
+    "url": "https://unhabitat.org/wcr/",
+    "tipo": "sintesis",
+    "nota": "Urbanización, vivienda y políticas territoriales; definiciones comparables con cautela."
+  },
+  {
+    "id": "unctad",
+    "nombre": "Review of Maritime Transport",
+    "organismo": "UNCTAD",
+    "url": "https://unctad.org/topic/transport-and-trade-logistics/review-of-maritime-transport",
+    "tipo": "sintesis",
+    "nota": "Transporte marítimo y conectividad; separar volumen, valor y capacidad."
+  },
+  {
+    "id": "ocean",
+    "nombre": "Ocean Literacy",
+    "organismo": "UNESCO · Comisión Oceanográfica Intergubernamental",
+    "url": "https://oceanliteracy.unesco.org/",
+    "tipo": "manual",
+    "nota": "Procesos oceánicos y alfabetización; remite a recursos y publicaciones."
+  },
+  {
+    "id": "cbd",
+    "nombre": "Convention on Biological Diversity",
+    "organismo": "Secretaría del CDB",
+    "url": "https://www.cbd.int/convention",
+    "tipo": "primaria",
+    "nota": "Texto y marco institucional de biodiversidad; no prueba ejecución nacional."
+  },
+  {
+    "id": "itu",
+    "nombre": "Facts and Figures",
+    "organismo": "Unión Internacional de Telecomunicaciones",
+    "url": "https://www.itu.int/itu-d/reports/statistics/",
+    "tipo": "datos",
+    "nota": "Conectividad; distinguir uso, cobertura, precio y habilidades."
+  },
+  {
+    "id": "uis",
+    "nombre": "UNESCO Institute for Statistics",
+    "organismo": "UNESCO UIS",
+    "url": "https://uis.unesco.org/",
+    "tipo": "datos",
+    "nota": "Educación, ciencia y cultura; las métricas no son intercambiables."
+  },
+  {
+    "id": "wipo",
+    "nombre": "Global Innovation Index",
+    "organismo": "OMPI",
+    "url": "https://www.wipo.int/global_innovation_index/en/",
+    "tipo": "sintesis",
+    "nota": "Índice compuesto; clasificaciones dependen de indicadores y pesos."
+  },
+  {
+    "id": "unido",
+    "nombre": "Industrial Development Report",
+    "organismo": "ONUDI",
+    "url": "https://www.unido.org/resources-publications-flagship-publications/industrial-development-report-series",
+    "tipo": "sintesis",
+    "nota": "Cambio estructural e industria; preservar año y ámbito de las estadísticas."
+  },
+  {
+    "id": "imf-fiscal",
+    "nombre": "Government Finance Statistics Manual 2014",
+    "organismo": "FMI",
+    "url": "https://www.imf.org/external/Pubs/FT/GFS/Manual/2014/gfsfinal.pdf",
+    "tipo": "manual",
+    "nota": "Marco para ingresos, gastos, activos, pasivos y perímetro del sector público."
+  },
+  {
+    "id": "ushmm",
+    "nombre": "Holocaust Encyclopedia",
+    "organismo": "United States Holocaust Memorial Museum",
+    "url": "https://encyclopedia.ushmm.org/",
+    "tipo": "manual",
+    "nota": "Documentación histórica del Holocausto; tratamiento contextual y no sensacionalista."
+  }
+]

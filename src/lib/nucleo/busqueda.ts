@@ -1,3 +1,4 @@
+import { CONCEPTOS as CONCEPTOS_GLOBALES } from "@/lib/conocimiento/indice";
 // ============================================================
 // v218.0 EL NÚCLEO — BÚSQUEDA GLOBAL (server-only)
 // v221.0 LA LUPA — la búsqueda entiende la pregunta:
@@ -94,6 +95,17 @@ function fuentePublica(id: string): FuenteNucleo {
 // ── LOS PROVEEDORES PÚBLICOS (uno por fuente autorizada) ────
 
 const PROVEEDORES: ProveedorBusqueda[] = [
+  {
+    fuente: fuentePublica("fnt:conocimiento"),
+    async buscar(q, limite) {
+      const terms = terminosDe(q);
+      return mejores(CONCEPTOS_GLOBALES.map(c => ({cosa:c,puntos:puntua(`${c.titulo} ${c.resumen} ${c.mecanismo} ${c.contexto}`,q,terms)})).filter(c=>c.puntos>0),limite).map(c=>({
+        entidad:{id:idEntidad("documento",`conocimiento-${c.id}`),tipo:"documento" as const,nombre:c.titulo},
+        titulo:c.titulo,subtitulo:`CONOCIMIENTO GLOBAL · ${c.area} · ${c.fuentes.length} fuentes`,
+        ruta:`/conocimiento/tema/${c.id}`,origen:"fnt:conocimiento",
+      }));
+    },
+  },
   // 1. MÓDULOS — la navegación primero: aterrizarte en la puerta correcta
   {
     fuente: fuentePublica("fnt:modulos"),
@@ -410,6 +422,7 @@ export interface RespuestaBusquedaNucleo {
 /** Orden canónico de resultados: navegar → entender → leer → oír. */
 const ORDEN_ORIGEN = [
   "fnt:modulos",
+  "fnt:conocimiento",
   "fnt:teatros",
   "fnt:acontecimientos",
   "fnt:atlas",

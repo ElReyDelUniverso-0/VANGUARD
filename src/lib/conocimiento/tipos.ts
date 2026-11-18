@@ -1,0 +1,11 @@
+export type Fuente = { id:string; nombre:string; organismo:string; url:string; tipo:'primaria'|'manual'|'datos'|'sintesis'; nota:string };
+export type Area = { id:string; nombre:string; pregunta:string; centro:string; fuentes:string[] };
+export type Centro = { id:string; nombre:string; mision:string; metodo:string[]; areas:string[] };
+export type Concepto = { id:string; area:string; titulo:string; resumen:string; mecanismo:string; contexto:string; limite:string; pregunta:string; fuentes:string[]; relacionados:string[]; hitos:string[]; paises:string[] };
+export type Hito = { id:string; nombre:string; desde:number; hasta?:number; precision:'año'|'aproximada'; area:string; texto:string; consecuencia:string; fuentes:string[]; paises:string[]; lat:number; lng:number };
+export type Civilizacion = { id:string; nombre:string; region:string; desde:number; hasta:number; cronologia:string; organizacion:string; subsistencia:string; conocimiento:string; legado:string; limite:string; lat:number; lng:number; paises:string[]; fuentes:string[] };
+export type Organizacion = { id:string; sigla:string; nombre:string; anio:number; sede:string; mandato:string; mecanismo:string; limite:string; areas:string[]; fuente:string; url:string };
+export type Indicador = {id:string;code:string;name:string;unit:string;area:string;limit:string;source:string;lastUpdated:string|null;series:Record<string,Record<string,number>>};
+export type Snapshot = {schema:number;provider:string;license:string;terms:string;captured:string;period:number[];requested:number;failures:{id:string;code:string;error:string}[];indicators:Indicador[]};
+export type PaisConocimiento = {iso2:string;iso3:string;nombre:string;region:string;lat:number;lng:number;capital:string|null;moneda:string|null};
+export type DatosConocimiento = {areas:Area[];centros:Centro[];conceptos:Concepto[];hitos:Hito[];civilizaciones:Civilizacion[];organizaciones:Organizacion[];fuentes:Fuente[];paises:PaisConocimiento[];indicadores:Snapshot;mapa:{iso2:string;d:string}[];cobertura:{paises:number;conDatos:number;observaciones:number;fuentes:number}};

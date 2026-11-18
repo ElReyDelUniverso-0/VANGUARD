@@ -1,0 +1,50 @@
+{
+  "passed": 17,
+  "checks": [
+    "Identificadores únicos en siete colecciones",
+    "Treinta áreas con al menos dos expedientes propios",
+    "Nueve centros y cada área asignada exactamente una vez",
+    "Textos sustantivos, no campos vacíos ni resúmenes duplicados",
+    "Referencias de fuentes, conceptos e hitos resueltas",
+    "Cronologías ordenables y localizaciones geográficas válidas",
+    "Civilizaciones sin puntuaciones de superioridad",
+    "Veinticuatro organizaciones con mandato y fuente HTTPS",
+    "Búsqueda normaliza tildes y usa todos los términos",
+    "Países reutilizados y agregados fuera de las comparaciones",
+    "Observaciones finitas, con año y período válidos",
+    "No se interpola ni reemplaza una ausencia por cero u otro año",
+    "Rutas públicas derivadas sin duplicados y con destino Next existente",
+    "Integración en núcleo, navegación, sitemap y ficha de país",
+    "API: búsqueda real",
+    "API: validación de límites, tipos y áreas",
+    "API: paginación y total"
+  ],
+  "coverage": {
+    "paises": 249,
+    "conDatos": 215,
+    "observaciones": 35463,
+    "fuentes": 28
+  },
+  "content": {
+    "areas": 30,
+    "centros": 9,
+    "conceptos": 63,
+    "hitos": 39,
+    "civilizaciones": 16,
+    "organizaciones": 24,
+    "rutas": 103
+  },
+  "snapshot": {
+    "series": 12,
+    "requested": 18,
+    "failures": [
+      "EG.ELC.ACCS.ZS",
+      "NV.AGR.TOTL.ZS",
+      "AG.LND.FRST.ZS",
+      "SE.SEC.ENRR",
+      "GC.TAX.TOTL.GD.ZS",
+      "ER.H2O.FWTL.ZS"
+    ],
+    "captured": "2026-11-18T18:55:49.875Z"
+  }
+}

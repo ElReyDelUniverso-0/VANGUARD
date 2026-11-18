@@ -1,3 +1,4 @@
+import { rutasConocimiento } from "@/lib/conocimiento/indice";
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
@@ -679,7 +680,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // + sin duplicados
   const vistas = new Set<string>();
-  return [...fijas, ...teatros, ...noticias].filter((e) => {
+  return [...fijas, ...["/conocimiento/aprender", "/sistema/departamentos"].map(r=>({url:`${SITE_URL}${r}`,changeFrequency:"monthly" as const,priority:0.6})), ...teatros, ...noticias, ...rutasConocimiento().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority:0.6}))].filter((e) => {
     if (vistas.has(e.url)) return false;
     vistas.add(e.url);
     return true;

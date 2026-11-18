@@ -1,0 +1,387 @@
+[
+  {
+    "id": "onu",
+    "sigla": "ONU",
+    "nombre": "Organización de las Naciones Unidas",
+    "anio": 1945,
+    "sede": "Nueva York",
+    "mandato": "Paz y seguridad, cooperación y derechos según la Carta.",
+    "mecanismo": "Órganos con competencias y reglas distintas, incluidas Asamblea General y Consejo de Seguridad.",
+    "limite": "No es un gobierno mundial ni todas sus resoluciones tienen igual efecto jurídico.",
+    "areas": [
+      "organizaciones-internacionales",
+      "relaciones-internacionales"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.un.org/en/about-us/un-charter"
+  },
+  {
+    "id": "fmi",
+    "sigla": "FMI",
+    "nombre": "Fondo Monetario Internacional",
+    "anio": 1944,
+    "sede": "Washington D. C.",
+    "mandato": "Cooperación monetaria, vigilancia económica y asistencia financiera.",
+    "mecanismo": "Consultas, análisis y programas financieros bajo reglas de membresía y gobernanza.",
+    "limite": "No es un banco central mundial; préstamos y diagnósticos tienen condiciones y supuestos.",
+    "areas": [
+      "economia",
+      "finanzas-publicas"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.imf.org/en/About"
+  },
+  {
+    "id": "bm",
+    "sigla": "Banco Mundial",
+    "nombre": "Grupo Banco Mundial",
+    "anio": 1944,
+    "sede": "Washington D. C.",
+    "mandato": "Financiamiento, conocimiento y apoyo al desarrollo.",
+    "mecanismo": "Instituciones del grupo ofrecen instrumentos distintos a gobiernos y sector privado.",
+    "limite": "El año corresponde al origen de BIRF; no todas las instituciones del grupo nacieron entonces.",
+    "areas": [
+      "economia",
+      "desarrollo-humano"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.worldbank.org/en/who-we-are"
+  },
+  {
+    "id": "omc",
+    "sigla": "OMC",
+    "nombre": "Organización Mundial del Comercio",
+    "anio": 1995,
+    "sede": "Ginebra",
+    "mandato": "Marco institucional de acuerdos comerciales entre miembros.",
+    "mecanismo": "Negociación, seguimiento y procedimientos de solución de diferencias.",
+    "limite": "No fija por sí sola toda política comercial ni elimina acuerdos regionales.",
+    "areas": [
+      "comercio-internacional",
+      "organizaciones-internacionales"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.wto.org/english/thewto_e/whatis_e/whatis_e.htm"
+  },
+  {
+    "id": "oms",
+    "sigla": "OMS",
+    "nombre": "Organización Mundial de la Salud",
+    "anio": 1948,
+    "sede": "Ginebra",
+    "mandato": "Coordinación y orientación técnica sobre salud internacional.",
+    "mecanismo": "Normas, cooperación y vigilancia conforme a instrumentos y mandatos específicos.",
+    "limite": "No administra todos los sistemas nacionales de salud ni tiene autoridad ilimitada de imposición.",
+    "areas": [
+      "ciencia",
+      "desarrollo-humano"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.who.int/about"
+  },
+  {
+    "id": "unesco",
+    "sigla": "UNESCO",
+    "nombre": "Organización de las Naciones Unidas para la Educación, la Ciencia y la Cultura",
+    "anio": 1945,
+    "sede": "París",
+    "mandato": "Cooperación en educación, ciencia, cultura e información.",
+    "mecanismo": "Convenciones, programas, redes y asistencia técnica con los Estados.",
+    "limite": "Inscribir un patrimonio no transfiere su propiedad a UNESCO ni garantiza conservación efectiva.",
+    "areas": [
+      "educacion",
+      "cultura",
+      "ciencia"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.unesco.org/en/brief"
+  },
+  {
+    "id": "fao",
+    "sigla": "FAO",
+    "nombre": "Organización de las Naciones Unidas para la Alimentación y la Agricultura",
+    "anio": 1945,
+    "sede": "Roma",
+    "mandato": "Alimentación, agricultura y uso sostenible de recursos relacionados.",
+    "mecanismo": "Estadísticas, cooperación técnica, foros y estándares en coordinación con otros organismos.",
+    "limite": "Producción de alimentos y seguridad alimentaria no son la misma métrica.",
+    "areas": [
+      "agricultura",
+      "recursos-naturales"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.fao.org/about/en/"
+  },
+  {
+    "id": "pnud",
+    "sigla": "PNUD",
+    "nombre": "Programa de las Naciones Unidas para el Desarrollo",
+    "anio": 1965,
+    "sede": "Nueva York",
+    "mandato": "Apoyar capacidades, reducción de pobreza y desarrollo sostenible.",
+    "mecanismo": "Cooperación con países, proyectos y producción de informes e indicadores.",
+    "limite": "El IDH es un resumen metodológico, no una medición completa de todas las libertades.",
+    "areas": [
+      "desarrollo-humano",
+      "educacion"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.undp.org/about-us"
+  },
+  {
+    "id": "pnuma",
+    "sigla": "PNUMA",
+    "nombre": "Programa de las Naciones Unidas para el Medio Ambiente",
+    "anio": 1972,
+    "sede": "Nairobi",
+    "mandato": "Coordinación y evaluación ambiental internacional.",
+    "mecanismo": "Evaluaciones, cooperación y apoyo a acuerdos ambientales.",
+    "limite": "No sustituye ministerios nacionales ni ejecuta automáticamente obligaciones de tratados.",
+    "areas": [
+      "medioambiente",
+      "biodiversidad"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.unep.org/who-we-are/about-us"
+  },
+  {
+    "id": "habitat",
+    "sigla": "ONU-Hábitat",
+    "nombre": "Programa de las Naciones Unidas para los Asentamientos Humanos",
+    "anio": 1978,
+    "sede": "Nairobi",
+    "mandato": "Urbanización sostenible y asentamientos humanos.",
+    "mecanismo": "Asistencia técnica, investigación y cooperación con gobiernos y ciudades.",
+    "limite": "El año remite al centro precursor; las ciudades y competencias nacionales siguen siendo diversas.",
+    "areas": [
+      "urbanismo",
+      "infraestructura"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://unhabitat.org/about-us"
+  },
+  {
+    "id": "unctad",
+    "sigla": "UNCTAD",
+    "nombre": "ONU Comercio y Desarrollo",
+    "anio": 1964,
+    "sede": "Ginebra",
+    "mandato": "Comercio, inversión, finanzas y desarrollo con atención a economías en desarrollo.",
+    "mecanismo": "Investigación, cooperación técnica y diálogo intergubernamental.",
+    "limite": "No negociar sus informes como si fueran reglas vinculantes de la OMC.",
+    "areas": [
+      "comercio-internacional",
+      "transporte"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://unctad.org/about"
+  },
+  {
+    "id": "onudi",
+    "sigla": "ONUDI",
+    "nombre": "Organización de las Naciones Unidas para el Desarrollo Industrial",
+    "anio": 1966,
+    "sede": "Viena",
+    "mandato": "Desarrollo industrial inclusivo y sostenible.",
+    "mecanismo": "Cooperación técnica, estadísticas y apoyo a capacidades productivas.",
+    "limite": "Un indicador industrial no describe por sí solo calidad del empleo o sostenibilidad.",
+    "areas": [
+      "industria",
+      "tecnologia"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.unido.org/who-we-are"
+  },
+  {
+    "id": "iea",
+    "sigla": "AIE",
+    "nombre": "Agencia Internacional de la Energía",
+    "anio": 1974,
+    "sede": "París",
+    "mandato": "Seguridad energética, análisis y transición de sistemas.",
+    "mecanismo": "Cooperación entre miembros y asociados, datos, análisis y mecanismos específicos de respuesta.",
+    "limite": "Escenarios no son pronósticos incondicionales; cobertura y acceso varían entre productos.",
+    "areas": [
+      "energia",
+      "recursos-naturales"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.iea.org/about"
+  },
+  {
+    "id": "irena",
+    "sigla": "IRENA",
+    "nombre": "Agencia Internacional de Energías Renovables",
+    "anio": 2009,
+    "sede": "Abu Dabi",
+    "mandato": "Cooperación y conocimiento para adopción de energías renovables.",
+    "mecanismo": "Análisis, plataformas de cooperación y asistencia a países.",
+    "limite": "Capacidad instalada renovable no equivale a generación ni acceso universal.",
+    "areas": [
+      "energia",
+      "tecnologia"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.irena.org/About"
+  },
+  {
+    "id": "ompi",
+    "sigla": "OMPI",
+    "nombre": "Organización Mundial de la Propiedad Intelectual",
+    "anio": 1967,
+    "sede": "Ginebra",
+    "mandato": "Cooperación y servicios sobre propiedad intelectual.",
+    "mecanismo": "Tratados, sistemas de registro y análisis de innovación.",
+    "limite": "Patentes no miden toda innovación ni implican que una invención sea comercialmente útil.",
+    "areas": [
+      "tecnologia",
+      "industria"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.wipo.int/about-wipo/en/"
+  },
+  {
+    "id": "uit",
+    "sigla": "UIT",
+    "nombre": "Unión Internacional de Telecomunicaciones",
+    "anio": 1865,
+    "sede": "Ginebra",
+    "mandato": "Coordinación internacional de telecomunicaciones.",
+    "mecanismo": "Estándares, radiocomunicaciones, desarrollo y estadísticas.",
+    "limite": "Cobertura técnica, usuarios y calidad del acceso son dimensiones diferentes.",
+    "areas": [
+      "tecnologia",
+      "infraestructura"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.itu.int/en/about/Pages/default.aspx"
+  },
+  {
+    "id": "oiea",
+    "sigla": "OIEA",
+    "nombre": "Organismo Internacional de Energía Atómica",
+    "anio": 1957,
+    "sede": "Viena",
+    "mandato": "Cooperación nuclear pacífica, seguridad y salvaguardias bajo acuerdos.",
+    "mecanismo": "Asistencia técnica, estándares y verificaciones conforme a instrumentos aplicables.",
+    "limite": "No es una fuerza ejecutiva global ni todas sus actividades son inspecciones de proliferación.",
+    "areas": [
+      "energia",
+      "fisica"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.iaea.org/about"
+  },
+  {
+    "id": "ipcc",
+    "sigla": "IPCC",
+    "nombre": "Grupo Intergubernamental de Expertos sobre el Cambio Climático",
+    "anio": 1988,
+    "sede": "Ginebra",
+    "mandato": "Evaluar conocimiento científico sobre cambio climático.",
+    "mecanismo": "Informes de evaluación, metodologías y síntesis de literatura existente.",
+    "limite": "No realiza por sí mismo toda la investigación primaria ni prescribe una política única.",
+    "areas": [
+      "medioambiente",
+      "ciencia"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.ipcc.ch/about/"
+  },
+  {
+    "id": "omm",
+    "sigla": "OMM",
+    "nombre": "Organización Meteorológica Mundial",
+    "anio": 1950,
+    "sede": "Ginebra",
+    "mandato": "Cooperación en meteorología, clima e hidrología.",
+    "mecanismo": "Redes de observación, intercambio de datos y coordinación técnica.",
+    "limite": "Una predicción meteorológica no equivale a una proyección climática de largo plazo.",
+    "areas": [
+      "medioambiente",
+      "geografia"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://wmo.int/about-wmo"
+  },
+  {
+    "id": "ocde",
+    "sigla": "OCDE",
+    "nombre": "Organización para la Cooperación y el Desarrollo Económicos",
+    "anio": 1961,
+    "sede": "París",
+    "mandato": "Análisis y cooperación en políticas públicas.",
+    "mecanismo": "Estadísticas, revisión entre pares y recomendaciones e instrumentos específicos.",
+    "limite": "No todos sus países o bases representan el conjunto del planeta.",
+    "areas": [
+      "economia",
+      "educacion"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.oecd.org/en/about.html"
+  },
+  {
+    "id": "ua",
+    "sigla": "UA",
+    "nombre": "Unión Africana",
+    "anio": 2002,
+    "sede": "Adís Abeba",
+    "mandato": "Cooperación e integración de Estados africanos.",
+    "mecanismo": "Órganos políticos, acuerdos y mecanismos regionales en distintas etapas de implementación.",
+    "limite": "No confundir con su predecesora OUA ni atribuir idénticas políticas a todos sus miembros.",
+    "areas": [
+      "organizaciones-internacionales",
+      "relaciones-internacionales"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://au.int/en/overview"
+  },
+  {
+    "id": "ue",
+    "sigla": "UE",
+    "nombre": "Unión Europea",
+    "anio": 1993,
+    "sede": "Bruselas y otras sedes institucionales",
+    "mandato": "Integración con competencias atribuidas mediante tratados.",
+    "mecanismo": "Instituciones supranacionales e intergubernamentales y legislación según ámbitos.",
+    "limite": "No equivale a Europa geográfica, zona euro o espacio Schengen; sus membresías difieren.",
+    "areas": [
+      "economia",
+      "relaciones-internacionales"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://european-union.europa.eu/principles-countries-history_en"
+  },
+  {
+    "id": "oea",
+    "sigla": "OEA",
+    "nombre": "Organización de los Estados Americanos",
+    "anio": 1948,
+    "sede": "Washington D. C.",
+    "mandato": "Cooperación hemisférica, democracia y otros fines de su Carta.",
+    "mecanismo": "Órganos políticos e instrumentos interamericanos con competencias diferenciadas.",
+    "limite": "No confundir la organización con todo el sistema interamericano ni con un gobierno regional.",
+    "areas": [
+      "organizaciones-internacionales",
+      "relaciones-internacionales"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.oas.org/en/about/"
+  },
+  {
+    "id": "bid",
+    "sigla": "BID",
+    "nombre": "Banco Interamericano de Desarrollo",
+    "anio": 1959,
+    "sede": "Washington D. C.",
+    "mandato": "Financiamiento y cooperación para desarrollo en América Latina y el Caribe.",
+    "mecanismo": "Préstamos, cooperación técnica y conocimiento según instituciones del grupo.",
+    "limite": "No todo financiamiento es donación ni todos los instrumentos corresponden a la misma entidad.",
+    "areas": [
+      "finanzas-publicas",
+      "desarrollo-humano"
+    ],
+    "fuente": "Sitio institucional · consultar instrumentos y documentación original",
+    "url": "https://www.iadb.org/en/who-we-are"
+  }
+]

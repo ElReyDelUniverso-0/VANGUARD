@@ -24,6 +24,11 @@ export interface FuenteNucleo {
 /** ── PÚBLICAS: únicas autorizadas para la búsqueda global ── */
 export const FUENTES_PUBLICAS: FuenteNucleo[] = [
   {
+    id: "fnt:conocimiento", nombre: "Enciclopedia de conocimiento global",
+    descripcion: "Expedientes públicos de síntesis editorial con referencias, contexto, límites y enlaces entre conceptos. No consulta datos privados.",
+    publica_tipo: "documento",
+  },
+  {
     id: "fnt:cables",
     nombre: "Archivo de cables",
     descripcion:

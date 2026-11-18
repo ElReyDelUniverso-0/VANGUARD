@@ -1,0 +1,140 @@
+[
+  {
+    "id": "historica",
+    "nombre": "Centro de investigación histórica",
+    "mision": "Explicar cambios sin confundir secuencia, causa y juicio retrospectivo.",
+    "metodo": [
+      "Contrastar fuentes primarias y síntesis",
+      "Distinguir fecha, período y controversia",
+      "Conectar procesos globales con casos locales"
+    ],
+    "areas": [
+      "historia",
+      "relaciones-internacionales"
+    ]
+  },
+  {
+    "id": "economica",
+    "nombre": "Centro de análisis económico",
+    "mision": "Leer producción, finanzas públicas y comercio sin confundir agregados con bienestar.",
+    "metodo": [
+      "Comparar unidad, precio y año",
+      "Examinar distribución y cobertura institucional",
+      "Explicitar supuestos antes de interpretar tendencias"
+    ],
+    "areas": [
+      "economia",
+      "finanzas-publicas",
+      "comercio-internacional"
+    ]
+  },
+  {
+    "id": "geografica",
+    "nombre": "Centro de investigación geográfica",
+    "mision": "Estudiar territorios, movilidad y redes con escalas cartográficas explícitas.",
+    "metodo": [
+      "Situar procesos y no solo fronteras",
+      "Comparar escalas y proyecciones",
+      "Relacionar territorio con actividad humana"
+    ],
+    "areas": [
+      "geografia",
+      "geopolitica",
+      "transporte"
+    ]
+  },
+  {
+    "id": "cientifica",
+    "nombre": "Centro de investigación científica",
+    "mision": "Conectar mecanismos, evidencia y límites de modelos científicos.",
+    "metodo": [
+      "Separar hipótesis, medición y explicación",
+      "Identificar incertidumbre y condiciones de validez",
+      "Reproducir razonamientos sin simular evidencia"
+    ],
+    "areas": [
+      "ciencia",
+      "astronomia",
+      "biologia",
+      "fisica",
+      "quimica",
+      "biodiversidad"
+    ]
+  },
+  {
+    "id": "recursos",
+    "nombre": "Centro de recursos naturales",
+    "mision": "Investigar flujos materiales, alimentos y energía junto a sus costes ecológicos.",
+    "metodo": [
+      "Distinguir existencias de flujos",
+      "Medir presiones sin reducirlas a un ranking",
+      "Integrar gobernanza y servicios ecosistémicos"
+    ],
+    "areas": [
+      "medioambiente",
+      "energia",
+      "recursos-naturales",
+      "agricultura",
+      "oceanos"
+    ]
+  },
+  {
+    "id": "tecnologia",
+    "nombre": "Centro de tecnología",
+    "mision": "Analizar sistemas técnicos, capacidades industriales y redes críticas.",
+    "metodo": [
+      "Examinar ciclo de vida y dependencias",
+      "Separar adopción de capacidad de innovación",
+      "Evaluar fiabilidad, acceso y mantenimiento"
+    ],
+    "areas": [
+      "tecnologia",
+      "industria",
+      "infraestructura"
+    ]
+  },
+  {
+    "id": "demografica",
+    "nombre": "Centro de estudios demográficos",
+    "mision": "Explicar el cambio poblacional con estructura por edades y supuestos visibles.",
+    "metodo": [
+      "Distinguir tasas de recuentos",
+      "Leer cohortes y transiciones",
+      "No tratar proyecciones como destinos inevitables"
+    ],
+    "areas": [
+      "demografia"
+    ]
+  },
+  {
+    "id": "civilizaciones",
+    "nombre": "Centro de civilizaciones",
+    "mision": "Comparar sociedades a partir de instituciones, subsistencia y evidencia material.",
+    "metodo": [
+      "Usar cronologías aproximadas declaradas",
+      "Evitar jerarquías de progreso universal",
+      "Reconocer continuidad y diversidad interna"
+    ],
+    "areas": [
+      "civilizaciones",
+      "arqueologia",
+      "cultura"
+    ]
+  },
+  {
+    "id": "desarrollo",
+    "nombre": "Centro de desarrollo mundial",
+    "mision": "Relacionar bienestar, educación, instituciones y condiciones urbanas.",
+    "metodo": [
+      "Leer promedios junto a desigualdades",
+      "Comparar períodos y no solo posiciones",
+      "Reconocer lagunas de cobertura"
+    ],
+    "areas": [
+      "educacion",
+      "organizaciones-internacionales",
+      "desarrollo-humano",
+      "urbanismo"
+    ]
+  }
+]

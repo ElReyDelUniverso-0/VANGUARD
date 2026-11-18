@@ -1,0 +1,372 @@
+[
+  {
+    "id": "sumer",
+    "nombre": "Sumer",
+    "region": "Mesopotamia meridional",
+    "desde": -3500,
+    "hasta": -2000,
+    "cronologia": "Urbanización y predominio de ciudades sumerias; no fecha de origen o desaparición de una población.",
+    "organizacion": "Ciudades-Estado con autoridades palaciales y religiosas; sus relaciones variaron entre competencia, alianzas y hegemonías.",
+    "subsistencia": "Agricultura irrigada, ganadería y comercio con regiones sin los mismos recursos minerales y forestales.",
+    "conocimiento": "Escritura cuneiforme, contabilidad, medición y tradiciones literarias transmitidas y reformuladas después.",
+    "legado": "Instituciones urbanas y registros administrativos influyeron en culturas mesopotámicas posteriores.",
+    "limite": "No reducir todas las ciudades a un modelo de teocracia inmutable ni explicar el Estado solo por el riego.",
+    "lat": 31.32,
+    "lng": 45.64,
+    "paises": [
+      "iq"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "egipto",
+    "nombre": "Egipto faraónico",
+    "region": "Valle del Nilo",
+    "desde": -3100,
+    "hasta": -30,
+    "cronologia": "Intervalo convencional entre unificación dinástica y conquista romana; incluye rupturas y dominaciones externas.",
+    "organizacion": "Monarquía y administración territorial con cambios en poder provincial, templos y relaciones exteriores.",
+    "subsistencia": "Agricultura del valle y del delta, obras hidráulicas, producción artesanal y redes de intercambio.",
+    "conocimiento": "Escrituras jeroglífica e hierática, prácticas médicas, astronomía calendárica y arquitectura monumental.",
+    "legado": "Paisajes funerarios, textos y técnicas permiten estudiar interacción entre poder, religión y trabajo.",
+    "limite": "No presentar tres milenios como una cultura sin cambios ni atribuir toda construcción a trabajo esclavo.",
+    "lat": 25.72,
+    "lng": 32.66,
+    "paises": [
+      "eg"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "indo",
+    "nombre": "Tradición urbana del Indo",
+    "region": "Asia meridional",
+    "desde": -2600,
+    "hasta": -1900,
+    "cronologia": "Fase urbana madura; continuidades y transformaciones exceden estos límites.",
+    "organizacion": "Asentamientos con estándares constructivos y planificación; no hay consenso sobre una monarquía única o su estructura completa.",
+    "subsistencia": "Agricultura, ganadería, artesanías y redes terrestres y marítimas que alcanzaban otras regiones.",
+    "conocimiento": "Pesos, sellos, drenajes y planificación; escritura no descifrada de manera consensuada.",
+    "legado": "Ofrece un caso de urbanismo complejo cuyo poder político se investiga sobre todo arqueológicamente.",
+    "limite": "No deducir ausencia de jerarquía de la falta de palacios identificados ni afirmar traducciones seguras de sus signos.",
+    "lat": 27.33,
+    "lng": 68.14,
+    "paises": [
+      "pk",
+      "in"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "shang",
+    "nombre": "Shang",
+    "region": "China septentrional",
+    "desde": -1600,
+    "hasta": -1046,
+    "cronologia": "Cronología aproximada para una tradición dinástica apoyada en arqueología y textos oraculares.",
+    "organizacion": "Centros reales, linajes y redes de autoridad con rituales y actividad militar.",
+    "subsistencia": "Agricultura, ganadería y producción especializada de bronces dentro de redes regionales.",
+    "conocimiento": "Inscripciones en huesos oraculares y complejas técnicas de fundición.",
+    "legado": "Permite contrastar secuencias dinásticas tradicionales con restos y escrituras contemporáneas.",
+    "limite": "Las fechas tempranas y extensión efectiva son discutidas; no equivale a toda la población de la China actual.",
+    "lat": 36.1,
+    "lng": 114.35,
+    "paises": [
+      "cn"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "han",
+    "nombre": "Han",
+    "region": "Asia oriental",
+    "desde": -202,
+    "hasta": 220,
+    "cronologia": "Incluye la interrupción Xin y divisiones internas; rango convencional de comparación.",
+    "organizacion": "Administración imperial con burocracia, territorios y negociaciones con poderes regionales.",
+    "subsistencia": "Agricultura fiscalizada, artesanías, comercio y circulación de bienes por rutas diversas.",
+    "conocimiento": "Historiografía, prácticas administrativas y desarrollos técnicos, con variación entre regiones.",
+    "legado": "Modelos de organización imperial y tradiciones textuales tuvieron larga influencia regional.",
+    "limite": "No confundir influencia cultural con control territorial continuo ni identidad moderna con una dinastía antigua.",
+    "lat": 34.34,
+    "lng": 108.94,
+    "paises": [
+      "cn"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "grecia",
+    "nombre": "Mundos griegos arcaicos y clásicos",
+    "region": "Mediterráneo y mar Negro",
+    "desde": -800,
+    "hasta": -323,
+    "cronologia": "Recorte de períodos arcaico y clásico; las culturas griegas continuaron en época helenística y romana.",
+    "organizacion": "Poleis con gobiernos diversos: oligarquías, tiranías, democracias y reinos coexistieron.",
+    "subsistencia": "Agricultura, navegación, artesanía, comercio y trabajo libre y esclavizado.",
+    "conocimiento": "Debate filosófico, teatro, matemáticas e historiografía en contacto con otras tradiciones.",
+    "legado": "Instituciones y textos fueron reinterpretados repetidamente, no transmitidos de forma intacta.",
+    "limite": "No identificar a todos los griegos con la democracia ateniense ni invisibilizar exclusiones de género y condición jurídica.",
+    "lat": 37.98,
+    "lng": 23.73,
+    "paises": [
+      "gr",
+      "tr",
+      "it"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "roma",
+    "nombre": "Roma republicana e imperial",
+    "region": "Mediterráneo",
+    "desde": -509,
+    "hasta": 476,
+    "cronologia": "La fundación republicana es tradicional; 476 limita Occidente, no toda continuidad romana.",
+    "organizacion": "República oligárquica y después variadas formas imperiales; ciudadanía y administración cambiaron a lo largo del tiempo.",
+    "subsistencia": "Agricultura, tributos, comercio y trabajo bajo condiciones jurídicas muy diversas, incluida esclavitud.",
+    "conocimiento": "Derecho, ingeniería, urbanismo y compilación de saberes mediterráneos.",
+    "legado": "Infraestructuras, lenguas y tradiciones jurídicas persistieron mediante adaptaciones regionales.",
+    "limite": "La caída no fue un evento único y el Imperio romano de Oriente continuó muchos siglos.",
+    "lat": 41.9,
+    "lng": 12.5,
+    "paises": [
+      "it",
+      "gr",
+      "tr",
+      "eg"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "persia",
+    "nombre": "Imperio aqueménida",
+    "region": "Asia occidental",
+    "desde": -550,
+    "hasta": -330,
+    "cronologia": "Período imperial aproximado desde Ciro hasta la conquista macedónica.",
+    "organizacion": "Monarquía imperial con satrapías y acuerdos con élites locales; diversidad de lenguas y tradiciones.",
+    "subsistencia": "Tributación, agricultura y circulación mediante redes terrestres y centros administrativos.",
+    "conocimiento": "Registros multilingües y arquitectura que integraba técnicas y trabajo de distintos territorios.",
+    "legado": "Su organización muestra cómo se gobierna diversidad sin imponer uniformidad cultural completa.",
+    "limite": "Fuentes griegas y reales tienen sesgos distintos; no reconstruir el imperio con una sola voz.",
+    "lat": 29.94,
+    "lng": 52.89,
+    "paises": [
+      "ir",
+      "iq",
+      "tr"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "aksum",
+    "nombre": "Aksum",
+    "region": "Cuerno de África",
+    "desde": 100,
+    "hasta": 700,
+    "cronologia": "Fase de protagonismo político y comercial; los cambios se extendieron más allá del intervalo.",
+    "organizacion": "Reino conectado con regiones vecinas y rutas del mar Rojo, con transformaciones religiosas y políticas.",
+    "subsistencia": "Agricultura y comercio en redes que enlazaban África, Arabia y el mundo mediterráneo.",
+    "conocimiento": "Monedas, inscripciones, arquitectura monumental y tradición escrita en geez.",
+    "legado": "Es central para comprender historias africanas y del océano Índico conectadas, no aisladas.",
+    "limite": "No explicar su transformación únicamente por un cambio de rutas ni equiparar reino antiguo y fronteras actuales.",
+    "lat": 14.13,
+    "lng": 38.72,
+    "paises": [
+      "et",
+      "er"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "mali",
+    "nombre": "Mali imperial",
+    "region": "África occidental",
+    "desde": 1235,
+    "hasta": 1600,
+    "cronologia": "Fechas aproximadas de consolidación y fragmentación; continuidades políticas y culturales posteriores.",
+    "organizacion": "Autoridad imperial negociada con poderes locales y redes regionales de ciudades y territorios.",
+    "subsistencia": "Agricultura, ganadería, oro y comercio transahariano con trabajo y distribución desiguales.",
+    "conocimiento": "Tradiciones orales, enseñanza y manuscritos en centros conectados con el mundo islámico.",
+    "legado": "Permite estudiar redes intelectuales africanas junto a instituciones y economías regionales.",
+    "limite": "No reducir Mali a la riqueza de un gobernante ni tratar relatos orales como simples copias de fuentes escritas.",
+    "lat": 12.65,
+    "lng": -8.0,
+    "paises": [
+      "ml",
+      "sn",
+      "gn"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "angkor",
+    "nombre": "Angkor",
+    "region": "Sudeste asiático",
+    "desde": 802,
+    "hasta": 1431,
+    "cronologia": "Convención para un período, no fecha de desaparición de la sociedad jemer.",
+    "organizacion": "Redes de poder real, templos y asentamientos con cambios de centro y autoridad.",
+    "subsistencia": "Agricultura de arroz, obras hidráulicas e intercambio en territorios conectados.",
+    "conocimiento": "Arquitectura, ingeniería del agua, epigrafía y adaptación de tradiciones religiosas.",
+    "legado": "El paisaje urbano y sus reservorios permiten estudiar relación entre ambiente y organización social.",
+    "limite": "No atribuir su transformación a una única sequía o invasión ni ignorar continuidad de uso y memoria.",
+    "lat": 13.41,
+    "lng": 103.87,
+    "paises": [
+      "kh"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "maya",
+    "nombre": "Ciudades mayas del período Clásico",
+    "region": "Mesoamérica",
+    "desde": 250,
+    "hasta": 900,
+    "cronologia": "Período Clásico convencional; los pueblos mayas existen antes y después y continúan hoy.",
+    "organizacion": "Entidades políticas y dinastías diversas, no un único imperio maya centralizado.",
+    "subsistencia": "Agricultura adaptada a ambientes distintos, intercambio y producción artesanal especializada.",
+    "conocimiento": "Escritura, calendarios, matemáticas y observaciones astronómicas integradas en vida política y ritual.",
+    "legado": "Inscripciones y arqueología permiten historias locales detalladas y estudio de paisajes transformados.",
+    "limite": "El declive de algunas ciudades no equivale a desaparición de los mayas; evitar relatos de misterio sin evidencia.",
+    "lat": 17.22,
+    "lng": -89.62,
+    "paises": [
+      "gt",
+      "mx",
+      "bz",
+      "hn"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "teotihuacan",
+    "nombre": "Teotihuacán",
+    "region": "México central",
+    "desde": 100,
+    "hasta": 650,
+    "cronologia": "Intervalo aproximado de gran desarrollo urbano; poblamiento y cambios exceden estas fechas.",
+    "organizacion": "Gran centro urbano con barrios y relaciones regionales; la estructura exacta de gobierno sigue debatida.",
+    "subsistencia": "Agricultura regional, talleres, obsidiana e intercambios de amplio alcance.",
+    "conocimiento": "Planificación urbana, arquitectura y producción mural con interpretaciones aún discutidas.",
+    "legado": "Su influencia arqueológica se rastrea sin suponer que todo objeto similar prueba conquista.",
+    "limite": "No identificar automáticamente idioma, etnicidad o régimen político de sus habitantes.",
+    "lat": 19.69,
+    "lng": -98.84,
+    "paises": [
+      "mx"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "inca",
+    "nombre": "Tawantinsuyu",
+    "region": "Andes",
+    "desde": 1438,
+    "hasta": 1533,
+    "cronologia": "Período convencional de expansión imperial hasta la conquista y crisis dinástica; hubo resistencias posteriores.",
+    "organizacion": "Poder imperial articulado mediante autoridades locales, obligaciones laborales y redes administrativas.",
+    "subsistencia": "Agricultura de múltiples pisos ecológicos, almacenamiento y redistribución con desigualdades territoriales.",
+    "conocimiento": "Caminos, arquitectura, manejo agrario y registros mediante quipus.",
+    "legado": "El sistema vial y paisajes agrícolas documentan coordinación a gran escala en ambientes diversos.",
+    "limite": "No describirlo como sociedad sin registros por no usar escritura alfabética ni dar por concluida toda resistencia en 1533.",
+    "lat": -13.52,
+    "lng": -71.97,
+    "paises": [
+      "pe",
+      "bo",
+      "ec",
+      "cl",
+      "ar"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "mexica",
+    "nombre": "Triple Alianza y poder mexica",
+    "region": "México central",
+    "desde": 1428,
+    "hasta": 1521,
+    "cronologia": "Recorte de hegemonía de la Triple Alianza; no comienzo o final de las culturas nahuas.",
+    "organizacion": "Alianza de Tenochtitlan, Texcoco y Tlacopan con tributos y formas diversas de subordinación.",
+    "subsistencia": "Agricultura intensiva, mercados, tributos y redes de abastecimiento de ciudades.",
+    "conocimiento": "Códices, calendarios, obras hidráulicas y conocimientos vinculados a organización política y ritual.",
+    "legado": "El caso permite estudiar tributación y urbanismo a través de fuentes indígenas y coloniales contrastadas.",
+    "limite": "La conquista fue un proceso con múltiples actores indígenas; no una simple oposición binaria de europeos e indígenas.",
+    "lat": 19.43,
+    "lng": -99.13,
+    "paises": [
+      "mx"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "song",
+    "nombre": "Song",
+    "region": "Asia oriental",
+    "desde": 960,
+    "hasta": 1279,
+    "cronologia": "Distingue fases septentrional y meridional; hubo importantes cambios territoriales.",
+    "organizacion": "Administración imperial, exámenes y élites regionales con negociación política y fiscal.",
+    "subsistencia": "Agricultura intensiva, mercados urbanos, manufacturas y comercio marítimo y terrestre.",
+    "conocimiento": "Impresión, conocimientos técnicos y desarrollos comerciales y monetarios.",
+    "legado": "Permite comparar expansión mercantil sin imponer categorías de industrialización europea posteriores.",
+    "limite": "No describir su economía como capitalismo moderno sin explicar criterios ni ignorar conflictos y desigualdades.",
+    "lat": 34.8,
+    "lng": 114.3,
+    "paises": [
+      "cn"
+    ],
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  }
+]

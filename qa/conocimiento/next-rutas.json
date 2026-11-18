@@ -1,0 +1,58 @@
+[
+  {
+    "route": "/conocimiento",
+    "status": 200,
+    "bytes": 1137651,
+    "seconds": 6.57,
+    "hasCanonical": null
+  },
+  {
+    "route": "/conocimiento/tema/pib",
+    "status": 200,
+    "bytes": 377526,
+    "seconds": 3.09,
+    "hasCanonical": true
+  },
+  {
+    "route": "/conocimiento/area/biologia",
+    "status": 200,
+    "bytes": 190050,
+    "seconds": 1.19,
+    "hasCanonical": null
+  },
+  {
+    "route": "/conocimiento/centro/cientifica",
+    "status": 200,
+    "bytes": 194906,
+    "seconds": 1.07,
+    "hasCanonical": null
+  },
+  {
+    "route": "/api/conocimiento?q=tectonica",
+    "status": 200,
+    "bytes": 1192,
+    "seconds": 0.47,
+    "hasCanonical": null
+  },
+  {
+    "route": "/api/conocimiento?tipo=organizaciones&limit=5",
+    "status": 200,
+    "bytes": 10843,
+    "seconds": 0.01,
+    "hasCanonical": null
+  },
+  {
+    "route": "/api/conocimiento?tipo=cuentas",
+    "status": 400,
+    "bytes": 29,
+    "seconds": 0.01,
+    "hasCanonical": null
+  },
+  {
+    "route": "/conocimiento/tema/no-existe",
+    "status": 404,
+    "bytes": 10306,
+    "seconds": 0.49,
+    "hasCanonical": null
+  }
+]

@@ -73,6 +73,7 @@ export const MODULOS: Modulo[] = [
     img: "/ilustraciones/planeta.jpg",
     gancho: "Las fichas que explican quién es quién, cuánto pesa cada país y de dónde viene todo.",
     pestanas: [
+      { href: "/conocimiento", label: "Conocimiento global", txt: "Nueve centros, treinta áreas, enciclopedia conectada e indicadores con fuentes y límites." },
       { href: "/atlas", label: "Atlas", img: "/ilustraciones/planeta.jpg", txt: "Las naciones, las personas y las rutas del poder." },
       // v406.3 EDITORIAL COMMAND — la biblioteca de artículos con fuentes, en diez áreas.
       { href: "/editorial", label: "Redacción", img: "/ilustraciones/biblioteca.jpg", txt: "Artículos con fuentes en diez áreas: geopolítica, historia, economía, conflictos y más." },

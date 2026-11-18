@@ -1,0 +1,17 @@
+{
+  "passed": 11,
+  "checks": [
+    "22 departamentos con auditoría, alcance, archivos, pruebas, límites y siguiente expansión",
+    "Censo reproducible sin colisiones; cada patrón apunta a un archivo real",
+    "Cuatro rutas y doce actividades conectadas a expedientes con fuentes",
+    "Evaluación distingue respuestas correctas, incorrectas y entradas no enteras",
+    "Motor explicativo reutiliza el texto exacto y no responde sobre temas inexistentes",
+    "Los nuevos módulos tienen destino y dependencias registradas",
+    "API explicativa tema=pib → 200",
+    "API explicativa tema=pib&nivel=completo → 200",
+    "API explicativa tema=no-existe → 404",
+    "API explicativa tema=pib&nivel=inventar → 400",
+    "API explicativa tema=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx → 400"
+  ],
+  "scope": "Integridad de contratos y lógica. No certifica todas las misiones ni derechos de activos heredados."
+}

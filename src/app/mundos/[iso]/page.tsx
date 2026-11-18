@@ -1,3 +1,4 @@
+import { PuentesConocimientoPais } from "@/components/conocimiento/puentes-pais";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -554,6 +555,7 @@ export default async function PaisPage({ params }: Props) {
             <CablesDelPais nombre={f.nombre} iso2={f.iso2} />
           </div>
 
+          <PuentesConocimientoPais iso={f.iso2} nombre={f.nombre} />
           <p className="vx-mp-nota">
             Ficha generada en el servidor con las tablas de la casa: geo-paises (identidad ISO), atlas-data (capital,
             población, superficie, idiomas, moneda, gobierno, líder), world-data (moneda y tasa), poder-data (Banco

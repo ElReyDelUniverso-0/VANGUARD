@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "src/lib/conocimiento/**/*.ts",
+    "src/components/conocimiento/**/*.tsx",
+    "src/app/conocimiento/**/*.tsx",
+    "src/app/api/conocimiento/**/*.ts",
+    "src/app/mundos/[iso]/page.tsx",
+    "src/app/sitemap.ts",
+    "src/lib/nucleo/registro.ts",
+    "src/lib/nucleo/fuentes.ts",
+    "src/lib/nucleo/busqueda.ts",
+    "src/lib/navegacion/espacios.ts",
+    "src/components/portada/modulos.ts",
+    "scripts/conocimiento/pruebas.ts",
+    "src/app/sistema/departamentos/page.tsx",
+    "src/app/sistema/page.tsx",
+    "src/lib/api/catalogo.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

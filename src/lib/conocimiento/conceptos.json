@@ -1,0 +1,1393 @@
+[
+  {
+    "id": "revolucion-industrial",
+    "area": "historia",
+    "titulo": "Revoluciones industriales",
+    "resumen": "La industrialización reorganizó producción, trabajo, energía y ciudades. No fue un salto simultáneo: la mecanización textil y el carbón británicos precedieron a combinaciones distintas de industria y Estado en otros territorios.",
+    "mecanismo": "Las máquinas elevaron la producción por trabajador en ciertas tareas, pero su difusión dependió de capital, mercados, conocimientos y transporte. El cambio también desplazó oficios y alteró la disciplina del trabajo.",
+    "contexto": "Vapor, ferrocarril y fábrica conectan la historia económica con la urbanización y las emisiones acumuladas. La división entre primera y segunda revolución ayuda a ordenar procesos, no a fijar fronteras universales.",
+    "limite": "No atribuir el cambio solo a inventores ni confundir crecimiento agregado con mejoras inmediatas de condiciones laborales.",
+    "pregunta": "¿Qué infraestructura hizo viable una fábrica y quién asumió sus costes?",
+    "fuentes": [
+      "hist2",
+      "iea"
+    ],
+    "relacionados": [
+      "productividad",
+      "urbanizacion",
+      "transicion-energetica"
+    ],
+    "hitos": [
+      "vapor",
+      "suez"
+    ],
+    "paises": []
+  },
+  {
+    "id": "descolonizacion",
+    "area": "historia",
+    "titulo": "Descolonización y construcción estatal",
+    "resumen": "La descolonización transformó imperios en Estados soberanos mediante negociación, movilización y conflictos. La independencia jurídica no resolvió automáticamente desigualdades económicas, fronteras disputadas o relaciones de dependencia.",
+    "mecanismo": "Los movimientos nacionales combinaron demandas internas con cambios en el equilibrio internacional. Las administraciones nuevas heredaron instituciones y redes comerciales que podían facilitar o restringir su autonomía.",
+    "contexto": "Asia y África siguieron trayectorias diversas después de la Segunda Guerra Mundial. La ONU se convirtió en foro para autodeterminación y reconocimiento, mientras la Guerra Fría atravesaba numerosos procesos.",
+    "limite": "No equiparar independencia con homogeneidad nacional ni reducir todas las guerras posteriores al legado colonial.",
+    "pregunta": "¿Qué cambió con la independencia y qué estructuras permanecieron?",
+    "fuentes": [
+      "hist2",
+      "un"
+    ],
+    "relacionados": [
+      "soberania",
+      "cooperacion",
+      "desarrollo-capacidades"
+    ],
+    "hitos": [
+      "haiti",
+      "india",
+      "bandung",
+      "independencias-africa"
+    ],
+    "paises": []
+  },
+  {
+    "id": "tectonica",
+    "area": "geografia",
+    "titulo": "Tectónica de placas y riesgo",
+    "resumen": "La litosfera está fragmentada en placas cuyo movimiento concentra sismos, volcanismo y formación de montañas. Los límites de placas explican patrones globales, pero no permiten predecir la fecha de un terremoto específico.",
+    "mecanismo": "En límites convergentes puede haber subducción o colisión; en divergentes se forma corteza y en transformantes predomina desplazamiento lateral. La deformación almacena energía que puede liberarse bruscamente.",
+    "contexto": "La amenaza geológica se convierte en desastre al combinarse con exposición, vulnerabilidad y capacidad de respuesta. Dos ciudades sometidas a sismos parecidos pueden sufrir consecuencias muy distintas.",
+    "limite": "Un mapa de placas no sustituye estudios locales, normas de construcción ni sistemas oficiales de alerta.",
+    "pregunta": "¿La diferencia de daños depende de la magnitud o de la vulnerabilidad construida?",
+    "fuentes": [
+      "fis",
+      "usgs"
+    ],
+    "relacionados": [
+      "resiliencia-redes",
+      "urbanizacion",
+      "riesgo-climatico"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "cuencas",
+    "area": "geografia",
+    "titulo": "Cuencas hidrográficas",
+    "resumen": "Una cuenca reúne el territorio cuyo escurrimiento converge hacia una salida común. Esa unidad física conecta usos de suelo aguas arriba con disponibilidad y calidad del agua aguas abajo.",
+    "mecanismo": "Precipitación, infiltración, evapotranspiración y almacenamiento reparten el agua entre suelo, acuíferos, ríos y atmósfera. Un cambio forestal o urbano puede modificar tiempos de escorrentía y transporte de sedimentos.",
+    "contexto": "Las fronteras administrativas rara vez coinciden con divisorias de aguas. Gestionar una cuenca exige coordinación entre agricultura, ciudades, energía e industrias, además de considerar flujos ecológicos.",
+    "limite": "No confundir precipitación anual con agua utilizable ni extracción con consumo neto.",
+    "pregunta": "¿Cómo afecta una intervención aguas arriba a quienes dependen del río aguas abajo?",
+    "fuentes": [
+      "usgs",
+      "fao"
+    ],
+    "relacionados": [
+      "agua-dulce",
+      "riego",
+      "ciclo-agua"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "soberania",
+    "area": "geopolitica",
+    "titulo": "Soberanía y reconocimiento",
+    "resumen": "La soberanía combina autoridad interna y una posición jurídica frente a otros Estados. El reconocimiento diplomático, el control efectivo y la membresía en organizaciones son dimensiones relacionadas, pero distintas.",
+    "mecanismo": "Las instituciones delimitan quién puede tomar decisiones y con qué legitimidad. En el exterior, tratados y prácticas diplomáticas ordenan relaciones entre entidades que no siempre coinciden en su reconocimiento mutuo.",
+    "contexto": "La Carta de la ONU afirma igualdad soberana y prohíbe en general la amenaza o el uso de la fuerza, con excepciones jurídicas concretas. Las controversias muestran la distancia entre reglas y poder material.",
+    "limite": "Un polígono cartográfico no resuelve una disputa territorial; representar una frontera no implica avalar una reclamación.",
+    "pregunta": "¿Qué diferencia hay entre controlar un territorio y ser reconocido como Estado?",
+    "fuentes": [
+      "un",
+      "hist2"
+    ],
+    "relacionados": [
+      "cooperacion",
+      "seguridad-colectiva",
+      "organismos-mandatos"
+    ],
+    "hitos": [
+      "westfalia",
+      "onu"
+    ],
+    "paises": []
+  },
+  {
+    "id": "estrechos",
+    "area": "geopolitica",
+    "titulo": "Estrechos y cuellos de botella",
+    "resumen": "Los estrechos concentran rutas porque conectan cuencas marítimas con pocos pasos alternativos. Su importancia depende de flujos comerciales, tipos de carga, puertos y capacidad de desvío, no solo de su anchura.",
+    "mecanismo": "Una interrupción aumenta distancia, tiempo, seguros y consumo energético. Los efectos se propagan mediante inventarios y cadenas logísticas; la disponibilidad de rutas alternativas determina la capacidad de adaptación.",
+    "contexto": "Los cuellos de botella unen geografía física con política naval, derecho del mar, energía y precios. La vulnerabilidad de una ruta debe leerse junto a la concentración de proveedores y la flexibilidad de la demanda.",
+    "limite": "No convertir un mapa de tráfico en una probabilidad de guerra ni confundir porcentaje por volumen con porcentaje por valor.",
+    "pregunta": "¿Cuánto costaría desviar una ruta y quién puede hacerlo?",
+    "fuentes": [
+      "unctad",
+      "wto"
+    ],
+    "relacionados": [
+      "logistica",
+      "seguridad-energetica",
+      "cadenas-valor"
+    ],
+    "hitos": [
+      "suez",
+      "derecho-mar"
+    ],
+    "paises": []
+  },
+  {
+    "id": "pib",
+    "area": "economia",
+    "titulo": "PIB: producción, no bienestar",
+    "resumen": "El producto interior bruto agrega el valor añadido de la producción dentro de una economía. Puede estimarse por producción, gasto o ingresos, buscando medir el mismo circuito desde perspectivas distintas.",
+    "mecanismo": "El PIB nominal cambia con cantidades y precios. Para estudiar crecimiento se usan medidas reales; para comparar niveles entre economías también importa el tipo de cambio o la paridad de poder adquisitivo.",
+    "contexto": "La suma de consumo, inversión, gasto público y exportaciones netas es una identidad contable, no una receta causal automática. El PIB por habitante sigue siendo un promedio y no una medida de distribución.",
+    "limite": "El PIB omite parte del trabajo no remunerado y no descuenta por completo degradación ambiental ni desigualdad.",
+    "pregunta": "¿Crece la producción real o solo su valoración monetaria?",
+    "fuentes": [
+      "wb",
+      "imf"
+    ],
+    "relacionados": [
+      "productividad",
+      "desarrollo-capacidades",
+      "desigualdad"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "productividad",
+    "area": "economia",
+    "titulo": "Productividad y cambio estructural",
+    "resumen": "La productividad relaciona producción e insumos: por hora trabajada, persona o combinación de factores. Su aumento puede proceder de aprendizaje, maquinaria, organización o reasignación hacia actividades de mayor valor añadido.",
+    "mecanismo": "Comparar productividad exige controlar horas, precios y composición sectorial. Una economía puede elevar su promedio desplazando empleo entre sectores sin que cada establecimiento mejore en igual medida.",
+    "contexto": "La industrialización y la difusión tecnológica suelen analizarse desde este ángulo. Instituciones, competencia, formación e infraestructura condicionan si las mejoras se difunden o quedan concentradas en pocas empresas.",
+    "limite": "No confundir productividad con intensidad del trabajo ni asumir que salarios y productividad avanzan automáticamente juntos.",
+    "pregunta": "¿La mejora viene de producir más con lo mismo o de cambiar de actividad?",
+    "fuentes": [
+      "wb",
+      "unido"
+    ],
+    "relacionados": [
+      "industrializacion",
+      "cadenas-valor",
+      "educacion-aprendizaje"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "presupuesto",
+    "area": "finanzas-publicas",
+    "titulo": "Presupuesto y ciclo fiscal",
+    "resumen": "El presupuesto autoriza ingresos y gastos para un período y expresa prioridades públicas. Su análisis requiere separar lo aprobado, lo comprometido, lo devengado y lo efectivamente pagado.",
+    "mecanismo": "Un déficit es un flujo durante un período; la deuda es una posición acumulada. El financiamiento y los ajustes de valoración conectan ambas magnitudes sin que sean idénticas.",
+    "contexto": "El perímetro importa: gobierno central, gobierno general y sector público pueden producir cifras distintas. También cambian las comparaciones cuando se incluye inversión, empresas públicas o pasivos contingentes.",
+    "limite": "Un gasto anunciado no es un servicio entregado; una baja ejecución puede responder a capacidad, retrasos o reclasificación.",
+    "pregunta": "¿Qué entidad, etapa contable y período cubre la cifra que comparas?",
+    "fuentes": [
+      "imf-fiscal",
+      "imf"
+    ],
+    "relacionados": [
+      "deuda-publica",
+      "infraestructura-ciclo",
+      "pib"
+    ],
+    "hitos": [
+      "bretton"
+    ],
+    "paises": []
+  },
+  {
+    "id": "deuda-publica",
+    "area": "finanzas-publicas",
+    "titulo": "Deuda pública y sostenibilidad",
+    "resumen": "La deuda pública representa obligaciones de un perímetro institucional definido. Su sostenibilidad depende de capacidad de pago, crecimiento, intereses, vencimientos, moneda y condiciones de refinanciamiento.",
+    "mecanismo": "La relación deuda/PIB puede caer con crecimiento o aumentar por depreciación si hay deuda en divisas. Un perfil concentrado en vencimientos cortos puede ser frágil incluso con un cociente moderado.",
+    "contexto": "Las evaluaciones usan escenarios y pruebas de tensión. El saldo primario excluye intereses y ayuda a separar decisiones fiscales corrientes del coste financiero heredado.",
+    "limite": "No existe un umbral universal que determine por sí solo insolvencia. Tampoco toda deuda financia inversión productiva.",
+    "pregunta": "¿Importa más el volumen total o cuándo y en qué moneda debe pagarse?",
+    "fuentes": [
+      "imf",
+      "imf-fiscal"
+    ],
+    "relacionados": [
+      "presupuesto",
+      "pib",
+      "seguridad-energetica"
+    ],
+    "hitos": [
+      "bretton"
+    ],
+    "paises": []
+  },
+  {
+    "id": "ventaja-comparativa",
+    "area": "comercio-internacional",
+    "titulo": "Ventaja comparativa",
+    "resumen": "La ventaja comparativa depende del coste de oportunidad relativo, no de ser el productor absolutamente más eficiente. Permite explicar ganancias potenciales del intercambio incluso con diferencias amplias de productividad.",
+    "mecanismo": "Al especializarse, una economía reasigna recursos hacia actividades relativamente menos costosas. Los modelos básicos suponen movilidad interna y ajustes que pueden ser lentos o desiguales en la práctica.",
+    "contexto": "La política comercial debe considerar aprendizaje, empleo, poder de mercado y resiliencia. Un resultado agregado favorable no asegura que todos los trabajadores o territorios ganen.",
+    "limite": "No interpretar el modelo como argumento automático contra cualquier política industrial o protección social.",
+    "pregunta": "¿Quién gana en el agregado y quién necesita apoyo durante la transición?",
+    "fuentes": [
+      "wto",
+      "imf"
+    ],
+    "relacionados": [
+      "cadenas-valor",
+      "productividad",
+      "desigualdad"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "cadenas-valor",
+    "area": "comercio-internacional",
+    "titulo": "Cadenas globales de valor",
+    "resumen": "Una cadena global de valor distribuye etapas de diseño, insumos, ensamblaje, logística y servicios entre territorios. El comercio bruto puede contar varias veces componentes que cruzan fronteras.",
+    "mecanismo": "La posición en la cadena afecta ingresos, capacidades y exposición a interrupciones. Capturar valor no depende solo de exportar más unidades: también cuentan tecnología, marcas, servicios y acceso al mercado.",
+    "contexto": "Los choques logísticos revelan dependencias en proveedores, rutas y estándares. Diversificar puede mejorar resiliencia, aunque también elevar costes y reducir economías de escala.",
+    "limite": "Exportación bruta no equivale a valor añadido nacional ni una cadena corta es siempre más segura.",
+    "pregunta": "¿Qué parte del valor queda en cada etapa y dónde se concentra el riesgo?",
+    "fuentes": [
+      "wto",
+      "unido",
+      "unctad"
+    ],
+    "relacionados": [
+      "logistica",
+      "semiconductores",
+      "ventaja-comparativa"
+    ],
+    "hitos": [
+      "suez",
+      "omc"
+    ],
+    "paises": []
+  },
+  {
+    "id": "metodo-cientifico",
+    "area": "ciencia",
+    "titulo": "Evidencia y contraste científico",
+    "resumen": "La investigación científica construye explicaciones que pueden someterse a observación, medición y crítica. No existe una secuencia única de pasos aplicable de forma idéntica a astronomía, historia natural y experimentación.",
+    "mecanismo": "Hipótesis y modelos generan expectativas; los datos permiten evaluar su ajuste frente a alternativas. La revisión por pares ayuda a detectar problemas, pero no convierte un resultado en verdad definitiva.",
+    "contexto": "La reproducibilidad depende de métodos, instrumentos y acceso a datos. Las ciencias observacionales usan controles estadísticos y convergencia de evidencia cuando no pueden intervenir experimentalmente.",
+    "limite": "Una correlación aislada no identifica una causa y un resultado significativo no garantiza relevancia práctica.",
+    "pregunta": "¿Qué observación haría cambiar la explicación que estás considerando?",
+    "fuentes": [
+      "bio",
+      "fis"
+    ],
+    "relacionados": [
+      "incertidumbre",
+      "evolucion",
+      "clima-carbono"
+    ],
+    "hitos": [
+      "copernico",
+      "darwin"
+    ],
+    "paises": []
+  },
+  {
+    "id": "incertidumbre",
+    "area": "ciencia",
+    "titulo": "Medición e incertidumbre",
+    "resumen": "Toda medición tiene resolución y fuentes de incertidumbre. Repetir observaciones permite estimar variabilidad aleatoria, pero no elimina sesgos comunes del instrumento o del diseño.",
+    "mecanismo": "La incertidumbre se propaga al combinar magnitudes. Un intervalo debe leerse junto al procedimiento que lo produjo; no es una garantía absoluta sobre cada valor posible.",
+    "contexto": "En estadísticas internacionales, diferencias metodológicas pueden importar tanto como el margen de error. Cambios de definición generan rupturas de serie que no representan cambios reales del fenómeno.",
+    "limite": "No publicar más decimales de los que sostiene el método ni convertir ausencia de evidencia en evidencia de ausencia.",
+    "pregunta": "¿La diferencia entre dos cifras supera su incertidumbre y sus diferencias metodológicas?",
+    "fuentes": [
+      "fis",
+      "wb"
+    ],
+    "relacionados": [
+      "metodo-cientifico",
+      "pib",
+      "demografia-transicion"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "semiconductores",
+    "area": "tecnologia",
+    "titulo": "Semiconductores y dependencia tecnológica",
+    "resumen": "Los semiconductores permiten controlar corriente mediante propiedades electrónicas de materiales y estructuras. Sus cadenas combinan diseño, software, equipos, fabricación, encapsulado y pruebas.",
+    "mecanismo": "La miniaturización no es la única vía de mejora: arquitectura, memoria, eficiencia energética y empaquetado también condicionan rendimiento. Fabricar requiere procesos muy precisos y proveedores especializados.",
+    "contexto": "La concentración de capacidades y los controles de exportación conectan política industrial con geopolítica. Tener una fábrica no equivale a dominar todas las etapas ni todos los tipos de chip.",
+    "limite": "No usar tamaño de nodo como comparación universal de calidad ni extrapolar una escasez a todos los componentes.",
+    "pregunta": "¿Dónde está el conocimiento difícil de sustituir dentro de la cadena?",
+    "fuentes": [
+      "wipo",
+      "unido"
+    ],
+    "relacionados": [
+      "cadenas-valor",
+      "productividad",
+      "infraestructura-digital"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "infraestructura-digital",
+    "area": "tecnologia",
+    "titulo": "Conectividad y brecha digital",
+    "resumen": "La conectividad incluye redes físicas, acceso asequible, dispositivos, habilidades y usos significativos. Una población cubierta por señal no está necesariamente conectada de manera efectiva.",
+    "mecanismo": "Cables submarinos, centros de datos y redes de acceso forman capas interdependientes. La calidad del servicio depende de capacidad, latencia, redundancia y energía disponible.",
+    "contexto": "La brecha digital se superpone a diferencias de ingreso, género y territorio. Medir usuarios, hogares conectados o cobertura móvil responde preguntas distintas.",
+    "limite": "No confundir acceso con seguridad, alfabetización o beneficios educativos; la privacidad y el diseño también importan.",
+    "pregunta": "¿Qué barrera impide que la cobertura técnica se convierta en uso efectivo?",
+    "fuentes": [
+      "itu",
+      "wb"
+    ],
+    "relacionados": [
+      "educacion-aprendizaje",
+      "resiliencia-redes",
+      "semiconductores"
+    ],
+    "hitos": [
+      "sputnik"
+    ],
+    "paises": []
+  },
+  {
+    "id": "sistema-solar",
+    "area": "astronomia",
+    "titulo": "Formación del Sistema Solar",
+    "resumen": "El Sistema Solar se explica mediante la evolución de un disco de gas y polvo alrededor del Sol joven. La acreción, colisiones y migraciones ayudan a comprender diferencias entre planetas y cuerpos menores.",
+    "mecanismo": "La temperatura del disco condicionó qué materiales podían condensarse. Más tarde, la gravedad redistribuyó órbitas y algunos cuerpos conservaron registros de etapas tempranas.",
+    "contexto": "Meteoritos, observaciones telescópicas y misiones espaciales aportan evidencias complementarias. Los modelos cambian cuando nuevas mediciones restringen composiciones y tiempos.",
+    "limite": "Las ilustraciones de órbitas rara vez están a escala; origen común no implica evolución idéntica.",
+    "pregunta": "¿Qué nos enseña un meteorito que no puede medirse observando un planeta lejano?",
+    "fuentes": [
+      "nasa",
+      "astro"
+    ],
+    "relacionados": [
+      "gravitacion",
+      "espectroscopia",
+      "datacion"
+    ],
+    "hitos": [
+      "sputnik",
+      "apollo"
+    ],
+    "paises": []
+  },
+  {
+    "id": "estrellas",
+    "area": "astronomia",
+    "titulo": "Vida de las estrellas",
+    "resumen": "Las estrellas mantienen un equilibrio entre gravedad y presión durante amplias etapas de su vida. Su masa inicial influye decisivamente en luminosidad, duración y destino.",
+    "mecanismo": "La fusión nuclear cambia composición y estructura interna. Al agotarse combustibles en el núcleo, la estrella puede expandirse y terminar en remanentes distintos según masa y evolución.",
+    "contexto": "Espectros y diagramas de luminosidad-temperatura permiten estudiar poblaciones estelares a distintas distancias y edades. La luz que llega hoy fue emitida en el pasado.",
+    "limite": "No confundir brillo aparente con luminosidad ni presentar todas las estrellas como futuros agujeros negros.",
+    "pregunta": "¿Cómo inferimos procesos internos sin observar directamente el núcleo?",
+    "fuentes": [
+      "astro",
+      "nasa"
+    ],
+    "relacionados": [
+      "espectroscopia",
+      "gravitacion",
+      "energia-conservacion"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "evolucion",
+    "area": "biologia",
+    "titulo": "Evolución y selección natural",
+    "resumen": "La evolución es cambio heredable en poblaciones a través de generaciones. La selección natural es uno de sus mecanismos, junto con mutación, deriva genética y flujo génico.",
+    "mecanismo": "Cuando variantes heredables afectan supervivencia o reproducción en un ambiente, sus frecuencias pueden cambiar. La deriva también modifica poblaciones por azar, especialmente en tamaños pequeños.",
+    "contexto": "Fósiles, genética, biogeografía y observaciones contemporáneas convergen en la explicación evolutiva. Adaptación es siempre relativa a condiciones concretas, no una escalera de perfección.",
+    "limite": "No atribuir intención a la evolución ni deducir normas sociales de diferencias biológicas.",
+    "pregunta": "¿El cambio observado responde a selección, azar o movimiento de individuos?",
+    "fuentes": [
+      "bio"
+    ],
+    "relacionados": [
+      "genetica",
+      "diversidad-biologica",
+      "metodo-cientifico"
+    ],
+    "hitos": [
+      "darwin"
+    ],
+    "paises": []
+  },
+  {
+    "id": "genetica",
+    "area": "biologia",
+    "titulo": "Herencia y expresión génica",
+    "resumen": "La información genética se transmite y expresa mediante sistemas moleculares que interactúan con el ambiente. Un gen no se traduce de forma directa e independiente en un rasgo complejo.",
+    "mecanismo": "Replicación, transcripción y traducción conectan ADN, ARN y proteínas. La regulación y las interacciones entre genes condicionan cuándo y dónde aparecen productos funcionales.",
+    "contexto": "Los patrones mendelianos describen casos útiles, pero muchos rasgos son poligénicos o dependen de ambiente y desarrollo. La secuenciación mide variantes; su interpretación exige evidencia adicional.",
+    "limite": "Asociación genética no implica determinismo individual; los datos genómicos requieren protección y consentimiento.",
+    "pregunta": "¿Qué parte de la variación explica el genotipo en el ambiente estudiado?",
+    "fuentes": [
+      "bio"
+    ],
+    "relacionados": [
+      "evolucion",
+      "diversidad-biologica",
+      "incertidumbre"
+    ],
+    "hitos": [
+      "genoma"
+    ],
+    "paises": []
+  },
+  {
+    "id": "energia-conservacion",
+    "area": "fisica",
+    "titulo": "Conservación de la energía",
+    "resumen": "La energía puede transferirse entre sistemas y transformarse entre formas, pero su contabilidad depende de definir claramente los límites del sistema y sus interacciones.",
+    "mecanismo": "Trabajo y calor son modos de transferencia, no sustancias almacenadas. La primera ley relaciona cambios de energía interna con intercambios a través de la frontera elegida.",
+    "contexto": "La eficiencia de una máquina y el consumo de una ciudad pueden estudiarse con balances, siempre distinguiendo energía de potencia y servicios finales.",
+    "limite": "La energía total se conserva, pero su capacidad de realizar trabajo útil puede disminuir; eficiencia no equivale a ausencia de impacto.",
+    "pregunta": "¿Qué entra, qué sale y qué se acumula en el sistema que analizas?",
+    "fuentes": [
+      "fis",
+      "iea"
+    ],
+    "relacionados": [
+      "termodinamica",
+      "transicion-energetica",
+      "productividad"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "gravitacion",
+    "area": "fisica",
+    "titulo": "Gravitación y modelos",
+    "resumen": "La gravitación describe la interacción asociada a la masa y energía. La mecánica newtoniana explica con gran precisión muchas situaciones cotidianas y orbitales, dentro de su dominio de validez.",
+    "mecanismo": "La atracción y las condiciones iniciales determinan trayectorias. La relatividad general amplía la descripción cuando importan curvatura del espacio-tiempo, precisión extrema o campos intensos.",
+    "contexto": "Usar un modelo más simple no es un error si sus aproximaciones son adecuadas. Navegación, astronomía y geodesia exigen niveles de precisión diferentes.",
+    "limite": "No confundir masa con peso ni presentar órbitas como trayectorias sostenidas por una fuerza adicional de impulso constante.",
+    "pregunta": "¿Qué precisión necesitas y qué efectos puede ignorar el modelo?",
+    "fuentes": [
+      "fis",
+      "astro"
+    ],
+    "relacionados": [
+      "sistema-solar",
+      "estrellas",
+      "incertidumbre"
+    ],
+    "hitos": [
+      "sputnik"
+    ],
+    "paises": []
+  },
+  {
+    "id": "enlaces-quimicos",
+    "area": "quimica",
+    "titulo": "Enlaces y estructura de la materia",
+    "resumen": "Las propiedades de una sustancia dependen de composición, disposición de átomos e interacciones entre partículas. Los modelos iónico, covalente y metálico son herramientas para describir patrones, no compartimentos absolutos.",
+    "mecanismo": "La distribución electrónica ayuda a explicar estabilidad, geometría y reactividad. Las fuerzas intermoleculares influyen en puntos de ebullición, solubilidad y comportamiento de materiales.",
+    "contexto": "La química conecta estructura microscópica con procesos industriales, biológicos y ambientales. Cambiar una molécula o una estructura cristalina puede cambiar radicalmente sus propiedades.",
+    "limite": "Una fórmula química no muestra siempre geometría, pureza o condiciones de uso; la sustancia no se evalúa fuera de dosis y exposición.",
+    "pregunta": "¿Qué estructura explica la propiedad macroscópica que observas?",
+    "fuentes": [
+      "quim"
+    ],
+    "relacionados": [
+      "reacciones",
+      "espectroscopia",
+      "materiales"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "reacciones",
+    "area": "quimica",
+    "titulo": "Reacciones y equilibrio químico",
+    "resumen": "Una reacción reorganiza enlaces conservando elementos y carga. El ajuste estequiométrico permite relacionar cantidades, pero no informa por sí solo de rapidez ni de rendimiento real.",
+    "mecanismo": "La termodinámica condiciona estados favorables y el equilibrio depende de condiciones como temperatura y concentración. La cinética estudia barreras y velocidades; un catalizador modifica la ruta, no el equilibrio final.",
+    "contexto": "Los procesos industriales buscan combinar rendimiento, selectividad, seguridad y consumo energético. El equilibrio químico también ayuda a estudiar aguas naturales y sistemas biológicos.",
+    "limite": "Que una reacción sea favorable no significa que ocurra rápidamente ni que sea segura fuera de condiciones controladas.",
+    "pregunta": "¿La limitación del proceso es equilibrio, velocidad o transferencia de materia?",
+    "fuentes": [
+      "quim"
+    ],
+    "relacionados": [
+      "termodinamica",
+      "agua-dulce",
+      "materiales"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "clima-carbono",
+    "area": "medioambiente",
+    "titulo": "Clima y ciclo del carbono",
+    "resumen": "El clima emerge de intercambios de energía y materia entre atmósfera, océanos, hielo, tierra y seres vivos. Los gases de efecto invernadero alteran el balance radiativo del planeta.",
+    "mecanismo": "La combustión y cambios de uso del suelo añaden carbono a la atmósfera; océanos y ecosistemas absorben una parte. La acumulación y las retroalimentaciones influyen en el calentamiento a largo plazo.",
+    "contexto": "La evaluación del IPCC integra observaciones y modelos. Distingue detección de cambios, atribución de causas y proyecciones condicionadas a emisiones y políticas.",
+    "limite": "Un episodio meteorológico aislado no caracteriza la tendencia global; las atribuciones de eventos requieren análisis específico.",
+    "pregunta": "¿Cambió el flujo anual de emisiones o la cantidad acumulada en la atmósfera?",
+    "fuentes": [
+      "ipcc",
+      "ocean"
+    ],
+    "relacionados": [
+      "transicion-energetica",
+      "ciclo-agua",
+      "riesgo-climatico"
+    ],
+    "hitos": [
+      "estocolmo",
+      "rio",
+      "paris"
+    ],
+    "paises": []
+  },
+  {
+    "id": "riesgo-climatico",
+    "area": "medioambiente",
+    "titulo": "Riesgo, exposición y adaptación",
+    "resumen": "El riesgo climático combina amenazas físicas con exposición y vulnerabilidad social. La misma sequía o inundación puede tener consecuencias distintas según vivienda, ingresos, servicios y gobernanza.",
+    "mecanismo": "La adaptación reduce daños ajustando sistemas e instituciones; la mitigación reduce emisiones o aumenta sumideros. Ambas operan en escalas y tiempos distintos y pueden generar sinergias o tensiones.",
+    "contexto": "Planificar exige considerar incertidumbre, desigualdad y límites de adaptación. Infraestructura rígida puede crear dependencia futura si se diseña para un clima que ya cambió.",
+    "limite": "No presentar toda intervención verde como adaptación eficaz ni ignorar desplazamientos de riesgo hacia otros grupos.",
+    "pregunta": "¿Se reduce el riesgo total o se transfiere a otro lugar o población?",
+    "fuentes": [
+      "ipcc",
+      "habitat"
+    ],
+    "relacionados": [
+      "urbanizacion",
+      "resiliencia-redes",
+      "clima-carbono"
+    ],
+    "hitos": [
+      "paris"
+    ],
+    "paises": []
+  },
+  {
+    "id": "transicion-energetica",
+    "area": "energia",
+    "titulo": "Transición energética",
+    "resumen": "La transición energética modifica fuentes, tecnologías y usos finales. No consiste solo en sustituir centrales: incluye movilidad, edificios, industria, redes, almacenamiento y comportamiento.",
+    "mecanismo": "La electrificación puede elevar eficiencia, pero exige oferta y redes compatibles con la demanda. La variabilidad renovable se gestiona combinando flexibilidad, interconexión, almacenamiento y diseño de mercado.",
+    "contexto": "Las trayectorias dependen de recursos, capacidades y decisiones distributivas. El coste de una tecnología aislada no es el coste completo del sistema que entrega un servicio confiable.",
+    "limite": "No equiparar potencia instalada con energía producida ni presentar una única solución válida para todo territorio.",
+    "pregunta": "¿Qué servicio energético se necesita y qué combinación lo entrega con menos impactos?",
+    "fuentes": [
+      "iea",
+      "ipcc"
+    ],
+    "relacionados": [
+      "energia-conservacion",
+      "seguridad-energetica",
+      "materiales"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "seguridad-energetica",
+    "area": "energia",
+    "titulo": "Seguridad energética",
+    "resumen": "La seguridad energética comprende disponibilidad, acceso asequible y capacidad de sostener servicios ante perturbaciones. Puede depender tanto de una red interna frágil como de importaciones concentradas.",
+    "mecanismo": "Diversificar proveedores y tecnologías reduce algunos riesgos, pero crea nuevos requisitos de coordinación. Inventarios, eficiencia y capacidad de respuesta de la demanda amplían opciones frente a choques.",
+    "contexto": "Los análisis deben distinguir combustibles, electricidad y materiales críticos. Reducir importaciones no garantiza seguridad si el sistema doméstico sigue expuesto a fallos comunes.",
+    "limite": "Autosuficiencia no es sinónimo de resiliencia; el precio de corto plazo tampoco resume sostenibilidad o equidad.",
+    "pregunta": "¿Qué fallo dejaría sin servicio al sistema aunque hubiera energía suficiente en el agregado?",
+    "fuentes": [
+      "iea",
+      "ipcc"
+    ],
+    "relacionados": [
+      "estrechos",
+      "resiliencia-redes",
+      "transicion-energetica"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "estados-antiguos",
+    "area": "civilizaciones",
+    "titulo": "Formación de Estados antiguos",
+    "resumen": "La formación estatal implicó concentrar decisiones, tributos, coerción e infraestructura en sociedades cada vez más complejas. No ocurrió de manera única ni se explica solo por el control del riego.",
+    "mecanismo": "Excedentes, redes de intercambio y autoridad religiosa o militar interactuaron con condiciones ambientales. La escritura permitió registrar obligaciones, pero muchos sistemas administrativos no dependieron de alfabetos.",
+    "contexto": "La comparación entre Mesopotamia, Egipto, Mesoamérica y Andes muestra instituciones diferentes. Ciudades, Estados e imperios no son etapas obligatorias de una secuencia universal.",
+    "limite": "No clasificar sociedades sin Estado como menos humanas o incapaces de conocimiento complejo.",
+    "pregunta": "¿Qué evidencias materiales sostienen la existencia de autoridad centralizada?",
+    "fuentes": [
+      "hist",
+      "unesco"
+    ],
+    "relacionados": [
+      "escritura",
+      "patrimonio",
+      "cuencas"
+    ],
+    "hitos": [
+      "escritura-mesopotamia",
+      "qin",
+      "augusto"
+    ],
+    "paises": []
+  },
+  {
+    "id": "escritura",
+    "area": "civilizaciones",
+    "titulo": "Escrituras y administración",
+    "resumen": "Los sistemas de escritura codifican lenguaje o información mediante convenciones gráficas. Surgieron en contextos distintos y coexistieron con tradiciones orales, registros numéricos y otras formas de memoria.",
+    "mecanismo": "La escritura facilita conservar contratos, tributos, calendarios y relatos a través de generaciones. Su control también puede concentrar autoridad en grupos especializados.",
+    "contexto": "Descifrar exige corpus, contexto y comparación lingüística; identificar signos no equivale a comprender una lengua. El soporte conservado condiciona lo que hoy sabemos.",
+    "limite": "Ausencia de textos conservados no demuestra ausencia de historia; fuentes de élite no representan a toda una sociedad.",
+    "pregunta": "¿Quién pudo escribir, qué registró y qué voces quedaron fuera?",
+    "fuentes": [
+      "hist",
+      "unesco"
+    ],
+    "relacionados": [
+      "estados-antiguos",
+      "patrimonio",
+      "datacion"
+    ],
+    "hitos": [
+      "escritura-mesopotamia",
+      "shang"
+    ],
+    "paises": []
+  },
+  {
+    "id": "estratigrafia",
+    "area": "arqueologia",
+    "titulo": "Estratigrafía y contexto arqueológico",
+    "resumen": "La arqueología interpreta vestigios junto a su posición y relaciones. Un objeto separado de su contexto pierde parte de la información sobre uso, cronología y asociación con otras actividades.",
+    "mecanismo": "Las capas permiten establecer secuencias relativas, aunque excavación, erosión y reutilización pueden alterarlas. El registro sistemático precede a interpretaciones sobre función o identidad.",
+    "contexto": "La excavación es destructiva: documentar ubicación, materiales y procesos de formación es indispensable. La conservación y participación comunitaria son parte del trabajo, no añadidos posteriores.",
+    "limite": "Un objeto espectacular no prueba por sí solo migraciones, rituales o contacto entre civilizaciones.",
+    "pregunta": "¿La asociación entre dos restos es original o resultado de una alteración posterior?",
+    "fuentes": [
+      "unesco",
+      "hist"
+    ],
+    "relacionados": [
+      "datacion",
+      "patrimonio",
+      "estados-antiguos"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "datacion",
+    "area": "arqueologia",
+    "titulo": "Fechar el pasado",
+    "resumen": "Las dataciones combinan secuencias relativas y métodos físicos o documentales. Cada técnica mide procesos concretos y requiere materiales y condiciones adecuadas.",
+    "mecanismo": "El radiocarbono estima tiempo desde intercambios biológicos de carbono, con calibración y límites propios. No fecha directamente cualquier piedra ni toda la duración de un asentamiento.",
+    "contexto": "Los laboratorios producen intervalos que deben interpretarse con contexto arqueológico. Un material reutilizado o una muestra contaminada pueden no coincidir con el evento investigado.",
+    "limite": "No convertir una fecha central en certeza exacta ni usar cronologías amplias como si fueran límites políticos precisos.",
+    "pregunta": "¿Se fechó el acontecimiento o un material relacionado que pudo ser anterior?",
+    "fuentes": [
+      "unesco",
+      "hist"
+    ],
+    "relacionados": [
+      "incertidumbre",
+      "estratigrafia",
+      "sistema-solar"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "demografia-transicion",
+    "area": "demografia",
+    "titulo": "Transición demográfica",
+    "resumen": "La transición demográfica describe cambios prolongados en mortalidad y fecundidad. No es una ley que todas las sociedades recorran con los mismos tiempos o causas.",
+    "mecanismo": "Si baja la mortalidad antes que la fecundidad, el crecimiento puede acelerarse; después, estructuras por edad y migración modifican la dinámica. El tamaño de generaciones importa incluso con tasas descendentes.",
+    "contexto": "Salud pública, educación, autonomía reproductiva, urbanización e ingresos interactúan con decisiones familiares. Las proyecciones explicitan supuestos sobre estos procesos.",
+    "limite": "Una tasa de fecundidad baja no implica reducción inmediata de población; existe inercia demográfica.",
+    "pregunta": "¿Cuánto del crecimiento procede de tasas actuales y cuánto de la estructura heredada?",
+    "fuentes": [
+      "unpop",
+      "wb"
+    ],
+    "relacionados": [
+      "envejecimiento",
+      "educacion-aprendizaje",
+      "urbanizacion"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "envejecimiento",
+    "area": "demografia",
+    "titulo": "Estructura por edades y envejecimiento",
+    "resumen": "El envejecimiento poblacional es un cambio en la distribución por edades, no solo aumento de esperanza de vida. Puede combinar mayor supervivencia con menos nacimientos y migración selectiva.",
+    "mecanismo": "Las necesidades de cuidados, salud, vivienda y pensiones cambian con cohortes y participación laboral. La relación de dependencia por edades es un indicador convencional, no un recuento real de personas económicamente dependientes.",
+    "contexto": "Políticas de empleo, prevención y accesibilidad condicionan consecuencias. Longevidad puede ser una ganancia social si se amplían capacidades y redes de apoyo.",
+    "limite": "No describir a todas las personas mayores como una carga ni proyectar gastos sin considerar salud y comportamiento.",
+    "pregunta": "¿Cómo cambian capacidades y necesidades dentro de un mismo grupo de edad?",
+    "fuentes": [
+      "unpop",
+      "undp"
+    ],
+    "relacionados": [
+      "demografia-transicion",
+      "desarrollo-capacidades",
+      "presupuesto"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "patrimonio",
+    "area": "cultura",
+    "titulo": "Patrimonio material e inmaterial",
+    "resumen": "El patrimonio reúne lugares, objetos, prácticas y conocimientos a los que comunidades atribuyen valor. Conservarlo implica decidir qué se protege, quién participa y cómo se transmite.",
+    "mecanismo": "Monumentos y paisajes necesitan mantenimiento; prácticas vivas dependen de aprendizaje y continuidad social. La protección no consiste en congelar culturas ni excluir a sus habitantes.",
+    "contexto": "Las convenciones de UNESCO ofrecen marcos internacionales distintos para patrimonio mundial e inmaterial. Una inscripción no agota el valor cultural de un territorio ni resuelve conflictos de gestión.",
+    "limite": "No confundir autenticidad con ausencia de cambio ni apropiarse de conocimientos comunitarios sin consentimiento.",
+    "pregunta": "¿La conservación beneficia a quienes mantienen vivo el patrimonio?",
+    "fuentes": [
+      "unesco"
+    ],
+    "relacionados": [
+      "escritura",
+      "diversidad-cultural",
+      "estratigrafia"
+    ],
+    "hitos": [
+      "angkor"
+    ],
+    "paises": []
+  },
+  {
+    "id": "diversidad-cultural",
+    "area": "cultura",
+    "titulo": "Lenguas y diversidad cultural",
+    "resumen": "La diversidad cultural comprende formas de expresión, memoria, valores y prácticas que cambian mediante contacto e innovación. Las identidades no son bloques homogéneos ni equivalen a fronteras estatales.",
+    "mecanismo": "La transmisión intergeneracional de lenguas depende de educación, prestigio, usos cotidianos y relaciones de poder. Digitalizar documentos puede ayudar, pero no sustituye comunidades de hablantes.",
+    "contexto": "Migración, medios y políticas lingüísticas transforman repertorios. La investigación debe distinguir lengua, etnicidad, nacionalidad y ciudadanía, sin convertir categorías en esencias.",
+    "limite": "No inferir capacidades o conductas individuales a partir de una etiqueta cultural.",
+    "pregunta": "¿Quién define las categorías culturales y con qué efectos sobre derechos y reconocimiento?",
+    "fuentes": [
+      "unesco",
+      "uis"
+    ],
+    "relacionados": [
+      "educacion-aprendizaje",
+      "patrimonio",
+      "soberania"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "educacion-aprendizaje",
+    "area": "educacion",
+    "titulo": "Escolarización y aprendizaje",
+    "resumen": "La escolarización mide acceso o participación; el aprendizaje requiere otras evidencias. Años de estudio, matrícula, finalización y competencias responden preguntas diferentes.",
+    "mecanismo": "Las tasas brutas incluyen alumnos fuera de edad oficial y pueden superar el cien por ciento. Comparar resultados exige considerar idioma, instrumentos, cobertura y desigualdades de origen.",
+    "contexto": "Salud, nutrición, formación docente y condiciones de aula influyen junto al acceso. La educación puede ampliar capacidades sin que sus beneficios se reduzcan a ingresos laborales.",
+    "limite": "Una mejora de matrícula no demuestra por sí sola mejor aprendizaje ni una clasificación resume la calidad de todo un sistema.",
+    "pregunta": "¿La expansión del acceso llegó acompañada de aprendizaje y permanencia?",
+    "fuentes": [
+      "uis",
+      "wb"
+    ],
+    "relacionados": [
+      "desarrollo-capacidades",
+      "infraestructura-digital",
+      "desigualdad"
+    ],
+    "hitos": [
+      "imprenta"
+    ],
+    "paises": []
+  },
+  {
+    "id": "alfabetizacion-cientifica",
+    "area": "educacion",
+    "titulo": "Alfabetización científica y estadística",
+    "resumen": "Comprender ciencia exige interpretar evidencia, escalas y límites, no memorizar una lista de hechos. La alfabetización estadística permite leer tasas, muestras, gráficos y asociaciones sin confundirlas.",
+    "mecanismo": "Preguntas sobre denominador, período y selección de muestra revelan comparaciones engañosas. En gráficos, escalas truncadas y cambios de unidad pueden exagerar diferencias reales.",
+    "contexto": "El pensamiento crítico no equivale a desconfiar indiscriminadamente: implica evaluar calidad relativa de métodos y fuentes. La transparencia facilita corregir errores.",
+    "limite": "Un recurso interactivo atractivo no prueba aprendizaje; debe acompañarse de objetivos y evaluación adecuados.",
+    "pregunta": "¿Qué información falta para que una comparación sea justa?",
+    "fuentes": [
+      "uis",
+      "bio"
+    ],
+    "relacionados": [
+      "incertidumbre",
+      "metodo-cientifico",
+      "pib"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "organismos-mandatos",
+    "area": "organizaciones-internacionales",
+    "titulo": "Mandato y capacidad institucional",
+    "resumen": "Las organizaciones internacionales nacen de acuerdos que definen miembros, competencias y procedimientos. Su nombre no basta para inferir qué pueden ordenar, financiar, recomendar o supervisar.",
+    "mecanismo": "Reglas de voto, presupuesto y delegación determinan capacidad de acción. Una secretaría técnica, un tribunal y una organización financiera operan mediante mecanismos diferentes.",
+    "contexto": "Comparar instituciones requiere leer tratados y decisiones, además de sus declaraciones públicas. El cumplimiento depende también de Estados y otros actores.",
+    "limite": "No atribuir a una agencia de la ONU poderes de todo el sistema ni confundir recomendaciones con obligaciones jurídicas.",
+    "pregunta": "¿Qué instrumento da autoridad a la organización y cómo se ejecuta?",
+    "fuentes": [
+      "un",
+      "wto"
+    ],
+    "relacionados": [
+      "seguridad-colectiva",
+      "cooperacion",
+      "presupuesto"
+    ],
+    "hitos": [
+      "onu",
+      "omc"
+    ],
+    "paises": []
+  },
+  {
+    "id": "seguridad-colectiva",
+    "area": "organizaciones-internacionales",
+    "titulo": "Seguridad colectiva",
+    "resumen": "La seguridad colectiva busca responder a amenazas mediante instituciones compartidas en lugar de decisiones exclusivamente bilaterales. El sistema de la ONU se estructura alrededor de la Carta y competencias de sus órganos.",
+    "mecanismo": "El Consejo de Seguridad puede adoptar decisiones bajo reglas específicas, incluido el papel de miembros permanentes. Operaciones de paz, sanciones y autorización del uso de fuerza no son instrumentos equivalentes.",
+    "contexto": "La práctica refleja tensiones entre soberanía, protección de personas y distribución de poder. El desacuerdo político puede limitar la respuesta sin eliminar el marco jurídico.",
+    "limite": "No confundir mantenimiento de paz con una alianza militar ni cada resolución con una intervención autorizada.",
+    "pregunta": "¿Qué órgano decide y qué alcance jurídico tiene la medida concreta?",
+    "fuentes": [
+      "un"
+    ],
+    "relacionados": [
+      "soberania",
+      "cooperacion",
+      "organismos-mandatos"
+    ],
+    "hitos": [
+      "onu"
+    ],
+    "paises": []
+  },
+  {
+    "id": "cooperacion",
+    "area": "relaciones-internacionales",
+    "titulo": "Cooperación y acción colectiva",
+    "resumen": "La cooperación internacional coordina decisiones frente a problemas que trascienden fronteras. Puede surgir entre actores que mantienen conflictos en otros ámbitos y no exige identidad de intereses.",
+    "mecanismo": "Información, monitoreo, reciprocidad y reglas reducen incertidumbre y costes de coordinación. Los incentivos a incumplir aumentan cuando beneficios son compartidos pero costes recaen en pocos.",
+    "contexto": "Clima, comercio, salud y cuencas transfronterizas muestran arreglos distintos. La legitimidad y distribución de beneficios influyen en estabilidad de los acuerdos.",
+    "limite": "Firmar un tratado no demuestra implementación ni igualdad de capacidad para cumplirlo.",
+    "pregunta": "¿Quién obtiene beneficios, quién asume costes y cómo se verifica el compromiso?",
+    "fuentes": [
+      "un",
+      "wto",
+      "ipcc"
+    ],
+    "relacionados": [
+      "soberania",
+      "clima-carbono",
+      "cuencas"
+    ],
+    "hitos": [
+      "bandung",
+      "rio",
+      "paris"
+    ],
+    "paises": []
+  },
+  {
+    "id": "diplomacia",
+    "area": "relaciones-internacionales",
+    "titulo": "Diplomacia y negociación",
+    "resumen": "La diplomacia utiliza representación, comunicación y negociación para gestionar relaciones entre actores. Puede continuar en crisis severas y no equivale a aprobación política del interlocutor.",
+    "mecanismo": "Los acuerdos dependen de alternativas, información, credibilidad y restricciones internas. Una concesión en un asunto puede vincularse a compromisos en otro, con riesgos de interpretación.",
+    "contexto": "Embajadas, organizaciones y canales técnicos cumplen funciones distintas. La negociación multilateral incorpora reglas de procedimiento que afectan quién participa y cómo se adoptan textos.",
+    "limite": "No interpretar todo encuentro como alianza ni toda declaración conjunta como tratado vinculante.",
+    "pregunta": "¿Qué compromiso verificable cambió después de la reunión?",
+    "fuentes": [
+      "un",
+      "hist2"
+    ],
+    "relacionados": [
+      "cooperacion",
+      "soberania",
+      "seguridad-colectiva"
+    ],
+    "hitos": [
+      "westfalia",
+      "bandung"
+    ],
+    "paises": []
+  },
+  {
+    "id": "agua-dulce",
+    "area": "recursos-naturales",
+    "titulo": "Agua dulce y seguridad hídrica",
+    "resumen": "La seguridad hídrica implica agua suficiente, de calidad adecuada y accesible para personas, actividades y ecosistemas. La disponibilidad física no garantiza infraestructura o derechos de acceso.",
+    "mecanismo": "El agua se desplaza y reutiliza; extracción, consumo y retorno son cantidades distintas. Contaminación y sobreexplotación de acuíferos pueden reducir oferta utilizable sin cambiar la lluvia.",
+    "contexto": "Precios, regulación y gobernanza de cuencas reparten costes y prioridades. Las sequías revelan vulnerabilidades acumuladas de sistemas agrícolas y urbanos.",
+    "limite": "No sumar disponibilidad superficial y subterránea sin revisar doble conteo; tasas nacionales ocultan fuertes diferencias locales.",
+    "pregunta": "¿Falta agua físicamente o faltan calidad, infraestructura y acceso equitativo?",
+    "fuentes": [
+      "usgs",
+      "fao"
+    ],
+    "relacionados": [
+      "cuencas",
+      "riego",
+      "ciclo-agua"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "rentas-recursos",
+    "area": "recursos-naturales",
+    "titulo": "Recursos y renta económica",
+    "resumen": "La renta de recursos naturales es el valor económico que queda después de costes de extracción bajo una metodología definida. No equivale a ventas brutas, reservas físicas ni ingresos fiscales efectivamente recaudados.",
+    "mecanismo": "La captura de renta depende de contratos, impuestos, precios y costes. Una subida del precio internacional puede elevar rentas sin aumentar volúmenes producidos.",
+    "contexto": "Los recursos pueden financiar desarrollo o reforzar dependencia y volatilidad. Fondos, reglas fiscales y transparencia influyen en cómo se distribuyen beneficios y riesgos.",
+    "limite": "Un porcentaje alto de renta/PIB no prueba corrupción ni prosperidad; exige estudiar instituciones y composición productiva.",
+    "pregunta": "¿Quién captura la renta y qué ocurre cuando cae el precio?",
+    "fuentes": [
+      "wb",
+      "imf"
+    ],
+    "relacionados": [
+      "presupuesto",
+      "materiales",
+      "seguridad-energetica"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "sistemas-alimentarios",
+    "area": "agricultura",
+    "titulo": "Sistemas alimentarios",
+    "resumen": "Los sistemas alimentarios incluyen producción, transformación, distribución, consumo y gestión de residuos. La seguridad alimentaria combina disponibilidad, acceso, utilización y estabilidad.",
+    "mecanismo": "Un país puede producir suficientes calorías y mantener inseguridad alimentaria por precios o distribución. Almacenamiento, transporte, agua e ingresos conectan la oferta con dietas reales.",
+    "contexto": "Las políticas deben considerar nutrición, trabajo rural, biodiversidad y emisiones. Los choques climáticos o comerciales se propagan de modo diferente según reservas y dependencia de insumos.",
+    "limite": "Rendimiento por hectárea no resume sostenibilidad ni calidad nutricional; exportar alimentos no elimina hambre.",
+    "pregunta": "¿El problema está en producir, distribuir, pagar o utilizar adecuadamente los alimentos?",
+    "fuentes": [
+      "fao",
+      "wb"
+    ],
+    "relacionados": [
+      "riego",
+      "logistica",
+      "diversidad-biologica"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "riego",
+    "area": "agricultura",
+    "titulo": "Riego y productividad del agua",
+    "resumen": "El riego permite ajustar parte de la oferta hídrica a las necesidades del cultivo. Su desempeño depende de suelo, clima, tecnología, energía y acuerdos de reparto.",
+    "mecanismo": "Mejorar eficiencia en una parcela puede reducir retornos disponibles aguas abajo. Si el ahorro impulsa expansión de superficie, el consumo total de la cuenca puede aumentar.",
+    "contexto": "Evaluar proyectos exige balance hídrico a escala apropiada y efectos distributivos. Mantener suelos y drenaje evita acumulación de sales y pérdidas de productividad.",
+    "limite": "No equiparar menos extracción en una toma con ahorro neto para todo el sistema.",
+    "pregunta": "¿El proyecto ahorra consumo total o solo cambia dónde se extrae y retorna el agua?",
+    "fuentes": [
+      "fao",
+      "usgs"
+    ],
+    "relacionados": [
+      "cuencas",
+      "agua-dulce",
+      "sistemas-alimentarios"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "industrializacion",
+    "area": "industria",
+    "titulo": "Industrialización y capacidades productivas",
+    "resumen": "La industrialización implica transformación de estructuras productivas y acumulación de capacidades. No equivale simplemente a aumentar la participación de fábricas en el empleo.",
+    "mecanismo": "Proveedores, ingeniería, formación y demanda permiten aprendizaje acumulativo. La integración de servicios, software y logística vuelve difusa la frontera entre manufactura y otras actividades.",
+    "contexto": "Políticas industriales buscan coordinar inversiones y superar cuellos de botella, pero necesitan evaluación y capacidad institucional para evitar apoyos permanentes sin resultados.",
+    "limite": "Un aumento de valor añadido nominal puede reflejar precios de minerales, no diversificación manufacturera.",
+    "pregunta": "¿Qué capacidades quedan instaladas cuando termina un incentivo o una inversión extranjera?",
+    "fuentes": [
+      "unido",
+      "wb"
+    ],
+    "relacionados": [
+      "productividad",
+      "materiales",
+      "cadenas-valor"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "materiales",
+    "area": "industria",
+    "titulo": "Materiales, minerales y circularidad",
+    "resumen": "La industria transforma materiales con propiedades específicas y costes ambientales a lo largo del ciclo de vida. Sustituir un material requiere considerar función, disponibilidad, procesamiento y fin de uso.",
+    "mecanismo": "Reutilizar preserva más funciones del producto; reciclar recupera materiales con pérdidas y requisitos energéticos. El diseño influye en reparación, separación y calidad del material recuperado.",
+    "contexto": "La electrificación y digitalización cambian demandas de minerales. Reservas económicas, recursos geológicos y capacidad de refinación son categorías distintas.",
+    "limite": "Reciclable no significa efectivamente reciclado y circularidad no elimina por completo extracción ni residuos.",
+    "pregunta": "¿Qué parte del servicio se conserva al reparar, reutilizar o reciclar?",
+    "fuentes": [
+      "unido",
+      "iea"
+    ],
+    "relacionados": [
+      "rentas-recursos",
+      "enlaces-quimicos",
+      "transicion-energetica"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "logistica",
+    "area": "transporte",
+    "titulo": "Logística y conectividad comercial",
+    "resumen": "La logística coordina movimiento, almacenamiento e información entre origen y destino. Su calidad depende de puertos, aduanas, carreteras, servicios y previsibilidad, no solo de velocidad máxima.",
+    "mecanismo": "Retrasos y variabilidad obligan a mantener inventarios y capital inmovilizado. Mejorar un puerto puede tener poco efecto si el acceso terrestre o el despacho siguen siendo el cuello de botella.",
+    "contexto": "La conectividad internacional importa de modo especial para islas y economías pequeñas. Distancia física y distancia económica no son equivalentes.",
+    "limite": "Más toneladas transportadas no prueban mejor acceso de la población ni menor huella ambiental.",
+    "pregunta": "¿Dónde se acumulan tiempo e incertidumbre a lo largo de la ruta?",
+    "fuentes": [
+      "unctad",
+      "wto"
+    ],
+    "relacionados": [
+      "estrechos",
+      "cadenas-valor",
+      "infraestructura-ciclo"
+    ],
+    "hitos": [
+      "suez"
+    ],
+    "paises": []
+  },
+  {
+    "id": "movilidad",
+    "area": "transporte",
+    "titulo": "Movilidad y accesibilidad",
+    "resumen": "La movilidad describe desplazamientos; la accesibilidad mide la posibilidad de llegar a empleos, educación, salud y otros destinos. Una ciudad puede mover muchos vehículos y ofrecer mal acceso.",
+    "mecanismo": "La localización de viviendas y actividades condiciona distancias. Transporte público, caminabilidad y seguridad influyen en opciones reales, especialmente para hogares sin automóvil.",
+    "contexto": "Evaluar proyectos exige comparar tiempos puerta a puerta, costes, emisiones y distribución de beneficios. Aumentar capacidad vial puede inducir más tráfico y no resolver congestión de forma permanente.",
+    "limite": "No usar velocidad media de automóviles como medida única de éxito urbano.",
+    "pregunta": "¿Se desplazan más vehículos o más personas pueden llegar a sus oportunidades?",
+    "fuentes": [
+      "habitat",
+      "wb"
+    ],
+    "relacionados": [
+      "urbanizacion",
+      "vivienda",
+      "resiliencia-redes"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "desarrollo-capacidades",
+    "area": "desarrollo-humano",
+    "titulo": "Desarrollo como ampliación de capacidades",
+    "resumen": "El desarrollo humano estudia oportunidades para vivir vidas valoradas, no solo expansión de producción. Salud, conocimientos y condiciones materiales son dimensiones centrales, pero no exhaustivas.",
+    "mecanismo": "Los índices compuestos resumen información mediante normalizaciones y pesos. Son útiles para abrir preguntas, aunque sacrifican detalle y no describen todas las libertades o desigualdades.",
+    "contexto": "El IDH del PNUD y el PIB por habitante miden cosas diferentes. El bienestar también depende de instituciones, seguridad, medioambiente y distribución de recursos.",
+    "limite": "No presentar el IDH como un examen moral de países ni reconstruirlo con indicadores aproximados sin metodología oficial.",
+    "pregunta": "¿Aumentaron los medios económicos o también las oportunidades efectivas de las personas?",
+    "fuentes": [
+      "undp",
+      "wb"
+    ],
+    "relacionados": [
+      "desigualdad",
+      "educacion-aprendizaje",
+      "pib"
+    ],
+    "hitos": [
+      "ods"
+    ],
+    "paises": []
+  },
+  {
+    "id": "desigualdad",
+    "area": "desarrollo-humano",
+    "titulo": "Desigualdad y distribución",
+    "resumen": "La desigualdad describe cómo se distribuyen ingresos, riqueza, servicios u oportunidades. La pobreza responde a umbrales o privaciones; ambos fenómenos se relacionan, pero no son equivalentes.",
+    "mecanismo": "Un promedio puede mejorar mientras grupos quedan rezagados. Impuestos, transferencias, educación, mercados laborales y herencias influyen mediante mecanismos distintos.",
+    "contexto": "Comparar exige distinguir ingresos de consumo y riqueza, unidades familiares y personales, medidas antes y después de transferencias y cambios de encuestas.",
+    "limite": "Un solo coeficiente no muestra quién gana o pierde ni permite comparar dimensiones distintas sin información adicional.",
+    "pregunta": "¿Qué ocurre con la distribución detrás del cambio del promedio?",
+    "fuentes": [
+      "undp",
+      "wb"
+    ],
+    "relacionados": [
+      "presupuesto",
+      "pib",
+      "educacion-aprendizaje"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "urbanizacion",
+    "area": "urbanismo",
+    "titulo": "Urbanización y forma urbana",
+    "resumen": "La urbanización aumenta la proporción de población clasificada como urbana, mientras la expansión urbana cambia superficie construida. Ambos procesos pueden avanzar a ritmos diferentes.",
+    "mecanismo": "Densidad, mezcla de usos y redes influyen en distancias, coste de servicios y exposición a riesgos. Las decisiones de suelo tienen efectos duraderos sobre vivienda y movilidad.",
+    "contexto": "Las definiciones nacionales de urbano varían. Comparar ciudades requiere observar áreas funcionales, límites administrativos y conexiones con su entorno rural.",
+    "limite": "Más densidad no garantiza habitabilidad si faltan espacio público, servicios o protección frente a riesgos.",
+    "pregunta": "¿La ciudad crece por población, expansión del suelo o reclasificación estadística?",
+    "fuentes": [
+      "habitat",
+      "wb"
+    ],
+    "relacionados": [
+      "vivienda",
+      "movilidad",
+      "demografia-transicion"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "vivienda",
+    "area": "urbanismo",
+    "titulo": "Vivienda, suelo y servicios",
+    "resumen": "La vivienda adecuada combina seguridad de tenencia, habitabilidad, asequibilidad, localización y acceso a servicios. Un techo físico no basta si expone a desalojos, aislamiento o riesgos evitables.",
+    "mecanismo": "Los mercados de suelo y crédito interactúan con regulación y provisión de infraestructura. Subsidios a demanda pueden elevar precios si la oferta bien localizada no responde.",
+    "contexto": "La mejora de barrios y la participación local ofrecen alternativas a desplazamientos masivos. Inundaciones y calor muestran por qué vivienda y adaptación deben planificarse juntas.",
+    "limite": "No tratar asentamientos informales como espacios sin organización ni asumir que la formalización jurídica resuelve todos los déficits.",
+    "pregunta": "¿El acceso a vivienda reduce costes totales o desplaza a los hogares lejos de sus oportunidades?",
+    "fuentes": [
+      "habitat",
+      "wb"
+    ],
+    "relacionados": [
+      "urbanizacion",
+      "movilidad",
+      "riesgo-climatico"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "infraestructura-ciclo",
+    "area": "infraestructura",
+    "titulo": "Ciclo de vida de infraestructura",
+    "resumen": "Una infraestructura presta servicios mediante activos que se diseñan, construyen, operan, mantienen y finalmente renuevan. Su valor no se reduce al coste de inauguración.",
+    "mecanismo": "El mantenimiento preventivo puede evitar fallos y costes futuros. Evaluar proyectos exige demanda realista, operación financiable y riesgos de construcción, ambientales y sociales.",
+    "contexto": "Las decisiones comprometen presupuestos durante décadas. Una carretera sin conservación o una planta sin personal y energía puede existir físicamente sin ofrecer el servicio previsto.",
+    "limite": "No confundir inversión ejecutada con beneficio social ni omitir costes recurrentes y desmantelamiento.",
+    "pregunta": "¿Quién pagará y gestionará el servicio durante toda la vida del activo?",
+    "fuentes": [
+      "wb",
+      "imf-fiscal"
+    ],
+    "relacionados": [
+      "presupuesto",
+      "resiliencia-redes",
+      "logistica"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "resiliencia-redes",
+    "area": "infraestructura",
+    "titulo": "Resiliencia e interdependencia de redes",
+    "resumen": "Electricidad, telecomunicaciones, agua y transporte dependen unos de otros. La resiliencia es capacidad de resistir, adaptarse y recuperar servicios ante perturbaciones.",
+    "mecanismo": "La redundancia y la diversidad reducen fallos individuales, pero las dependencias comunes pueden propagar interrupciones. Conocer puntos únicos de fallo permite priorizar protección y recuperación.",
+    "contexto": "Planificar requiere escenarios, mantenimiento y coordinación entre operadores. La continuidad de hospitales y abastecimiento puede ser más importante que mantener cada activo funcionando sin cambios.",
+    "limite": "Un sistema eficiente en condiciones normales no es necesariamente robusto frente a choques; redundancia no es desperdicio por definición.",
+    "pregunta": "¿Qué servicio crítico cae primero y qué dependencias impiden recuperarlo?",
+    "fuentes": [
+      "wb",
+      "iea",
+      "habitat"
+    ],
+    "relacionados": [
+      "infraestructura-digital",
+      "seguridad-energetica",
+      "riesgo-climatico"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "circulacion-oceanica",
+    "area": "oceanos",
+    "titulo": "Circulación oceánica y clima",
+    "resumen": "El océano transporta calor, carbono y nutrientes mediante corrientes impulsadas por vientos y diferencias de densidad. Su gran capacidad térmica amortigua y prolonga cambios del sistema climático.",
+    "mecanismo": "Temperatura y salinidad afectan densidad, mientras mezcla y estratificación condicionan intercambio vertical. La circulación superficial y profunda interactúan, pero no forman una cinta transportadora simple e invariable.",
+    "contexto": "Mediciones desde barcos, boyas y satélites complementan modelos. Cambios regionales afectan nivel del mar, ecosistemas y condiciones costeras.",
+    "limite": "No extrapolar una anomalía local a un colapso global ni confundir una proyección de riesgo con una fecha cierta.",
+    "pregunta": "¿Qué variable se observó y cómo se conecta con el mecanismo oceánico propuesto?",
+    "fuentes": [
+      "ocean",
+      "ipcc"
+    ],
+    "relacionados": [
+      "clima-carbono",
+      "ciclo-agua",
+      "ecosistemas-marinos"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "costas",
+    "area": "oceanos",
+    "titulo": "Costas y dinámica litoral",
+    "resumen": "Las costas cambian por oleaje, mareas, sedimentos, nivel del mar y acciones humanas. Una playa es parte de un sistema dinámico conectado a ríos, dunas y fondos cercanos.",
+    "mecanismo": "Puertos, presas y defensas pueden alterar flujos de sedimentos. Proteger un tramo con obras rígidas puede modificar erosión en otros puntos y requerir mantenimiento continuo.",
+    "contexto": "La planificación combina gestión del riesgo, conservación y usos productivos. Manglares y humedales pueden aportar protección, pero su capacidad depende del contexto y del espacio para adaptarse.",
+    "limite": "Una fotografía de erosión no identifica por sí sola la causa; las tendencias requieren series y balances de sedimentos.",
+    "pregunta": "¿La intervención conserva el sistema litoral o desplaza el problema a otro tramo?",
+    "fuentes": [
+      "ocean",
+      "ipcc"
+    ],
+    "relacionados": [
+      "cuencas",
+      "riesgo-climatico",
+      "ecosistemas-marinos"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "diversidad-biologica",
+    "area": "biodiversidad",
+    "titulo": "Diversidad genética, de especies y ecosistemas",
+    "resumen": "La biodiversidad incluye variación dentro de especies, entre especies y entre ecosistemas. Ninguna cifra única captura por completo esas dimensiones ni sus interacciones.",
+    "mecanismo": "Pérdida y fragmentación de hábitats, explotación, contaminación, especies invasoras y cambio climático alteran poblaciones. La diversidad genética puede influir en capacidad de adaptación.",
+    "contexto": "Conservar requiere conectar áreas, usos sostenibles y participación de comunidades. Los indicadores dependen de qué grupos se estudian y con qué esfuerzo de muestreo.",
+    "limite": "Un aumento local de especies no demuestra recuperación ecológica si reemplaza comunidades nativas o esconde homogenización.",
+    "pregunta": "¿Qué dimensión de diversidad se mide y respecto a qué referencia?",
+    "fuentes": [
+      "cbd",
+      "bio"
+    ],
+    "relacionados": [
+      "evolucion",
+      "ecosistemas-marinos",
+      "sistemas-alimentarios"
+    ],
+    "hitos": [
+      "rio"
+    ],
+    "paises": []
+  },
+  {
+    "id": "ecosistemas-marinos",
+    "area": "biodiversidad",
+    "titulo": "Ecosistemas marinos y redes tróficas",
+    "resumen": "Los ecosistemas marinos enlazan productores, consumidores y descomponedores mediante flujos de energía y nutrientes. Arrecifes, manglares, praderas y mar abierto tienen dinámicas y presiones diferentes.",
+    "mecanismo": "La extracción de organismos puede alterar interacciones y estructuras poblacionales. Temperatura, oxígeno, acidificación y contaminación afectan supervivencia y reproducción de maneras distintas.",
+    "contexto": "Las áreas protegidas son una herramienta entre varias: su eficacia depende de diseño, cumplimiento y conexiones ecológicas. Pesca sostenible requiere información y gobernanza además de límites espaciales.",
+    "limite": "Cobertura protegida no equivale a protección efectiva ni todos los sistemas se recuperan al mismo ritmo.",
+    "pregunta": "¿Se protege una superficie nominal o los procesos que sostienen el ecosistema?",
+    "fuentes": [
+      "cbd",
+      "ocean",
+      "bio"
+    ],
+    "relacionados": [
+      "diversidad-biologica",
+      "circulacion-oceanica",
+      "sistemas-alimentarios"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "termodinamica",
+    "area": "fisica",
+    "titulo": "Termodinámica y calidad de la energía",
+    "resumen": "La termodinámica estudia transformaciones macroscópicas y límites de intercambio de energía. La primera ley conserva la energía; la segunda condiciona dirección y posibilidad de procesos.",
+    "mecanismo": "La entropía permite analizar irreversibilidad y límites de conversión de calor en trabajo. Un balance energético completo no basta para decidir si un proceso es posible.",
+    "contexto": "Motores, refrigeración, producción eléctrica y procesos químicos se diseñan bajo estas restricciones. Mejorar eficiencia requiere definir temperaturas, servicio final y fronteras del sistema.",
+    "limite": "No interpretar entropía simplemente como desorden visual ni asumir que toda energía tiene igual capacidad de trabajo útil.",
+    "pregunta": "¿Qué limita la conversión del recurso energético en el servicio deseado?",
+    "fuentes": [
+      "fis",
+      "quim"
+    ],
+    "relacionados": [
+      "energia-conservacion",
+      "reacciones",
+      "transicion-energetica"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "espectroscopia",
+    "area": "astronomia",
+    "titulo": "Leer la materia mediante la luz",
+    "resumen": "La espectroscopia separa radiación por longitud de onda o frecuencia para estudiar interacciones con la materia. Líneas y bandas revelan propiedades físicas bajo modelos específicos.",
+    "mecanismo": "Niveles de energía electrónicos y moleculares producen absorción o emisión característica. Intensidad, anchura y desplazamiento de líneas aportan información adicional.",
+    "contexto": "Permite estudiar estrellas remotas, composiciones químicas y atmósferas. La calibración del instrumento y la identificación de señales superpuestas son parte esencial del análisis.",
+    "limite": "Una línea aislada no siempre identifica inequívocamente un compuesto; las inferencias dependen de temperatura, presión y resolución.",
+    "pregunta": "¿Qué modelo relaciona el espectro observado con la propiedad inferida?",
+    "fuentes": [
+      "astro",
+      "quim"
+    ],
+    "relacionados": [
+      "estrellas",
+      "enlaces-quimicos",
+      "incertidumbre"
+    ],
+    "hitos": [],
+    "paises": []
+  },
+  {
+    "id": "ciclo-agua",
+    "area": "geografia",
+    "titulo": "Ciclo del agua y balances",
+    "resumen": "El agua circula entre atmósfera, continentes, océanos y seres vivos. Sus depósitos tienen tamaños y tiempos de renovación diferentes, por lo que no todo almacenamiento es renovable a escala humana.",
+    "mecanismo": "Un balance compara entradas, salidas y cambio de almacenamiento. Infiltración y recarga conectan agua superficial y subterránea sin hacerlas independientes.",
+    "contexto": "La intervención humana altera el ciclo mediante extracción, impermeabilización, embalses y uso del suelo. Las medias anuales ocultan estacionalidad y extremos.",
+    "limite": "No confundir un recurso renovable con uno ilimitado ni usar una media nacional para decidir disponibilidad en una cuenca.",
+    "pregunta": "¿Se mantiene el servicio hídrico consumiendo reservas que no se reponen?",
+    "fuentes": [
+      "usgs",
+      "ipcc"
+    ],
+    "relacionados": [
+      "cuencas",
+      "agua-dulce",
+      "circulacion-oceanica"
+    ],
+    "hitos": [],
+    "paises": []
+  }
+]

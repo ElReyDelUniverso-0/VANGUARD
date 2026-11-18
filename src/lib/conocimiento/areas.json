@@ -1,0 +1,301 @@
+[
+  {
+    "id": "historia",
+    "nombre": "Historia mundial",
+    "pregunta": "¿Cómo cambian las sociedades y qué evidencia permite reconstruirlo?",
+    "centro": "historica",
+    "fuentes": [
+      "hist",
+      "hist2"
+    ]
+  },
+  {
+    "id": "geografia",
+    "nombre": "Geografía",
+    "pregunta": "¿Cómo se organizan el territorio y los procesos que lo transforman?",
+    "centro": "geografica",
+    "fuentes": [
+      "wb",
+      "usgs"
+    ]
+  },
+  {
+    "id": "geopolitica",
+    "nombre": "Geopolítica",
+    "pregunta": "¿Cómo interactúan poder, territorio, redes y seguridad?",
+    "centro": "geografica",
+    "fuentes": [
+      "un",
+      "wto"
+    ]
+  },
+  {
+    "id": "economia",
+    "nombre": "Economía",
+    "pregunta": "¿Cómo se producen y distribuyen bienes bajo restricciones?",
+    "centro": "economica",
+    "fuentes": [
+      "wb",
+      "imf"
+    ]
+  },
+  {
+    "id": "finanzas-publicas",
+    "nombre": "Finanzas públicas",
+    "pregunta": "¿Cómo recauda, gasta y se financia el sector público?",
+    "centro": "economica",
+    "fuentes": [
+      "imf-fiscal",
+      "imf"
+    ]
+  },
+  {
+    "id": "comercio-internacional",
+    "nombre": "Comercio internacional",
+    "pregunta": "¿Qué conecta a productores y consumidores entre fronteras?",
+    "centro": "economica",
+    "fuentes": [
+      "wto",
+      "unctad"
+    ]
+  },
+  {
+    "id": "ciencia",
+    "nombre": "Ciencia",
+    "pregunta": "¿Qué distingue una explicación contrastable de una afirmación?",
+    "centro": "cientifica",
+    "fuentes": [
+      "bio",
+      "fis"
+    ]
+  },
+  {
+    "id": "tecnologia",
+    "nombre": "Tecnología",
+    "pregunta": "¿Cómo se transforma conocimiento en sistemas utilizables?",
+    "centro": "tecnologia",
+    "fuentes": [
+      "itu",
+      "wipo"
+    ]
+  },
+  {
+    "id": "astronomia",
+    "nombre": "Astronomía",
+    "pregunta": "¿Qué puede inferirse del universo a partir de su luz y dinámica?",
+    "centro": "cientifica",
+    "fuentes": [
+      "astro",
+      "nasa"
+    ]
+  },
+  {
+    "id": "biologia",
+    "nombre": "Biología",
+    "pregunta": "¿Cómo se organiza, hereda y transforma la vida?",
+    "centro": "cientifica",
+    "fuentes": [
+      "bio",
+      "cbd"
+    ]
+  },
+  {
+    "id": "fisica",
+    "nombre": "Física",
+    "pregunta": "¿Qué modelos describen materia, energía e interacciones?",
+    "centro": "cientifica",
+    "fuentes": [
+      "fis",
+      "astro"
+    ]
+  },
+  {
+    "id": "quimica",
+    "nombre": "Química",
+    "pregunta": "¿Cómo determinan estructura y enlaces las transformaciones de la materia?",
+    "centro": "cientifica",
+    "fuentes": [
+      "quim"
+    ]
+  },
+  {
+    "id": "medioambiente",
+    "nombre": "Medioambiente",
+    "pregunta": "¿Cómo alteran las actividades humanas los sistemas naturales?",
+    "centro": "recursos",
+    "fuentes": [
+      "ipcc",
+      "cbd"
+    ]
+  },
+  {
+    "id": "energia",
+    "nombre": "Energía",
+    "pregunta": "¿Cómo se transforma energía en servicios y con qué impactos?",
+    "centro": "recursos",
+    "fuentes": [
+      "iea",
+      "ipcc"
+    ]
+  },
+  {
+    "id": "civilizaciones",
+    "nombre": "Civilizaciones",
+    "pregunta": "¿Cómo comparar sociedades sin convertir su diversidad en una escala de superioridad?",
+    "centro": "civilizaciones",
+    "fuentes": [
+      "hist",
+      "unesco"
+    ]
+  },
+  {
+    "id": "arqueologia",
+    "nombre": "Arqueología",
+    "pregunta": "¿Cómo se construye conocimiento social desde vestigios materiales?",
+    "centro": "civilizaciones",
+    "fuentes": [
+      "unesco",
+      "hist"
+    ]
+  },
+  {
+    "id": "demografia",
+    "nombre": "Demografía",
+    "pregunta": "¿Cómo cambian tamaño, estructura y distribución de las poblaciones?",
+    "centro": "demografica",
+    "fuentes": [
+      "unpop",
+      "wb"
+    ]
+  },
+  {
+    "id": "cultura",
+    "nombre": "Cultura",
+    "pregunta": "¿Cómo se transmiten y transforman prácticas, lenguas y significados?",
+    "centro": "civilizaciones",
+    "fuentes": [
+      "unesco",
+      "uis"
+    ]
+  },
+  {
+    "id": "educacion",
+    "nombre": "Educación",
+    "pregunta": "¿Quién aprende, en qué condiciones y con qué resultados?",
+    "centro": "desarrollo",
+    "fuentes": [
+      "uis",
+      "wb"
+    ]
+  },
+  {
+    "id": "organizaciones-internacionales",
+    "nombre": "Organizaciones internacionales",
+    "pregunta": "¿Qué mandatos tienen las instituciones que coordinan a los Estados?",
+    "centro": "desarrollo",
+    "fuentes": [
+      "un",
+      "wto"
+    ]
+  },
+  {
+    "id": "relaciones-internacionales",
+    "nombre": "Relaciones internacionales",
+    "pregunta": "¿Cómo cooperan y compiten actores con intereses distintos?",
+    "centro": "historica",
+    "fuentes": [
+      "un",
+      "hist2"
+    ]
+  },
+  {
+    "id": "recursos-naturales",
+    "nombre": "Recursos naturales",
+    "pregunta": "¿Quién accede a los recursos, a qué coste y bajo qué reglas?",
+    "centro": "recursos",
+    "fuentes": [
+      "usgs",
+      "wb"
+    ]
+  },
+  {
+    "id": "agricultura",
+    "nombre": "Agricultura",
+    "pregunta": "¿Cómo se producen alimentos dentro de límites de tierra, agua y clima?",
+    "centro": "recursos",
+    "fuentes": [
+      "fao",
+      "wb"
+    ]
+  },
+  {
+    "id": "industria",
+    "nombre": "Industria",
+    "pregunta": "¿Cómo se transforma materia en bienes y capacidades productivas?",
+    "centro": "tecnologia",
+    "fuentes": [
+      "unido",
+      "wb"
+    ]
+  },
+  {
+    "id": "transporte",
+    "nombre": "Transporte",
+    "pregunta": "¿Cómo se mueven personas y mercancías y quién puede acceder?",
+    "centro": "geografica",
+    "fuentes": [
+      "unctad",
+      "habitat"
+    ]
+  },
+  {
+    "id": "desarrollo-humano",
+    "nombre": "Desarrollo humano",
+    "pregunta": "¿Se amplían las capacidades y oportunidades de las personas?",
+    "centro": "desarrollo",
+    "fuentes": [
+      "undp",
+      "wb"
+    ]
+  },
+  {
+    "id": "urbanismo",
+    "nombre": "Urbanismo",
+    "pregunta": "¿Cómo organizar ciudades habitables, accesibles y resilientes?",
+    "centro": "desarrollo",
+    "fuentes": [
+      "habitat",
+      "wb"
+    ]
+  },
+  {
+    "id": "infraestructura",
+    "nombre": "Infraestructura",
+    "pregunta": "¿Qué redes sostienen los servicios y qué ocurre cuando fallan?",
+    "centro": "tecnologia",
+    "fuentes": [
+      "wb",
+      "iea"
+    ]
+  },
+  {
+    "id": "oceanos",
+    "nombre": "Océanos",
+    "pregunta": "¿Cómo conecta el océano clima, recursos y sociedades?",
+    "centro": "recursos",
+    "fuentes": [
+      "ocean",
+      "unctad"
+    ]
+  },
+  {
+    "id": "biodiversidad",
+    "nombre": "Biodiversidad",
+    "pregunta": "¿Qué diversidad biológica existe y cómo se conserva?",
+    "centro": "cientifica",
+    "fuentes": [
+      "cbd",
+      "bio"
+    ]
+  }
+]

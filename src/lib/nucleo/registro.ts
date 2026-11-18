@@ -55,6 +55,17 @@ export interface ModuloNucleo {
 }
 
 export const MODULOS_NUCLEO: ModuloNucleo[] = [
+  { id:"mod:academia-conocimiento", nombre:"VANGUARD ACADEMY", lema:"Aprender conectando", descripcion:"Piloto de cuatro rutas, doce actividades con respuestas explicadas, expedientes existentes y progreso local borrable. No certifica competencias.", categoria:"MUNDO", ruta:"/conocimiento/aprender", permiso:"publico", estado:"BETA", dependencias:["mod:conocimiento-global"], alias:"academia lecciones cuestionarios aprendizaje ciencia datos historia energia" },
+  { id:"mod:departamentos", nombre:"LOS 22 DEPARTAMENTOS", lema:"Una arquitectura común", descripcion:"Auditoría inicial y plan progresivo, inventario estático reproducible de rutas y dependencias declaradas. Todos los departamentos con alcance parcial explícito.", categoria:"SISTEMA", ruta:"/sistema/departamentos", permiso:"publico", estado:"BETA", dependencias:["mod:conocimiento-global"], alias:"arquitectura inventario departamentos contratos integracion auditoria" },
+  {
+    id: "mod:conocimiento-global",
+    nombre: "CONOCIMIENTO GLOBAL",
+    lema: "Investigar es conectar",
+    descripcion: "Enciclopedia con fuentes, nueve centros de investigación, treinta áreas, cronologías, comparación de países y civilizaciones e indicadores internacionales. Colección editorial inicial ampliable; ausencias declaradas.",
+    categoria: "MUNDO", ruta: "/conocimiento", permiso: "publico", estado: "BETA",
+    dependencias: ["fnt:conocimiento"],
+    alias: "enciclopedia ciencia biologia fisica quimica astronomia historia geografia economia conceptos biblioteca organizaciones estadisticas comparador",
+  },
   // ── REDACCIÓN ──────────────────────────────────────────────
   {
     id: "mod:envivo",

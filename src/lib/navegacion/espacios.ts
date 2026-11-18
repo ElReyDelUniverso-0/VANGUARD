@@ -28,12 +28,13 @@ export const ESPACIOS: Espacio[] = [
     color: "#5eead4",
     icono: "globe",
     detecta: {
-      rutas: ["/mundos", "/mapas", "/atlas", "/mundo", "/zona-cero", "/conflictos", "/conflicto", "/guerra-hoy", "/rostros", "/pulso-mundial", "/pulso"],
+      rutas: ["/conocimiento", "/mundos", "/mapas", "/atlas", "/mundo", "/zona-cero", "/conflictos", "/conflicto", "/guerra-hoy", "/rostros", "/pulso-mundial", "/pulso"],
       salas: ["mapa", "tierra", "geoint", "planeta", "atlas", "mundo", "teatro3d", "frentes", "fichas", "mundial", "rostros", "frente"],
       modulos: ["mapa", "conocimiento", "datos"],
       constelaciones: ["teatro3d"],
     },
     herramientas: [
+      { id: "conocimiento-global", nombre: "Conocimiento global", href: "/conocimiento", icono: "book-open", desc: "Enciclopedia, centros de investigación, cronologías y comparación internacional con procedencia" },
       { id: "mundos", nombre: "El mapa de los mundos", href: "/mundos", icono: "globe-2", desc: "249 países con ficha unificada, 177 con polígono y fronteras reales, doce capas de datos y el registro de los quince mundos de la casa", desde: "v405.12" },
       { id: "mundos-pais", nombre: "Ficha de país", href: "/mundos/do", icono: "map-pin", desc: "Geografía, economía, política, historia y cultura de un país, con sus fronteras, sus vecinos y el puente al simulador", desde: "v405.12" },
       { id: "centro-mapas", nombre: "Centro de mapas", href: "/mapas", icono: "layers", desc: "Ocho capas geográficas sobre el globo: mundial, político, físico, económico, demográfico, temático, histórico y de acontecimientos", desde: "v405.9" },
