@@ -6137,8 +6137,29 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.15";
-export const APP_CODENAME = "SIN UN CUADRO DE MÁS";
+// v406.3 VANGUARD EDITORIAL COMMAND — la redacción que la casa no tenía.
+// Orden del Dueño: «No quiero un calendario vacío. Quiero que comiences a
+// producir contenido real.» La casa tenía 155 salas, 249 fichas de país,
+// curiosidades, guerras y cables, pero NINGÚN artículo de fondo con fuentes.
+// ① LA ESTRUCTURA: diez áreas (geopolítica, países, economía, historia,
+//    conflictos, ciencia, sociedad, educación, recursos y relaciones) que unen
+//    el Vanguard moderno (rutas de servidor) y el clásico (/sala/<clave>,
+//    filtradas contra puertas-salas: ninguna puerta rota).
+// ② LAS PRIMERAS 13 PIEZAS, con 60 fuentes abiertas una a una: Ormuz y los
+//    cuellos de botella, COP31, midterms, APEC/G20, tierras raras, el español
+//    2026, Westfalia (y su mito), chips/EUV, verificar en 7 pasos, Estados con
+//    reconocimiento limitado, cómo se cuentan los muertos y DOS piezas de datos
+//    vivos que se recalculan desde el censo de /mundos (con la RD a la vista).
+// ③ EL CALENDARIO: 30 días (18-nov → 17-dic), cuatro semanas con prioridad,
+//    29 piezas en cola con ángulo, fuentes previstas, informe con el que se
+//    coordina y la sala que NO repiten.
+// ④ EL SISTEMA: plan de revisiones derivado (periodicidad + hito con fecha),
+//    criterios de calidad, pasos de verificación y mapa de coordinación con el
+//    departamento de informes. El registro rechaza slugs repetidos y piezas
+//    sin fuentes. /editorial, /editorial/<slug>, /editorial/area/<clave>,
+//    /editorial/calendario; sitemap y pestaña «Redacción» en Conocimiento.
+export const APP_VERSION = "v406.3";
+export const APP_CODENAME = "EDITORIAL COMMAND";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6198,7 +6219,7 @@ export const APP_CODENAME = "SIN UN CUADRO DE MÁS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.14";
+export const APP_VERSION_ANTERIOR = "v405.15";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

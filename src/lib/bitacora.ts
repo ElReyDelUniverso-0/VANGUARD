@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v406.3",
+    nombre: "EDITORIAL COMMAND",
+    hitos: [
+      "LA REDACCIÓN: /editorial, una biblioteca de artículos con fuentes en diez áreas que unen el Vanguard moderno y el clásico",
+      "LAS PRIMERAS 13 PIEZAS: Ormuz, COP31, midterms, APEC y G20, tierras raras, el español, Westfalia, chips, verificación, Estados a medias, víctimas de guerra y dos rankings de datos vivos",
+      "EL CALENDARIO: 30 días con cuatro prioridades semanales y una cola de 29 piezas con ángulo, fuentes previstas y el informe con el que se coordinan",
+      "EL SISTEMA: plan de revisiones calculado, criterios de calidad, verificación y registro de cambios en cada artículo",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v405.15",
     nombre: "SIN UN CUADRO DE MÁS",
     hitos: [

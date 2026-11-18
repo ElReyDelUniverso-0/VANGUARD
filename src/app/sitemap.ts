@@ -13,6 +13,8 @@ import { SITE_URL } from "@/lib/site"; // v403.6: una sola puerta
 import { CONSTELACIONES } from "@/lib/vanguard/mapa-salas"; // v403.9: las 20 puertas
 import { PUERTAS_SALAS } from "@/lib/vanguard/puertas-salas"; // v405.8: las puertas de las salas
 import { PAISES_GEO } from "@/lib/geo-paises"; // v405.12: el mapa de los mundos
+import { ARTICULOS } from "@/lib/editorial"; // v406.3: la biblioteca de la redacción
+import { AREAS_EDITORIALES } from "@/lib/editorial/areas";
 
 // v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
 // «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
@@ -313,6 +315,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      // v406.3 EDITORIAL COMMAND — la biblioteca de la redacción, su calendario,
+      // sus diez áreas y cada artículo (con su fecha de revisión real).
+      url: `${SITE_URL}/editorial`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/editorial/calendario`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.5,
+    },
+    ...AREAS_EDITORIALES.map((a) => ({
+      url: `${SITE_URL}/editorial/area/${a.clave}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
+    ...ARTICULOS.map((a) => ({
+      url: `${SITE_URL}/editorial/${a.slug}`,
+      lastModified: new Date(a.revisado + "T12:00:00Z"),
+      changeFrequency: (a.tipo === "permanente" ? "monthly" : "weekly") as "monthly" | "weekly",
+      priority: a.tipo === "actualidad" ? 0.7 : 0.6,
+    })),
     {
       // v295.0 LA VERDAD CRUDA — la fuente dark-data (v24, documentada,
       // «todas las entradas citan fuentes públicas (ONU, CPJ, RSF, ACLED,
