@@ -5,7 +5,7 @@ import { Marco } from "@/components/planeta/marco";
 import { COLECCIONES, TEMA_POR_ID } from "@/lib/planeta/directorio";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /colecciones — RECORRIDOS GUIADOS
+// v407.1 · /colecciones — RECORRIDOS GUIADOS
 // Cada colección responde una pregunta enlazando salas que ya existen, en
 // orden y con el porqué de cada parada. Las rutas se verifican en
 // scripts/pruebas-nucleo.mjs: ninguna parada lleva a una página vacía.

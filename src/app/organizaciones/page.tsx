@@ -10,7 +10,7 @@ import { miles } from "@/lib/mundos/formato";
 import type { FilaPlaneta } from "@/lib/planeta/indicadores";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /organizaciones — QUIÉN SE SIENTA CON QUIÉN
+// v407.1 · /organizaciones — QUIÉN SE SIENTA CON QUIÉN
 // Dieciséis bloques con sus miembros de pleno derecho, su fuente oficial y
 // su peso real (población, PIB y gasto militar sumados con la tabla única
 // del planeta). Un buscador dice a qué bloques pertenece cualquier país.

@@ -1,7 +1,7 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · EL DIRECTORIO (cliente)
+// v407.1 · EL DIRECTORIO (cliente)
 //   · búsqueda instantánea por palabras (todas deben aparecer, sin tildes);
 //   · temas inteligentes (un destino puede estar en varios);
 //   · ★ favoritos propios del directorio (vx406.5-directorio-favs) — no se

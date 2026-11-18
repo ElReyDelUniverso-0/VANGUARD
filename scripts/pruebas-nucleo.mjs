@@ -392,7 +392,7 @@ async function parteA() {
     afirmar(pag.includes("Puerta canónica"), "/nucleo no declara la puerta canónica de cada familia");
   });
 
-  // ── v406.5 EL PLANETA EN CIFRAS · LA EXPANSIÓN DEL UNIVERSO ──────────────
+  // ── v407.1 EL PLANETA EN CIFRAS · LA EXPANSIÓN DEL UNIVERSO ──────────────
   const leer = (rel) => readFileSync(join(RAIZ, rel), "utf8");
   const geoTxt = leer("src/lib/geo-paises.ts");
   const ISOS = new Set([...geoTxt.matchAll(/iso2: "([a-z]{2})"/g)].map((m) => m[1]));
@@ -425,7 +425,7 @@ async function parteA() {
     return false;
   }
 
-  await verificar("v406.5 · los siete centros nuevos existen, están en el censo y en un módulo", () => {
+  await verificar("v407.1 · los siete centros nuevos existen, están en el censo y en un módulo", () => {
     const mods = leer("src/components/portada/modulos.ts");
     afirmar(mods.includes('id: "planeta"'), "falta el módulo público «planeta» en modulos.ts");
     for (const r of ["/comparador", "/rankings", "/demografia", "/regiones", "/organizaciones", "/directorio", "/colecciones"]) {
@@ -438,7 +438,7 @@ async function parteA() {
     }
   });
 
-  await verificar("v406.5 · organizaciones: ISO reales, sin duplicados y la cifra de la nota cuadra", () => {
+  await verificar("v407.1 · organizaciones: ISO reales, sin duplicados y la cifra de la nota cuadra", () => {
     afirmar(ORGS.length >= 16, `solo ${ORGS.length} organizaciones legibles`);
     for (const o of ORGS) {
       afirmar(o.miembros.length > 0, `${o.clave} sin miembros`);
@@ -456,7 +456,7 @@ async function parteA() {
     afirmar(urls.length === ORGS.length && urls.every((u) => u.startsWith("https://")), "cada organización necesita su fuente https");
   });
 
-  await verificar("v406.5 · colecciones y temas: ninguna parada lleva a una página vacía", () => {
+  await verificar("v407.1 · colecciones y temas: ninguna parada lleva a una página vacía", () => {
     afirmar(COLS.length >= 5, `solo ${COLS.length} colecciones`);
     const paradas = [...dirTxt.matchAll(/\{ ruta: "([^"]+)", titulo:/g)].map((m) => m[1]);
     afirmar(paradas.length >= 30, `solo ${paradas.length} paradas`);
@@ -469,7 +469,7 @@ async function parteA() {
     }
   });
 
-  await verificar("v406.5 · la familia de las cifras y el país conectado (ficha, núcleo, sitemap)", () => {
+  await verificar("v407.1 · la familia de las cifras y el país conectado (ficha, núcleo, sitemap)", () => {
     const fus = leer("src/lib/nucleo/fusiones.ts");
     afirmar(fus.includes('id: "familia-cifras"'), "fusiones.ts no declara la familia de las cifras");
     const rel = leer("src/lib/nucleo/relaciones.ts");

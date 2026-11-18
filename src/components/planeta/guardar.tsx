@@ -1,7 +1,7 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · GUARDAR CUALQUIER COSA EN TU ESPACIO — la versión genérica del
+// v407.1 · GUARDAR CUALQUIER COSA EN TU ESPACIO — la versión genérica del
 // botón de /mundos (guardar-espacio.tsx, que solo sabe de países). Escribe
 // una pieza en el proyecto activo del almacén vx405.11-espacio.
 // ═══════════════════════════════════════════════════════════════════

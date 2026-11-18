@@ -984,7 +984,7 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
       "datos catalogo procedencia licencia fuente fecha captura banco mundial natural earth modelos esquema calidad trazabilidad v407.0",
   },
 
-  // ── v406.5 EL PLANETA EN CIFRAS · LA EXPANSIÓN DEL UNIVERSO ────────────
+  // ── v407.1 EL PLANETA EN CIFRAS · LA EXPANSIÓN DEL UNIVERSO ────────────
   // Cinco centros que ponen la ficha del país en contexto (todos leen la MISMA
   // tabla: src/lib/planeta/datos.ts → ficha.ts → Banco Mundial con su año) y
   // dos piezas del sistema de módulos: el directorio y las colecciones.

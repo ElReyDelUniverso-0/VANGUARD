@@ -6,7 +6,7 @@ import { INDICADORES, fmt } from "@/lib/planeta/indicadores";
 import { anioTipico, ranking } from "@/lib/planeta/datos";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /rankings — LAS LISTAS DEL PLANETA (índice)
+// v407.1 · /rankings — LAS LISTAS DEL PLANETA (índice)
 // Ocho indicadores, cada uno con su podio y la puerta a la lista completa.
 // Estática: se calcula en el build con la tabla única del planeta.
 // ═══════════════════════════════════════════════════════════════════

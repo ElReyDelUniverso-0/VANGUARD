@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · EL MAPA DE MIEMBROS — los polígonos reales del mapa de los mundos
+// v407.1 · EL MAPA DE MIEMBROS — los polígonos reales del mapa de los mundos
 // (mapa-mundo.json, Natural Earth 110m) con los miembros encendidos. Los
 // países demasiado pequeños para tener polígono a esta escala (islas del
 // Caribe, del Pacífico…) se marcan con un punto en su coordenada real.

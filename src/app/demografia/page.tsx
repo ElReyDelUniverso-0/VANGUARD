@@ -8,7 +8,7 @@ import { anioTipico, filasPlaneta, mundo, puestoDe, ranking, regiones } from "@/
 import { miles } from "@/lib/mundos/formato";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /demografia — POBLACIÓN Y DEMOGRAFÍA
+// v407.1 · /demografia — POBLACIÓN Y DEMOGRAFÍA
 // La pregunta que la casa no respondía: ¿cuántos somos, dónde vivimos y
 // cuánto vivimos? Todo se calcula en el build con la tabla única del
 // planeta (Banco Mundial SP.POP.TOTL y SP.DYN.LE00.IN, con su año).

@@ -45,6 +45,6 @@ un cliente sin poder probarlo es lo prohibido); no hay carga de plugins en calie
 ## v407.1 · EL PLANETA EN CIFRAS · 2026-11-14
 
 - **Encargo:** VANGUARD UNIVERSE EXPANSION — crecer la estructura con centros completos, sistema de módulos (directorio, temas, favoritos, recientes, recomendaciones, colecciones) y conexión de todo con el ecosistema.
-- **Hecho:** módulo público «planeta» + 5 centros de datos (/comparador, /rankings, /demografia, /regiones, /organizaciones) sobre una tabla única que lee la ficha canónica del país; /directorio (215 destinos, 11 temas) y /colecciones (7 recorridos); costura en /mundos, /mundos/[iso], enlacesDePais, fusiones, registro (73 módulos), sitemap (+62 URLs); pruebas offline 30/30.
+- **Hecho:** módulo público «planeta» + 5 centros de datos (/comparador, /rankings, /demografia, /regiones, /organizaciones) sobre una tabla única que lee la ficha canónica del país; /directorio (217 destinos, 11 temas) y /colecciones (7 recorridos); costura en /mundos, /mundos/[iso], enlacesDePais, fusiones, registro (73 módulos), sitemap (+62 URLs); pruebas offline 30/30.
 - **Verificado:** tsc acotado y eslint sin errores en todo lo tocado; dev con 1,1 GB: /comparador, /rankings, /rankings/pibPC, /demografia, /regiones, /regiones/caribe, /organizaciones, /organizaciones/sica, /directorio, /colecciones, /colecciones/tu-pais-en-el-mundo y /mundos/do → 200.
 - **Detalle y cola:** agent-ctx/improvement-inbox.md (mensaje del 2026-11-14).

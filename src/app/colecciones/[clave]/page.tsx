@@ -6,7 +6,7 @@ import { Marco } from "@/components/planeta/marco";
 import { GuardarPieza } from "@/components/planeta/guardar";
 import { COLECCIONES, TEMA_POR_ID, coleccionDe, destinoDe } from "@/lib/planeta/directorio";
 
-// v406.5 · /colecciones/[clave] — UN RECORRIDO, PARADA A PARADA
+// v407.1 · /colecciones/[clave] — UN RECORRIDO, PARADA A PARADA
 
 export const dynamicParams = false;
 

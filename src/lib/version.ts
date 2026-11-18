@@ -18,7 +18,7 @@
 //    /regiones + 24 subregiones, /organizaciones + 16 bloques con miembros,
 //    fuente oficial, cambios recientes (salida de Emiratos de la OPEP, ingreso
 //    de Timor Oriental en la ASEAN), mapa de miembros y peso real.
-// ④ EL SISTEMA DE MÓDULOS: /directorio (215 destinos: 60 centros + 155 salas,
+// ④ EL SISTEMA DE MÓDULOS: /directorio (217 destinos: 62 centros + 155 salas,
 //    11 temas inteligentes, búsqueda, ★ favoritos, recientes del rastro,
 //    «porque visitaste…», guardar en el espacio) y /colecciones (7 recorridos
 //    guiados con el porqué de cada parada).

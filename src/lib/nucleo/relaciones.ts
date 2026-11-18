@@ -29,7 +29,7 @@ import { puntoPorClave, puntosDelNucleo, idPunto } from "./puntos";
 // v405.16 · EL NEXO — de un titular a un país (y de vuelta)
 import { enlacesDePaisEnTexto, contextoDePais } from "./nexo";
 import { indicadoresDePais, type FichaIndicadores } from "./indicadores";
-// v406.5 · EL PLANETA EN CIFRAS — el país, en contexto: comparador, región y bloques
+// v407.1 · EL PLANETA EN CIFRAS — el país, en contexto: comparador, región y bloques
 import { POR_ISO2 as GEO_POR_ISO2 } from "@/lib/geo-paises";
 import { rutaRegionDe } from "@/lib/planeta/subregiones";
 import { organizacionesDePais } from "@/lib/planeta/organizaciones";
@@ -160,7 +160,7 @@ export function enlacesDePais(
       tipoRelacion: "visible_en",
     });
   }
-  // v406.5 — la ficha dice cómo es el país; estos tres chips dicen cuánto pesa
+  // v407.1 — la ficha dice cómo es el país; estos tres chips dicen cuánto pesa
   // frente a los demás (todas las rutas son estáticas y existen para cada ISO).
   const geo = GEO_POR_ISO2.get(iso.toLowerCase());
   if (geo) {

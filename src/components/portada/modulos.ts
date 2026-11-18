@@ -83,7 +83,7 @@ export const MODULOS: Modulo[] = [
       { href: "/traductor", label: "Traductor", img: "/ilustraciones/osint.jpg", txt: "Las noticias del mundo en tu idioma." },
     ],
   },
-  // v406.5 EL PLANETA EN CIFRAS — el módulo de los países: la ficha de cada
+  // v407.1 EL PLANETA EN CIFRAS — el módulo de los países: la ficha de cada
   // uno (que ya existía en /mundos sin colgar de ningún módulo) más los cinco
   // centros que la ponen en contexto: comparar, ordenar, sumar por regiones,
   // contar la población y ver quién se sienta con quién.

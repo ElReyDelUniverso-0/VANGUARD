@@ -1,4 +1,4 @@
-// v406.5 · Las subregiones en español y su slug — pura y liviana para que
+// v407.1 · Las subregiones en español y su slug — pura y liviana para que
 // relaciones.ts (enlaces del núcleo) pueda usarla sin cargar tablas.
 
 /** Las 24 subregiones del censo geográfico, en español. */

@@ -5,7 +5,7 @@ import { Directorio } from "@/components/planeta/directorio";
 import { COLECCIONES, TEMAS, payloadDirectorio } from "@/lib/planeta/directorio";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /directorio — TODAS LAS PUERTAS DE LA CASA
+// v407.1 · /directorio — TODAS LAS PUERTAS DE LA CASA
 // El índice que cruza la cabecera, el censo del Núcleo y las familias de
 // módulos. Buscable al instante, con temas inteligentes, favoritos, recientes
 // (el rastro de la Travesía, vg-rastro-v1) y recomendaciones según lo visto.

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · EL MARCO DE LOS CENTROS — atajos, cabecera y «sigue explorando».
+// v407.1 · EL MARCO DE LOS CENTROS — atajos, cabecera y «sigue explorando».
 // Server component: cero JS. Cada centro nuevo lo monta para que ninguno
 // quede aislado: el pie recomienda las puertas vecinas (directorio.ts →
 // relacionados()) y las colecciones que pasan por la página.

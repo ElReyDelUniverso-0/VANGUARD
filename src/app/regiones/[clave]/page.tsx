@@ -10,7 +10,7 @@ import { ORGANIZACIONES } from "@/lib/planeta/organizaciones";
 import { miles } from "@/lib/mundos/formato";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /regiones/[clave] — UNA SUBREGIÓN, PAÍS POR PAÍS
+// v407.1 · /regiones/[clave] — UNA SUBREGIÓN, PAÍS POR PAÍS
 // Sus cifras sumadas, el peso de cada país dentro de ella, los bloques
 // que la atraviesan y el comparador listo con sus gigantes.
 // ═══════════════════════════════════════════════════════════════════

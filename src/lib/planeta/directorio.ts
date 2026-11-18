@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · EL DIRECTORIO DE LA CASA — todas las puertas en un solo índice
+// v407.1 · EL DIRECTORIO DE LA CASA — todas las puertas en un solo índice
 //
 // La casa ya tenía tres censos que no se hablaban: los módulos públicos de la
 // cabecera (portada/modulos.ts), el censo del Núcleo (nucleo/registro.ts) y

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · EL PLANETA EN CIFRAS — LOS INDICADORES (sin datos dentro)
+// v407.1 · EL PLANETA EN CIFRAS — LOS INDICADORES (sin datos dentro)
 //
 // Este archivo NO importa ninguna tabla: solo declara qué se mide, con qué
 // código del Banco Mundial, en qué unidad y cómo se escribe la cifra. Lo usan

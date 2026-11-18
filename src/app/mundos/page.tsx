@@ -193,7 +193,7 @@ export default function MundosPage() {
           <MapaMundos payload={payload} />
         </section>
 
-        {/* v406.5 · EL PLANETA EN CIFRAS — de la ficha de un país al contexto */}
+        {/* v407.1 · EL PLANETA EN CIFRAS — de la ficha de un país al contexto */}
         <section id="cifras" className="vx-mo-seccion">
           <h2 className="vx-mo-titulo">
             El planeta en cifras <span>cinco centros sobre la misma tabla</span>

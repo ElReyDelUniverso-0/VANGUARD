@@ -12,7 +12,7 @@ import { miles } from "@/lib/mundos/formato";
 import { POR_ISO2 } from "@/lib/geo-paises";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /organizaciones/[clave] — UN BLOQUE POR DENTRO
+// v407.1 · /organizaciones/[clave] — UN BLOQUE POR DENTRO
 // El mapa de sus miembros, lo que pesan juntos, quién pesa más dentro, con
 // qué otros bloques se solapa y la fuente oficial donde se comprueba.
 // ═══════════════════════════════════════════════════════════════════

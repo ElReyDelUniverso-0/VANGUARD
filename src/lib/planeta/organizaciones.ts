@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · LAS ORGANIZACIONES INTERNACIONALES — quién se sienta con quién
+// v407.1 · LAS ORGANIZACIONES INTERNACIONALES — quién se sienta con quién
 //
 // La casa hablaba de la OTAN, los BRICS, la OPEP o el G20 en sus artículos y
 // cables, pero no tenía un lugar donde ver QUIÉN está dentro de cada bloque ni

@@ -7,7 +7,7 @@ import { INDICADORES } from "@/lib/planeta/indicadores";
 import { ORGANIZACIONES } from "@/lib/planeta/organizaciones";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /comparador — EL COMPARADOR INTERNACIONAL
+// v407.1 · /comparador — EL COMPARADOR INTERNACIONAL
 // La casa tenía 249 fichas de país y ninguna forma de ponerlas una al lado
 // de otra. La página es estática: la tabla del planeta (≈250 filas, solo
 // números) viaja en el HTML y el cliente compara sin pedir nada a la red.

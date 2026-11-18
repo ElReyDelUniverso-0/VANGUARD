@@ -1,6 +1,6 @@
 "use client";
 
-// v406.5 · ¿A qué bloques pertenece un país? — buscador instantáneo de
+// v407.1 · ¿A qué bloques pertenece un país? — buscador instantáneo de
 // /organizaciones. Recibe la tabla país → claves de bloque desde el servidor.
 import { useMemo, useState } from "react";
 import Link from "next/link";

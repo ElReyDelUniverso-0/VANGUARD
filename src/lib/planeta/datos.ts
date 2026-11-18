@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · EL PLANETA EN CIFRAS — LA TABLA ÚNICA
+// v407.1 · EL PLANETA EN CIFRAS — LA TABLA ÚNICA
 //
 // Una fila por país, sacada de la ficha canónica (src/lib/mundos/ficha.ts):
 // así el comparador, los rankings, las regiones, la demografía y las

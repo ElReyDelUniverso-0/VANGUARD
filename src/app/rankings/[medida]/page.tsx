@@ -9,7 +9,7 @@ import { anioTipico, mundo, ranking } from "@/lib/planeta/datos";
 import { miles } from "@/lib/mundos/formato";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /rankings/[medida] — UNA LISTA MUNDIAL COMPLETA
+// v407.1 · /rankings/[medida] — UNA LISTA MUNDIAL COMPLETA
 // Todos los países con dato, de mayor a menor, con su peso sobre el total
 // mundial y el acumulado. Estática (ocho páginas). Cada fila lleva a la ficha
 // del país y al comparador.

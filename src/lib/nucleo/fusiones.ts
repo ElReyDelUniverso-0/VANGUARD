@@ -86,7 +86,7 @@ export const FAMILIAS_MODULO: FamiliaModulos[] = [
       "Seis puertas abiertas sobre el mismo planeta y ninguna decía cuál abrir. No se cierra ninguna: se declara que /mundos es el índice y que las otras cinco son lecturas de la misma tabla (geo-paises une las cinco por identidad ISO).",
     cifra: "6 puertas · 1 planeta · 249 fichas",
   },
-  // v406.5 EL PLANETA EN CIFRAS — la ficha de un país dice cómo es; esta
+  // v407.1 EL PLANETA EN CIFRAS — la ficha de un país dice cómo es; esta
   // familia responde la pregunta siguiente: cuánto pesa frente a los demás.
   {
     id: "familia-cifras",

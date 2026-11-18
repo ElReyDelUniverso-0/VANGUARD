@@ -7,7 +7,7 @@ import { mundo, regiones } from "@/lib/planeta/datos";
 import { miles } from "@/lib/mundos/formato";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · /regiones — TERRITORIOS Y REGIONES
+// v407.1 · /regiones — TERRITORIOS Y REGIONES
 // Los continentes del censo y sus 24 subregiones, con las cifras de sus
 // países SUMADAS (población, superficie, PIB, gasto militar) o PONDERADAS
 // (renta por habitante, esperanza de vida). Cada subregión tiene su página.

@@ -44,7 +44,7 @@ export function BotonTravesia() {
   );
 }
 
-/** v406.5 — la puerta al directorio: todas las salas, buscables, con favoritos */
+/** v407.1 — la puerta al directorio: todas las salas, buscables, con favoritos */
 export function BotonDirectorio() {
   return (
     <Link href="/directorio" className="tv-hp-boton">

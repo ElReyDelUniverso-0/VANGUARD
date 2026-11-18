@@ -1,7 +1,7 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════
-// v406.5 · EL COMPARADOR (cliente) — elige países, compáralos, compártelo.
+// v407.1 · EL COMPARADOR (cliente) — elige países, compáralos, compártelo.
 // Sin red: la tabla llega en el HTML. Los puestos mundiales se calculan
 // aquí con la misma regla que /rankings (mayor = puesto 1).
 // ═══════════════════════════════════════════════════════════════════
