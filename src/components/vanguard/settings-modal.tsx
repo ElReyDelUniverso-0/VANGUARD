@@ -42,6 +42,7 @@ export function SettingsModal({ open, onOpenChange, contenedor }: SettingsModalP
     () => false
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [seccionActiva, setSeccionActiva] = useState<"TODAS" | "GENERAL" | "3D" | "SISTEMA">("TODAS");
   // v110: ajustes del motor 3D (persistidos)
   const m3d = useEstilo3D();
   // v111: ¿el aparato expone giroscopio? (móvil sí, escritorio no)
@@ -208,57 +209,86 @@ export function SettingsModal({ open, onOpenChange, contenedor }: SettingsModalP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent contenedor={contenedor} className="!fixed hud-panel border-amber-hud sm:max-w-md">
-        <DialogHeader>
+      <DialogContent contenedor={contenedor} className="!fixed hud-panel border-amber-hud sm:max-w-xl max-h-[88dvh] overflow-y-auto thin-scroll p-4 sm:p-6">
+        <DialogHeader className="sticky -top-4 sm:-top-6 bg-background/95 backdrop-blur-md pt-1 pb-3 -mx-4 sm:-mx-6 px-4 sm:px-6 z-20 border-b border-border/40">
           <DialogTitle className="font-mono text-amber flex items-center gap-2">
             <SettingsIcon className="w-5 h-5" /> Ajustes de comando
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Personaliza tu experiencia de operador
+          <DialogDescription className="text-muted-foreground text-xs">
+            Personaliza tu experiencia de operador · Vanguard System
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
-          {/* Alias */}
-          <div className="space-y-2">
-            <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
-              <User className="w-3 h-3" /> Identificador de agente
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                value={newAlias}
-                onChange={(e) => setNewAlias(e.target.value)}
-                maxLength={24}
-                placeholder="AGENTE-XXXX"
-                className="font-mono bg-secondary border-amber-hud/40"
-              />
-              <Button
-                onClick={handleSaveAlias}
-                size="sm"
-                className="bg-amber-hud text-amber hover:bg-amber-hud/80 font-mono uppercase whitespace-nowrap"
-              >
-                Guardar
-              </Button>
-            </div>
-            <p className="text-[10px] text-muted-foreground font-mono">Max 24 caracteres · se muestra en el HUD</p>
-          </div>
+        {/* Selector de pestañas para móvil y navegación rápida */}
+        <div className="flex items-center gap-1.5 py-1.5 overflow-x-auto thin-scroll border-b border-border/30">
+          {([
+            { id: "TODAS", label: "Todas las opciones" },
+            { id: "GENERAL", label: "General & Audio" },
+            { id: "3D", label: "Motor 3D & Eras" },
+            { id: "SISTEMA", label: "Datos & Reset" },
+          ] as const).map((s) => (
+            <button
+              key={s.id}
+              onClick={() => { setSeccionActiva(s.id); sfx.click(); }}
+              className={cn(
+                "px-2.5 py-1 text-[10px] font-mono uppercase font-bold rounded-sm border transition-all shrink-0",
+                seccionActiva === s.id
+                  ? "border-amber-hud text-amber bg-amber-hud/25 glow-amber"
+                  : "border-border/60 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
+              )}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
 
-          {/* Sound */}
-          <div className="hud-corner p-3 bg-secondary/30">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {muted ? <VolumeX className="w-4 h-4 text-muted-foreground" /> : <Volume2 className="w-4 h-4 text-amber" />}
-                <div>
-                  <div className="text-xs font-mono font-bold text-foreground">{tr("settings.sound")}</div>
-                  <div className="text-[10px] text-muted-foreground">{tr("settings.soundDesc")}</div>
+        <div className="space-y-4 py-2">
+          {/* SECCIÓN GENERAL */}
+          {(seccionActiva === "TODAS" || seccionActiva === "GENERAL") && (
+            <>
+              {/* Alias */}
+              <div className="space-y-2">
+                <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
+                  <User className="w-3 h-3" /> Identificador de agente
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={newAlias}
+                    onChange={(e) => setNewAlias(e.target.value)}
+                    maxLength={24}
+                    placeholder="AGENTE-XXXX"
+                    className="font-mono bg-secondary border-amber-hud/40"
+                  />
+                  <Button
+                    onClick={handleSaveAlias}
+                    size="sm"
+                    className="bg-amber-hud text-amber hover:bg-amber-hud/80 font-mono uppercase whitespace-nowrap"
+                  >
+                    Guardar
+                  </Button>
+                </div>
+                <p className="text-[10px] text-muted-foreground font-mono">Max 24 caracteres · se muestra en el HUD</p>
+              </div>
+
+              {/* Sound */}
+              <div className="hud-corner p-3 bg-secondary/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {muted ? <VolumeX className="w-4 h-4 text-muted-foreground" /> : <Volume2 className="w-4 h-4 text-amber" />}
+                    <div>
+                      <div className="text-xs font-mono font-bold text-foreground">{tr("settings.sound")}</div>
+                      <div className="text-[10px] text-muted-foreground">{tr("settings.soundDesc")}</div>
+                    </div>
+                  </div>
+                  <Switch checked={!muted} onCheckedChange={(c) => handleToggleMute(!c)} />
                 </div>
               </div>
-              <Switch checked={!muted} onCheckedChange={(c) => handleToggleMute(!c)} />
-            </div>
-          </div>
+            </>
+          )}
 
-          {/* v110.0 MATRIZ 2100 — TECNOLOGÍA 3D: la matrix responde a TU mano */}
-          <div className={cn("hud-corner p-3 bg-secondary/30", !m3d.activo && "opacity-70")}>
+          {/* SECCIÓN 3D */}
+          {(seccionActiva === "TODAS" || seccionActiva === "3D") && (
+            <div className={cn("hud-corner p-3 bg-secondary/30", !m3d.activo && "opacity-70")}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Boxes className={cn("w-4 h-4", m3d.activo ? "text-emerald-400" : "text-muted-foreground")} />
@@ -466,145 +496,156 @@ export function SettingsModal({ open, onOpenChange, contenedor }: SettingsModalP
               </div>
             )}
           </div>
+          )}
 
-          {/* v26: MODO ESTRICTO 18+ — el usuario pidió no ver NINGUNA foto censurada */}
-          <div className={cn("hud-corner p-3 bg-secondary/30", strict18 && "border-red-hud/60 bg-red-hud/10")}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <EyeOff className={cn("w-4 h-4", strict18 ? "text-red-hud" : "text-muted-foreground")} />
-                <div>
-                  <div className="text-xs font-mono font-bold text-foreground">Modo estricto 18+</div>
-                  <div className="text-[10px] text-muted-foreground">
-                    Nunca mostrar contenido sensible — se oculta por completo, sin censuras ni pasos extra
+          {/* SECCIÓN GENERAL (PARTE 2: Modo 18+, Idioma, Tema HUD) */}
+          {(seccionActiva === "TODAS" || seccionActiva === "GENERAL") && (
+            <>
+              {/* v26: MODO ESTRICTO 18+ — el usuario pidió no ver NINGUNA foto censurada */}
+              <div className={cn("hud-corner p-3 bg-secondary/30", strict18 && "border-red-hud/60 bg-red-hud/10")}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <EyeOff className={cn("w-4 h-4", strict18 ? "text-red-hud" : "text-muted-foreground")} />
+                    <div>
+                      <div className="text-xs font-mono font-bold text-foreground">Modo estricto 18+</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        Nunca mostrar contenido sensible — se oculta por completo, sin censuras ni pasos extra
+                      </div>
+                    </div>
                   </div>
+                  <Switch checked={strict18} onCheckedChange={handleToggleStrict18} />
                 </div>
               </div>
-              <Switch checked={strict18} onCheckedChange={handleToggleStrict18} />
-            </div>
-          </div>
 
-          {/* v21: Idioma */}
-          <div className="space-y-2">
-            <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
-              <Languages className="w-3 h-3" /> {tr("hud.language")}
-            </Label>
-            <div className="grid grid-cols-4 gap-1.5">
-              {LANGS.map((l) => (
-                <button
-                  key={l.id}
-                  onClick={() => {
-                    setLang(l.id);
-                    sfx.click();
-                    toast.success(`${tr("hud.language")}: ${l.native}`);
-                  }}
+              {/* v21: Idioma */}
+              <div className="space-y-2">
+                <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
+                  <Languages className="w-3 h-3" /> {tr("hud.language")}
+                </Label>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {LANGS.map((l) => (
+                    <button
+                      key={l.id}
+                      onClick={() => {
+                        setLang(l.id);
+                        sfx.click();
+                        toast.success(`${tr("hud.language")}: ${l.native}`);
+                      }}
+                      className={cn(
+                        "h-8 hud-corner text-[10px] font-mono uppercase transition-all",
+                        lang === l.id
+                          ? "border-amber-hud text-amber bg-amber-hud/30 glow-amber font-bold"
+                          : "border-border text-muted-foreground hover:text-foreground hover:border-amber-hud/50"
+                      )}
+                    >
+                      {l.glyph}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* HUD Theme */}
+              <div className="space-y-2">
+                <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
+                  <Shield className="w-3 h-3" /> Tema HUD
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(["AMBER", "RED", "CYAN"] as const).map((t) => {
+                    const owned = ownedCosmetics.includes(t);
+                    const active = hudTheme === t;
+                    return (
+                      <button
+                        key={t}
+                        onClick={() => handleSetTheme(t)}
+                        disabled={!owned}
+                        className={cn(
+                          "p-2 hud-corner text-center text-[10px] font-mono uppercase transition-all",
+                          active && "glow-amber",
+                          owned
+                            ? t === "AMBER"
+                              ? "border-amber-hud text-amber hover:bg-amber-hud/30"
+                              : t === "RED"
+                              ? "border-red-hud text-red-hud hover:bg-red-hud/30"
+                              : "border-cyan-hud text-cyan-hud hover:bg-cyan-hud/30"
+                            : "border-border text-muted-foreground opacity-50"
+                        )}
+                      >
+                        <div className={cn(
+                          "w-full h-2 rounded-sm mb-1",
+                          t === "AMBER" ? "bg-amber" : t === "RED" ? "bg-red-hud" : "bg-cyan-hud"
+                        )} />
+                        {t}
+                        {!owned && <div className="text-[8px] mt-0.5"> bloqueado</div>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* SECCIÓN SISTEMA (Backup & Zona de Peligro) */}
+          {(seccionActiva === "TODAS" || seccionActiva === "SISTEMA") && (
+            <>
+              {/* Backup: Export/Import */}
+              <div className="space-y-2">
+                <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
+                  <Shield className="w-3 h-3" /> Copia de seguridad
+                </Label>
+                <p className="text-[10px] text-muted-foreground font-mono">
+                  Exporta tu progreso a un archivo JSON o importa un backup anterior.
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    onClick={handleExport}
+                    size="sm"
+                    className="h-8 bg-amber-hud/30 border border-amber-hud text-amber hover:bg-amber-hud/50 font-mono uppercase text-[10px]"
+                  >
+                    <Download className="w-3 h-3 mr-1" /> Exportar
+                  </Button>
+                  <Button
+                    onClick={handleImportClick}
+                    size="sm"
+                    className="h-8 bg-cyan-hud/30 border border-cyan-hud text-cyan-hud hover:bg-cyan-hud/50 font-mono uppercase text-[10px]"
+                  >
+                    <Upload className="w-3 h-3 mr-1" /> Importar
+                  </Button>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={handleImportFile}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Reset */}
+              <div className="hud-corner p-3 bg-red-hud/10 border-red-hud/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="w-4 h-4 text-red-hud" />
+                  <div className="text-xs font-mono font-bold text-red-hud uppercase">Zona peligrosa</div>
+                </div>
+                <p className="text-[10px] text-muted-foreground mb-2">
+                  Resetear progreso borra: monedas, gemas, nivel, misiones, logros, racha e inventario. Esta accion es irreversible.
+                </p>
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  size="sm"
                   className={cn(
-                    "h-8 hud-corner text-[10px] font-mono uppercase transition-all",
-                    lang === l.id
-                      ? "border-amber-hud text-amber bg-amber-hud/30 glow-amber font-bold"
-                      : "border-border text-muted-foreground hover:text-foreground hover:border-amber-hud/50"
+                    "w-full font-mono uppercase",
+                    confirmReset
+                      ? "bg-red-hud text-white border-red-hud blink-soft"
+                      : "border-red-hud text-red-hud hover:bg-red-hud/30"
                   )}
                 >
-                  {l.glyph}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* HUD Theme */}
-          <div className="space-y-2">
-            <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
-              <Shield className="w-3 h-3" /> Tema HUD
-            </Label>
-            <div className="grid grid-cols-3 gap-2">
-              {(["AMBER", "RED", "CYAN"] as const).map((t) => {
-                const owned = ownedCosmetics.includes(t);
-                const active = hudTheme === t;
-                return (
-                  <button
-                    key={t}
-                    onClick={() => handleSetTheme(t)}
-                    disabled={!owned}
-                    className={cn(
-                      "p-2 hud-corner text-center text-[10px] font-mono uppercase transition-all",
-                      active && "glow-amber",
-                      owned
-                        ? t === "AMBER"
-                          ? "border-amber-hud text-amber hover:bg-amber-hud/30"
-                          : t === "RED"
-                          ? "border-red-hud text-red-hud hover:bg-red-hud/30"
-                          : "border-cyan-hud text-cyan-hud hover:bg-cyan-hud/30"
-                        : "border-border text-muted-foreground opacity-50"
-                    )}
-                  >
-                    <div className={cn(
-                      "w-full h-2 rounded-sm mb-1",
-                      t === "AMBER" ? "bg-amber" : t === "RED" ? "bg-red-hud" : "bg-cyan-hud"
-                    )} />
-                    {t}
-                    {!owned && <div className="text-[8px] mt-0.5"> bloqueado</div>}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Backup: Export/Import */}
-          <div className="space-y-2">
-            <Label className="text-xs font-mono uppercase text-amber flex items-center gap-1">
-              <Shield className="w-3 h-3" /> Copia de seguridad
-            </Label>
-            <p className="text-[10px] text-muted-foreground font-mono">
-              Exporta tu progreso a un archivo JSON o importa un backup anterior.
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                onClick={handleExport}
-                size="sm"
-                className="h-8 bg-amber-hud/30 border border-amber-hud text-amber hover:bg-amber-hud/50 font-mono uppercase text-[10px]"
-              >
-                <Download className="w-3 h-3 mr-1" /> Exportar
-              </Button>
-              <Button
-                onClick={handleImportClick}
-                size="sm"
-                className="h-8 bg-cyan-hud/30 border border-cyan-hud text-cyan-hud hover:bg-cyan-hud/50 font-mono uppercase text-[10px]"
-              >
-                <Upload className="w-3 h-3 mr-1" /> Importar
-              </Button>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json,application/json"
-              onChange={handleImportFile}
-              className="hidden"
-            />
-          </div>
-
-          {/* Reset */}
-          <div className="hud-corner p-3 bg-red-hud/10 border-red-hud/50">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="w-4 h-4 text-red-hud" />
-              <div className="text-xs font-mono font-bold text-red-hud uppercase">Zona peligrosa</div>
-            </div>
-            <p className="text-[10px] text-muted-foreground mb-2">
-              Resetear progreso borra: monedas, gemas, nivel, misiones, logros, racha e inventario. Esta accion es irreversible.
-            </p>
-            <Button
-              onClick={handleReset}
-              variant="outline"
-              size="sm"
-              className={cn(
-                "w-full font-mono uppercase",
-                confirmReset
-                  ? "bg-red-hud text-white border-red-hud blink-soft"
-                  : "border-red-hud text-red-hud hover:bg-red-hud/30"
-              )}
-            >
-              <RotateCcw className="w-3 h-3 mr-1" />
-              {confirmReset ? "Confirmar reseteo (irreversible)" : "Resetear progreso"}
-            </Button>
-          </div>
+                  <RotateCcw className="w-3 h-3 mr-1" />
+                  {confirmReset ? "Confirmar reseteo (irreversible)" : "Resetear progreso"}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>
