@@ -602,8 +602,25 @@ export function TerrenoGuerra3D({
         },
       });
 
+      // v405.15 EL REPINTADO QUE NO HACÍA FALTA (el culpable del 107% de CPU):
+      // este sincronizador volcaba SIETE fuentes GeoJSON al mapa cada 75 ms
+      // —91 setData por segundo— y cada setData obliga a maplibre a repintar el
+      // terreno 3D completo, aunque la simulación no se hubiera movido un
+      // milímetro. Medido con perfilador de CPU: el 74% del trabajo de bajo nivel
+      // de /teatro-3d era esta bomba de repintado.
+      // Ahora se firma el estado y solo se vuelca cuando cambia de verdad.
+      let ultimaFirma = "";
       const syncSimToMap = () => {
         const st = simRef.current;
+        const firma =
+          st.seq +
+          "§" + st.frenteLinea.map((v: number) => v.toFixed(2)).join(",") +
+          "§" + st.unidades.map((u: { x: number; z: number }) => u.x.toFixed(2) + "," + u.z.toFixed(2)).join(";") +
+          "§" + st.proyectiles.map((pr: { p: number }) => pr.p.toFixed(2)).join(",") +
+          "§" + st.explosiones.map((ex: { edad: number }) => ex.edad.toFixed(2)).join(",") +
+          "§" + st.crateres.length;
+        if (firma === ultimaFirma) return; // nada nuevo que dibujar: ni un repintado
+        ultimaFirma = firma;
 
         const frontCoords: [number, number][] = [];
         for (let i = 0; i < 9; i++) {
