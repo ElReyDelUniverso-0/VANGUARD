@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v414.0",
+    nombre: "LA CASA SE CONOCE",
+    hitos: [
+      "EL GRAFO: 176 áreas con su peso real, 435 acoplamientos y 4 ciclos de enlace — el mapa de quién tira de quién, generado desde el censo y el registro de módulos",
+      "EL CONTRATO EJECUTABLE: las ocho piezas que un área nueva debe cumplir (puerta canónica, registro, origen, contrato, ida y vuelta, límites, prueba, constancia) con validador que dice en voz alta lo que falta",
+      "LA PUERTA DE MÁQUINA: /api/sistema/arquitectura sirve censo, grafo, huecos, piezas y el estado de los 22 departamentos con el contrato de la casa",
+      "LA GUARDA: 15 comprobaciones que fallan si el mapa miente — ninguna página fuera del censo, ninguna ruta fantasma, ningún endpoint vivo sin registrar (ahí se cazó /api/investigacion)",
+      "LA GUÍA: docs/INTEGRACION-22-DEPARTAMENTOS.md — el camino en ocho pasos, dónde escribe cada departamento y las cinco formas de romper la casa",
+      "LO QUE NO SE TOCA: ni una pieza de la v412.0 se borra; ningún departamento se marca construido por tener solo interfaz",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v413.0",
     nombre: "INVESTIGACIÓN SISTÉMICA",
     hitos: [

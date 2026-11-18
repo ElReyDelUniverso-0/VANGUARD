@@ -63,6 +63,7 @@ export interface EndpointVanguard {
 
 /** Los endpoints cuyo contrato está revisado. */
 export const ENDPOINTS_DOCUMENTADOS: EndpointVanguard[] = [
+  {ruta:"/api/sistema/arquitectura",metodos:["GET"],grupo:"sistema",descripcion:"El mapa de la casa para máquinas: censo del árbol, grafo de áreas, huecos declarados, las ocho piezas del contrato de integración y el estado de los 22 departamentos.",params:[{nombre:"seccion",donde:"query",tipo:"texto",requerido:false,descripcion:"resumen | grafo | huecos | piezas | acoplamientos | departamentos | todo"}],respuesta:"{ok,api,version,datos:{version,seccion,resumen|areasCentrales|huecos|piezas|departamentos,…},meta}",auth:"ninguna",documentado:true,version:"1",cache:"public, max-age=300",muro:"60 por minuto y cliente"},
   {ruta:"/api/conocimiento/explicar",metodos:["GET"],grupo:"nucleo",descripcion:"Selecciona dos niveles de explicación del expediente existente, sin generar afirmaciones nuevas.",params:[{nombre:"tema",donde:"query",tipo:"texto",requerido:true,descripcion:"Identificador del concepto"},{nombre:"nivel",donde:"query",tipo:"texto",requerido:false,descripcion:"rapido o completo"}],respuesta:"{ok,api,version,datos:{id,titulo,nivel,resumen,limites,fuentes,relacionados,ruta,metodo,revision,…},meta}",auth:"ninguna",documentado:true,version:"1",cache:"public, max-age=300",muro:"Sin limitador específico; lectura local acotada, sin proveedor externo"},
   {ruta:"/api/conocimiento",metodos:["GET"],grupo:"nucleo",descripcion:"Busca conceptos, acontecimientos, civilizaciones u organizaciones editoriales.",params:[{nombre:"q",donde:"query",tipo:"texto",requerido:false,descripcion:"Consulta, hasta 180 caracteres"},{nombre:"tipo",donde:"query",tipo:"texto",requerido:false,descripcion:"conceptos, acontecimientos, civilizaciones u organizaciones"},{nombre:"area",donde:"query",tipo:"texto",requerido:false,descripcion:"Identificador de área"},{nombre:"limite",donde:"query",tipo:"numero",requerido:false,descripcion:"1 a 50"},{nombre:"desde",donde:"query",tipo:"numero",requerido:false,descripcion:"0 a 10000"}],respuesta:"{tipo,q,area,total,desde,limite,resultados,siguiente}; error:{error:string}. Contrato específico original, sin envoltorio central.",auth:"ninguna",documentado:true,version:"1",cache:"public, max-age=300",muro:"Sin limitador específico; máximo 50 resultados por petición"},
   {
@@ -461,6 +462,7 @@ export const RUTAS_INVENTARIADAS: string[] = [
   "/api/goal",
   "/api/government",
   "/api/indexnow",
+  "/api/investigacion",
   "/api/juegos",
   "/api/live/claim",
   "/api/live/presence",

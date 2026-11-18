@@ -93,7 +93,7 @@ async function parteA() {
   await verificar("el catálogo de endpoints cuadra con src/app/api (sin fantasmas ni huérfanos)", () => {
     const t = leer("src/lib/api/catalogo.ts");
     const reales = new Set(rutasApiReales());
-    const declaradas = [...t.matchAll(/ruta: "(\/api[^"]*)"/g)].map((m) => m[1]);
+    const declaradas = [...t.matchAll(/ruta:\s*"(\/api[^"]*)"/g)].map((m) => m[1]);
     const inventariadas = [...t.matchAll(/^\s{2}"(\/api[^"]*)",$/gm)].map((m) => m[1]);
     afirmar(declaradas.length >= 20, `solo ${declaradas.length} endpoints documentados`);
     for (const r of declaradas) afirmar(reales.has(r), `endpoint documentado que NO existe en src/app/api: ${r}`);

@@ -48,3 +48,30 @@ un cliente sin poder probarlo es lo prohibido); no hay carga de plugins en calie
 - **Hecho:** módulo público «planeta» + 5 centros de datos (/comparador, /rankings, /demografia, /regiones, /organizaciones) sobre una tabla única que lee la ficha canónica del país; /directorio (217 destinos, 11 temas) y /colecciones (7 recorridos); costura en /mundos, /mundos/[iso], enlacesDePais, fusiones, registro (73 módulos), sitemap (+62 URLs); pruebas offline 30/30.
 - **Verificado:** tsc acotado y eslint sin errores en todo lo tocado; dev con 1,1 GB: /comparador, /rankings, /rankings/pibPC, /demografia, /regiones, /regiones/caribe, /organizaciones, /organizaciones/sica, /directorio, /colecciones, /colecciones/tu-pais-en-el-mundo y /mundos/do → 200.
 - **Detalle y cola:** agent-ctx/improvement-inbox.md (mensaje del 2026-11-14).
+
+## v414.0 · LA CASA SE CONOCE (2026-11-18) — IA 1 · Master Architect
+
+Plan de 22 departamentos. Primer turno: dejar la arquitectura en condiciones de recibir a los otros
+veintiuno sin romper lo que hay.
+
+Antes de escribir, medido: el grafo de dependencias no existía (el propio registro lo listaba como
+«falta»), los contratos de la v412.0 se leían pero no se comprobaban, `/api/sistema/arquitectura`
+daba 404 y nada avisaba si una página nueva se quedaba fuera del censo.
+
+Entregado (aditivo; ni una pieza de la v412.0 se ha borrado):
+· `tools/arquitectura/grafo.mjs` + `src/lib/arquitectura/grafo.json` — 176 áreas, 435
+  acoplamientos, 4 ciclos de enlace, áreas centrales, huecos y dependencias rotas (0).
+· `src/lib/arquitectura/integracion.ts` — las ocho piezas del contrato de integración con su
+  comprobación, y `validarIntegracion()`.
+· `src/app/api/sistema/arquitectura/route.ts` — el mapa con el contrato de la casa.
+· `docs/INTEGRACION-22-DEPARTAMENTOS.md` — el camino en ocho pasos para cualquier área nueva.
+· `scripts/pruebas-arquitectura.mjs` — 15 offline + 5 en vivo.
+· Correcciones de deriva: `/api/investigacion` inventariada en el catálogo de API; la suite de
+  plataforma aprende a leer las entradas compactas del catálogo (`{ruta:"…"}`).
+
+Verificación: pruebas-arquitectura 15/15 offline; pruebas-plataforma 12/12 offline (sin
+regresiones); probar.mjs de la v412.0 sigue en verde.
+
+Lo que no se hizo, y por qué: no se regenera el censo a mano (es de `tools/arquitectura/censar.mjs`,
+de la tanda que lo escribió); no se marcan departamentos como construidos; la detección de
+duplicados por comportamiento sigue pendiente y así se declara en el registro.
