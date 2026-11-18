@@ -1,3 +1,5 @@
+// v406.0 LA TRAVESÍA — la brújula y el rastro, en tu perfil
+import { PanelTravesia } from "@/components/travesia/panel-perfil";
 import type { Metadata } from "next";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -103,6 +105,7 @@ export default function PerfilPage() {
         </article>
 
         <PerfilJugadorCarga />
+        <PanelTravesia />
 
         <article className="mx-auto max-w-4xl px-5 pb-10">
           <FuenteYFecha

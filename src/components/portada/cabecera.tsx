@@ -18,7 +18,9 @@ import { BuscadorUniversal } from "@/components/vanguard/buscador-universal";
 
 // v402.6 LOS NUEVE MÓDULOS — la cabecera lee los módulos de modulos.ts
 // (la portada está en el logo: ocho módulos caben en una sola fila)
+// v406.0 LA TRAVESÍA: «Explorar» abre la entrada inmersiva de toda la casa
 export const NAV = [
+  { href: "/entrar", label: "Explorar" },
   ...MODULOS_PUBLICOS.map((m) => ({ href: entradaDe(m), label: m.corto })),
 ];
 
@@ -28,6 +30,7 @@ function activo(ruta: string, href: string) {
   if (href === "/") return !m && (ruta === "/" || ruta.startsWith("/lectura"));
   // la pestaña Módulos se enciende en /modulos y en los módulos nuevos (sin botón propio)
   if (href === "/modulos") return ruta === "/modulos" || (!!m && entradaDe(m).startsWith("/modulo/"));
+  if (href === "/entrar") return ruta === "/entrar" || ruta === "/modulos" || (!!m && entradaDe(m).startsWith("/modulo/"));
   if (m) return entradaDe(m) === href;
   return ruta === href || ruta.startsWith(href + "/");
 }
@@ -84,7 +87,9 @@ const TABS = [
   { href: "/", label: "Inicio", Ico: IcoInicio },
   { href: "/mundo", label: "Mapa", Ico: IcoMapa },
   { href: "/en-vivo", label: "En vivo", Ico: IcoVivo, vivo: true },
-  { href: "/modulos", label: "Módulos", Ico: IcoModulos },
+  // v406.0 LA TRAVESÍA: la pestaña de módulos lleva ahora a la entrada que los
+  // recorre todos (el índice /modulos sigue vivo dentro de ella: «El mapa de la casa»)
+  { href: "/entrar", label: "Explorar", Ico: IcoModulos },
   { href: "/cuartel", label: "Juego", Ico: IcoJuego },
 ];
 

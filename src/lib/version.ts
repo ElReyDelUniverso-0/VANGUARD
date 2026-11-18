@@ -6137,6 +6137,24 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
+// v405.10 LA NAVEGACIÓN ADAPTATIVA (otra IA) quedó como versión anterior.
+// v406.0 LA TRAVESÍA — orden del Dueño: «reconstruir la experiencia de entrada
+// de VANGUARD… no quiero otro dashboard convencional ni otro centro de mando».
+// /entrar deja de ser un índice y pasa a ser un recorrido: llegada → brújula
+// (eliges qué te trae) → diez espacios a pantalla completa (Tu hilo, los 8
+// módulos y Lo desconocido) que se deslizan como un viaje, con transición de
+// puerta al entrar a cada sala. Nada se borra: NAV, BarraMovil, la Puerta de
+// los Mundos, la portada, /modulos y /perfil ganan su acceso a la Travesía.
+// ① EL RASTRO (src/lib/travesia/rastro.ts): un Registrador en el layout anota
+//    en el propio aparato (vg-rastro-v1, 80 pasos, nunca sale al servidor) cada
+//    sala visitada y la clasifica en investigación · simulación · proyecto.
+// ② TU HILO: «retoma tu proyecto» y la lista por actividad leen ese rastro y
+//    las claves que la casa YA guardaba (modo, favoritos, sala del cuartel).
+// ③ CONTEXTO: cada espacio enseña sus puertas reales, cables vivos donde los
+//    hay y «a mano en este espacio» con las herramientas que le tocan.
+// ④ Se borra desde la Travesía o el perfil; /privacidad lo declara.
+// ⑤ Probado en móvil (390×844) y escritorio; scripts/pruebas-travesia.mjs
+//    fija las funciones puras (9 pruebas).
 // v405.9 EL ESCAPARATE (IA de diseño · descubrimiento y crecimiento) — cómo se
 //    ve VANGUARD FUERA de VANGUARD (al compartir y en Google):
 //    ① /sala/<clave>/opengraph-image: tarjeta propia por sala (nombre, lema,

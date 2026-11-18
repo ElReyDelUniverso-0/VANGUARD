@@ -23,6 +23,8 @@ import { Carcasa } from "@/components/portada/carcasa";
 // v405.10 · LA BARRA ADAPTATIVA: las herramientas del espacio en el que estás.
 // Se monta una sola vez aquí y aparece en todas las salas que no son inmersivas.
 import { BarraAdaptativa } from "@/components/vanguard/navegacion/barra-adaptativa";
+// v406.0 LA TRAVESÍA — el rastro: cada página deja un paso (solo en el aparato)
+import { Registrador } from "@/components/travesia/registrador";
 import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -900,6 +902,7 @@ try{
         <Carcasa />
         {/* v405.10: el muelle contextual — se adapta a la sala en la que estás */}
         <BarraAdaptativa />
+        <Registrador />
         {/* v403.1 LOS DOS MUNDOS: la Puerta (primera visita) y el Cruce entre mundos */}
         <PuertaMundos />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />

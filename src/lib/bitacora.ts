@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v406.0",
+    nombre: "LA TRAVESÍA",
+    hitos: [
+      "LA ENTRADA SE RECORRE, NO SE LEE: /entrar pasa de índice a viaje — llegada, una brújula para elegir qué te trae y diez espacios a pantalla completa que se deslizan, cada uno con su verbo (DESCIFRA, MIDE, INVESTIGA, RECORRE…)",
+      "SIGUES DONDE LO DEJASTE: la casa recuerda en tu propio aparato las salas que abres y las ordena en investigación, simulación y proyecto; «Tu hilo» te devuelve a la última con un toque",
+      "CADA ESPACIO TRAE SUS HERRAMIENTAS: puertas reales de cada módulo, los cables vivos donde los hay y «a mano en este espacio» con el buscador, los modos y el mapa de la casa",
+      "LO DESCONOCIDO: una sala al azar que todavía no abriste, entre las 155 del cuartel",
+      "NADA SE PIERDE: la barra de arriba, la de abajo, la Puerta de los Mundos, la portada, /modulos y el perfil llevan a la Travesía; tu rastro no sale del aparato y se borra cuando quieras",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.9",
     nombre: "EL ESCAPARATE",
     hitos: [

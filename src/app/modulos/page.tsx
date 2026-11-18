@@ -2,6 +2,7 @@
 // v402.6 LOS NUEVE MÓDULOS — /modulos: el índice de la casa.
 // Todo lo que Vanguard tiene además de noticias, módulo a módulo.
 // ============================================================
+import { BotonTravesia } from "@/components/travesia/hilo-portada";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
@@ -31,8 +32,10 @@ export default function Modulos() {
           <p>
             {MODULOS_PUBLICOS.length} módulos y {SALAS} salas para entender el mundo: elige por dónde entrar.
           </p>
-          <div style={{ marginTop: 16 }}>
+          <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
             <BotonMundos />
+            {/* v406.0 LA TRAVESÍA: los mismos módulos, recorridos espacio a espacio */}
+            <BotonTravesia />
           </div>
         </div>
       </section>
