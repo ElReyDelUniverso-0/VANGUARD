@@ -12,6 +12,14 @@ import { vistaDePais } from "@/lib/mundos/mapa-detalle";
 import { PUENTES, resolverPuente } from "@/lib/mundos/registro";
 import { formatear, distancia as fmtDistancia, aniosDesde, miles } from "@/lib/mundos/formato";
 import { GuardarEnEspacio } from "@/components/mundos/guardar-espacio";
+// v405.16 · EL NÚCLEO, DENTRO DE LA FICHA — la función enlacesDePais() existía
+// desde la v218 y no la montaba nadie: 249 fichas sin un solo chip. Ahora la
+// ficha abre el teatro, el mapa, el acontecimiento y la búsqueda, y escucha los
+// cables del país sin dejar de ser estática (el bloque los pide al núcleo).
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import { enlacesDePais } from "@/lib/nucleo/relaciones";
+import { enlacesDePaisARedaccion as enlacesRedaccion } from "@/lib/nucleo/nexo";
+import { CablesDelPais } from "./cables-del-pais";
 
 // ═══════════════════════════════════════════════════════════════════
 // v405.12 · /mundos/[iso] — LA FICHA DE UN PAÍS
@@ -475,6 +483,23 @@ export default async function PaisPage({ params }: Props) {
               </div>
             </div>
           ) : null}
+
+          {/* ── v405.16 · EL CABLE Y EL PAÍS ─────────────────────────
+              Dos direcciones, una sola verdad:
+              · la ficha enlaza al núcleo (teatro, mapa, acontecimiento,
+                búsqueda) con enlacesDePais — la costura que llevaba escrita
+                desde la v218 y nadie montaba;
+              · y la redacción entra en la ficha: los cables que mencionan al
+                país, pedidos al núcleo desde el cliente para no romper el
+                prerenderizado de los 249 países. */}
+          <div className="vx-mp-bloque" id="nucleo">
+            <h2>Este país en el núcleo · qué se puede hacer desde aquí</h2>
+            <EnlacesNucleo
+              enlaces={[...enlacesDePais(f.iso2), ...enlacesRedaccion(f.iso2)]}
+              titulo={`CONECTA CON ${f.nombre.toUpperCase()}`}
+            />
+            <CablesDelPais nombre={f.nombre} iso2={f.iso2} />
+          </div>
 
           <p className="vx-mp-nota">
             Ficha generada en el servidor con las tablas de la casa: geo-paises (identidad ISO), atlas-data (capital,

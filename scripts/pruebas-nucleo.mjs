@@ -286,6 +286,102 @@ async function parteA() {
     // anti-invención: CERO fechas históricas escritas a mano (viven en la semilla v219)
     afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la página del mural escribe fechas históricas a mano!");
   });
+
+  // ══════════════════════════════════════════════════════════════
+  // v406.4 · LA PLATAFORMA, NO LAS HERRAMIENTAS
+  // El encargo: «fusionar duplicados, conectar noticias, mapas, simuladores
+  // y centros de información, mejorar». Estas pruebas vigilan que la costura
+  // siga cosida: censo completo, familias declaradas, nexo con países reales,
+  // ficha de país dentro del núcleo y cable que sabe de qué país habla.
+  // ══════════════════════════════════════════════════════════════
+
+  await verificar("v406.4 · el censo cubre la plataforma (≥ 60 módulos y la geografía dentro)", () => {
+    afirmar(ids.length >= 60, `solo ${ids.length} módulos en el censo: la casa tiene más de 70 salas`);
+    for (const id of [
+      "mod:mundos",
+      "mod:ficha-pais",
+      "mod:mapas",
+      "mod:atlas",
+      "mod:rostros",
+      "mod:divisas",
+      "mod:herramientas",
+      "mod:cuartel",
+    ]) {
+      afirmar(ids.includes(id), `la sala existe en src/app y no está en el censo: ${id}`);
+    }
+  });
+
+  await verificar("v406.4 · las familias de módulos apuntan a rutas que existen", () => {
+    const rutaFam = join(RAIZ, "src/lib/nucleo/fusiones.ts");
+    afirmar(existsSync(rutaFam), "src/lib/nucleo/fusiones.ts no existe");
+    const f = readFileSync(rutaFam, "utf8");
+    const rutasFam = [...f.matchAll(/ruta: "([^"]+)"/g)].map((m) => m[1]);
+    afirmar(rutasFam.length >= 20, `solo ${rutasFam.length} puertas declaradas en las familias`);
+    for (const r of rutasFam) {
+      afirmar(existsSync(join(RAIZ, `src/app${r}/page.tsx`)), `familia con ruta fantasma: ${r}`);
+    }
+    afirmar(rutasFam.includes("/mundos"), "las familias no incluyen el mapa de los mundos");
+    afirmar(/canonico:/.test(f), "ninguna familia declara su puerta canónica");
+    afirmar(/motivo:/.test(f), "las familias no explican por qué son una sola cosa");
+  });
+
+  await verificar("v406.4 · el nexo no inventa países: cada ISO existe en geo-paises", () => {
+    const rutaNexo = join(RAIZ, "src/lib/nucleo/nexo.ts");
+    afirmar(existsSync(rutaNexo), "src/lib/nucleo/nexo.ts no existe");
+    const geo = readFileSync(join(RAIZ, "src/lib/geo-paises.ts"), "utf8");
+    const isos = new Set([...geo.matchAll(/iso2: "([a-z]{2})"/g)].map((m) => m[1]));
+    afirmar(isos.size >= 200, `geo-paises solo declara ${isos.size} países`);
+    const nexo = readFileSync(rutaNexo, "utf8");
+    const bloques = [...nexo.matchAll(/const (?:ALIAS|GENTILICIOS): Record<string, string\[\]> = \{([\s\S]*?)\n\};/g)];
+    afirmar(bloques.length === 2, "no encuentro las tablas ALIAS y GENTILICIOS del nexo");
+    let n = 0;
+    for (const b of bloques) {
+      for (const m of b[1].matchAll(/^\s{2}([a-z]{2}):/gm)) {
+        n++;
+        afirmar(isos.has(m[1]), `el nexo apunta a un país que la casa no tiene: «${m[1]}»`);
+      }
+    }
+    afirmar(n >= 100, `el nexo solo conoce ${n} países entre alias y gentilicios`);
+  });
+
+  await verificar("v406.4 · el nexo se contiene con los nombres ambiguos", () => {
+    const nexo = readFileSync(join(RAIZ, "src/lib/nucleo/nexo.ts"), "utf8");
+    for (const t of ['"chad"', '"georgia"', '"congo"', '"corea"', '"guinea"']) {
+      afirmar(nexo.includes(t), `«${t}» no está en la lista de ambiguos: un titular sobre una persona llamada Chad abriría la ficha del país`);
+    }
+    afirmar(nexo.includes("AMBIGUOS.has(clave)"), "la guarda de ambiguos no se aplica al construir el índice");
+  });
+
+  await verificar("v406.4 · el nexo es puro: sin BD, sin red, sin reloj", () => {
+    const nexo = readFileSync(join(RAIZ, "src/lib/nucleo/nexo.ts"), "utf8");
+    for (const prohibido of ["@/lib/db", "fetch(", "Date.now(", "new Date("]) {
+      afirmar(!nexo.includes(prohibido), `el nexo usa ${prohibido}: deja de ser determinista y no se puede probar`);
+    }
+  });
+
+  await verificar("v406.4 · la ficha de país monta el núcleo y sigue siendo estática", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/mundos/[iso]/page.tsx"), "utf8");
+    for (const t of ["enlacesDePais", "EnlacesNucleo", "CablesDelPais", "enlacesDePaisARedaccion"]) {
+      afirmar(pag.includes(t), `la ficha de país no monta ${t} — la costura país↔núcleo está suelta`);
+    }
+    afirmar(pag.includes("dynamicParams = false"), "la ficha dejó de ser estática: se perdería el CDN de los 249 países");
+    afirmar(existsSync(join(RAIZ, "src/app/mundos/[iso]/cables-del-pais.tsx")), "falta el bloque de cables del país");
+  });
+
+  await verificar("v406.4 · el cable dice de qué país habla (titular → país)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/noticia/[id]/page.tsx"), "utf8");
+    afirmar(pag.includes("titulo: it.title"), "la noticia no pasa su titular al nexo");
+    const rel = readFileSync(join(RAIZ, "src/lib/nucleo/relaciones.ts"), "utf8");
+    afirmar(rel.includes("enlacesDePaisEnTexto"), "relaciones.ts no lee países del titular");
+    afirmar(rel.includes("SIMULAR EN ESTE PAÍS"), "el cable no ofrece el simulador en el país del que habla");
+    afirmar(rel.includes("incluirFicha"), "enlacesDePais no puede llevar a la ficha del país");
+  });
+
+  await verificar("v406.4 · /nucleo publica las familias y sus puertas canónicas", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/nucleo/page.tsx"), "utf8");
+    afirmar(pag.includes("FAMILIAS_MODULO"), "/nucleo no monta las familias de módulos");
+    afirmar(pag.includes("Puerta canónica"), "/nucleo no declara la puerta canónica de cada familia");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────

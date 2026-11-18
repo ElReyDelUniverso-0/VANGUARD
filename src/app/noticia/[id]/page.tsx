@@ -512,7 +512,12 @@ export default async function NoticiaPage({
 
         {/* v218.0 EL NÚCLEO — la conexión explícita del cable con la casa */}
         <EnlacesNucleo
-          enlaces={enlacesDeCable({ id: it.id, conflictTag: it.conflictTag ?? null, source: it.source })}
+          enlaces={enlacesDeCable({
+            id: it.id,
+            conflictTag: it.conflictTag ?? null,
+            source: it.source,
+            titulo: it.title, // v405.16 — de qué país habla el titular
+          })}
           titulo="CONECTA CON EL NÚCLEO"
         />
 

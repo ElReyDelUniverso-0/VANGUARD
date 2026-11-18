@@ -16,6 +16,8 @@ import { puntosDelNucleo } from "@/lib/nucleo/puntos";
 import { FUENTE_INDICADORES } from "@/lib/nucleo/indicadores";
 import { NucleoBusqueda } from "@/components/vanguard/nucleo-busqueda";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+// v405.16 · LAS FAMILIAS — qué módulos son la misma cosa vista de otro ángulo
+import { FAMILIAS_MODULO, rutasDeFamilias } from "@/lib/nucleo/fusiones";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ============================================================
@@ -503,6 +505,58 @@ export default async function NucleoPage({
                   ))}
                 </div>
               </div>
+            ))}
+          </div>
+        </section>
+
+        {/* v405.16 · LAS FAMILIAS DE MÓDULOS — la casa deja de ser 73
+            herramientas sueltas. Cada familia declara su pregunta, su puerta
+            canónica y el papel de las demás: nada se cierra y nada se
+            esconde; lo que antes había que adivinar, ahora se lee. */}
+        <section className="mt-12" aria-label="Familias de módulos">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+            LAS FAMILIAS — {FAMILIAS_MODULO.length} preguntas, {rutasDeFamilias().length} puertas
+          </p>
+          <p className="mt-2 max-w-3xl text-xs leading-relaxed text-zinc-400">
+            La casa tiene más de setenta puertas y muchas responden a la misma pregunta desde
+            ángulos distintos: seis miran al planeta, cinco a la redacción, cinco a la simulación.
+            Aquí se declara cuál es la puerta canónica de cada familia, qué papel cumple cada una
+            de las demás y por qué no sobran. No se cierra ninguna: se ordena el mapa.
+          </p>
+          <div className="mt-4 space-y-4">
+            {FAMILIAS_MODULO.map((fam) => (
+              <article
+                key={fam.id}
+                className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className="font-bold text-sm text-zinc-100">{fam.pregunta}</h2>
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
+                    {fam.cifra}
+                  </span>
+                </div>
+                <a
+                  href={fam.canonico.ruta}
+                  className="mt-2 inline-block rounded-sm border border-amber-hud/50 bg-amber-hud/5 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-amber hover:bg-amber-hud/10"
+                >
+                  Puerta canónica · {fam.canonico.nombre} ▸ {fam.canonico.ruta}
+                </a>
+                <p className="mt-2 text-xs leading-relaxed text-zinc-400">{fam.canonico.papel}</p>
+                <ul className="mt-3 space-y-1.5">
+                  {fam.piezas.map((p) => (
+                    <li key={p.ruta} className="text-xs text-zinc-400">
+                      <a href={p.ruta} className="text-zinc-200 underline decoration-zinc-700 hover:text-amber">
+                        {p.nombre}
+                      </a>{" "}
+                      <span className="font-mono text-[10px] text-zinc-600">{p.ruta}</span>
+                      <span className="block text-[11px] leading-snug text-zinc-500">{p.papel}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 border-t border-zinc-800 pt-2 text-[11px] leading-relaxed text-zinc-500">
+                  {fam.motivo}
+                </p>
+              </article>
             ))}
           </div>
         </section>

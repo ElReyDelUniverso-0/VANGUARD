@@ -583,6 +583,376 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     alias:
       "parque militar uniformes personajes soldados tanques carros mech vehiculos 3d glb gltf cc0 quaternius simulador guerra v367.8",
   },
+
+  // ══════════════════════════════════════════════════════════════════
+  // v405.16 · LA PLATAFORMA — los módulos que existían sin estar en el censo
+  //
+  // Medido antes de escribirlos: 73 rutas vivas en src/app y solo 39 módulos en
+  // este censo. La geografía entera (/mundos, /mundos/<iso>, /mapas, /mundo,
+  // /atlas, /poder, /divisas, /conflictos, /archivo-mundial…), el taller, la
+  // editorial y la propia casa estaban fuera del catálogo central: existían para
+  // quien ya sabía la URL y no existían para nadie más. Aquí se registran. No se
+  // inventa ninguno: cada uno tiene su ruta real y su trabajo real.
+  // ══════════════════════════════════════════════════════════════════
+
+  // ── EL PLANETA ─────────────────────────────────────────────
+  {
+    id: "mod:mundos",
+    nombre: "EL MAPA DE LOS MUNDOS",
+    lema: "Todo el planeta en un solo mapa, con sus fronteras",
+    descripcion:
+      "El índice geográfico de la casa: 177 países con polígono real de Natural Earth, 249 con ficha, doce medidas (población, superficie, PIB, renta, esperanza de vida…), las fronteras topológicas reales (156 países, simétricas) y los 24 macroterritorios de la casa como filtro. Cada país lleva su puerta a la ficha y al simulador con sus coordenadas. Es la puerta canónica de la familia del planeta.",
+    categoria: "MUNDO",
+    ruta: "/mundos",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:atlas", "fnt:indicadores", "fnt:teatros"],
+    alias:
+      "mundos mapa planeta paises fronteras vecinos macroterritorios natural earth indice geografia capas poblacion pib v405.12",
+    idEntidadComo: "vg:mapa:mundos",
+  },
+  {
+    id: "mod:ficha-pais",
+    nombre: "LA FICHA DEL PAÍS",
+    lema: "Un país, una ficha, cinco tablas unidas",
+    descripcion:
+      "La ficha única de los 249 países: geografía (ISO-2/ISO-3/numérico, región, coordenadas), economía y demografía del Banco Mundial con el año de cada cifra, política y cultura del atlas, historia del archivo de guerras y los vecinos reales por aristas compartidas. Donde no hay dato se escribe «sin dato», sin rellenar. Toda ficha lleva los doce puentes a la información y a la simulación de la casa.",
+    categoria: "MUNDO",
+    ruta: "/mundos/[iso]",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:mundos", "fnt:atlas", "fnt:indicadores", "fnt:acontecimientos"],
+    alias:
+      "ficha pais pais capital gobierno lider moneda poblacion superficie vecinos fronteras iso buenos aires madrid ucrania v405.12",
+  },
+  {
+    id: "mod:mapas",
+    nombre: "EL GLOBO POR CAPAS",
+    lema: "El planeta en 3D, una capa cada vez",
+    descripcion:
+      "El globo que ya existía, ahora con las doce capas del censo del Banco Mundial (población, superficie, PIB, renta por habitante, esperanza de vida, gasto militar…), leyenda por cuantiles, cobertura declarada por capa y la fuente al lado de cada cifra. Capa sin dato se dice; no se pinta de gris sin explicar.",
+    categoria: "MUNDO",
+    ruta: "/mapas",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:atlas", "fnt:indicadores"],
+    alias: "mapas globo 3d capas leyenda cuantiles poblacion pib renta esperanza vida cobertura",
+    idEntidadComo: "vg:mapa:mapas",
+  },
+  {
+    id: "mod:atlas",
+    nombre: "EL ATLAS DEL PLANETA",
+    lema: "Capital, gobierno y líder de cada nación",
+    descripcion:
+      "La lectura larga del mismo censo: capital, población, superficie, idiomas, moneda, forma de gobierno y líder real de cada nación, con las personas que mueven el mundo. Es la fuente `fnt:atlas` que alimenta las fichas de país y el globo por capas.",
+    categoria: "MUNDO",
+    ruta: "/atlas",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:atlas"],
+    alias: "atlas capital gobierno lider idiomas moneda naciones paises ficha larga",
+  },
+  {
+    id: "mod:poder",
+    nombre: "EL PODER",
+    lema: "La geografía medida en gasto militar",
+    descripcion:
+      "El tablero de poder militar: gasto de defensa y efectivos por país desde el Banco Mundial (con su año en cada cifra) y su lectura estratégica. Comparte identidad ISO con las fichas de país y con el mapa: el mismo país, la misma cifra, una sola verdad.",
+    categoria: "MUNDO",
+    ruta: "/poder",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:indicadores", "fnt:atlas"],
+    alias: "poder militar gasto defensa efectivos ejercito banco mundial estrategia",
+  },
+  {
+    id: "mod:divisas",
+    nombre: "LAS DIVISAS",
+    lema: "La moneda de cada país frente al tablero",
+    descripcion:
+      "El tablero de monedas: cada divisa frente al dólar, con las tasas que la casa ya guarda en world-data. Es la cara económica de la ficha de país: quien llega por la ficha a «su moneda» aterriza aquí con el país ya elegido.",
+    categoria: "MUNDO",
+    ruta: "/divisas",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:atlas"],
+    alias: "divisas monedas cambio dolar euro tasas forex economia",
+  },
+  {
+    id: "mod:conflictos",
+    nombre: "LOS CONFLICTOS",
+    lema: "Las regiones en seguimiento y su intensidad",
+    descripcion:
+      "Las regiones en vigilancia con su intensidad y su fuente, enlazadas a los nueve teatros del archivo. Es la puerta de lista: la versión sin globo del mapa vivo, para quien necesita leer los frentes de un vistazo.",
+    categoria: "MUNDO",
+    ruta: "/conflictos",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:teatros", "fnt:cables"],
+    alias: "conflictos regiones intensidad frentes vigilancia seguimiento guerras",
+  },
+  {
+    id: "mod:archivo-mundial",
+    nombre: "EL ARCHIVO MUNDIAL",
+    lema: "Lo publicado, ordenado por geografía",
+    descripcion:
+      "El mismo archivo de cables de la redacción, ordenado por país y región en vez de por hora: la puerta de quien busca «qué pasó en tal sitio» y no «qué pasó a las 21:08». Enlaza cada pieza con su ficha de país.",
+    categoria: "REDACCION",
+    ruta: "/archivo-mundial",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables"],
+    alias: "archivo mundial pais region geografia cables hemeroteca pasado",
+  },
+  {
+    id: "mod:historia",
+    nombre: "EL ARCHIVO DE GUERRAS",
+    lema: "Diez guerras reales con fecha y coordenada",
+    descripcion:
+      "Diez guerras históricas reales con su fecha, sus bandos y su coordenada: la capa de pasado del atlas. La ficha de cada país la consulta por cercanía geográfica declarada (radio de 2.600 km), sin inventar pertenencias.",
+    categoria: "MUNDO",
+    ruta: "/historia",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:acontecimientos"],
+    alias: "historia guerras archivo historico fecha coordenada pasado conflicto",
+  },
+  {
+    id: "mod:rostros",
+    nombre: "ROSTROS DEL PODER",
+    lema: "Quién manda y desde qué sede",
+    descripcion:
+      "El censo de personas del planeta: gobernantes y figuras con su país, su cargo y su fuente. Es la puerta canónica de la familia de personas; la ficha de país enlaza aquí para responder «quién manda».",
+    categoria: "MUNDO",
+    ruta: "/rostros",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:atlas"],
+    alias: "rostros poder gobernantes presidentes lideres personas quien manda sede",
+  },
+  {
+    id: "mod:galeria",
+    nombre: "LA FOTOTECA DEL PLANETA",
+    lema: "Cincuenta fotos reales, con su medio y su licencia",
+    descripcion:
+      "La capa real del aparato: cincuenta fotos descargadas y servidas por la casa, cada una con su medio, su pie y su licencia. No se genera ninguna imagen: se documenta lo que ya está publicado.",
+    categoria: "MUNDO",
+    ruta: "/galeria",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:documentos"],
+    alias: "galeria fotos fototeca imagenes reales licencia medio periodismo",
+  },
+  {
+    id: "mod:oscura",
+    nombre: "EL EXPEDIENTE OSCURO",
+    lema: "La otra redacción: expedientes, no cables",
+    descripcion:
+      "Cuarenta y tres expedientes documentados con veredicto y rareza; el texto largo vive detrás de «abrir expediente» para que la sala no sea un muro de párrafos. Se alimenta de documentos, no del cable del día.",
+    categoria: "REDACCION",
+    ruta: "/oscura",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:documentos"],
+    alias: "oscura expediente archivo documentado rareza veredicto historias",
+  },
+  {
+    id: "mod:verdad-cruda",
+    nombre: "LA VERDAD CRUDA",
+    lema: "Los abusos de guerra y los caídos, con nombre",
+    descripcion:
+      "El memorial de la casa: abusos de guerra documentados, incidentes con fecha y víctimas con nombre, y los modelos de drones que los ejecutan. Es la sala que no maquilla: cada entrada lleva su fuente y ninguna se estima.",
+    categoria: "REDACCION",
+    ruta: "/verdad-cruda",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:documentos", "fnt:verificaciones"],
+    alias: "verdad cruda abusos guerra victimas memorial caidos drones incidentes",
+  },
+  {
+    id: "mod:lectura",
+    nombre: "LA LECTURA EN 30 SEGUNDOS",
+    lema: "Cada nota en lo esencial",
+    descripcion:
+      "Cada cable con su versión corta: titular, foto real del medio, tres puntos, línea de tiempo del frente y minúsculo mapa. Es la misma noticia de /en-vivo leída de otra manera, no otra noticia.",
+    categoria: "REDACCION",
+    ruta: "/lectura/[clave]",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:envivo", "fnt:cables"],
+    alias: "lectura resumen 30 segundos puntos clave linea tiempo foto nota",
+  },
+  {
+    id: "mod:editorial",
+    nombre: "LA EDITORIAL",
+    lema: "Lo que la casa escribe de sí misma",
+    descripcion:
+      "Los artículos con fecha y área: análisis propios de la casa sobre energía, cuellos de botella, tierras raras y actualidad, con calendario editorial. Es la voz escrita de Vanguard, separada de los cables de agencia.",
+    categoria: "REDACCION",
+    ruta: "/editorial",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:documentos"],
+    alias: "editorial articulos analisis opinion areas calendario voz casa",
+  },
+  {
+    id: "mod:servicios",
+    nombre: "LOS SERVICIOS",
+    lema: "Las agencias y las fuentes aliadas",
+    descripcion:
+      "El directorio de agencias, medios aliados y sentidos que alimentan la redacción, con su categoría y su estado. Sirve para responder, de cara al lector, de dónde sale cada cosa que se publica.",
+    categoria: "REDACCION",
+    ruta: "/servicios",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:fuentes"],
+    alias: "servicios agencias medios aliados fuentes directorio origen credito",
+  },
+
+  // ── EL TALLER Y LA CASA ────────────────────────────────────
+  {
+    id: "mod:armeria",
+    nombre: "LA ARMERÍA",
+    lema: "El material de la simulación, con su ficha",
+    descripcion:
+      "El catálogo de armamento que usa la casa en sus simulaciones y sus fichas: qué es cada pieza y qué se puede hacer con ella. Estaba fuera del censo aunque la simulación dependía de ella.",
+    categoria: "SIMULACION",
+    ruta: "/armeria",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:teatro-3d"],
+    alias: "armeria armas catalogo material fichas equipo simulacion arsenal",
+  },
+  {
+    id: "mod:escudo",
+    nombre: "EL ESCUDO",
+    lema: "La defensa digital de la casa, a la vista",
+    descripcion:
+      "La sala del escudo (ley v204): el detector de amenazas y el estado de las defensas de la plataforma, contado para que el lector sepa qué protege a la casa y qué no.",
+    categoria: "SISTEMA",
+    ruta: "/escudo",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:verificaciones"],
+    alias: "escudo defensa digital amenazas detector seguridad plataforma",
+  },
+  {
+    id: "mod:espacio",
+    nombre: "MI ESPACIO",
+    lema: "Donde lo encontrado se convierte en proyecto",
+    descripcion:
+      "La mesa de trabajo del operador: lo que se guarda desde las fichas de país, los mapas y el archivo aterriza aquí como pieza de un proyecto. Es el punto final de todos los puentes de la casa.",
+    categoria: "COMUNIDAD",
+    ruta: "/espacio",
+    permiso: "cuenta",
+    estado: "VIVO",
+    dependencias: ["mod:nucleo", "fnt:documentos"],
+    alias: "espacio mesa trabajo proyecto guardar piezas guardados operador",
+  },
+  {
+    id: "mod:herramientas",
+    nombre: "LAS DIEZ LLAVES",
+    lema: "El taller: lo que se puede hacer, no lo que se puede leer",
+    descripcion:
+      "El taller de la casa: las fuentes externas que ya están dentro y se sirven con dato vivo, más las que esperan llave. Cada llave dice qué resuelve y en qué estado está; ninguna se presenta como funcionando si no lo está.",
+    categoria: "SISTEMA",
+    ruta: "/herramientas",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:indicadores", "fnt:fuentes"],
+    alias: "herramientas taller llaves api externas utilidades calculadoras traductor",
+  },
+  {
+    id: "mod:modulos",
+    nombre: "LOS MÓDULOS",
+    lema: "El índice de la casa, sin la búsqueda",
+    descripcion:
+      "La puerta rápida al censo: todo lo que Vanguard tiene además de noticias, módulo a módulo y con su estado. Es la versión corta de /nucleo para quien solo quiere ver la lista.",
+    categoria: "SISTEMA",
+    ruta: "/modulos",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:nucleo", "fnt:modulos"],
+    alias: "modulos indice lista secciones censo casa todo",
+  },
+  {
+    id: "mod:navegacion",
+    nombre: "LA NAVEGACIÓN",
+    lema: "Cómo se mueve uno por la casa",
+    descripcion:
+      "El mapa de las salas y sus transiciones: qué se conecta con qué y por dónde. Es la vista de arquitectura de la plataforma, la que permite ver si la casa es un bosque o una red.",
+    categoria: "SISTEMA",
+    ruta: "/navegacion",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:modulos"],
+    alias: "navegacion mapa salas transiciones arquitectura conexiones red",
+  },
+  {
+    id: "mod:constelacion",
+    nombre: "LAS CONSTELACIONES",
+    lema: "Las salas agrupadas por lo que tienen que ver",
+    descripcion:
+      "Cada constelación con su puerta propia: las 155 salas agrupadas por tema (INTEL, MUNDO, SIMULACIÓN…) para que no haya que bajar por un mapa entero para llegar a una. Generadas del mismo mapa de salas que usa el buscador ⌘K.",
+    categoria: "SISTEMA",
+    ruta: "/constelacion/[clave]",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:navegacion", "fnt:modulos"],
+    alias: "constelacion constelaciones salas agrupadas tema intel mapa salas",
+  },
+  {
+    id: "mod:cuartel",
+    nombre: "EL CUARTEL",
+    lema: "La casa entera en una pantalla",
+    descripcion:
+      "La aplicación completa: las 155 salas con sus paneles, el estado en vivo y la navegación por pestañas. Es la casa por dentro; la portada «/» es el escaparate y /sala/<clave> la puerta sin JavaScript de cada sala.",
+    categoria: "SISTEMA",
+    ruta: "/cuartel",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:modulos"],
+    alias: "cuartel app aplicacion paneles pestanas salas casa escritorio",
+  },
+  {
+    id: "mod:clasico",
+    nombre: "LA CASA CLÁSICA",
+    lema: "La app de siempre, sin capas nuevas",
+    descripcion:
+      "Alias de la experiencia clásica de la casa: la misma aplicación de siempre, conservada para quien aprendió a moverse en ella. No se tira lo que funciona.",
+    categoria: "SISTEMA",
+    ruta: "/clasico",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:cuartel"],
+    alias: "clasico casa clasica experiencia antigua alias home app",
+  },
+  {
+    id: "mod:universo",
+    nombre: "EL UNIVERSO DIARIO",
+    lema: "Créditos, colecciones y mercado ético",
+    descripcion:
+      "La economía diaria y semanal de la casa sin penalizaciones: Vanguard Credits, colecciones educativas mejorables y un mercado declarado ético. Es la capa de recompensa de la plataforma, separada del juego de guerra.",
+    categoria: "COMUNIDAD",
+    ruta: "/universo",
+    permiso: "cuenta",
+    estado: "VIVO",
+    dependencias: ["mod:cuenta"],
+    alias: "universo creditos vc colecciones albumes mercado economia diaria recompensa",
+  },
+  {
+    id: "mod:creadores",
+    nombre: "LOS CREADORES",
+    lema: "La comunidad que produce",
+    descripcion:
+      "El espacio de la comunidad: publicar, colecciones, perfiles y moderación. Es la cara de la casa en la que el lector deja de solo leer.",
+    categoria: "COMUNIDAD",
+    ruta: "/creadores",
+    permiso: "cuenta",
+    estado: "VIVO",
+    dependencias: ["mod:cuenta"],
+    alias: "creadores comunidad publicar coleccion perfil moderacion obras",
+  },
 ];
 
 /** ── Consultas del censo (puras, sin BD) ─────────────────── */

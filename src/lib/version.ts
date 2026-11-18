@@ -1,3 +1,40 @@
+// v406.4 LA PLATAFORMA ENTERA — la casa deja de ser setenta herramientas sueltas.
+// El encargo del Dueño, textual: «analiza todos los módulos, fusiona los que hacen
+// lo mismo, conecta noticias, mapas, simuladores y centros de información, mejora;
+// no elimines nada útil».
+//
+// ① LO MEDIDO ANTES DE TOCAR NADA (árbol real de main, 73 rutas / 434 componentes
+//    / 264 librerías): el censo del Núcleo conocía 39 módulos y la geografía
+//    entera —/mundos, /mundos/<iso>, /mapas, /mundo, /atlas, /poder, /divisas,
+//    /conflictos, /archivo-mundial, /historia, /rostros…— no estaba registrada.
+//    La función `enlacesDePais()` existía desde la v218 y NO LA MONTABA NADIE:
+//    249 fichas de país sin un solo chip hacia el núcleo. Y un cable sabía su
+//    TEATRO pero no de qué PAÍS hablaba, así que la redacción y la geografía no
+//    se tocaban en ninguna parte.
+//
+// ② EL CENSO COMPLETO: `registro.ts` pasa de 39 a 66 módulos. Se registran, con
+//    su ruta real y su trabajo real, la geografía entera (13), la editorial y los
+//    archivos (6), la simulación que faltaba y la casa (8). Nada se inventa: cada
+//    ruta la verifica la prueba contra src/app.
+//
+// ③ EL NEXO (`src/lib/nucleo/nexo.ts`, nuevo): de un titular a un país. Lee el
+//    texto, encuentra los países con el término exacto que los delató —«el texto
+//    dice “ecuatorianos”»— y devuelve puertas reales: la ficha, el mapa, el
+//    simulador con sus coordenadas y la búsqueda global. 108 países entre alias y
+//    gentilicios, todos con ISO real de `geo-paises`; los nombres ambiguos (Chad,
+//    Georgia, Congo, Corea, Guinea) SOLO cuentan dentro de un nombre completo.
+//    Puro y determinista: sin BD, sin red, sin reloj — se puede probar.
+//
+// ④ LA COSTURA COSIDA: /noticia pasa su titular al nexo (país + «simular en este
+//    país»); /mundos/<iso> monta por fin `enlacesDePais` y añade los cables del
+//    país sin romper el prerenderizado de los 249 (el bloque los pide al núcleo
+//    desde el cliente); /mundos abre sus puertas al núcleo; y /nucleo publica las
+//    FAMILIAS (`fusiones.ts`, nuevo): seis preguntas, cada una con su puerta
+//    canónica y el papel declarado de las demás. No se cierra ninguna sala.
+//
+// ⑤ PRUEBAS: `scripts/pruebas-nucleo.mjs` pasa de 17 a 25 comprobaciones en la
+//    parte offline — las 8 nuevas vigilan censo, familias, ISO del nexo, ambiguos,
+//    pureza, ficha conectada, cable con país y familias publicadas.
 // v405.15 SIN UN CUADRO DE MÁS — el 3D dejó de quemar lo que nadie mira.
 // El encargo del Dueño, textual: «necesita mejorar los 3D la verdad, y hay lag».
 // Antes de tocar una línea se midió, con navegador real, la casa publicada
@@ -6255,8 +6292,8 @@
 //      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
 //    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
 //    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
-export const APP_VERSION = "v406.3";
-export const APP_CODENAME = "EDITORIAL COMMAND";
+export const APP_VERSION = "v406.4";
+export const APP_CODENAME = "LA PLATAFORMA ENTERA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6316,7 +6353,7 @@ export const APP_CODENAME = "EDITORIAL COMMAND";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v406.2";
+export const APP_VERSION_ANTERIOR = "v406.3";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
