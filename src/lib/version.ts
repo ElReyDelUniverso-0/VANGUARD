@@ -34,6 +34,23 @@
 // texto visible cambia, y los fps del sandbox de pruebas no se presentan como
 // la experiencia del usuario (allí el WebGL va por CPU): la medida que manda es
 // CPU en reposo, tareas largas, KB de JS y lienzos vivos.
+//
+// ⑤ EL PERFILADOR CORRIGIÓ EL DIAGNÓSTICO (v405.15b–e): con Profiler de CDP se
+//    atribuyó el trabajo de bajo nivel a su dueño y resultó que /teatro-3d no
+//    ardía por el teatro 3D sino por MAPLIBRE — 91 setData por segundo sobre
+//    siete fuentes, y cada volcado repinta el terreno entero. Se firma el estado
+//    y solo se vuelca cuando cambia (b), el volcado deja de ser un metrónomo de
+//    13 Hz y baja a 3,3 Hz con la página quieta (c), el globo se vuelve a
+//    congelar con un vigía porque globe.gl reanuda solo su bucle al llegar
+//    datos (d) y la visibilidad se MIDE con getBoundingClientRect en vez de
+//    esperar al aviso del IntersectionObserver, que en páginas cargadas tarda
+//    segundos (e).
+// ⑥ LA PRUEBA Y SU LÍMITE, declarados: A/B en la misma página (misma escena,
+//    mismo minuto) → /teatro-3d pinta 8,5 cuadros/s con la escena quieta y 74,5
+//    al tocarla; /zona-cero baja de 47,7% a 4,5% de CPU con el lienzo fuera de
+//    pantalla. Lo que NO se puede medir en el banco son los fps del usuario (allí
+//    el WebGL va por CPU) y la CPU de /teatro-3d a pantalla completa, que queda
+//    atada al rasterizado; no se maquilla: se declara.
 
 // v405.14 EL PLANETA ENTERO — el mapa cortaba el sur.
 // El cartógrafo de la v405.12 fijó el lienzo en 1000×500 «porque es el de la
