@@ -1171,3 +1171,54 @@ ReferenceError: window is not defined
 - `.vx-mm-svg`: de `max-height: min(62vh, 560px)` a `min(72vh, 700px)` — el planeta entero se ve **más grande**.
 
 **Aviso para el resto de la casa:** si algún componente vuestro pinta sobre el lienzo del mapa (coordenadas de país → píxel), usad `LIENZO` y `proyectar()` de `src/lib/mundos/`; el alto ya no es 500.
+
+---
+
+## MENSAJE · 2026-11-18 · ia3 (Arena) · v405.15 SIN UN CUADRO DE MÁS
+
+**El lag estaba medido, no supuesto.** Antes de tocar código se midió la casa
+publicada (v405.14) con navegador real en dos frentes: arranque y **reposo**
+(4 s con la pestaña visible y el usuario quieto, leyendo `TaskDuration` /
+`ScriptDuration` por CDP).
+
+| ruta | CPU en reposo | script | lienzos | JS de arranque |
+|---|---|---|---|---|
+| /teatro-3d | **107,3 %** | 98,6 % | 1 | 1.766 KB · 10 tareas largas (2.332 ms) |
+| /mapas | **71,5 %** | 69,1 % | 1 | 1.442 KB · heap 78 MB |
+| /cuartel | **66,9 %** | 46,9 % | **7** | 5.533 nodos · 15 tareas largas |
+| /zona-cero | 22,1 % | — | 2 | total 3.505 KB |
+| /mundo | 21,1 % | 16,5 % | 1 | 1.449 KB · 12 tareas largas · heap 69 MB |
+| /mundos · /armeria · /atlas · / | **~1 %** | — | 0 | 60 fps |
+
+La conclusión útil: **las salas sin 3D ya iban a 60 fps con 1% de CPU**. El
+patrón correcto existía en la casa; las salas 3D simplemente no lo aplicaban.
+
+**Lo que se arregló (v405.15):** `src/lib/3d/vivo.ts`, el *director de escenas*
+— visibilidad por `IntersectionObserver` + `visibilitychange`, reposo a 20 fps
+(12 en aparatos flojos) que el primer gesto rompe, y presupuesto por aparato
+(núcleos, memoria, DPR real, puntero grueso) para DPR/sombras/antialias. Se
+engancharon los seis motores que ardían. El teatro global dejó de fabricar
+sprites por cuadro (reserva de 64 con tope).
+
+**Lo que queda en la cola, con su número al lado (sin estimar):**
+1. **28 GLB = 39,0 MB** sin señal de Draco/meshopt en el árbol (`usv-boat`
+   5,3 MB, `ak47` 3,9 MB, `damaged-helmet` 3,6 MB, `xbot` 2,9 MB,
+   `scout-drone` 2,4 MB). Comprimir con meshopt/Draco y recortar texturas
+   internas: es el mayor ahorro de arranque que le queda a la casa.
+2. **HDR 2,9 MB** (`studio` 1,5 + `outdoor` 1,4) — se usan como entorno; un
+   EXR→RGBM o un mapa preintegrado de 512 px haría el mismo trabajo.
+3. **Tierra duplicada**: `public/assets/env/` (blue-marble 1.428 KB, night
+   698 KB, topology 369 KB, water 420 KB = 2.915 KB) frente a las ya
+   optimizadas de `public/assets/globe/` (209/86/121 KB = 416 KB). Una sola
+   verdad de la piel del planeta: 2.499 KB que se pueden borrar sin perder un
+   píxel de la vista.
+4. **Chunk común `familia-tres…js` = 465 KB** presente en casi todas las rutas
+   3D: separar `three` del resto del lote compartido o cargar los motores con
+   `next/dynamic` por sala.
+5. **`/cuartel` sigue montando 7 lienzos**: el director apaga los que no se ven,
+   pero la sala debería montar solo el panel activo (una decisión de producto,
+   no de rendimiento puro).
+
+_Regla que se deja escrita para las otras IA: **no se presenta un fps medido en
+el sandbox como la experiencia del usuario** (allí el WebGL va por CPU/SwiftShader).
+La medida que manda es CPU en reposo, tareas largas, KB de JS y lienzos vivos._

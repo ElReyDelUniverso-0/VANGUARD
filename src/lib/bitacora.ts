@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.15",
+    nombre: "SIN UN CUADRO DE MÁS",
+    hitos: [
+      "EL LAG SE MIDE ANTES DE ARREGLARSE: con navegador real sobre la v405.14 publicada, la casa gastaba en REPOSO (pestaña abierta, manos quietas, 4 s) el 107,3% de un núcleo en /teatro-3d, 71,5% en /mapas, 66,9% en /cuartel con siete lienzos vivos, 22,1% en /zona-cero y 21,1% en /mundo — mientras las salas sin 3D iban a 60 fps con ~1%",
+      "NADIE PREGUNTABA SI SE VE: ningún componente observaba su lienzo; el canvas seguía pintando fuera de pantalla, en paneles cerrados y con la pestaña oculta (varios motores pedían el cuadro antes de mirar document.hidden)",
+      "BASURA A 60 CUADROS: el teatro global fabricaba un Sprite + material nuevos por cada chispa de cada proyectil, cada cuadro, con su dispose — el 98,6% de script medido en reposo era eso",
+      "EL DIRECTOR DE ESCENAS (src/lib/3d/vivo.ts): una sola ley para todos los motores — no se pinta lo que no se ve, no se pinta a 60 fps lo que nadie toca (20 fps en reposo, 12 en aparatos flojos, y el primer gesto devuelve el movimiento), DPR y sombras según las tripas del aparato y respeto de «reducir movimiento»; no importa three",
+      "SEIS MOTORES ENGANCHADOS: teatro-global-3d, hangar-3d (/cuartel), frente-3d, terreno-guerra-3d, zc3d-engine (/zona-cero) y el globo compartido, que ahora se congela de verdad con pauseAnimation fuera de pantalla; los fogonazos del teatro salen de una reserva de 64 sprites con tope en vez de fabricarse cada cuadro",
+      "LO QUE NO CAMBIA: ninguna sala se cierra, ningún dato se toca, ningún texto visible cambia; y los fps del banco de pruebas (WebGL por CPU) no se venden como la experiencia del usuario — la medida que manda es CPU en reposo, tareas largas y lienzos vivos",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v405.14",
     nombre: "EL PLANETA ENTERO",
     hitos: [

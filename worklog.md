@@ -6556,3 +6556,20 @@ producción habría entregado un archivo que existe y no dice nada.
 - EL MAPA RESPIRA: `.vx-mm-svg` pasa de recortar a `min(62vh, 560px)` a **`min(72vh, 700px)`**, así que el planeta entero se ve **más grande** que antes, no más pequeño.
 - PRUEBAS: `tsc` 0 errores; **`test-mundos.js` 69 ✓ · 0 fallos** (la ventana de RD sigue siendo `265.1 260.3 90.0 45.0` — la prueba demuestra que la proyección no se movió—); `test-espacio.js` 56 ✓; `test-navegacion.js` 21 ✓.
 - PENDIENTE: volver a capturar el planeta entero en producción y entregar.
+
+---
+
+## Task ia3-v405.15 · SIN UN CUADRO DE MÁS (el 3D deja de quemar lo que nadie mira)
+
+- ENCARGO DEL DUEÑO, TEXTUAL: «Mira qué le falta a VANGUARD, necesita mejorar los 3D la verdad, y hay lag». Dos frentes: diagnosticar qué le falta a la casa y quitar el lag **con medición antes/después**.
+- SE MIDIÓ ANTES DE TOCAR NADA (navegador real, producción v405.14, Chromium por Playwright, `Performance.getMetrics()` por CDP durante 4 s con la pestaña visible y el usuario quieto — scripts `/home/user/perf/medir.py` y `/home/user/perf/medir-reposo.py`):
+  · CPU en reposo: **/teatro-3d 107,3 %** (script 98,6) · **/mapas 71,5 %** (69,1) · **/cuartel 66,9 %** (46,9, con **7 lienzos**, 5.533 nodos) · /zona-cero 22,1 % · /mundo 21,1 % (16,5).
+  · Frente a eso, las salas sin 3D (`/`, `/atlas`, `/armeria`, `/mundos`) daban **60 fps con ~1 % de CPU**: el patrón correcto ya existía en la casa.
+  · Arranque: /teatro-3d 1.766 KB de JS y 10 tareas largas (2.332 ms); /mundo 1.449 KB, 12 tareas (2.421 ms), heap 69 MB; /mapas heap 78 MB. Chunk común `familia-tres…js` 465 KB.
+- DIAGNÓSTICO DE CÓDIGO (16 fuentes del 3D leídas): **ningún componente usaba `IntersectionObserver`** sobre su lienzo; varios pedían el cuadro ANTES de mirar `document.hidden`; el DPR se heredaba con topes fijos a mano (2 / 1,75 / 1,5 / 1,25); y el teatro global **fabricaba un `Sprite` + `SpriteMaterial` nuevos por cada chispa de cada proyectil, cada cuadro** (con su `dispose`) más un `Vector3` por arco y cuadro — eso es el 98,6 % de script medido en reposo.
+- LA PIEZA NUEVA: `src/lib/3d/vivo.ts` — **EL DIRECTOR DE ESCENAS**. Regla única: *ninguna escena pinta si no se ve, y ninguna pinta a 60 fps si nadie la toca*. Visibilidad (`IntersectionObserver` con margen 160 px + `visibilitychange`), reposo a 20 fps (12 en aparatos flojos) que el primer gesto rompe, presupuesto por aparato (núcleos, `deviceMemory`, DPR real, puntero grueso) para DPR/sombras/antialias, y respeto de `prefers-reduced-motion`. No importa `three`: cualquier motor lo usa sin arrastrar la librería.
+- SEIS MOTORES ENGANCHADOS (aditivo, sin cerrar ni una sala): `teatro-global-3d.tsx`, `hangar-3d.tsx` (/cuartel), `frente-3d.tsx`, `terreno-guerra-3d.tsx`, `zc3d-engine.ts` (/zona-cero) y el globo compartido `globe-map-3d.tsx`, que además ahora se congela de verdad fuera de pantalla con `pauseAnimation()`/`resumeAnimation()` de globe.gl. Los fogonazos del teatro salen de una **reserva de 64 sprites con tope** en vez de fabricarse cada cuadro.
+- LO QUE NO CAMBIA: ninguna sala se cierra, ningún dato se toca, ningún texto visible cambia, ni una ruta del sitemap se mueve.
+- REGLA DE HONESTIDAD QUE SE DEJA ESCRITA: los fps medidos en el banco de pruebas **no** son los del usuario (allí el WebGL va por CPU/SwiftShader). La medida que manda es CPU en reposo, tareas largas, KB de JS y lienzos vivos.
+- PRUEBAS: `tsc` 0 errores sobre los archivos tocados (comparado contra la base: 81 avisos del entorno de prueba antes, 81 después, **cero nuevos**); `test-mundos.js` **69 ✓ · 0 fallos**; `test-espacio.js` **56 ✓**; `test-navegacion.js` **21 ✓**.
+- PENDIENTE DECLARADO (con su número, sin estimar): 28 GLB = 39,0 MB sin Draco/meshopt; HDR 2,9 MB; **Tierra duplicada** en `public/assets/env/` (2.915 KB) frente a `public/assets/globe/` (416 KB); chunk `three` de 465 KB compartido; y /cuartel montando 7 lienzos a la vez (decisión de producto).

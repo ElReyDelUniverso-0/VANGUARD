@@ -13,6 +13,7 @@ import {
   TEXTURAS_VISTA,
   type GlobeViewMode,
 } from "@/lib/globe-assets"; // v237 EL RELIEVE: fuente única de las pieles
+import { presupuesto3D } from "@/lib/3d/vivo";
 
 export interface Globe3DMarker {
   id: string;
@@ -230,7 +231,9 @@ export function GlobeMap3D({
     // tironeos al rotar). 2× es indistinguible a la vista y deja el
     // planeta a 60 fps en el bolsillo. El escritorio (DPR 1) no cambia.
     try {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // v405.15: el DPR sale del presupuesto del aparato (y sigue capado a lo
+      // que el aparato declara: nunca por encima de su densidad real).
+      const dpr = Math.min(window.devicePixelRatio || 1, presupuesto3D().dpr);
       (
         globe as unknown as {
           renderer: () => { setPixelRatio: (n: number) => void };
@@ -263,8 +266,30 @@ export function GlobeMap3D({
       } catch {
         /* noop */
       }
+      // v405.15: pestaña oculta = dibujo congelado (no solo rotación parada)
+      congelar(document.hidden);
     };
     document.addEventListener("visibilitychange", onVis);
+
+    // v405.15: con el globo fuera de pantalla NO se dibuja. Antes el lienzo
+    // seguía rasterizando el planeta entero detrás del pliegue (medido: 71%
+    // de un núcleo en reposo en /mapas). globe.gl sabe congelarse.
+    const congelar = (congelado: boolean) => {
+      try {
+        const g = globe as unknown as { pauseAnimation?: () => void; resumeAnimation?: () => void };
+        if (congelado) g.pauseAnimation?.();
+        else g.resumeAnimation?.();
+      } catch {
+        /* noop */
+      }
+    };
+    const io = typeof IntersectionObserver !== "undefined"
+      ? new IntersectionObserver(
+          (entradas) => congelar(!entradas.some((e) => e.isIntersecting) || document.hidden),
+          { rootMargin: "160px", threshold: 0 }
+        )
+      : null;
+    io?.observe(el);
 
     // pausa la rotacion al pasar el raton (facilita clicar territorios)
     const setRot = (on: boolean) => {
@@ -286,6 +311,7 @@ export function GlobeMap3D({
 
     return () => {
       window.removeEventListener("resize", onResize);
+      io?.disconnect();
       document.removeEventListener("visibilitychange", onVis);
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);

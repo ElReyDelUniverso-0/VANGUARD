@@ -28,6 +28,7 @@ import { claimOraculo, oraculoClaimed, ORACULO_DOCS, ORACULO_SECRET } from "@/li
 import { TarotModal, PropagandaModal, DiarioModal } from "@/components/vanguard/hangar-modals";
 import { leerLook, medallasGanadas, reliquiaDesbloqueada, RELIQUIAS, type AgenteLook, type MedalStats } from "@/lib/agente-look";
 import { Warehouse, Flame, Coins, Users, Thermometer, Compass } from "lucide-react";
+import { escenaViva, presupuesto3D } from "@/lib/3d/vivo";
 
 // ---- geometría del hangar ----
 const HALF_W = 26; // semiancho interior
@@ -177,14 +178,21 @@ export function HangarPanel() {
     const cam = new THREE.PerspectiveCamera(58, mount.clientWidth / Math.max(1, mount.clientHeight), 0.1, 220);
     // v70.1 ANTI-FREEZE: resolución controlada + AA solo desktop + degradación adaptativa
     const isMobile = window.matchMedia("(pointer: coarse)").matches;
-    const QUALITY_STEPS: number[] = isMobile ? [1, 0.72] : [1.25, 1, 0.72];
+    // v405.15: el presupuesto del aparato manda (DPR y sombras). El escalón
+    // adaptativo sigue existiendo, pero ya no se arranca por encima de lo que
+    // el aparato puede mover.
+    const presupuesto = presupuesto3D();
+    const QUALITY_STEPS: number[] = (isMobile ? [1, 0.72] : [1.25, 1, 0.72]).filter(
+      (x) => x <= presupuesto.dpr
+    );
+    if (QUALITY_STEPS.length === 0) QUALITY_STEPS.push(presupuesto.dpr);
     let qStep = 0;
     let fpsFrames = 0;
     let fpsTime = 0;
     const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
     renderer.setPixelRatio(QUALITY_STEPS[0]);
     // v71.1: sombras reales — el sol bajo proyecta al agente, pedestales y podio
-    if (!isMobile) {
+    if (!isMobile && presupuesto.sombras) {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     }
@@ -1049,8 +1057,14 @@ export function HangarPanel() {
     cam.position.set(agent.position.x * 0.7, 6.4, agent.position.z + 9.2);
     cam.lookAt(agent.position.x * 0.55, 1.6, agent.position.z * 0.55 + 3.5);
 
+    // v405.15: el hangar estaba pintando aunque estuviera fuera de pantalla
+    // (/cuartel llegó a tener 7 lienzos a la vez). El director decide.
+    const vivo3d = escenaViva(mount, { reposoSeg: 2.5 });
     const tick = () => {
-      raf = requestAnimationFrame(tick);
+      const seguir = vivo3d
+        ? vivo3d.programar(tick)
+        : (raf = requestAnimationFrame(tick), true);
+      if (!seguir) return;
       const dt = Math.min(0.05, clock.getDelta());
       const t = clock.elapsedTime;
 
@@ -1244,6 +1258,7 @@ export function HangarPanel() {
     window.addEventListener("resize", onResize);
 
     return () => {
+      vivo3d?.parar();
       cancelAnimationFrame(raf);
       window.removeEventListener("vanguard:agente-look", onAgenteLook);
       window.removeEventListener("vanguard:proezas", onProezas);
