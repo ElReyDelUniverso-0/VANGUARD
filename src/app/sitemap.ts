@@ -668,6 +668,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.72,
     })),
+    // v412.0 LA CASA CONECTADA — una sola puerta nueva: el mapa de la
+    // arquitectura. No genera URLs derivadas: cuenta lo que existe en un
+    // sitio y publica los nexos, los departamentos y los contratos.
+    {
+      url: `${SITE_URL}/arquitectura`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
   ];
 
   // ② y ③: fuera las salas noindex; lastmod real o ninguno

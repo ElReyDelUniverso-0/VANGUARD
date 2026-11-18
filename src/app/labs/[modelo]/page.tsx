@@ -6,6 +6,8 @@ import { MODELOS, obtenerModelo } from "@/lib/labs/registro";
 import { CATEGORIA_LAB, ORIGEN_ETIQUETA } from "@/lib/labs/tipos";
 import { SITE_URL } from "@/lib/site";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { BandaNexos } from "@/components/arquitectura/banda-nexos";
+import { nexosDeModelo } from "@/lib/arquitectura/nexos";
 
 // ═══════════════════════════════════════════════════════════════════
 // v411.0 · LA FICHA DE UN LABORATORIO — /labs/<modelo>
@@ -199,6 +201,11 @@ export default async function ModeloPage({ params }: Props) {
             <Laboratorio modeloId={m.id} />
           </div>
         </section>
+
+        <BandaNexos
+          nexos={nexosDeModelo(m.id)}
+          nota="Este modelo no simula un país concreto: sus cifras de partida son genéricas y están declaradas arriba. Las salidas de abajo llevan a los datos reales y a las fichas de los países cuyos totales se parecen a lo que estás moviendo."
+        />
 
         {hermanos.length > 0 && (
           <section className="mt-12 border-t border-zinc-800 pt-6">

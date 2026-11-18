@@ -408,6 +408,19 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     alias: "nucleo mapa modulos arquitectura busqueda entidades sistema",
   },
   {
+    id: "mod:arquitectura",
+    nombre: "LA ARQUITECTURA",
+    lema: "Qué existe, cómo se conecta y qué falta",
+    descripcion:
+      "El censo real del árbol (páginas y rutas de API contadas desde src/app, con sus referencias entrantes), el motor de nexos entre países, datos, mapas, cronologías y simuladores, y el estado honesto de los veintidós departamentos del plan con lo que queda por construir.",
+    categoria: "SISTEMA",
+    ruta: "/arquitectura",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:nucleo", "fnt:modulos"],
+    alias: "arquitectura censo inventario departamentos nexos conexiones mapa de la casa auditoria",
+  },
+  {
     id: "mod:privacidad",
     nombre: "PRIVACIDAD",
     lema: "Las reglas de la casa por escrito",

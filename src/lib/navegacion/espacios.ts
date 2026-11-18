@@ -254,6 +254,7 @@ export const ESPACIOS: Espacio[] = [
     herramientas: [
       { id: "estado", nombre: "Estado", href: "/estado", icono: "activity", desc: "La casa por dentro: salud, versión y auditoría" },
       { id: "navegacion", nombre: "Navegación", href: "/navegacion", icono: "compass", desc: "Esta arquitectura: los diez espacios, sus herramientas y sus fusiones", desde: "v405.10" },
+      { id: "arquitectura", nombre: "Arquitectura", href: "/arquitectura", icono: "network", desc: "El censo del árbol, el motor de nexos y los veintidós departamentos con su estado real", desde: "v412.0" },
       { id: "calidad", nombre: "Calidad", href: "/calidad", icono: "gauge", desc: "Las pruebas de la casa y lo que miden" },
       { id: "torre", nombre: "La Torre", href: "/torre", icono: "tower-control", desc: "El control de la infraestructura y los despliegues" },
       { id: "escudo", nombre: "El Escudo", href: "/escudo", icono: "shield-alert", desc: "Seguridad, permisos y límites de la casa" },

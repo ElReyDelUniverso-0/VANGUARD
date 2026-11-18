@@ -6397,8 +6397,44 @@
 //   ⑥ LA LEY: dato real citado con fuente y con la sala donde comprobarlo;
 //      supuesto etiquetado; y aviso permanente de que NO es una predicción.
 // ═══════════════════════════════════════════════════════════════════
-export const APP_VERSION = "v411.0";
-export const APP_CODENAME = "EL LABORATORIO";
+// ═══════════════════════════════════════════════════════════════════
+// v412.0 LA CASA CONECTADA — encargo del Dueño: el plan de los veintidós
+// departamentos, con una regla que ordena todo lo demás: «no marques como
+// completada una función que solamente tenga una interfaz visual».
+//
+// ① LO MEDIDO ANTES DE ESCRIBIR (censo real del árbol, 2026-11-18): 88
+//    páginas y 111 rutas de API. Ocho páginas se alcanzaban desde un solo
+//    sitio y tres —/datos, /sistema y /escudo/detector— desde uno solo de
+//    verdad. El laboratorio entero colgaba de dos enlaces. Y la ficha de país
+//    —el nodo más rico de la casa, 249 fichas— no decía qué modelo explica lo
+//    que enseña ni dónde se comprueba cada cifra.
+// ② EL CENSO, POR MÁQUINA: `tools/arquitectura/censar.mjs` recorre src/app,
+//    cuenta páginas y endpoints y mide las referencias ENTRANTES que un
+//    visitante puede pulsar (excluye sitemap, robots, llms.txt y las API:
+//    mencionan rutas, pero nadie las pulsa). Escribe censo.json versionado.
+// ③ EL MOTOR DE NEXOS (`src/lib/arquitectura/nexos.ts`): cada uno de los
+//    quince laboratorios declara sus salidas a países, datos, mapas,
+//    cronologías, otros simuladores y herramientas, con el motivo escrito; y
+//    cada ficha de país declara siete. Cincuenta y siete enlaces declarados,
+//    todos comprobados contra el censo antes de publicar.
+// ④ LAS BANDAS MONTADAS: /labs, las quince fichas de modelo y las 249 fichas
+//    de país enseñan «sigue por aquí» con familia, etiqueta y por qué. Donde
+//    el modelo no usa los datos del país, se dice en la propia banda.
+// ⑤ LA AUDITORÍA DE LOS VEINTIDÓS DEPARTAMENTOS (`departamentos.ts`): cada
+//    uno con su estado real —en pie, parcial o sin construir—, sus piezas con
+//    ruta viva, lo que falta y la siguiente pieza concreta. Cinco en pie, once
+//    parciales y seis sin construir al cerrar esta ronda. Los ocho contratos
+//    de integración, escritos para que los demás departamentos no construyan
+//    veintidós plataformas distintas.
+// ⑥ LA PUERTA: /arquitectura, indexable, con el censo, los nexos, los
+//    departamentos y los contratos. Entra en el sitemap, en llms.txt, en el
+//    censo del Núcleo y en el espacio «La Casa».
+// ⑦ LA PRUEBA: `tools/arquitectura/probar.mjs` falla si un nexo, una pieza o
+//    un departamento citan una ruta que ya no existe, si el registro no tiene
+//    22 entradas o si un departamento «en pie» no tiene ninguna pieza.
+// ═══════════════════════════════════════════════════════════════════
+export const APP_VERSION = "v412.0";
+export const APP_CODENAME = "LA CASA CONECTADA";
 // (codename anterior) export const APP_CODENAME = "EL PLANETA EN CIFRAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:

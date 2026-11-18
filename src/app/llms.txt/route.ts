@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/lib/site";
 import { CONSTELACIONES, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
 import { MODELOS, estadisticasLabs } from "@/lib/labs/registro"; // v411.0: el laboratorio
+import CENSO from "@/lib/arquitectura/censo.json"; // v412.0: el censo real del árbol
 
 // ============================================================
 // v405.6 LA CARTA A LAS MÁQUINAS — /llms.txt — ia3 (Arena)
@@ -60,6 +61,16 @@ export function GET() {
       `supuestos y sus límites (${estadisticasLabs().limites} límites escritos, ${estadisticasLabs().datosReales} datos reales citados). ` +
       "Motor determinista: mismos mandos y misma semilla dan la misma corrida. No son predicciones.",
     ...MODELOS.map((m) => `- [${m.nombre}](${c(`/labs/${m.id}`)}): ${m.pregunta}`),
+    "",
+    "## Arquitectura y verificación",
+    "",
+    `- [La arquitectura](${c("/arquitectura")}): el censo real de la plataforma —${CENSO.paginas} páginas y ${CENSO.rutasApi} rutas de API, con sus ` +
+      "referencias entrantes—, el motor de nexos entre países, datos, mapas, cronologías y simuladores, el estado honesto " +
+      "de los veintidós departamentos del plan (cuáles están en pie, cuáles a medias y cuáles sin construir) y los ocho " +
+      "contratos de integración. El censo se regenera con `node tools/arquitectura/censar.mjs` y se comprueba con " +
+      "`node tools/arquitectura/probar.mjs`.",
+    `- [Catálogo de datos](${c("/datos")}): procedencia, licencia, fecha de captura y límites de cada modelo de datos del sitio.`,
+    `- [Sala de la calidad](${c("/calidad")}): las pruebas de la casa y qué mide cada una.`,
     "",
     "## Datos y mapas del sitio",
     "",

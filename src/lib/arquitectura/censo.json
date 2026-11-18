@@ -1,0 +1,2067 @@
+{
+  "version": "v412.0",
+  "fecha": "2026-11-18",
+  "paginas": 89,
+  "rutasApi": 111,
+  "total": 200,
+  "bienConectadas": 84,
+  "huerfanas": [],
+  "paginasConReferencias": 89,
+  "mediaReferencias": 15.19,
+  "rutas": [
+    {
+      "ruta": "/",
+      "tipo": "pagina",
+      "referencias": 84,
+      "desde": [
+        "app/archivo-mundial/page.tsx",
+        "app/armeria/page.tsx",
+        "app/atlas/page.tsx",
+        "app/audios/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/api",
+      "tipo": "api",
+      "referencias": 148,
+      "desde": [
+        "app/audios/grabador.tsx",
+        "app/audios/page.tsx",
+        "app/datos/page.tsx",
+        "app/en-vivo/sala-en-vivo.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/agent-ping",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/agente",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/panels/agente-ia-panel.tsx",
+        "components/vanguard/panels/muro-obras-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/agente/opinar",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/muro-obras-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/ambassadors",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/embajadores-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/ambassadors/vote",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/embajadores-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/arquitecto",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/arquitecto.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/asistente",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/audios",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "app/audios/grabador.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/auth/login",
+      "tipo": "api",
+      "referencias": 6,
+      "desde": [
+        "app/modo/selector-modo.tsx",
+        "components/creadores/comun.tsx",
+        "components/vanguard/ritual-entrada.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/auth/logout",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "app/modo/selector-modo.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts",
+        "lib/game-store.ts"
+      ]
+    },
+    {
+      "ruta": "/api/auth/me",
+      "tipo": "api",
+      "referencias": 9,
+      "desde": [
+        "app/modo/selector-modo.tsx",
+        "components/vanguard/modo-activo.tsx",
+        "components/vanguard/panels/contribuidores-panel.tsx",
+        "components/vanguard/perfil-jugador.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/auth/modo",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "app/modo/selector-modo.tsx",
+        "components/vanguard/ritual-entrada.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/auth/register",
+      "tipo": "api",
+      "referencias": 6,
+      "desde": [
+        "app/modo/selector-modo.tsx",
+        "components/creadores/comun.tsx",
+        "components/vanguard/ritual-entrada.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/auth/save",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts",
+        "lib/game-store.ts"
+      ]
+    },
+    {
+      "ruta": "/api/consejo",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/consejo-ia-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/consulta",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts",
+        "lib/ia/proveedor.ts"
+      ]
+    },
+    {
+      "ruta": "/api/contrib",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/contribuidores-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/contrib/[id]",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/contribuidores-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/contrib/[id]/vote",
+      "tipo": "api",
+      "referencias": 0,
+      "desde": []
+    },
+    {
+      "ruta": "/api/contrib/leaderboard",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/contribuidores-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/creadores/colecciones",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/creadores/coleccion.tsx",
+        "components/creadores/obra.tsx",
+        "components/creadores/vitrina.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/creadores/fama",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/creadores/vitrina.tsx",
+        "components/vanguard/panels/muro-obras-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/creadores/moderacion",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/creadores/moderacion.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/creadores/obras",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/creadores/obra.tsx",
+        "components/creadores/publicar.tsx",
+        "components/creadores/vitrina.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/creadores/obras/[id]",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/creadores/obra.tsx",
+        "components/creadores/publicar.tsx",
+        "components/creadores/vitrina.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/creadores/perfil/[alias]",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/creadores/perfil.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/creadores/yo",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/creadores/comun.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/cronica",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/centinela-panel.tsx",
+        "components/vanguard/musica-sala.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/currencies",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/panels/bolsa-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts",
+        "lib/datos/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/datos/clima",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/sala-vista.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/datos/cripto",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/novedades/funciones-expansion.tsx",
+        "components/vanguard/sala-vista.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/datos/curiosidad",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/sala-vista.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/datos/planeta",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/novedades/funciones-expansion.tsx",
+        "components/vanguard/sala-vista.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/datos/sismos",
+      "tipo": "api",
+      "referencias": 5,
+      "desde": [
+        "components/vanguard/novedades/funciones-expansion.tsx",
+        "components/vanguard/sala-vista.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/denuncias",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/panels/abusos-panel.tsx",
+        "components/vanguard/panels/forum-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/denuncias/[id]",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/panels/abusos-panel.tsx",
+        "components/vanguard/panels/forum-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/drone-scores",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/drone-strike-3d.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/duelo",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/duelo-pvp.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/earthquakes",
+      "tipo": "api",
+      "referencias": 5,
+      "desde": [
+        "components/vanguard/panels/infinita-panel.tsx",
+        "components/vanguard/panels/observatorio-panel.tsx",
+        "components/vanguard/panels/osint-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/efemerides",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/panels/curiosidades-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts",
+        "lib/productor-vivo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/escudo",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "app/escudo/escudo-escaner.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/espectro",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/espectro-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/fortaleza",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/fortaleza-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/foto",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/tarjeta-cable.tsx",
+        "lib/api/catalogo.ts",
+        "lib/version.ts"
+      ]
+    },
+    {
+      "ruta": "/api/geo",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/panels/geopolitica-panel.tsx",
+        "components/vanguard/panels/planeta-panel.tsx",
+        "lib/api/catalogo.ts",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/api/geo-tablero",
+      "tipo": "api",
+      "referencias": 7,
+      "desde": [
+        "components/vanguard/frente-total-sim.tsx",
+        "components/vanguard/teatro-global-3d.tsx",
+        "components/vanguard/zona-cero-3d.tsx",
+        "components/vanguard/zona-cero-geo.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/geopolitics",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/geopolitics-radar.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/goal",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/goal-banner.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/government",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/gobierno-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/health",
+      "tipo": "api",
+      "referencias": 6,
+      "desde": [
+        "app/estado/estado-latido.tsx",
+        "app/estado/page.tsx",
+        "components/vanguard/connection-watchdog.tsx",
+        "lib/agentes-autonomos.ts"
+      ]
+    },
+    {
+      "ruta": "/api/indexnow",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/bitacora.ts",
+        "lib/faro.ts"
+      ]
+    },
+    {
+      "ruta": "/api/juegos",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/game-runtime.tsx",
+        "components/vanguard/panels/taller-juegos-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/layers",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/planeta-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/live/claim",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/en-vivo-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/live/presence",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/en-vivo-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/live/replays",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/en-vivo-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/live/schedule",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/en-vivo-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/live/streams",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/en-vivo-panel.tsx",
+        "components/vanguard/panels/ojo-dios-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/live/streams/[id]",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/en-vivo-panel.tsx",
+        "components/vanguard/panels/ojo-dios-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/live/streams/[id]/chat",
+      "tipo": "api",
+      "referencias": 0,
+      "desde": []
+    },
+    {
+      "ruta": "/api/live/streams/[id]/donate",
+      "tipo": "api",
+      "referencias": 0,
+      "desde": []
+    },
+    {
+      "ruta": "/api/live/streams/sala-chat",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/en-vivo-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/maestro",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/asistente-voz.tsx",
+        "components/vanguard/voz-sala.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/media/[id]",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "app/audios/page.tsx",
+        "lib/api/catalogo.ts",
+        "lib/nucleo/relaciones.ts"
+      ]
+    },
+    {
+      "ruta": "/api/memes",
+      "tipo": "api",
+      "referencias": 5,
+      "desde": [
+        "components/vanguard/panels/foryou-panel.tsx",
+        "components/vanguard/panels/meme-studio-panel.tsx",
+        "components/vanguard2/mundos-datos.ts",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/memes/[id]",
+      "tipo": "api",
+      "referencias": 5,
+      "desde": [
+        "components/vanguard/panels/foryou-panel.tsx",
+        "components/vanguard/panels/meme-studio-panel.tsx",
+        "components/vanguard2/mundos-datos.ts",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/mente",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/panels/creador-panel.tsx",
+        "components/vanguard/panels/mente-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/mercado",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/mercado-vivo.tsx",
+        "lib/api/catalogo.ts",
+        "lib/mercado-vivo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/meteo",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/megalopolis.tsx",
+        "components/vanguard/panels/frente-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/mp/stats",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/multiplayer-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/mundo",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/mundo/mundo-3d-vivo.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/naciones",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/mi-pais-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/neurona",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/news-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/news",
+      "tipo": "api",
+      "referencias": 27,
+      "desde": [
+        "components/vanguard/central-alarmas.tsx",
+        "components/vanguard/panels/cambios-panel.tsx",
+        "components/vanguard/panels/comunidad-panel.tsx",
+        "components/vanguard/panels/daily-briefing-panel.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/noticias",
+      "tipo": "api",
+      "referencias": 5,
+      "desde": [
+        "components/vanguard/buscador-universal.tsx",
+        "components/vanguard/panels/redaccion-panel.tsx",
+        "components/vanguard/section-search.tsx",
+        "components/vanguard2/mundos-datos.ts"
+      ]
+    },
+    {
+      "ruta": "/api/notifications",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/contribuidores-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/nucleo/acontecimientos",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/datos/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/nucleo/busqueda",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "app/mundos/[iso]/cables-del-pais.tsx",
+        "components/vanguard/nucleo-busqueda.tsx",
+        "lib/api/catalogo.ts",
+        "lib/ia/proveedor.ts"
+      ]
+    },
+    {
+      "ruta": "/api/nucleo/entidad",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/nucleo/modulos",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/nucleo/simulacion",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/vanguard/escenario-controles.tsx",
+        "lib/api/catalogo.ts",
+        "lib/datos/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/planeta",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/planeta-vivo.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/portada",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "components/portada/aviso-nuevas.tsx",
+        "components/portada/carcasa.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/presence",
+      "tipo": "api",
+      "referencias": 5,
+      "desde": [
+        "components/vanguard/hangar-3d.tsx",
+        "components/vanguard/panels/news-panel.tsx",
+        "components/vanguard/panels/observatorio-panel.tsx",
+        "components/vanguard/presence-ping.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/pulso",
+      "tipo": "api",
+      "referencias": 8,
+      "desde": [
+        "app/en-vivo/sala-en-vivo.tsx",
+        "app/traductor/traductor-estudio.tsx",
+        "components/vanguard/panels/observatorio-panel.tsx",
+        "components/vanguard/panels/pulso-panel.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/reclutar",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/mi-pais-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sharegoal",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/share-goal.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/actividad",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/datos",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "app/datos/page.tsx",
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/diagnostico",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/endpoints",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/extensiones",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/ia",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/novedades",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/system",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/auto-actualizacion.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/telegram",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/telegram-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/telegram/webhook",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/telemetria",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/vanguard/agente-store.ts"
+      ]
+    },
+    {
+      "ruta": "/api/torre",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/torre-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/traductor",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "app/traductor/traductor-estudio.tsx",
+        "components/noticia/traductor-chip.tsx",
+        "components/vanguard/panels/googles-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/ugc",
+      "tipo": "api",
+      "referencias": 10,
+      "desde": [
+        "components/vanguard/community-games.tsx",
+        "components/vanguard/creador-parts.tsx",
+        "components/vanguard/panels/creador-panel.tsx",
+        "components/vanguard/panels/escenarios-panel.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/ugc/[id]",
+      "tipo": "api",
+      "referencias": 10,
+      "desde": [
+        "components/vanguard/community-games.tsx",
+        "components/vanguard/creador-parts.tsx",
+        "components/vanguard/panels/creador-panel.tsx",
+        "components/vanguard/panels/escenarios-panel.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/ugc/comments",
+      "tipo": "api",
+      "referencias": 4,
+      "desde": [
+        "components/vanguard/creador-parts.tsx",
+        "components/vanguard/panels/escenarios-panel.tsx",
+        "components/vanguard/panels/muro-obras-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/verify",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/contribuidores-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/vertigo",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/vertigo/vertigo-feed.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/visits",
+      "tipo": "api",
+      "referencias": 7,
+      "desde": [
+        "components/vanguard/growth-share.tsx",
+        "components/vanguard/mission-100.tsx",
+        "components/vanguard/promo-kit.tsx",
+        "components/vanguard/referral-landing.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/wiki",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/vanguard/panels/encyclopedia-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/archivo-mundial",
+      "tipo": "pagina",
+      "referencias": 19,
+      "desde": [
+        "app/herramientas/page.tsx",
+        "app/mundos/page.tsx",
+        "app/page.tsx",
+        "components/portada/areas.ts"
+      ]
+    },
+    {
+      "ruta": "/armeria",
+      "tipo": "pagina",
+      "referencias": 13,
+      "desde": [
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx",
+        "lib/agente/maestro.ts"
+      ]
+    },
+    {
+      "ruta": "/arquitectura",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/labs/page.tsx",
+        "lib/arquitectura/departamentos.ts",
+        "lib/navegacion/espacios.ts",
+        "lib/nucleo/registro.ts"
+      ]
+    },
+    {
+      "ruta": "/atlas",
+      "tipo": "pagina",
+      "referencias": 22,
+      "desde": [
+        "app/labs/page.tsx",
+        "app/mapas/page.tsx",
+        "app/mundos/[iso]/page.tsx",
+        "app/navegacion/navegacion-sala.tsx"
+      ]
+    },
+    {
+      "ruta": "/audios",
+      "tipo": "pagina",
+      "referencias": 12,
+      "desde": [
+        "app/ver-guerra/page.tsx",
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx"
+      ]
+    },
+    {
+      "ruta": "/calidad",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/torre/page.tsx",
+        "components/mundos/mundos.ts",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/catalogo",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "app/calidad/page.tsx",
+        "app/perfil/page.tsx",
+        "components/mundos/mundos.ts",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/centinela",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "app/cronica/page.tsx",
+        "components/portada/modulos.ts",
+        "components/travesia/travesia.tsx",
+        "lib/agente/maestro.ts"
+      ]
+    },
+    {
+      "ruta": "/clasico",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "components/mundos/mundos.ts",
+        "components/portada/carcasa.tsx",
+        "lib/catalogo-real.ts",
+        "lib/navegacion/espacios.ts"
+      ]
+    },
+    {
+      "ruta": "/colecciones",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/colecciones/[clave]/page.tsx",
+        "components/planeta/directorio.tsx",
+        "components/planeta/marco.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/colecciones/[clave]",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/colecciones/page.tsx",
+        "components/planeta/directorio.tsx",
+        "components/planeta/marco.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/comparador",
+      "tipo": "pagina",
+      "referencias": 14,
+      "desde": [
+        "app/demografia/page.tsx",
+        "app/mundos/[iso]/page.tsx",
+        "app/mundos/page.tsx",
+        "app/organizaciones/[clave]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/conflicto",
+      "tipo": "pagina",
+      "referencias": 36,
+      "desde": [
+        "app/audios/emisora-cliente.tsx",
+        "app/audios/page.tsx",
+        "app/conflicto/[tag]/page.tsx",
+        "app/conflictos/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/conflicto/[tag]",
+      "tipo": "pagina",
+      "referencias": 36,
+      "desde": [
+        "app/audios/emisora-cliente.tsx",
+        "app/audios/page.tsx",
+        "app/conflicto/page.tsx",
+        "app/conflictos/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/conflictos",
+      "tipo": "pagina",
+      "referencias": 14,
+      "desde": [
+        "app/mundos/[iso]/page.tsx",
+        "app/mundos/page.tsx",
+        "components/portada/carcasa.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/constelacion/[clave]",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/sala/[clave]/page.tsx",
+        "components/vanguard/buscador-universal.tsx",
+        "components/vanguard/mapa-constelaciones.tsx",
+        "lib/navegacion/destinos.ts"
+      ]
+    },
+    {
+      "ruta": "/creadores",
+      "tipo": "pagina",
+      "referencias": 14,
+      "desde": [
+        "app/creadores/publicar/page.tsx",
+        "app/perfil/page.tsx",
+        "components/creadores/coleccion.tsx",
+        "components/creadores/comun.tsx"
+      ]
+    },
+    {
+      "ruta": "/creadores/coleccion/[id]",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "components/creadores/perfil.tsx",
+        "components/creadores/vitrina.tsx"
+      ]
+    },
+    {
+      "ruta": "/creadores/moderacion",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "components/creadores/obra.tsx",
+        "components/creadores/vitrina.tsx"
+      ]
+    },
+    {
+      "ruta": "/creadores/obra/[id]",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "components/creadores/comun.tsx",
+        "components/creadores/moderacion.tsx",
+        "components/creadores/publicar.tsx"
+      ]
+    },
+    {
+      "ruta": "/creadores/perfil/[alias]",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "components/creadores/coleccion.tsx",
+        "components/creadores/obra.tsx",
+        "components/creadores/vitrina.tsx"
+      ]
+    },
+    {
+      "ruta": "/creadores/publicar",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "components/creadores/obra.tsx",
+        "components/creadores/perfil.tsx",
+        "components/creadores/vitrina.tsx"
+      ]
+    },
+    {
+      "ruta": "/cronica",
+      "tipo": "pagina",
+      "referencias": 14,
+      "desde": [
+        "app/centinela/page.tsx",
+        "app/musica/page.tsx",
+        "app/navegacion/navegacion-sala.tsx",
+        "app/torre/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/cruce",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "app/historia/page.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx",
+        "lib/arquitectura/departamentos.ts"
+      ]
+    },
+    {
+      "ruta": "/cuartel",
+      "tipo": "pagina",
+      "referencias": 34,
+      "desde": [
+        "app/constelacion/[clave]/page.tsx",
+        "app/cuartel/layout.tsx",
+        "app/layout.tsx",
+        "app/mision/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/datos",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/sistema/page.tsx",
+        "lib/arquitectura/departamentos.ts",
+        "lib/arquitectura/nexos.ts"
+      ]
+    },
+    {
+      "ruta": "/demografia",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/mundos/page.tsx",
+        "components/portada/modulos.ts",
+        "lib/arquitectura/departamentos.ts",
+        "lib/arquitectura/nexos.ts"
+      ]
+    },
+    {
+      "ruta": "/descubrimiento.json",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "lib/bitacora.ts",
+        "lib/faro.ts",
+        "lib/version.ts"
+      ]
+    },
+    {
+      "ruta": "/directorio",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "components/planeta/marco.tsx",
+        "components/portada/modulos.ts",
+        "components/travesia/hilo-portada.tsx"
+      ]
+    },
+    {
+      "ruta": "/divisas",
+      "tipo": "pagina",
+      "referencias": 19,
+      "desde": [
+        "app/mapas/page.tsx",
+        "app/navegacion/navegacion-sala.tsx",
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/editorial",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "app/editorial/[slug]/page.tsx",
+        "app/editorial/area/[clave]/page.tsx",
+        "app/editorial/calendario/page.tsx",
+        "components/editorial/bloques.tsx"
+      ]
+    },
+    {
+      "ruta": "/editorial/[slug]",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "app/editorial/area/[clave]/page.tsx",
+        "app/editorial/calendario/page.tsx",
+        "app/editorial/page.tsx",
+        "components/editorial/bloques.tsx"
+      ]
+    },
+    {
+      "ruta": "/editorial/area/[clave]",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "app/editorial/[slug]/page.tsx",
+        "app/editorial/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/editorial/calendario",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "app/editorial/area/[clave]/page.tsx",
+        "app/editorial/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/en-vivo",
+      "tipo": "pagina",
+      "referencias": 36,
+      "desde": [
+        "app/centinela/page.tsx",
+        "app/cronica/page.tsx",
+        "app/guerra-hoy/page.tsx",
+        "app/mundo/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/entrar",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "components/mundos/mundos.ts",
+        "components/mundos/puerta-mundos.tsx",
+        "components/portada/areas.ts",
+        "components/portada/cabecera.tsx"
+      ]
+    },
+    {
+      "ruta": "/escenarios",
+      "tipo": "pagina",
+      "referencias": 23,
+      "desde": [
+        "app/labs/page.tsx",
+        "app/ver-guerra/page.tsx",
+        "app/zona-cero/page.tsx",
+        "components/creadores/obra.tsx"
+      ]
+    },
+    {
+      "ruta": "/escudo",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "app/escudo/detector/page.tsx",
+        "app/estado/page.tsx",
+        "components/mundos/mundos.ts",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/escudo/detector",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "app/escudo/page.tsx",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/espacio",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "components/mundos/guardar-espacio.tsx",
+        "components/planeta/guardar.tsx",
+        "components/planeta/marco.tsx",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/espia",
+      "tipo": "pagina",
+      "referencias": 17,
+      "desde": [
+        "app/en-vivo/page.tsx",
+        "app/mundo/mundo-3d-vivo.tsx",
+        "app/mundo/page.tsx",
+        "app/pulso-mundial/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/estado",
+      "tipo": "pagina",
+      "referencias": 12,
+      "desde": [
+        "app/calidad/page.tsx",
+        "app/escudo/detector/page.tsx",
+        "app/navegacion/navegacion-sala.tsx",
+        "app/navegacion/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/feed.xml",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "app/layout.tsx"
+      ]
+    },
+    {
+      "ruta": "/galeria",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx",
+        "lib/agente/maestro.ts"
+      ]
+    },
+    {
+      "ruta": "/guerra-hoy",
+      "tipo": "pagina",
+      "referencias": 41,
+      "desde": [
+        "app/audios/page.tsx",
+        "app/conflicto/[tag]/page.tsx",
+        "app/conflicto/page.tsx",
+        "app/en-vivo/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/herramientas",
+      "tipo": "pagina",
+      "referencias": 12,
+      "desde": [
+        "app/cruce/page.tsx",
+        "app/divisas/page.tsx",
+        "app/labs/page.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/historia",
+      "tipo": "pagina",
+      "referencias": 25,
+      "desde": [
+        "app/calidad/page.tsx",
+        "app/cruce/page.tsx",
+        "app/mundo/mundo-3d-vivo.tsx",
+        "app/mundo/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/labs",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/escenarios/page.tsx",
+        "app/herramientas/page.tsx",
+        "app/labs/[modelo]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/labs/[modelo]",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/escenarios/page.tsx",
+        "app/herramientas/page.tsx",
+        "app/labs/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/lectura/[clave]",
+      "tipo": "pagina",
+      "referencias": 15,
+      "desde": [
+        "app/noticia/[id]/page.tsx",
+        "app/page.tsx",
+        "components/portada/cabecera.tsx",
+        "components/portada/carcasa.tsx"
+      ]
+    },
+    {
+      "ruta": "/llms.txt",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "lib/bitacora.ts",
+        "lib/version.ts"
+      ]
+    },
+    {
+      "ruta": "/mapas",
+      "tipo": "pagina",
+      "referencias": 24,
+      "desde": [
+        "app/espacio/page.tsx",
+        "app/mundos/page.tsx",
+        "app/navegacion/navegacion-sala.tsx",
+        "app/navegacion/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/mision",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "components/portada/modulos.ts",
+        "components/vanguard/mission-100.tsx",
+        "components/vanguard/section-search.tsx",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/modo",
+      "tipo": "pagina",
+      "referencias": 15,
+      "desde": [
+        "app/perfil/page.tsx",
+        "app/privacidad/page.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/modo-activo.tsx"
+      ]
+    },
+    {
+      "ruta": "/modulo/[id]",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "app/modulos/page.tsx",
+        "components/mundos/mundos.ts",
+        "components/planeta/marco.tsx",
+        "components/portada/cabecera.tsx"
+      ]
+    },
+    {
+      "ruta": "/modulos",
+      "tipo": "pagina",
+      "referencias": 15,
+      "desde": [
+        "app/constelacion/[clave]/page.tsx",
+        "app/modulo/[id]/page.tsx",
+        "app/navegacion/page.tsx",
+        "app/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/mundo",
+      "tipo": "pagina",
+      "referencias": 42,
+      "desde": [
+        "app/audios/emisora-cliente.tsx",
+        "app/audios/page.tsx",
+        "app/conflicto/[tag]/page.tsx",
+        "app/conflicto/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/mundos",
+      "tipo": "pagina",
+      "referencias": 35,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/atlas/page.tsx",
+        "app/demografia/page.tsx",
+        "app/mapas/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/mundos/[iso]",
+      "tipo": "pagina",
+      "referencias": 35,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/atlas/page.tsx",
+        "app/demografia/page.tsx",
+        "app/mapas/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/musica",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "app/catalogo/page.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/radio-real-chip.tsx",
+        "lib/arquitectura/departamentos.ts"
+      ]
+    },
+    {
+      "ruta": "/navegacion",
+      "tipo": "pagina",
+      "referencias": 12,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/espacio/page.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/espacio/espacio-trabajo.tsx"
+      ]
+    },
+    {
+      "ruta": "/noticia/[id]",
+      "tipo": "pagina",
+      "referencias": 28,
+      "desde": [
+        "app/audios/emisora-cliente.tsx",
+        "app/conflicto/[tag]/page.tsx",
+        "app/conflictos/page.tsx",
+        "app/en-vivo/sala-en-vivo.tsx"
+      ]
+    },
+    {
+      "ruta": "/novedades",
+      "tipo": "pagina",
+      "referencias": 18,
+      "desde": [
+        "app/page.tsx",
+        "components/mundos/mundos.ts",
+        "components/portada/modulos.ts",
+        "components/portada/portada-nueva.tsx"
+      ]
+    },
+    {
+      "ruta": "/nucleo",
+      "tipo": "pagina",
+      "referencias": 48,
+      "desde": [
+        "app/arquitectura/page.tsx",
+        "app/audios/page.tsx",
+        "app/calidad/page.tsx",
+        "app/catalogo/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/objetivos",
+      "tipo": "pagina",
+      "referencias": 15,
+      "desde": [
+        "app/historia/page.tsx",
+        "app/servicios/page.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx"
+      ]
+    },
+    {
+      "ruta": "/offline",
+      "tipo": "pagina",
+      "referencias": 6,
+      "desde": [
+        "components/mundos/mundos.ts",
+        "components/portada/carcasa.tsx",
+        "components/vanguard/navegacion/barra-adaptativa.tsx",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/organizaciones",
+      "tipo": "pagina",
+      "referencias": 13,
+      "desde": [
+        "app/mundos/[iso]/page.tsx",
+        "app/mundos/page.tsx",
+        "app/organizaciones/[clave]/page.tsx",
+        "app/regiones/[clave]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/organizaciones/[clave]",
+      "tipo": "pagina",
+      "referencias": 13,
+      "desde": [
+        "app/mundos/[iso]/page.tsx",
+        "app/mundos/page.tsx",
+        "app/organizaciones/page.tsx",
+        "app/regiones/[clave]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/oscura",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx",
+        "lib/catalogo-real.ts",
+        "lib/datos/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/perfil",
+      "tipo": "pagina",
+      "referencias": 13,
+      "desde": [
+        "app/espacio/page.tsx",
+        "app/mision/page.tsx",
+        "components/portada/modulos.ts",
+        "components/portada/pie.tsx"
+      ]
+    },
+    {
+      "ruta": "/poder",
+      "tipo": "pagina",
+      "referencias": 16,
+      "desde": [
+        "app/mapas/page.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/centro-mapas.tsx",
+        "components/vanguard/section-search.tsx"
+      ]
+    },
+    {
+      "ruta": "/privacidad",
+      "tipo": "pagina",
+      "referencias": 13,
+      "desde": [
+        "app/escudo/page.tsx",
+        "app/perfil/page.tsx",
+        "app/torre/page.tsx",
+        "components/mundos/mundos.ts"
+      ]
+    },
+    {
+      "ruta": "/pulso-mundial",
+      "tipo": "pagina",
+      "referencias": 21,
+      "desde": [
+        "app/herramientas/page.tsx",
+        "app/labs/page.tsx",
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/rankings",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "app/demografia/page.tsx",
+        "app/mundos/[iso]/page.tsx",
+        "app/mundos/page.tsx",
+        "app/rankings/[medida]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/rankings/[medida]",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "app/demografia/page.tsx",
+        "app/mundos/[iso]/page.tsx",
+        "app/mundos/page.tsx",
+        "app/rankings/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/regiones",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "app/demografia/page.tsx",
+        "app/mundos/page.tsx",
+        "app/regiones/[clave]/page.tsx",
+        "components/planeta/comparador.tsx"
+      ]
+    },
+    {
+      "ruta": "/regiones/[clave]",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "app/demografia/page.tsx",
+        "app/mundos/page.tsx",
+        "app/regiones/page.tsx",
+        "components/planeta/comparador.tsx"
+      ]
+    },
+    {
+      "ruta": "/rostros",
+      "tipo": "pagina",
+      "referencias": 12,
+      "desde": [
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/sala/[clave]",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "app/constelacion/[clave]/page.tsx",
+        "components/planeta/directorio.tsx",
+        "components/portada/areas.ts",
+        "lib/editorial/areas.ts"
+      ]
+    },
+    {
+      "ruta": "/servicios",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts",
+        "lib/catalogo-real.ts",
+        "lib/editorial/areas.ts"
+      ]
+    },
+    {
+      "ruta": "/sistema",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/datos/page.tsx",
+        "lib/arquitectura/departamentos.ts",
+        "lib/nucleo/fusiones.ts",
+        "lib/nucleo/registro.ts"
+      ]
+    },
+    {
+      "ruta": "/teatro-3d",
+      "tipo": "pagina",
+      "referencias": 28,
+      "desde": [
+        "app/espacio/page.tsx",
+        "app/mundos/page.tsx",
+        "app/navegacion/navegacion-sala.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/torre",
+      "tipo": "pagina",
+      "referencias": 12,
+      "desde": [
+        "app/catalogo/page.tsx",
+        "app/cronica/page.tsx",
+        "app/musica/page.tsx",
+        "app/voz/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/traductor",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "app/mundo/page.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/barra-mundo.tsx",
+        "components/vanguard/section-search.tsx"
+      ]
+    },
+    {
+      "ruta": "/universo",
+      "tipo": "pagina",
+      "referencias": 12,
+      "desde": [
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts",
+        "components/vanguard/home-panel.tsx",
+        "components/vanguard/mega-menu.tsx"
+      ]
+    },
+    {
+      "ruta": "/vanguard2",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "app/layout.tsx",
+        "components/portada/carcasa.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/navegacion/barra-adaptativa.tsx"
+      ]
+    },
+    {
+      "ruta": "/ver-guerra",
+      "tipo": "pagina",
+      "referencias": 24,
+      "desde": [
+        "app/audios/page.tsx",
+        "app/conflicto/[tag]/page.tsx",
+        "app/conflicto/page.tsx",
+        "app/escenarios/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/verdad-cruda",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "components/portada/areas.ts",
+        "components/portada/modulos.ts",
+        "components/vanguard/section-search.tsx",
+        "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/vertigo",
+      "tipo": "pagina",
+      "referencias": 23,
+      "desde": [
+        "app/en-vivo/sala-en-vivo.tsx",
+        "app/historia/page.tsx",
+        "app/noticia/[id]/page.tsx",
+        "app/objetivos/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/voz",
+      "tipo": "pagina",
+      "referencias": 10,
+      "desde": [
+        "app/catalogo/page.tsx",
+        "app/musica/page.tsx",
+        "components/portada/modulos.ts",
+        "lib/agente/maestro.ts"
+      ]
+    },
+    {
+      "ruta": "/zona-cero",
+      "tipo": "pagina",
+      "referencias": 20,
+      "desde": [
+        "app/conflicto/[tag]/page.tsx",
+        "app/en-vivo/sala-en-vivo.tsx",
+        "app/not-found.tsx",
+        "app/noticia/[id]/page.tsx"
+      ]
+    }
+  ]
+}

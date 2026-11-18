@@ -26,6 +26,10 @@ import { puestoDe } from "@/lib/planeta/datos";
 import { INDICADOR } from "@/lib/planeta/indicadores";
 import { organizacionesDePais } from "@/lib/planeta/organizaciones";
 import { rutaRegionDe, SUBREGIONES_ES } from "@/lib/planeta/subregiones";
+// v412.0 · LA BANDA DE NEXOS — la ficha deja de ser un callejón: dice qué
+// modelo explica lo que enseña y dónde se comprueban sus cifras.
+import { BandaNexos } from "@/components/arquitectura/banda-nexos";
+import { nexosDePais } from "@/lib/arquitectura/nexos";
 
 // ═══════════════════════════════════════════════════════════════════
 // v405.12 · /mundos/[iso] — LA FICHA DE UN PAÍS
@@ -552,6 +556,21 @@ export default async function PaisPage({ params }: Props) {
               titulo={`CONECTA CON ${f.nombre.toUpperCase()}`}
             />
             <CablesDelPais nombre={f.nombre} iso2={f.iso2} />
+          </div>
+
+          {/* ── v412.0 · DEL DATO AL MECANISMO ─────────────────────
+              La ficha decía cuánto, no por qué. Estas siete salidas llevan
+              al comparador, al globo, a los dos modelos que explican los
+              mecanismos de la ficha y al catálogo donde consta la fuente de
+              cada cifra. Los dos modelos avisan de que NO usan los datos de
+              este país: enseñan el mecanismo, no lo proyectan. */}
+          <div className="vx-mp-bloque">
+            <h2>De la cifra al mecanismo · sigue por aquí</h2>
+            <BandaNexos
+              nexos={nexosDePais(f.iso2)}
+              titulo={`${f.nombre.toUpperCase()} EN EL RESTO DE LA CASA`}
+              nota="Ninguna de estas salidas promete un dato que la casa no tenga. Los dos simuladores son genéricos: sirven para entender el mecanismo que aparece en esta ficha, no para proyectar este país."
+            />
           </div>
 
           <p className="vx-mp-nota">
