@@ -181,6 +181,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      // v406.1 LA FORJA — la vitrina del ecosistema de creadores (las obras,
+      // perfiles y colecciones quedan noindex mientras la base no sea permanente)
+      url: `${SITE_URL}/creadores`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.7,
+    },
+    {
       // v216.0 LOS 100 — la vitrina de objetivos: la puerta de la adicción
       url: `${SITE_URL}/objetivos`,
       lastModified: new Date(),

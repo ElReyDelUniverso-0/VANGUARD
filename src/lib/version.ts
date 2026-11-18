@@ -6138,6 +6138,28 @@
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
 // v405.10 LA NAVEGACIÓN ADAPTATIVA (otra IA) quedó como versión anterior.
+// (La v406.0 LA TRAVESÍA va en su propia rama/PR; esta rama sale de main y
+// no la contiene: quien entre segunda se rebasa sobre la otra.)
+// v406.1 LA FORJA — orden del Dueño, «ECOSISTEMA DE CREADORES»: «convertir a
+// los usuarios en creadores de contenido dentro de VANGUARD». Se fusiona lo que
+// ya existía (UgcItem v26, votos, comentarios, moderateUgc, muro de fortaleza,
+// cuentas, /api/creadores/fama) en un solo sistema en /creadores:
+// ① CINCO CLASES DE OBRA: mapa · escenario · investigación · simulación ·
+//    proyecto, cada una con su esquema validado en el servidor
+//    (src/lib/creadores/tipos.ts) y su sala de herramientas real enlazada.
+// ② PÁGINAS DE CREADOR (/creadores/perfil/[alias]): obras, colecciones, fama,
+//    rango e insignias calculados de datos reales (reconocimiento.ts).
+// ③ VERSIONES: cada edición guarda una versión con nota; se puede volver atrás.
+// ④ COMENTARIOS (pasan por moderateUgc) y VALORACIONES 1-5, una por cuenta.
+// ⑤ COLECCIONES: listas públicas o privadas de obras de cualquier autor.
+// ⑥ PERMISOS por rol (lector · creador · verificado · moderador · dueño) que
+//    fallan cerrados; MODERACIÓN con cola, reportes (umbral → retenida),
+//    retirada/republicación, roles y una BITÁCORA donde toda decisión exige
+//    motivo. Nadie se modera a sí mismo salvo el dueño.
+// ⑦ El muro y los feeds de /api/ugc excluyen las obras de la Forja (otro
+//    esquema). /privacidad lo declara. Obras, perfiles y colecciones van
+//    noindex mientras la base de producción sea efímera (SQLite en /tmp).
+// ⑧ scripts/pruebas-forja.mjs fija las funciones puras.
 // v406.0 LA TRAVESÍA — orden del Dueño: «reconstruir la experiencia de entrada
 // de VANGUARD… no quiero otro dashboard convencional ni otro centro de mando».
 // /entrar deja de ser un índice y pasa a ser un recorrido: llegada → brújula
