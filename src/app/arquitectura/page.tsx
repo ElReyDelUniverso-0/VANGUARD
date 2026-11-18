@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import {normalizar} from "@/lib/conocimiento/indice";
 import Link from "next/link";
 import { SITE_URL } from "@/lib/site";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
@@ -45,7 +46,10 @@ const COLOR_ESTADO: Record<EstadoDepartamento, { borde: string; texto: string; f
   "sin construir": { borde: "border-zinc-700", texto: "text-zinc-400", fondo: "bg-zinc-800/40" },
 };
 
-export default function ArquitecturaPage() {
+export default async function ArquitecturaPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
+  const params=await searchParams;const q=typeof params.q==='string'?params.q.slice(0,180):'';
+  const tokens=normalizar(q).split(/\s+/).filter(Boolean);
+  const departamentosFiltrados=DEPARTAMENTOS.filter(d=>tokens.every(t=>normalizar(JSON.stringify(d)).includes(t)));
   const resumen = resumenDepartamentos();
   const nexos = cuentaNexos();
   const labs = estadisticasLabs();
@@ -225,7 +229,7 @@ export default function ArquitecturaPage() {
         </section>
 
         {/* ── 3. los 22 departamentos ──────────────────────────── */}
-        <section className="mt-10">
+        <section id="departamentos" className="mt-10">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="font-orbitron text-xl font-black text-zinc-100">Los 22 departamentos</h2>
             <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
@@ -234,11 +238,13 @@ export default function ArquitecturaPage() {
           </div>
           <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-zinc-400">
             Cada ficha dice qué infraestructura existe hoy con su ruta, qué falta y cuál es la siguiente pieza
-            concreta. «En pie» significa que hay motor y datos reales detrás; una pantalla sin función no cuenta.
+            concreta. «En pie» significa que hay una base funcional, no que toda la misión esté completada. Una pantalla sin función no cuenta.
           </p>
 
+          <form action="/arquitectura#departamentos" className="mt-4 flex flex-wrap gap-3"><label className="flex-1 text-sm">Buscar departamento, ruta o archivo<input name="q" type="search" maxLength={180} defaultValue={q} className="mt-2 block w-full rounded border border-zinc-700 bg-zinc-900 p-3"/></label><button type="submit" className="self-end rounded border border-amber-400/50 px-4 py-3 text-sm text-amber-300">Filtrar</button><Link className="self-end p-3 text-sm text-amber-300" href="/arquitectura#departamentos">Restablecer</Link></form>
+          <p className="mt-3 text-xs text-zinc-500" role="status">{departamentosFiltrados.length} departamentos con el filtro actual.</p>
           <ol className="mt-4 space-y-3">
-            {DEPARTAMENTOS.map((d) => {
+            {departamentosFiltrados.map((d) => {
               const c = COLOR_ESTADO[d.estado];
               return (
                 <li key={d.id} className={`rounded-lg border ${c.borde} bg-zinc-900/40 p-4`}>

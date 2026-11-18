@@ -1,8 +1,8 @@
 {
   "passed": 11,
   "checks": [
-    "22 departamentos con auditoría, alcance, archivos, pruebas, límites y siguiente expansión",
-    "Censo reproducible sin colisiones; cada patrón apunta a un archivo real",
+    "Registro canónico único de 22 departamentos; academia y explicador con alcance parcial",
+    "Censo compartido regenerado y sin rutas huérfanas",
     "Cuatro rutas y doce actividades conectadas a expedientes con fuentes",
     "Evaluación distingue respuestas correctas, incorrectas y entradas no enteras",
     "Motor explicativo reutiliza el texto exacto y no responde sobre temas inexistentes",

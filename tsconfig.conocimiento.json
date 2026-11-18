@@ -16,10 +16,11 @@
     "src/lib/navegacion/espacios.ts",
     "src/components/portada/modulos.ts",
     "scripts/conocimiento/pruebas.ts",
-    "src/app/sistema/departamentos/page.tsx",
     "src/app/sistema/page.tsx",
     "src/lib/api/catalogo.ts",
-    "scripts/conocimiento/pruebas-departamentos.ts"
+    "scripts/conocimiento/pruebas-departamentos.ts",
+    "src/app/arquitectura/page.tsx",
+    "src/lib/arquitectura/**/*.ts"
   ],
   "exclude": [
     "node_modules"

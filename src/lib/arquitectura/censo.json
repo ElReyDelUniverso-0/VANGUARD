@@ -1,25 +1,23 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-18",
-  "paginas": 95,
+  "paginas": 94,
   "rutasApi": 113,
-  "total": 208,
+  "total": 207,
   "bienConectadas": 89,
-  "huerfanas": [
-    "/sistema/departamentos"
-  ],
+  "huerfanas": [],
   "paginasConReferencias": 94,
-  "mediaReferencias": 14.68,
+  "mediaReferencias": 14.84,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 85,
+      "referencias": 86,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
-        "app/atlas/page.tsx",
-        "app/audios/page.tsx"
+        "app/arquitectura/page.tsx",
+        "app/atlas/page.tsx"
       ]
     },
     {
@@ -1124,12 +1122,12 @@
     {
       "ruta": "/arquitectura",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 6,
       "desde": [
         "app/labs/page.tsx",
-        "app/sistema/departamentos/page.tsx",
         "app/sistema/page.tsx",
-        "components/conocimiento/explorador.tsx"
+        "components/conocimiento/explorador.tsx",
+        "lib/arquitectura/departamentos.ts"
       ]
     },
     {
@@ -2022,12 +2020,6 @@
         "lib/nucleo/fusiones.ts",
         "lib/nucleo/registro.ts"
       ]
-    },
-    {
-      "ruta": "/sistema/departamentos",
-      "tipo": "pagina",
-      "referencias": 0,
-      "desde": []
     },
     {
       "ruta": "/teatro-3d",
