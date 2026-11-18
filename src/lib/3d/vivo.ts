@@ -165,6 +165,19 @@ export class EscenaViva {
       fpsReposo: opciones.fpsReposo ?? this.presupuesto.fpsReposo,
       siempreViva: opciones.siempreViva ?? false,
     };
+    // v405.15: la visibilidad de salida se MIDE (getBoundingClientRect), no se
+    // supone. Antes se asumía «visible» y, en páginas lentas —donde el aviso del
+    // IntersectionObserver puede tardar segundos en entregarse—, una escena que
+    // nacía fuera de pantalla seguía pintando mientras esperaba.
+    if (!this.opciones.siempreViva) {
+      try {
+        const r = el.getBoundingClientRect();
+        const margen = 160;
+        this.visible = r.bottom > -margen && r.top < (window.innerHeight || 0) + margen && r.width > 0 && r.height > 0;
+      } catch {
+        this.visible = true;
+      }
+    }
     if (typeof IntersectionObserver !== "undefined" && !this.opciones.siempreViva) {
       this.io = new IntersectionObserver(
         (entradas) => {
