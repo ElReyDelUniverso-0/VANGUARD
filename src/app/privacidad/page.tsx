@@ -68,7 +68,7 @@ const SECCIONES: { titulo: string; parrafos: string[] }[] = [
   {
     titulo: "2. Lo que se guarda en tu aparato (y nunca sale de él)",
     parrafos: [
-      "Tu identidad de juego básica (alias, preferencias de vista, interruptores de sonido y voz) se guarda localmente en tu navegador mediante almacenamiento local del navegador. Estos datos no se envían a nuestros servidores: viven en tu aparato y desaparecen si borras los datos del sitio.",
+      "Tu identidad de juego básica (alias, preferencias de vista, interruptores de sonido y voz) se guarda localmente en tu navegador mediante almacenamiento local del navegador. Estos datos no se envían a nuestros servidores: viven en tu aparato y desaparecen si borras los datos del sitio. Desde v406.0, La Travesía guarda también ahí tu rastro (las últimas 80 páginas que abriste, para que puedas continuar donde lo dejaste) y tu brújula (los espacios que elegiste poner delante); los dos se borran con un toque desde La Travesía o tu perfil.",
       "También se guarda localmente una copia temporal de imágenes y sonidos de la Casa (caché) para que Vanguard cargue más rápido. La caché no contiene datos personales.",
     ],
   },
@@ -76,7 +76,7 @@ const SECCIONES: { titulo: string; parrafos: string[] }[] = [
     titulo: "3. Lo que se guarda en nuestros servidores",
     parrafos: [
       "Si creas una cuenta para guardar tu progreso en la nube (rango, monedas, gemas, cartas y logros), guardamos el alias que elijas, un identificador de cuenta y tu contraseña cifrada con una función de hash segura (scrypt). Nadie —ni siquiera el equipo de la Casa— puede leer tu contraseña.",
-      "Guardamos además los contenidos que publiques voluntariamente en las zonas comunitarias (contribuciones, memes, denuncias, mensajes de sala) y las puntuaciones de los modos de juego, necesarias para el ranking global.",
+      "Guardamos además los contenidos que publiques voluntariamente en las zonas comunitarias (contribuciones, memes, denuncias, mensajes de sala y, desde la v406.1, las obras, versiones, comentarios, valoraciones, colecciones y reportes de La Forja, siempre firmados con tu alias; las decisiones de moderación quedan en una bitácora con su motivo) y las puntuaciones de los modos de juego, necesarias para el ranking global.",
       "El servidor mantiene una cookie técnica de sesión (vg_session) firmada, que solo sirve para reconocerte entre recargas. No se usa para publicidad ni para rastrear otros sitios.",
       "Desde v367.1 la Casa cuenta además SUCESOS anónimos de salud técnica para saber si la web llega viva al arranque (la «Torre de Control»): que un aparato montó la página, que llegó a hidratar, si el navegador reportó un error, por qué tramo de tiempo cargó y qué escalón del camino se pisó. Esos contadores NO guardan tu IP, ni tu navegador, ni tu alias, ni ningún identificador: no hay forma de reconstruir a una persona a partir de ellos, y el tiempo de carga se guarda por tramos, nunca exacto. Puedes ver las cifras reales en la sala pública «La Torre de Control».",
     ],

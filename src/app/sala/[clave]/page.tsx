@@ -76,6 +76,14 @@ export async function generateMetadata({ params }: { params: Promise<{ clave: st
       url: `/sala/${s.clave}`,
       type: "website",
     },
+    // v405.7 EL ESCAPARATE: sin `images` a propósito — la tarjeta propia de la
+    // sala sale de ./opengraph-image.tsx (og:image y twitter:image). Si aquí se
+    // heredara el twitter del layout, X seguiría enseñando la genérica /api/og.
+    twitter: {
+      card: "summary_large_image",
+      title: `${titulo} · VANGUARD`,
+      description,
+    },
   };
 }
 

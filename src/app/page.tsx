@@ -7,6 +7,14 @@
 // ⑦ historias por conflicto · ⑧ el mapa vivo a la vista · ⑨ movimiento ·
 // ⑩ confianza: un idioma, fotos reales de cada nota, fechas de verdad.
 // El cuartel de siempre (juego y salas) vive intacto en /cuartel.
+// ───────────────────────────────────────────────────────────────────
+// v406.2 MISIÓN 2 — LA PORTADA TRANSFORMADA. Todo lo de v400 sigue (historias,
+// noticia grande, última hora, destacadas, módulos, spot, mapa, teatros y
+// salas) y se SUMA: el héroe que dice qué es Vanguard (con índice rápido),
+// las ocho puertas (mundos, noticias, mapas, simuladores, información,
+// historia, educación y documentales), «Descubre hoy» con el archivo real
+// rotando cada día y «Lo nuevo en la casa» desde la bitácora. Cada enlace
+// lleva a su módulo real — nada de páginas vacías.
 // ═══════════════════════════════════════════════════════════════════
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -29,6 +37,9 @@ import { SpotPortada } from "@/components/portada/spot-portada";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
 import { BotonMundos } from "@/components/mundos/puerta-mundos";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
+// v406.0 LA TRAVESÍA — el hilo (continúa donde lo dejaste) y la puerta a la entrada inmersiva
+import { HiloPortada, BotonTravesia } from "@/components/travesia/hilo-portada";
+import { HeroeVanguard, AreasRejilla, DescubreHoy, NovedadesPortada } from "@/components/portada/portada-nueva";
 
 
 export const revalidate = 300;
@@ -36,7 +47,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: { absolute: "VANGUARD · El mundo en tiempo real — conflictos, mapa en vivo y última hora" },
   description:
-    "Las noticias del mundo en tiempo real, en español: última hora de cada conflicto, mapa vivo, historias de 30 segundos y el cuartel de juego. Gratis y sin registro.",
+    "Vanguard, el mundo en tiempo real y en español: última hora de cada conflicto, mapas vivos, simuladores, historia, educación, documentales y el cuartel de juego. Gratis.",
   alternates: { canonical: "/" },
 };
 
@@ -109,9 +120,18 @@ export default async function Portada() {
         <div id="historias" className="vx-entra">
           <Historias grupos={historias} />
         </div>
+        <HiloPortada />
+
+        <HeroeVanguard cables={notas.length} />
+
+        {/* v406.2 LAS OCHO PUERTAS — qué se puede hacer aquí, cada una a su módulo real */}
+        <section id="areas" className="vx-sec vxp-ancla" aria-label="Explora Vanguard por áreas">
+          <TituloSeccion sello="Sección 01 · Explora" titulo="¿Qué quieres hacer hoy?" sub="Ocho puertas a todo lo que tiene Vanguard: elige una y entra." enlace="/modulos" textoEnlace="Ver todo" />
+          <AreasRejilla />
+        </section>
 
         {heroe ? (
-          <section className="vx-top" aria-label="Lo más importante ahora">
+          <section id="ahora" className="vx-top vxp-ancla vxp-top" aria-label="Lo más importante ahora">
             <Link href={`/lectura/${heroe.id}`} className="vx-heroe vx-entra">
               <span className="vx-mira vx-esquinas" aria-hidden />
               <Foto src={heroe.imagen} alt={heroe.titulo} region={heroe.region} prioridad />
@@ -127,7 +147,7 @@ export default async function Portada() {
                 <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                   <Etiqueta nota={heroe} />
                 </div>
-                <h1>{heroe.titulo}</h1>
+                <h2 className="vxp-titular">{heroe.titulo}</h2>
                 {heroe.resumen && <p>{heroe.resumen}</p>}
                 <div className="vx-meta">
                   <b>{heroe.fuente}</b> · <Hace iso={heroe.fecha} />
@@ -159,7 +179,7 @@ export default async function Portada() {
             </aside>
           </section>
         ) : (
-          <section className="vx-sec">
+          <section id="ahora" className="vx-sec vxp-ancla">
             <div className="vx-caja">
               <h3>Las agencias no responden ahora mismo</h3>
               <p className="vx-meta">Vuelve en unos minutos o entra al <Link href="/en-vivo">canal en vivo</Link>.</p>
@@ -169,7 +189,7 @@ export default async function Portada() {
 
         {destacadas.length > 0 && (
           <section className="vx-sec" aria-label="Destacadas">
-            <TituloSeccion sello="Sección 01 · Inteligencia" titulo="Lo que tienes que saber" sub="Las historias que más pesan hoy en el mundo." />
+            <TituloSeccion sello="Sección 02 · Inteligencia" titulo="Lo que tienes que saber" sub="Las historias que más pesan hoy en el mundo." />
             <div className="vx-bento vx-entra-3">
               {destacadas.map((n, i) => (
                 <Tarjeta key={n.id} nota={n} grande={i === 0} cable={i + 2} />
@@ -178,12 +198,19 @@ export default async function Portada() {
           </section>
         )}
 
+        {/* v406.2 DESCUBRE HOY — el archivo real de la casa, distinto cada día */}
+        <section id="descubre" className="vx-sec vxp-ancla" aria-label="Descubre hoy">
+          <TituloSeccion sello="Sección 03 · Descubre" titulo="Descubre hoy" sub="Seis hallazgos del archivo de Vanguard que cambian cada día." enlace="/archivo-mundial" textoEnlace="Archivo mundial" />
+          <DescubreHoy />
+        </section>
+
         {/* v402.6 LOS NUEVE MÓDULOS — lo que la casa tiene además de noticias, a la vista */}
-        <section className="vx-sec" aria-label="Los módulos de Vanguard">
-          <TituloSeccion sello={`Sección 02 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
+        <section id="modulos" className="vx-sec vxp-ancla" aria-label="Los módulos de Vanguard">
+          <TituloSeccion sello={`Sección 04 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
           <ModulosRejilla compacta />
-          <div style={{ display: "flex", justifyContent: "center", marginTop: 18 }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: 12, marginTop: 18 }}>
             <BotonMundos />
+            <BotonTravesia />
           </div>
         </section>
 
@@ -192,8 +219,8 @@ export default async function Portada() {
           <SpotPortada />
         </section>
 
-        <section className="vx-sec" aria-label="Mapa de conflictos">
-          <TituloSeccion sello="Sección 03 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
+        <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
+          <TituloSeccion sello="Sección 05 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
           <MapaPortada notas={notas} />
         </section>
 
@@ -208,8 +235,14 @@ export default async function Portada() {
           </section>
         ))}
 
-        <section className="vx-sec" aria-label="Explora Vanguard">
-          <TituloSeccion sello="Sección 04 · Las salas" titulo="Explora Vanguard" sub="Las salas favoritas de la casa: en 3D, en directo y jugando." />
+        {/* v406.2 LO NUEVO EN LA CASA — la bitácora, las tres últimas entregas */}
+        <section id="novedades" className="vx-sec vxp-ancla" aria-label="Lo nuevo en Vanguard">
+          <TituloSeccion sello="Sección 06 · Bitácora" titulo="Lo nuevo en la casa" sub="Las tres últimas entregas de Vanguard, con lo que cambió." enlace="/novedades" textoEnlace="Todas las novedades" />
+          <NovedadesPortada />
+        </section>
+
+        <section className="vx-sec" aria-label="Las salas favoritas">
+          <TituloSeccion sello="Sección 07 · Las salas" titulo="Explora Vanguard" sub="Las salas favoritas de la casa: en 3D, en directo y jugando." />
           <div className="vx-salas">
             {SALAS.map((s) => (
               <Link key={s.href} href={s.href} className="vx-sala">

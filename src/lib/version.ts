@@ -469,6 +469,35 @@
 //
 // NUMERACIÓN: main iba por v405.10 (navegación adaptativa) → v405.11.
 
+// v406.2 LA PORTADA NUEVA — MISIÓN 2 del Dueño: la portada (/) es la primera
+// experiencia de cada visitante y tiene que decir QUÉ ES Vanguard y QUÉ se puede
+// hacer en ella. Nada de la portada v400 se quita (historias, noticia grande,
+// última hora, destacadas, nueve módulos, spot, mapa vivo, teatros y salas):
+// se evoluciona y se SUMA.
+//   · EL HÉROE DE LA CASA (h1): «El mundo entero, en tiempo real y a tu
+//     alcance» + qué reúne Vanguard + tres acciones (última hora, mapas, elegir
+//     mundo) + cuatro cifras de la fuente (cables vivos, naciones del atlas,
+//     curiosidades, salas) + índice rápido a las secciones de la portada.
+//     El titular de la noticia grande pasa a h2 con el mismo aspecto.
+//   · LAS OCHO PUERTAS (src/components/portada/areas.ts): noticias, mapas,
+//     simuladores, mundos, información, historia, educación y documentales,
+//     cada una a su módulo REAL con sus atajos (Mundos abre /mundos, el índice
+//     de v405.12) — todas las rutas comprobadas
+//     con 200 y contenido (nada de páginas vacías).
+//   · DESCUBRE HOY (src/lib/portada/descubre.ts): seis hallazgos del archivo
+//     real que rotan a medianoche de Santo Domingo — país del atlas, curiosidad,
+//     guerra de la historia, pieza del arsenal, una era y la sala del día (de las
+//     51 puertas indexables) — cada uno a SU ficha exacta (el país, a su ficha
+//     única /mundos/<iso>). Además /atlas y
+//     /armeria ganan anclas por ficha (#pais-xx, #arma-xx), sin tocar su texto.
+//   · LO NUEVO EN LA CASA: las tres últimas entregas de la bitácora.
+//   · Jerarquía renumerada (Sección 01–07), anclas con scroll-margin bajo la
+//     cabecera, móvil a dos columnas y todo en componentes de servidor (cero JS
+//     extra). CSS solo AÑADIDO al final de portada.css (prefijo .vxp-).
+//
+// NUMERACIÓN: main va por v405.13; v406.0 (La Travesía) y v406.1 (La Forja)
+// esperan en sus PR → esta entra como v406.2.
+
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -6154,8 +6183,80 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.15";
-export const APP_CODENAME = "SIN UN CUADRO DE MÁS";
+// v406.3 VANGUARD EDITORIAL COMMAND — la redacción que la casa no tenía.
+// Orden del Dueño: «No quiero un calendario vacío. Quiero que comiences a
+// producir contenido real.» La casa tenía 155 salas, 249 fichas de país,
+// curiosidades, guerras y cables, pero NINGÚN artículo de fondo con fuentes.
+// ① LA ESTRUCTURA: diez áreas (geopolítica, países, economía, historia,
+//    conflictos, ciencia, sociedad, educación, recursos y relaciones) que unen
+//    el Vanguard moderno (rutas de servidor) y el clásico (/sala/<clave>,
+//    filtradas contra puertas-salas: ninguna puerta rota).
+// ② LAS PRIMERAS 13 PIEZAS, con 60 fuentes abiertas una a una: Ormuz y los
+//    cuellos de botella, COP31, midterms, APEC/G20, tierras raras, el español
+//    2026, Westfalia (y su mito), chips/EUV, verificar en 7 pasos, Estados con
+//    reconocimiento limitado, cómo se cuentan los muertos y DOS piezas de datos
+//    vivos que se recalculan desde el censo de /mundos (con la RD a la vista).
+// ③ EL CALENDARIO: 30 días (18-nov → 17-dic), cuatro semanas con prioridad,
+//    29 piezas en cola con ángulo, fuentes previstas, informe con el que se
+//    coordina y la sala que NO repiten.
+// ④ EL SISTEMA: plan de revisiones derivado (periodicidad + hito con fecha),
+//    criterios de calidad, pasos de verificación y mapa de coordinación con el
+//    departamento de informes. El registro rechaza slugs repetidos y piezas
+//    sin fuentes. /editorial, /editorial/<slug>, /editorial/area/<clave>,
+//    /editorial/calendario; sitemap y pestaña «Redacción» en Conocimiento.
+// v405.10 LA NAVEGACIÓN ADAPTATIVA (otra IA) quedó como versión anterior.
+// (La v406.0 LA TRAVESÍA va en su propia rama/PR; esta rama sale de main y
+// no la contiene: quien entre segunda se rebasa sobre la otra.)
+// v406.1 LA FORJA — orden del Dueño, «ECOSISTEMA DE CREADORES»: «convertir a
+// los usuarios en creadores de contenido dentro de VANGUARD». Se fusiona lo que
+// ya existía (UgcItem v26, votos, comentarios, moderateUgc, muro de fortaleza,
+// cuentas, /api/creadores/fama) en un solo sistema en /creadores:
+// ① CINCO CLASES DE OBRA: mapa · escenario · investigación · simulación ·
+//    proyecto, cada una con su esquema validado en el servidor
+//    (src/lib/creadores/tipos.ts) y su sala de herramientas real enlazada.
+// ② PÁGINAS DE CREADOR (/creadores/perfil/[alias]): obras, colecciones, fama,
+//    rango e insignias calculados de datos reales (reconocimiento.ts).
+// ③ VERSIONES: cada edición guarda una versión con nota; se puede volver atrás.
+// ④ COMENTARIOS (pasan por moderateUgc) y VALORACIONES 1-5, una por cuenta.
+// ⑤ COLECCIONES: listas públicas o privadas de obras de cualquier autor.
+// ⑥ PERMISOS por rol (lector · creador · verificado · moderador · dueño) que
+//    fallan cerrados; MODERACIÓN con cola, reportes (umbral → retenida),
+//    retirada/republicación, roles y una BITÁCORA donde toda decisión exige
+//    motivo. Nadie se modera a sí mismo salvo el dueño.
+// ⑦ El muro y los feeds de /api/ugc excluyen las obras de la Forja (otro
+//    esquema). /privacidad lo declara. Obras, perfiles y colecciones van
+//    noindex mientras la base de producción sea efímera (SQLite en /tmp).
+// ⑧ scripts/pruebas-forja.mjs fija las funciones puras.
+// v406.0 LA TRAVESÍA — orden del Dueño: «reconstruir la experiencia de entrada
+// de VANGUARD… no quiero otro dashboard convencional ni otro centro de mando».
+// /entrar deja de ser un índice y pasa a ser un recorrido: llegada → brújula
+// (eliges qué te trae) → diez espacios a pantalla completa (Tu hilo, los 8
+// módulos y Lo desconocido) que se deslizan como un viaje, con transición de
+// puerta al entrar a cada sala. Nada se borra: NAV, BarraMovil, la Puerta de
+// los Mundos, la portada, /modulos y /perfil ganan su acceso a la Travesía.
+// ① EL RASTRO (src/lib/travesia/rastro.ts): un Registrador en el layout anota
+//    en el propio aparato (vg-rastro-v1, 80 pasos, nunca sale al servidor) cada
+//    sala visitada y la clasifica en investigación · simulación · proyecto.
+// ② TU HILO: «retoma tu proyecto» y la lista por actividad leen ese rastro y
+//    las claves que la casa YA guardaba (modo, favoritos, sala del cuartel).
+// ③ CONTEXTO: cada espacio enseña sus puertas reales, cables vivos donde los
+//    hay y «a mano en este espacio» con las herramientas que le tocan.
+// ④ Se borra desde la Travesía o el perfil; /privacidad lo declara.
+// ⑤ Probado en móvil (390×844) y escritorio; scripts/pruebas-travesia.mjs
+//    fija las funciones puras (9 pruebas).
+// v405.9 EL ESCAPARATE (IA de diseño · descubrimiento y crecimiento) — cómo se
+//    ve VANGUARD FUERA de VANGUARD (al compartir y en Google):
+//    ① /sala/<clave>/opengraph-image: tarjeta propia por sala (nombre, lema,
+//      constelación y su color), estática en el build (155 PNG, ~81 KB); la
+//      twitter:card de la puerta ya no hereda la genérica /api/og.
+//    ② FAQPage JSON-LD: salía en TODAS las URLs (2.138) con 4 preguntas que no
+//      se veían en ninguna; ahora vive en /cuartel, la única página con
+//      <SeoFaq/>, y sale de la misma lista que la sección visible
+//      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
+//    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
+//    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
+export const APP_VERSION = "v406.3";
+export const APP_CODENAME = "EDITORIAL COMMAND";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6215,7 +6316,7 @@ export const APP_CODENAME = "SIN UN CUADRO DE MÁS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.14";
+export const APP_VERSION_ANTERIOR = "v406.2";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

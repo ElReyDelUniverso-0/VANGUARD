@@ -21,6 +21,61 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v406.3",
+    nombre: "EDITORIAL COMMAND",
+    hitos: [
+      "LA REDACCIÓN: /editorial, una biblioteca de artículos con fuentes en diez áreas que unen el Vanguard moderno y el clásico",
+      "LAS PRIMERAS 13 PIEZAS: Ormuz, COP31, midterms, APEC y G20, tierras raras, el español, Westfalia, chips, verificación, Estados a medias, víctimas de guerra y dos rankings de datos vivos",
+      "EL CALENDARIO: 30 días con cuatro prioridades semanales y una cola de 29 piezas con ángulo, fuentes previstas y el informe con el que se coordinan",
+      "EL SISTEMA: plan de revisiones calculado, criterios de calidad, verificación y registro de cambios en cada artículo",
+    ],
+    tipo: "mundo",
+  },
+  {
+    version: "v406.2",
+    nombre: "LA PORTADA NUEVA",
+    hitos: [
+      "AUDITORÍA: la portada abría directamente con un titular — ni una línea decía qué es Vanguard ni qué se puede hacer aquí, y las áreas de la casa quedaban a varios desplazamientos",
+      "EL HÉROE DE LA CASA: qué es Vanguard en una frase, tres acciones (última hora, mapas y elegir mundo), cuatro cifras reales y un índice rápido a cada sección de la portada",
+      "LAS OCHO PUERTAS: noticias, mapas, simuladores, mundos, información, historia, educación y documentales — cada una a su módulo real, con sus atajos",
+      "DESCUBRE HOY: seis hallazgos del archivo (país, curiosidad, guerra, arma, era y sala del día) que cambian cada medianoche y llevan a su ficha exacta",
+      "LO NUEVO EN LA CASA: las tres últimas entregas de la bitácora, a la vista desde la portada",
+      "NADA SE PIERDE: historias, noticia grande, última hora, destacadas, módulos, spot, mapa vivo, teatros y salas siguen en su sitio, con la jerarquía ordenada y el móvil a dos columnas",
+    ],
+    tipo: "nav",
+  },
+  {
+    version: "v406.1",
+    nombre: "LA FORJA",
+    hitos: [
+      "EL ECOSISTEMA DE CREADORES: mapas, escenarios, investigaciones, simulaciones y proyectos hechos por la comunidad",
+      "PÁGINAS DE CREADOR Y COLECCIONES: cada obra con versiones, comentarios, valoraciones y reconocimiento",
+      "PERMISOS Y MODERACIÓN: quién puede ver, editar o publicar, con bitácora de cada decisión",
+    ],
+    tipo: "reten",
+  },
+  {
+    version: "v406.0",
+    nombre: "LA TRAVESÍA",
+    hitos: [
+      "LA ENTRADA SE RECORRE, NO SE LEE: /entrar pasa de índice a viaje — llegada, una brújula para elegir qué te trae y diez espacios a pantalla completa que se deslizan, cada uno con su verbo (DESCIFRA, MIDE, INVESTIGA, RECORRE…)",
+      "SIGUES DONDE LO DEJASTE: la casa recuerda en tu propio aparato las salas que abres y las ordena en investigación, simulación y proyecto; «Tu hilo» te devuelve a la última con un toque",
+      "CADA ESPACIO TRAE SUS HERRAMIENTAS: puertas reales de cada módulo, los cables vivos donde los hay y «a mano en este espacio» con el buscador, los modos y el mapa de la casa",
+      "LO DESCONOCIDO: una sala al azar que todavía no abriste, entre las 155 del cuartel",
+      "NADA SE PIERDE: la barra de arriba, la de abajo, la Puerta de los Mundos, la portada, /modulos y el perfil llevan a la Travesía; tu rastro no sale del aparato y se borra cuando quieras",
+    ],
+    tipo: "nav",
+  },
+  {
+    version: "v405.9",
+    nombre: "EL ESCAPARATE",
+    hitos: [
+      "CADA SALA SE VE AL COMPARTIRLA: el enlace de una sala en WhatsApp, X o Telegram enseña su propia tarjeta — nombre, lema y constelación con su color — en vez de la misma imagen genérica para todo",
+      "LAS PREGUNTAS FRECUENTES, DONDE SE VEN: el marcado FAQ para Google salía en las 2.138 páginas y no coincidía con las preguntas visibles; ahora vive solo en el cuartel y sale de la misma lista que se lee",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v405.15",
     nombre: "SIN UN CUADRO DE MÁS",
     hitos: [

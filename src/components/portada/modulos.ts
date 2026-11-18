@@ -74,6 +74,8 @@ export const MODULOS: Modulo[] = [
     gancho: "Las fichas que explican quién es quién, cuánto pesa cada país y de dónde viene todo.",
     pestanas: [
       { href: "/atlas", label: "Atlas", img: "/ilustraciones/planeta.jpg", txt: "Las naciones, las personas y las rutas del poder." },
+      // v406.3 EDITORIAL COMMAND — la biblioteca de artículos con fuentes, en diez áreas.
+      { href: "/editorial", label: "Redacción", img: "/ilustraciones/biblioteca.jpg", txt: "Artículos con fuentes en diez áreas: geopolítica, historia, economía, conflictos y más." },
       { href: "/rostros", label: "Rostros del poder", img: "/ilustraciones/gobierno.jpg", txt: "Quién decide y quién ejecuta: las fichas del poder." },
       { href: "/divisas", label: "Dinero", img: "/ilustraciones/divisas.jpg", txt: "Las monedas oficiales del planeta y quién las comparte." },
       { href: "/historia", label: "Historia", img: "/ilustraciones/historia.jpg", txt: "Las guerras que enseñaron a leer las de hoy." },
@@ -152,6 +154,8 @@ export const MODULOS: Modulo[] = [
       { href: "/cuartel", label: "Cuartel", img: "/ilustraciones/salas.jpg", txt: "El centro de mando del juego." },
       { href: "/objetivos", label: "Objetivos", img: "/ilustraciones/logros.jpg", txt: "Misiones, retos y torneos: lo que hay que hacer hoy." },
       { href: "/universo", label: "Colecciones", img: "/ilustraciones/recompensas.jpg", txt: "Créditos, colecciones y tu base personal." },
+      // v406.1 LA FORJA: el ecosistema de creadores entra como pestaña del módulo de la comunidad y el juego
+      { href: "/creadores", label: "La Forja", img: "/ilustraciones/creador.jpg", txt: "Publica mapas, escenarios, investigaciones, simulaciones y proyectos con tu nombre." },
       { href: "/mision", label: "Misión 100", img: "/ilustraciones/recluta.jpg", txt: "Reparte Vanguard y suma reclutas." },
       { href: "/perfil", label: "Mi perfil", img: "/ilustraciones/perfil.jpg", txt: "Tu carnet de agente, tu código y tus permisos." },
       { href: "/modo", label: "Modo y cuenta", img: "/ilustraciones/registro.jpg", txt: "Elige cómo juegas y entra con tu alias." },
