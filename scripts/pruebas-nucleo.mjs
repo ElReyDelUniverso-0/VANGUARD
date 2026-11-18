@@ -391,6 +391,97 @@ async function parteA() {
     afirmar(pag.includes("FAMILIAS_MODULO"), "/nucleo no monta las familias de módulos");
     afirmar(pag.includes("Puerta canónica"), "/nucleo no declara la puerta canónica de cada familia");
   });
+
+  // ── v406.5 EL PLANETA EN CIFRAS · LA EXPANSIÓN DEL UNIVERSO ──────────────
+  const leer = (rel) => readFileSync(join(RAIZ, rel), "utf8");
+  const geoTxt = leer("src/lib/geo-paises.ts");
+  const ISOS = new Set([...geoTxt.matchAll(/iso2: "([a-z]{2})"/g)].map((m) => m[1]));
+  const orgTxt = leer("src/lib/planeta/organizaciones.ts");
+  const ORGS = [...orgTxt.matchAll(/clave: "([a-z0-9-]+)",\s*sigla:[\s\S]*?miembros: \[([^\]]*)\],\s*nota: "([^"]*)"/g)].map((m) => ({
+    clave: m[1],
+    miembros: [...m[2].matchAll(/"([a-z]{2})"/g)].map((x) => x[1]),
+    nota: m[3],
+  }));
+  const subTxt = leer("src/lib/planeta/subregiones.ts");
+  const slug = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const SUBS = new Set([...subTxt.matchAll(/^\s+(?:"[^"]+"|[A-Za-z]+): "([^"]+)",$/gm)].map((m) => slug(m[1])));
+  const indTxt = leer("src/lib/planeta/indicadores.ts");
+  const INDS = new Set((indTxt.match(/IDS_INDICADOR = \[([^\]]*)\]/)?.[1] ?? "").match(/[a-zA-Z]+/g) ?? []);
+  const dirTxt = leer("src/lib/planeta/directorio.ts");
+  const COLS = [...dirTxt.matchAll(/clave: "([a-z0-9-]+)",\s*titulo:/g)].map((m) => m[1]);
+
+  /** ¿La ruta lleva a una página real? Estática, o dinámica con su clave válida. */
+  function rutaReal(r) {
+    const limpia = r.split("?")[0].split("#")[0];
+    if (existsSync(join(RAIZ, `src/app${limpia === "/" ? "" : limpia}/page.tsx`))) return true;
+    const m = limpia.match(/^\/([a-z-]+)\/([^/]+)$/);
+    if (!m) return false;
+    const [, base, clave] = m;
+    if (base === "mundos") return ISOS.has(clave);
+    if (base === "regiones") return SUBS.has(clave);
+    if (base === "organizaciones") return ORGS.some((o) => o.clave === clave);
+    if (base === "rankings") return INDS.has(clave);
+    if (base === "colecciones") return COLS.includes(clave);
+    return false;
+  }
+
+  await verificar("v406.5 · los siete centros nuevos existen, están en el censo y en un módulo", () => {
+    const mods = leer("src/components/portada/modulos.ts");
+    afirmar(mods.includes('id: "planeta"'), "falta el módulo público «planeta» en modulos.ts");
+    for (const r of ["/comparador", "/rankings", "/demografia", "/regiones", "/organizaciones", "/directorio", "/colecciones"]) {
+      afirmar(existsSync(join(RAIZ, `src/app${r}/page.tsx`)), `falta la página ${r}`);
+      afirmar(rutas.includes(r), `${r} no está en el censo del Núcleo`);
+      afirmar(mods.includes(`href: "${r}"`), `${r} no cuelga de ningún módulo (quedaría aislado)`);
+    }
+    for (const d of ["rankings/[medida]", "regiones/[clave]", "organizaciones/[clave]", "colecciones/[clave]"]) {
+      afirmar(existsSync(join(RAIZ, `src/app/${d}/page.tsx`)), `falta la página ${d}`);
+    }
+  });
+
+  await verificar("v406.5 · organizaciones: ISO reales, sin duplicados y la cifra de la nota cuadra", () => {
+    afirmar(ORGS.length >= 16, `solo ${ORGS.length} organizaciones legibles`);
+    for (const o of ORGS) {
+      afirmar(o.miembros.length > 0, `${o.clave} sin miembros`);
+      const malos = o.miembros.filter((x) => !ISOS.has(x));
+      afirmar(malos.length === 0, `${o.clave}: ISO inexistentes ${malos.join(",")}`);
+      const dup = o.miembros.filter((x, i) => o.miembros.indexOf(x) !== i);
+      afirmar(dup.length === 0, `${o.clave}: miembros repetidos ${dup.join(",")}`);
+      const n = o.nota.match(/^(\d+) miembros/);
+      if (n) afirmar(Number(n[1]) === o.miembros.length, `${o.clave}: la nota dice ${n[1]} miembros y la lista tiene ${o.miembros.length}`);
+    }
+    afirmar(!ORGS.find((o) => o.clave === "opep")?.miembros.includes("ae"), "Emiratos salió de la OPEP el 1-may-2026: no puede figurar");
+    afirmar(ORGS.find((o) => o.clave === "asean")?.miembros.includes("tl"), "Timor Oriental es miembro de la ASEAN desde el 26-oct-2025");
+    afirmar(ORGS.find((o) => o.clave === "sica")?.miembros.includes("do"), "la República Dominicana es miembro pleno del SICA");
+    const urls = [...orgTxt.matchAll(/url: "([^"]+)"/g)].map((m) => m[1]);
+    afirmar(urls.length === ORGS.length && urls.every((u) => u.startsWith("https://")), "cada organización necesita su fuente https");
+  });
+
+  await verificar("v406.5 · colecciones y temas: ninguna parada lleva a una página vacía", () => {
+    afirmar(COLS.length >= 5, `solo ${COLS.length} colecciones`);
+    const paradas = [...dirTxt.matchAll(/\{ ruta: "([^"]+)", titulo:/g)].map((m) => m[1]);
+    afirmar(paradas.length >= 30, `solo ${paradas.length} paradas`);
+    for (const r of paradas) afirmar(rutaReal(r), `parada sin página real: ${r}`);
+    const temas = [...dirTxt.matchAll(/rutas: \[([^\]]*)\]/g)].flatMap((m) => [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]));
+    afirmar(temas.length >= 60, `los temas solo cubren ${temas.length} rutas`);
+    for (const r of temas) {
+      const ok = r.includes("[") ? existsSync(join(RAIZ, `src/app${r}/page.tsx`)) : rutaReal(r);
+      afirmar(ok, `ruta de tema inexistente: ${r}`);
+    }
+  });
+
+  await verificar("v406.5 · la familia de las cifras y el país conectado (ficha, núcleo, sitemap)", () => {
+    const fus = leer("src/lib/nucleo/fusiones.ts");
+    afirmar(fus.includes('id: "familia-cifras"'), "fusiones.ts no declara la familia de las cifras");
+    const rel = leer("src/lib/nucleo/relaciones.ts");
+    afirmar(rel.includes("/comparador?p=") && rel.includes("organizacionesDePais") && rel.includes("rutaRegionDe"), "enlacesDePais no lleva al comparador, la región y los bloques");
+    const ficha = leer("src/app/mundos/[iso]/page.tsx");
+    afirmar(ficha.includes("en el planeta") && ficha.includes("puestoDe") && ficha.includes("/organizaciones/"), "la ficha del país no muestra sus puestos ni sus bloques");
+    const sm = leer("src/app/sitemap.ts");
+    afirmar(sm.includes("subregiones()") && sm.includes("ORGANIZACIONES") && sm.includes("COLECCIONES") && sm.includes("INDICADORES"), "el sitemap no anuncia los centros del planeta");
+    const datos = leer("src/lib/planeta/datos.ts");
+    afirmar(datos.includes('from "@/lib/mundos/ficha"'), "la tabla del planeta debe leer la ficha canónica, no otra fuente");
+    afirmar(!/Math\.random/.test(datos + dirTxt), "nada de azar en los datos ni en las recomendaciones");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────

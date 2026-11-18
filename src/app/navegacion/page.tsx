@@ -200,7 +200,7 @@ export default function NavegacionPage() {
         <NavegacionSala />
 
         <FuenteYFecha
-          fuente="Registro de espacios (src/lib/navegacion/espacios.ts) · catálogo de destinos derivado de src/lib/vanguard/mapa-salas.ts (155 salas, generado de tab-nav.tsx), src/components/portada/modulos.ts (9 módulos) y las rutas reales del árbol src/app · contexto y ranking: funciones puras de src/lib/navegacion/contexto.ts"
+          fuente="Registro de espacios (src/lib/navegacion/espacios.ts) · catálogo de destinos derivado de src/lib/vanguard/mapa-salas.ts (155 salas, generado de tab-nav.tsx), src/components/portada/modulos.ts (los módulos públicos) y las rutas reales del árbol src/app · contexto y ranking: funciones puras de src/lib/navegacion/contexto.ts"
           nota="Ninguna herramienta apunta a un sitio inventado: los scripts de prueba comprueban que cada href es una ruta real del repo o una sala real del cuartel, que ningún prefijo se declara en dos espacios y que ninguna sala del cuartel se queda sin espacio."
         />
 

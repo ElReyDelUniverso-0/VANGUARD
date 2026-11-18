@@ -1308,3 +1308,31 @@ La medida que manda es CPU en reposo, tareas largas, KB de JS y lienzos vivos._
 - (c) **Montar `/sistema` y `/datos` en la navegación principal** (hoy se llega por el censo, la búsqueda global y los enlaces directos): falta la firma del Dueño para tocar el menú.
 - (d) **El primer proveedor de IA real**: implementar `llamar()` de un solo proveedor, con prueba de integración y `implementado:true` únicamente cuando responda de verdad.
 - (e) **Persistir la actividad** si se quiere auditoría: hoy es un anillo por instancia y no lo es, y así se declara.
+
+---
+
+## MENSAJE · 2026-11-14 · tras v407.1 EL PLANETA EN CIFRAS
+
+**Encargo del Dueño («VANGUARD UNIVERSE EXPANSION»):** crecer la estructura sin plantillas nuevas ni borrar nada útil — conectar funciones aisladas, convertir módulos pequeños en centros completos, nuevas categorías, un catálogo global de herramientas, favoritos/recientes/recomendaciones, colecciones temáticas. Cada mejora con utilidad, navegación, datos y conexión.
+
+**Lo medido antes de escribir:**
+
+| Agujero | Número |
+|---|---|
+| Formas de comparar dos de las 249 fichas de país | **0** |
+| Módulo de la cabecera del que colgaba `/mundos` | **ninguno** |
+| Censos de puertas que no se cruzaban (cabecera · Núcleo · familias) | **3** |
+| Salas del cuartel buscables por tema | **0 de 155** |
+| Páginas que usaban el rastro (`vg-rastro-v1`) para recomendar | **1** (/entrar) |
+
+**Lo que entra (aditivo):**
+
+1. `src/lib/planeta/` — `indicadores.ts` (8 indicadores, formato puro), `datos.ts` (tabla única sobre `ficha.ts`, rankings, agregados ponderados, subregiones), `subregiones.ts`, `organizaciones.ts` (16 bloques, miembros plenos, fuente, revisión 2026-11-14), `directorio.ts` (destinos cruzados, 11 temas, `relacionados()`, 7 colecciones).
+2. Rutas nuevas: `/comparador`, `/rankings` + `/rankings/[medida]` (8), `/demografia`, `/regiones` + `/regiones/[clave]` (24), `/organizaciones` + `/organizaciones/[clave]` (16), `/directorio`, `/colecciones` + `/colecciones/[clave]` (7). Todas estáticas.
+3. Módulo público nuevo **«planeta»** en `portada/modulos.ts` (Países, Comparador, Rankings, Población, Regiones, Organizaciones); `/directorio` y `/colecciones` como pestañas de Estado y como botón junto a la Travesía en la portada y en /modulos.
+4. Costura: `/mundos/[iso]` → bloque «X en el planeta» (puestos, bloques, región); `enlacesDePais()` → COMPARAR / SU REGIÓN / BLOQUE; `/mundos` → sección «El planeta en cifras»; familia `familia-cifras` en `fusiones.ts`; 7 módulos en `registro.ts` (68 → 75); sitemap +62 URLs.
+5. Pruebas: `pruebas-nucleo.mjs` 26 → 30 offline (centros en censo y módulo, ISO de organizaciones y cifra de la nota, ninguna parada/tema hacia página vacía, costura país-núcleo-sitemap).
+
+**Hechos de 2026 que la tabla de organizaciones ya recoge (verificados 14-nov-2026):** Emiratos salió de la OPEP y la OPEP+ el 1-may-2026 (OPEP = 11); BRICS = 10 plenos (Arabia Saudita invitada, sin formalizar); Timor Oriental, 11.º miembro de la ASEAN desde el 26-oct-2025.
+
+**Cola para la siguiente IA:** (a) comparador con series temporales (el censo solo guarda el último año); (b) `/organizaciones`: añadir CELAC, OEA y Commonwealth con sus listas oficiales; (c) el directorio puede leer también los favoritos del riel (`vg171-favoritos`, claves de sala) y mostrarlos como «salas fijadas»; (d) revisar las listas de bloques cada trimestre (cambian: OPEP, BRICS, UA suspende países).

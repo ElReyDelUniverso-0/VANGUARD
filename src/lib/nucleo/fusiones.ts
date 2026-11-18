@@ -86,6 +86,42 @@ export const FAMILIAS_MODULO: FamiliaModulos[] = [
       "Seis puertas abiertas sobre el mismo planeta y ninguna decía cuál abrir. No se cierra ninguna: se declara que /mundos es el índice y que las otras cinco son lecturas de la misma tabla (geo-paises une las cinco por identidad ISO).",
     cifra: "6 puertas · 1 planeta · 249 fichas",
   },
+  // v406.5 EL PLANETA EN CIFRAS — la ficha de un país dice cómo es; esta
+  // familia responde la pregunta siguiente: cuánto pesa frente a los demás.
+  {
+    id: "familia-cifras",
+    pregunta: "¿Cuánto pesa un país frente a los demás?",
+    canonico: {
+      ruta: "/comparador",
+      nombre: "El comparador internacional",
+      papel: "La puerta de entrada: de dos a cuatro países cara a cara, con su puesto mundial y el año de cada cifra.",
+    },
+    piezas: [
+      {
+        ruta: "/rankings",
+        nombre: "Los rankings",
+        papel: "Las ocho listas mundiales completas, con el peso de cada país sobre el total.",
+      },
+      {
+        ruta: "/demografia",
+        nombre: "Población y demografía",
+        papel: "La lectura humana de la misma tabla: cuántos somos, dónde y cuánto vivimos.",
+      },
+      {
+        ruta: "/regiones",
+        nombre: "Territorios y regiones",
+        papel: "La misma tabla sumada por las 24 subregiones del mundo.",
+      },
+      {
+        ruta: "/organizaciones",
+        nombre: "Las organizaciones",
+        papel: "La misma tabla sumada por bloques: OTAN, BRICS, OPEP, SICA y doce más.",
+      },
+    ],
+    motivo:
+      "Cinco centros nuevos y una sola tabla: src/lib/planeta/datos.ts lee la ficha canónica del país, así que el comparador, los rankings, las regiones, la demografía y los bloques dicen siempre la misma cifra que /mundos/[iso].",
+    cifra: "5 centros · 1 tabla · 8 indicadores",
+  },
   {
     id: "familia-redaccion",
     pregunta: "¿Qué está pasando ahora?",

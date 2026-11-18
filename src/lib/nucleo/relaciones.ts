@@ -29,6 +29,10 @@ import { puntoPorClave, puntosDelNucleo, idPunto } from "./puntos";
 // v405.16 · EL NEXO — de un titular a un país (y de vuelta)
 import { enlacesDePaisEnTexto, contextoDePais } from "./nexo";
 import { indicadoresDePais, type FichaIndicadores } from "./indicadores";
+// v406.5 · EL PLANETA EN CIFRAS — el país, en contexto: comparador, región y bloques
+import { POR_ISO2 as GEO_POR_ISO2 } from "@/lib/geo-paises";
+import { rutaRegionDe } from "@/lib/planeta/subregiones";
+import { organizacionesDePais } from "@/lib/planeta/organizaciones";
 import {
   idEntidad,
   partesDeId,
@@ -155,6 +159,34 @@ export function enlacesDePais(
       motivo: `${nombre} en el índice del planeta: polígono real, fronteras y macroterritorio`,
       tipoRelacion: "visible_en",
     });
+  }
+  // v406.5 — la ficha dice cómo es el país; estos tres chips dicen cuánto pesa
+  // frente a los demás (todas las rutas son estáticas y existen para cada ISO).
+  const geo = GEO_POR_ISO2.get(iso.toLowerCase());
+  if (geo) {
+    enlaces.push({
+      etiqueta: `COMPARAR ${nombre.toUpperCase()} ▸`,
+      ruta: `/comparador?p=${geo.iso2}`,
+      motivo: `${nombre} cara a cara con otros países: población, PIB, renta, defensa y años de vida, con su puesto mundial`,
+      tipoRelacion: "analizado_en",
+    });
+    const region = rutaRegionDe(geo.subregion);
+    if (region) {
+      enlaces.push({
+        etiqueta: "SU REGIÓN, SUMADA ▸",
+        ruta: region,
+        motivo: `La subregión de ${nombre} con las cifras de todos sus países sumadas`,
+        tipoRelacion: "pertenece_a",
+      });
+    }
+    for (const o of organizacionesDePais(geo.iso2).slice(0, 3)) {
+      enlaces.push({
+        etiqueta: `BLOQUE: ${o.sigla.toUpperCase()} ▸`,
+        ruta: `/organizaciones/${o.clave}`,
+        motivo: `${nombre} es miembro pleno de ${o.nombre}`,
+        tipoRelacion: "pertenece_a",
+      });
+    }
   }
   const teatro = teatroDePais(iso);
   if (teatro) {

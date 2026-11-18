@@ -15,6 +15,11 @@ import { PUERTAS_SALAS } from "@/lib/vanguard/puertas-salas"; // v405.8: las pue
 import { PAISES_GEO } from "@/lib/geo-paises"; // v405.12: el mapa de los mundos
 import { ARTICULOS } from "@/lib/editorial"; // v406.3: la biblioteca de la redacción
 import { AREAS_EDITORIALES } from "@/lib/editorial/areas";
+// v406.5 EL PLANETA EN CIFRAS — los centros nuevos y sus páginas derivadas
+import { INDICADORES } from "@/lib/planeta/indicadores";
+import { subregiones } from "@/lib/planeta/datos";
+import { ORGANIZACIONES } from "@/lib/planeta/organizaciones";
+import { COLECCIONES } from "@/lib/planeta/directorio";
 
 // v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
 // «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
@@ -635,6 +640,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.55,
     })),
+    // v406.5 EL PLANETA EN CIFRAS — cinco centros, el directorio y las
+    // colecciones, más sus páginas derivadas de las fuentes (8 rankings, 24
+    // subregiones, 16 organizaciones, 7 colecciones): una entrada nueva en
+    // cualquiera de esas tablas entra sola al mapa.
+    ...["/comparador", "/rankings", "/demografia", "/regiones", "/organizaciones", "/directorio", "/colecciones"].map((r) => ({
+      url: `${SITE_URL}${r}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.75,
+    })),
+    ...INDICADORES.map((i) => ({ url: `${SITE_URL}/rankings/${i.id}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...subregiones().map((x) => ({ url: `${SITE_URL}/regiones/${x.slug}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
+    ...ORGANIZACIONES.map((o) => ({ url: `${SITE_URL}/organizaciones/${o.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...COLECCIONES.map((c) => ({ url: `${SITE_URL}/colecciones/${c.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
   ];
 
   // ② y ③: fuera las salas noindex; lastmod real o ninguno

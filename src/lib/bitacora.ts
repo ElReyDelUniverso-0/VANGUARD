@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v407.1",
+    nombre: "EL PLANETA EN CIFRAS",
+    hitos: [
+      "UN MÓDULO NUEVO EN LA CABECERA: «Planeta», con la ficha de cada país (/mundos, que no colgaba de ningún módulo) y cinco centros que la ponen en contexto",
+      "EL COMPARADOR: de dos a cuatro países cara a cara en ocho indicadores, con su puesto mundial, «cuántas veces» uno respecto del otro, el año de cada dato, los bloques que comparten y un enlace que se comparte o se guarda en tu espacio",
+      "LOS RANKINGS, LA DEMOGRAFÍA Y LAS REGIONES: ocho listas mundiales completas con peso y acumulado, el centro de población (cuántos países reúnen la mitad de la humanidad, la brecha de esperanza de vida) y las 24 subregiones del mundo con sus cifras sumadas",
+      "LAS ORGANIZACIONES: 16 bloques —del Consejo de Seguridad al SICA— con sus miembros de pleno derecho, su fuente oficial, los cambios de 2025-2026, el mapa de sus miembros y lo que pesan juntos",
+      "EL DIRECTORIO Y LAS COLECCIONES: 215 destinos (60 centros y las 155 salas del cuartel) con 11 temas, favoritos, recientes, «porque visitaste…» y siete recorridos guiados",
+      "LA COSTURA: cada ficha de país muestra sus puestos mundiales, sus bloques y su región; el núcleo ofrece COMPARAR, SU REGIÓN y BLOQUE; 75 módulos en el censo y 30 comprobaciones offline",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v407.0",
     nombre: "EL SISTEMA ABIERTO",
     hitos: [

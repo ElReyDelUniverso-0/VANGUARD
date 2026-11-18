@@ -136,6 +136,14 @@ export default function MundosPage() {
     numberOfItems: todas.length,
   };
 
+  const CENTROS_CIFRAS = [
+    { ruta: "/comparador", nombre: "El comparador", lema: "Hasta cuatro países, cifra a cifra", texto: "Población, PIB, renta, gasto militar y años de vida lado a lado, con su puesto mundial." },
+    { ruta: "/rankings", nombre: "Los rankings", lema: "Ocho listas mundiales completas", texto: "Todos los países con dato, de mayor a menor, con su peso sobre el total." },
+    { ruta: "/demografia", nombre: "Población y demografía", lema: "Cuántos somos y cuánto vivimos", texto: "Dónde se concentra la humanidad y la brecha de esperanza de vida." },
+    { ruta: "/regiones", nombre: "Territorios y regiones", lema: "Las 24 subregiones, sumadas", texto: "El Caribe, África occidental, el Sudeste asiático: sus cifras y sus países uno a uno." },
+    { ruta: "/organizaciones", nombre: "Organizaciones", lema: "Quién se sienta con quién", texto: "OTAN, UE, BRICS, OPEP, SICA y once bloques más, con su peso real." },
+  ];
+
   return (
     <main className="min-h-screen bg-[#05060b] text-foreground">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
@@ -161,6 +169,7 @@ export default function MundosPage() {
         ]}
         anclas={[
           { etiqueta: "Mapa", href: "#mapa" },
+          { etiqueta: "Cifras", href: "#cifras" },
           { etiqueta: "Mundos", href: "#mundos" },
           { etiqueta: "Fusiones", href: "#fusiones" },
           { etiqueta: "Puentes", href: "#puentes" },
@@ -182,6 +191,27 @@ export default function MundosPage() {
             guerra de la casa, intactos — aquí solo se les pone nombre para poder leerlos.
           </p>
           <MapaMundos payload={payload} />
+        </section>
+
+        {/* v406.5 · EL PLANETA EN CIFRAS — de la ficha de un país al contexto */}
+        <section id="cifras" className="vx-mo-seccion">
+          <h2 className="vx-mo-titulo">
+            El planeta en cifras <span>cinco centros sobre la misma tabla</span>
+          </h2>
+          <p className="vx-mo-parrafo">
+            La ficha dice cómo es un país. Estos centros dicen cuánto pesa frente a los demás, con las mismas cifras del
+            Banco Mundial y su año: compáralo, ordénalo, súmalo por regiones o por bloques.
+          </p>
+          <div className="vx-mo-rejilla">
+            {CENTROS_CIFRAS.map((c) => (
+              <Link key={c.ruta} href={c.ruta} className="vx-mo-mundo">
+                <span className="vx-mo-mundo-clase vx-mo-clase-real">Real</span>
+                <h3>{c.nombre}</h3>
+                <p className="vx-mo-mundo-lema">{c.lema}</p>
+                <p>{c.texto}</p>
+              </Link>
+            ))}
+          </div>
         </section>
 
         {/* ② EL REGISTRO DE MUNDOS */}

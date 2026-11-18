@@ -47,6 +47,7 @@ const H = {
 const EXTRA: Record<string, { verbo: string; color: string; herramientas: Herramienta[] }> = {
   conflictos: { verbo: "Investiga", color: "#ff4d5e", herramientas: [H.centinela, H.globo, H.traductor] },
   mapa: { verbo: "Recorre", color: "#6ed6ff", herramientas: [H.mapas, H.escenarios, H.cruce] },
+  planeta: { verbo: "Compara", color: "#5eead4", herramientas: [H.mapas, H.poder, H.nucleo] },
   conocimiento: { verbo: "Entiende", color: "#e8c56a", herramientas: [H.nucleo, H.poder, H.traductor] },
   secretos: { verbo: "Descifra", color: "#a9b8ff", herramientas: [H.nucleo, H.historia, H.centinela] },
   arsenal: { verbo: "Analiza", color: "#ff9a4d", herramientas: [H.escenarios, H.arsenal3d, H.globo] },
