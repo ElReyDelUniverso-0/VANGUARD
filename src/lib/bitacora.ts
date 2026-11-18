@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.14",
+    nombre: "EL PLANETA ENTERO",
+    hitos: [
+      "EL DEFECTO MEDIDO: el lienzo del mapa estaba fijado en 1000×500 sin medir el planeta; con la proyección de la casa el disco llega a y=631,7, así que el borde inferior se comía la Antártida, el cono sur y el extremo de Nueva Zelanda",
+      "EL LIENZO SE MIDE: alto 500 → 648 en el generador, con el número medido y su porqué al lado; los paths no cambian ni un píxel porque la proyección es la misma",
+      "UNA SOLA VERDAD DEL TAMAÑO: payload, ficha de país y mapa de detalle leen LIENZO del archivo generado en vez de repetir el número a mano, y el CSS deja de recortar a 560 px",
+      "LA PRUEBA VIGILA EL LÍMITE REAL: las ventanas de país se comparan con LIENZO.alto, no con un 500 escrito en la prueba",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v405.13",
     nombre: "EL CENSO COMPLETO",
     hitos: [

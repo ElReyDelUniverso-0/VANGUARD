@@ -21,7 +21,7 @@ import { TERRITORY_COUNTRY_MAP, COUNTRY_TO_TERRITORY } from "@/lib/world-geo";
 export interface PaisMapa {
   /** nombre de Natural Earth (inglés) — el que casa con los territorios */
   n: string;
-  /** path SVG ya proyectado al lienzo 1000×500 */
+  /** path SVG ya proyectado al lienzo del mapa */
   d: string;
   /** encuadre [x0,y0,x1,y1] */
   b: [number, number, number, number];

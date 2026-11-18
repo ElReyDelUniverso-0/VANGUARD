@@ -7,7 +7,7 @@ import { SEMILLA_ACONTECIMIENTOS } from "@/lib/nucleo/acontecimientos";
 import { HISTORICAL_WARS } from "@/lib/game-data";
 import { PAISES_GEO, POR_ISO2 } from "@/lib/geo-paises";
 import { fichaPais, regionEnEspanol, type FichaPais } from "@/lib/mundos/ficha";
-import { vecinosDe, territorioDe } from "@/lib/mundos/mapa";
+import { LIENZO, vecinosDe, territorioDe } from "@/lib/mundos/mapa";
 import { vistaDePais } from "@/lib/mundos/mapa-detalle";
 import { PUENTES, resolverPuente } from "@/lib/mundos/registro";
 import { formatear, distancia as fmtDistancia, aniosDesde, miles } from "@/lib/mundos/formato";
@@ -151,7 +151,7 @@ export default async function PaisPage({ params }: Props) {
                 aria-label={`Mapa de ${f.nombre} con sus países vecinos`}
                 preserveAspectRatio="xMidYMid meet"
               >
-                <rect x="0" y="0" width="1000" height="500" className="vx-mp-mar" />
+                <rect x="0" y="0" width={LIENZO.ancho} height={LIENZO.alto} className="vx-mp-mar" />
                 {vista.capas
                   .filter((c) => c.rol !== "pais")
                   .map((c) => (

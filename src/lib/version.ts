@@ -1,3 +1,21 @@
+// v405.14 EL PLANETA ENTERO — el mapa cortaba el sur.
+// El cartógrafo de la v405.12 fijó el lienzo en 1000×500 «porque es el de la
+// casa», sin medir el planeta. Medido ahora sobre el propio dato: con la
+// proyección de la casa (azimuthal de área igual, scale 155, translate
+// [500,295]) el disco llega a y = 631,7 — el borde inferior cortaba la
+// Antártida, el cono sur de América y el extremo de Nueva Zelanda. Nadie lo
+// había visto porque el mapa se mira arriba; el mapa se estaba comiendo el 21%
+// de su altura.
+// ① EL LIENZO SE MIDE, NO SE HEREDA: alto 500 → 648 (631,7 + margen), escrito
+//    en el generador con el porqué al lado. Los paths no cambian ni un píxel:
+//    la proyección es la misma; lo que cambia es cuánto planeta se ve.
+// ② UNA SOLA VERDAD DEL TAMAÑO: el payload, la ficha de país y el fondo del
+//    mapa de detalle leen `LIENZO` del archivo generado en vez de repetir
+//    «1000×500» a mano (tres copias del mismo número es cómo se desincronizan).
+// ③ EL MAPA RESPIRA: el CSS deja de recortar a 560 px y permite 700, así que
+//    el planeta entero se ve MÁS grande que antes, no más pequeño.
+// ④ LA PRUEBA VIGILA EL LÍMITE REAL: la ventana de un país se compara con
+//    `LIENZO.alto`, no con un 500 escrito en la prueba.
 // v405.13 EL CENSO COMPLETO — la medida que el mapa no podía enseñar.
 // El mapa de los mundos estrenó nueve capas, pero la capa que más importa
 // —Población— apagaba 165 de los 249 países porque `atlas-data` solo la tenía
@@ -6082,8 +6100,8 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.13";
-export const APP_CODENAME = "EL CENSO COMPLETO";
+export const APP_VERSION = "v405.14";
+export const APP_CODENAME = "EL PLANETA ENTERO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6143,7 +6161,7 @@ export const APP_CODENAME = "EL CENSO COMPLETO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.12";
+export const APP_VERSION_ANTERIOR = "v405.13";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

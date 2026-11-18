@@ -8,7 +8,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { fichas, MEDIDAS, coberturaGlobal, regionEnEspanol, type FichaPais, type Medida } from "./ficha";
-import { POLIGONOS_ORDENADOS, TERRITORIOS, coberturaMapa, REJILLA_SVG, vecinosDe, territorioDe } from "./mapa";
+import { LIENZO, POLIGONOS_ORDENADOS, TERRITORIOS, coberturaMapa, REJILLA_SVG, vecinosDe, territorioDe } from "./mapa";
 import { formatear } from "./formato";
 import { proyectar, type BandaLeyenda, type CapaCliente, type PaisCliente, type PayloadMundos, type PoligonoCliente } from "./capas";
 
@@ -150,7 +150,7 @@ export function construirPayload(ctx: ContextoConflictos): PayloadMundos {
   }));
 
   return {
-    lienzo: { ancho: 1000, alto: 500 },
+    lienzo: LIENZO,
     rejilla: REJILLA_SVG,
     poligonos,
     paises,

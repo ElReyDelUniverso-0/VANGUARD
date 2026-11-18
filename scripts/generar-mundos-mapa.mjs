@@ -12,8 +12,12 @@
 //   · countries-110m.json → mapa del índice (cobertura mundial, ~120 KB)
 //   · countries-50m.json  → mapa de detalle por país (fronteras finas)
 // PROYECCIÓN: azimuthal de área igual, rotate [-10,0], center [0,20],
-//   scale 155, translate [500,295] → lienzo 1000×500 (idéntica a
-//   src/lib/world-paths.json, para que el mapa nuevo encaje con el viejo).
+//   scale 155, translate [500,295] (idéntica a src/lib/world-paths.json, para
+//   que el mapa nuevo encaje con el viejo).
+// LIENZO: 1000×648. Nació en 500 y el disco se salía: con esta proyección el
+//   planeta llega a y=631,7, así que el borde inferior cortaba la Antártida y
+//   el cono sur. El alto se mide del propio dato (631,7 + margen), no se
+//   adivina: cualquier cambio de escala obliga a volver a medirlo.
 //
 // NO se edita a mano. Regenerar:
 //   NODE_PATH=./node_modules node scripts/generar-mundos-mapa.mjs
@@ -27,7 +31,7 @@ import * as d3 from "d3-geo";
 const require = createRequire(import.meta.url);
 
 const PROY = { rotate: [-10, 0], center: [0, 20], scale: 155, translate: [500, 295] };
-const W = 1000, H = 500;
+const W = 1000, H = 648;
 
 const proy = () =>
   d3
