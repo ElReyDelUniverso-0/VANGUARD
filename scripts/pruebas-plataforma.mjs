@@ -74,6 +74,11 @@ function rutasApiReales() {
 // ─────────────────────────────────────────────────────────────
 async function parteA() {
   console.log("\nPARTE A — EL SISTEMA CENTRAL (offline)");
+  if (!existsSync(join(RAIZ, "src/app/api"))) {
+    console.log("  · sin árbol del repositorio en este directorio: la parte A se omite y lo dice.");
+    console.log("    Ejecútala desde la raíz del repositorio (necesita src/ y docs/).");
+    return;
+  }
 
   await verificar("el contrato existe y sus códigos de error son cerrados (6)", () => {
     const t = leer("src/lib/sistema/contrato.ts");
@@ -295,14 +300,14 @@ async function parteB() {
 
   await verificar("el muro del diagnóstico existe (ráfaga → 429)", async () => {
     let vio429 = false;
-    for (let i = 0; i < 26; i++) {
+    for (let i = 0; i < 66; i++) {
       const r = await pedirJson("/api/sistema/diagnostico");
       if (r.status === 429) {
         vio429 = true;
         break;
       }
     }
-    afirmar(vio429, "26 diagnósticos seguidos sin 429: el muro no está aplicado");
+    afirmar(vio429, "66 diagnósticos seguidos sin 429: el muro no está aplicado");
   });
 }
 
@@ -311,7 +316,7 @@ await parteA();
 if (BASE) await parteB();
 else console.log("\nPARTE B omitida: pasa la URL del servidor como argumento para probarla en vivo.");
 console.log("\n════════════════════════════════════════");
-console.log(`  PASAN ${pasan} · FALLAN ${fallan} · ${Date.now() - t0} ms`);
+console.log(`  PASAN ${pasan} · FALLAN ${fallan} · ${Date.now() - t0} ms${BASE ? " (parte A + B)" : " (solo parte A)"}`);
 if (fallan > 0) {
   fallos.forEach((f) => console.log(`   · ${f}`));
   process.exit(1);

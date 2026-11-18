@@ -6,8 +6,8 @@ import { diagnosticar } from "@/lib/sistema/diagnostico";
 export const dynamic = "force-dynamic";
 
 export const GET = conManejo("/api/sistema/diagnostico", async (req, t0) => {
-  const veredicto = muro(`sistema-diag:${claveCliente(req)}`, 20, 60_000);
-  if (!veredicto.permitido) return fallo("MURO", `Demasiadas comprobaciones. Espera ${veredicto.espera} s.`, undefined, { t0 });
+  const veredicto = muro(`sistema-diag:${claveCliente(req)}`, 60, 60_000);
+  if (!veredicto.permitido) return fallo("MURO", `Demasiadas comprobaciones (60 por minuto y cliente). Espera ${veredicto.espera} s.`, undefined, { t0 });
 
   const url = new URL(req.url);
   const profundo = url.searchParams.get("profundo") === "1";
