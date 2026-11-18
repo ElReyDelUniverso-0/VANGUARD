@@ -170,7 +170,7 @@ export function useArchivo(id?: string): [boolean, () => void] {
 }
 
 const MEDIANA_CASA = ((): number | null => {
-  const filas = (censo as { humo?: { densidad?: { ratio: number }[] } }).humo?.densidad;
+  const filas = (censo as unknown as { humo?: { densidad?: { ratio: number }[] } | null })?.humo?.densidad;
   if (!filaBien(filas)) return null;
   const ratios = filas!.map((d) => d.ratio).filter((r) => Number.isFinite(r) && r > 0).sort((a, b) => a - b);
   if (ratios.length === 0) return null;
