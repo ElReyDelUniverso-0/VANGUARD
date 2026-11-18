@@ -9,6 +9,56 @@ import { fichas, regionEnEspanol } from "@/lib/mundos/ficha";
 import { coberturaMapa, TERRITORIOS, vecinosDe } from "@/lib/mundos/mapa";
 import { MUNDOS, FUSIONES, PUENTES, mundosPorClase, type ClaseMundo } from "@/lib/mundos/registro";
 import { MapaMundos } from "@/components/mundos/mapa-mundos";
+// v405.16 · LA CASA AL LADO DEL MAPA — el índice del planeta estaba fuera del
+// censo del núcleo y sin una sola puerta a la búsqueda global: era el mapa más
+// completo de la plataforma y un callejón sin salida. Estas son sus puertas.
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import { contextoDePais } from "@/lib/nucleo/nexo";
+const PUERTAS_NUCLEO = [
+  {
+    etiqueta: "EL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "El censo completo de la casa: búsqueda global, módulos y frontera de datos",
+    tipoRelacion: "modulo_de" as const,
+  },
+  ...(["es", "us", "ua", "cn", "br", "ng"] as const).flatMap((iso) => {
+    const c = contextoDePais(iso);
+    return c
+      ? [
+          {
+            etiqueta: `${c.nombre.toUpperCase()} ▸`,
+            ruta: `/mundos/${c.iso2}`,
+            motivo: `Ficha completa de ${c.nombre} (${c.region}) — el patrón de las 249 fichas`,
+            tipoRelacion: "documenta" as const,
+          },
+        ]
+      : [];
+  }),
+  {
+    etiqueta: "EL GLOBO POR CAPAS ▸",
+    ruta: "/mapas",
+    motivo: "El mismo planeta en 3D con las doce capas y su leyenda",
+    tipoRelacion: "visible_en" as const,
+  },
+  {
+    etiqueta: "LOS CONFLICTOS ▸",
+    ruta: "/conflictos",
+    motivo: "Las regiones en seguimiento, sin globo: la lista de los frentes",
+    tipoRelacion: "visible_en" as const,
+  },
+  {
+    etiqueta: "EL ARCHIVO MUNDIAL ▸",
+    ruta: "/archivo-mundial",
+    motivo: "Los cables de este planeta ordenados por geografía",
+    tipoRelacion: "fuente_de" as const,
+  },
+  {
+    etiqueta: "SIMULAR UN PAÍS ▸",
+    ruta: "/teatro-3d",
+    motivo: "El teatro táctico, con las coordenadas reales de cada país",
+    tipoRelacion: "simulado_en" as const,
+  },
+];
 
 // ═══════════════════════════════════════════════════════════════════
 // v405.12 · /mundos — EL MAPA DE LOS MUNDOS
@@ -225,7 +275,14 @@ export default function MundosPage() {
         </section>
 
         {/* ⑤ TODOS LOS PAÍSES */}
-        <section id="paises" className="vx-mo-seccion">
+        <section id="nucleo" className="vx-mo-seccion" style={{ marginTop: 8 }}>
+        <EnlacesNucleo
+          enlaces={PUERTAS_NUCLEO}
+          titulo="EL MAPA NO ESTÁ SOLO — CONECTA CON EL NÚCLEO"
+        />
+      </section>
+
+      <section id="paises" className="vx-mo-seccion">
           <h2 className="vx-mo-titulo">
             Los {todas.length} países <span>por región · cada uno con su ficha</span>
           </h2>

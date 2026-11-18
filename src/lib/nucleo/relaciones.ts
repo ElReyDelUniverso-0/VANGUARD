@@ -26,6 +26,8 @@ import {
 } from "./acontecimientos";
 import { geografiaDeTeatro, metaGeografia, type GeografiaTeatro } from "./geografia";
 import { puntoPorClave, puntosDelNucleo, idPunto } from "./puntos";
+// v405.16 · EL NEXO — de un titular a un país (y de vuelta)
+import { enlacesDePaisEnTexto, contextoDePais } from "./nexo";
 import { indicadoresDePais, type FichaIndicadores } from "./indicadores";
 import {
   idEntidad,
@@ -122,9 +124,38 @@ export function enlacesDeRegion(slug: string): EnlaceContextual[] {
 }
 
 /** Enlaces contextuales de un país (ISO-2). */
-export function enlacesDePais(iso: string): EnlaceContextual[] {
+/**
+ * Enlaces contextuales de un país: a dónde conecta.
+ *
+ * v405.16 — esta función existía desde la v218 y NO LA MONTABA NADIE: 249
+ * fichas de país sin un solo chip hacia el núcleo. Ahora la monta /mundos/[iso]
+ * (y /mundo, con `incluirFicha`), y estrena las dos puertas que le faltaban:
+ * la ficha canónica del país y el índice del mapa de los mundos.
+ */
+export function enlacesDePais(
+  iso: string,
+  opciones: { incluirFicha?: boolean } = {}
+): EnlaceContextual[] {
   const nombre = nombrePais(iso);
   const enlaces: EnlaceContextual[] = [];
+  const ctx = contextoDePais(iso);
+  if (opciones.incluirFicha && ctx) {
+    enlaces.push({
+      etiqueta: `LA FICHA DE ${nombre.toUpperCase()} ▸`,
+      ruta: ctx.puertas[0].ruta,
+      motivo:
+        "Geografía, economía (Banco Mundial con su año), política, cultura, historia y vecinos reales en una sola ficha",
+      tipoRelacion: "documenta",
+    });
+  }
+  if (ctx) {
+    enlaces.push({
+      etiqueta: "EL MAPA DE LOS MUNDOS ▸",
+      ruta: "/mundos",
+      motivo: `${nombre} en el índice del planeta: polígono real, fronteras y macroterritorio`,
+      tipoRelacion: "visible_en",
+    });
+  }
   const teatro = teatroDePais(iso);
   if (teatro) {
     enlaces.push(
@@ -191,6 +222,8 @@ export function enlacesDeCable(cable: {
   id: string;
   conflictTag: string | null;
   source: string;
+  /** v405.16 — el titular, para saber DE QUÉ PAÍS habla el cable */
+  titulo?: string | null;
 }): EnlaceContextual[] {
   const enlaces: EnlaceContextual[] = [];
   const slugAcon = slugAcontecimientoDeTeatro(cable.conflictTag);
@@ -217,6 +250,27 @@ export function enlacesDeCable(cable: {
         tipoRelacion: "visible_en",
       }
     );
+  }
+  // v405.16 · EL NEXO — el cable sabía su TEATRO pero no su PAÍS. Se lee el
+  // titular (nada más: dos países como máximo) y se abren las dos puertas que
+  // faltaban: la ficha real del país y el simulador en sus coordenadas. Si el
+  // titular no nombra a nadie, no se añade nada inventado.
+  if (cable.titulo) {
+    const paises = enlacesDePaisEnTexto(cable.titulo, 2);
+    for (const e of paises) enlaces.push(e);
+    const primero = paises[0];
+    if (primero && primero.ruta.startsWith("/mundos/")) {
+      const iso = primero.ruta.slice("/mundos/".length);
+      const ctx = contextoDePais(iso);
+      if (ctx) {
+        enlaces.push({
+          etiqueta: "SIMULAR EN ESTE PAÍS ▸",
+          ruta: ctx.puertas[2].ruta,
+          motivo: `El teatro táctico abierto en las coordenadas reales de ${ctx.nombre} (${ctx.lat.toFixed(2)}, ${ctx.lng.toFixed(2)})`,
+          tipoRelacion: "simulado_en",
+        });
+      }
+    }
   }
   enlaces.push(
     {

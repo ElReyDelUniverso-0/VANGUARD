@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v406.4",
+    nombre: "LA PLATAFORMA ENTERA",
+    hitos: [
+      "EL CENSO COMPLETO: el núcleo pasa de 39 a 66 módulos — la geografía entera (/mundos, /mundos/<iso>, /mapas, /mundo, /atlas, /poder, /divisas, /conflictos, /archivo-mundial, /historia, /rostros, /galeria), la editorial y los archivos, la armería y la casa estaban fuera del catálogo",
+      "EL NEXO: de un titular a un país — 108 países entre alias y gentilicios con ISO real, el término exacto que los delata («dice ecuatorianos») y cuatro puertas: ficha, mapa, simulador con coordenadas y búsqueda global",
+      "LA COSTURA COSIDA: enlacesDePais() existía desde la v218 y no la montaba nadie; 249 fichas de país estrenan chips al núcleo y los cables del país sin dejar de ser estáticas",
+      "LAS FAMILIAS: seis preguntas, seis puertas canónicas y el papel declarado de cada sala — el planeta, la redacción, la simulación, las personas, el conocimiento y la casa. Ninguna se cierra",
+      "PRUEBAS: 17 → 25 comprobaciones offline en scripts/pruebas-nucleo.mjs, las 8 nuevas vigilan la costura",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v406.3",
     nombre: "EDITORIAL COMMAND",
     hitos: [

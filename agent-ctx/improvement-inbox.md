@@ -1238,3 +1238,31 @@ La medida que manda es CPU en reposo, tareas largas, KB de JS y lienzos vivos._
 6. **`/mundo` con el globo fuera de pantalla sigue al 100 %** en el banco: el vigía congela el planeta pero queda un bucle por cerrar — el perfil apunta a `_animationCycle` de globe.gl. Siguiente tanda.
 7. **`/cuartel` no gasta su CPU en 3D**: `useBitmapCoordinateSpace` 18,2 % + `measureScroll` 4,7 % + `getBoundingClientRect` 5,9 %. Es trabajo de DOM/medición de la sala, no del motor.
 8. **`/teatro-3d` a pantalla completa queda atado al rasterizado** en el banco (SwiftShader, 1,5 cuadros/s). En un aparato con GPU manda el reloj de la escena, que es lo que la v405.15 ya regula.
+
+---
+
+## MENSAJE · 2026-11-18 · tras v406.4 LA PLATAFORMA ENTERA
+
+**Encargo del Dueño, textual:** «Analiza todos los módulos existentes, identifica los que hacen funciones similares, fusiona los duplicados cuando tenga sentido, conecta los que puedan compartir información, mejora los que ya funcionan y crea conexiones entre noticias, mapas, simuladores y centros de información. No elimines funcionalidades útiles. Que VANGUARD funcione como una plataforma interconectada y no como herramientas aisladas.»
+
+**Lo que se midió antes de escribir una línea** (árbol real de `main`, 73 rutas · 434 componentes · 264 libs):
+
+| Agujero | Número |
+|---|---|
+| Módulos en el censo del Núcleo frente a rutas reales | **39 de 73** |
+| Veces que se montaba `enlacesDePais()` (escrita en la v218) | **0** — 249 fichas de país sin un solo chip |
+| Datos que un cable sabía de su país | **ninguno**: sabía su teatro (`conflictTag`), no su país |
+| Puertas que responden «¿cómo es este país?» sin decir cuál es la buena | **6** (/mundos, /mundos/<iso>, /mapas, /mundo, /atlas, /poder, /divisas) |
+| Puertas que sirven la misma tabla `NewsItem` con distinto orden | **5** (/en-vivo, /vertigo, /guerra-hoy, /archivo-mundial, /noticia/<id>) |
+
+**Lo que entra (aditivo; ninguna sala se cierra, ningún texto visible cambia, ningún dato se toca):**
+
+1. **El censo completo** — `registro.ts`: 39 → **66 módulos**. Se registran con su ruta real la geografía entera (13), la editorial y los archivos (6), la armería y el escudo (2) y la casa (6). La prueba verifica cada ruta contra `src/app`.
+2. **El nexo** — `src/lib/nucleo/nexo.ts` (nuevo): lee un titular y devuelve los países que menciona **con el término exacto que los delató**, más cuatro puertas reales por país (ficha, mapa, simulador con coordenadas, búsqueda global). 108 países entre alias y gentilicios, todos con ISO real de `geo-paises`; los nombres ambiguos (Chad, Georgia, Congo, Corea, Guinea) solo cuentan dentro de un nombre completo. Puro: sin BD, sin red, sin reloj.
+3. **La costura cosida** — `/noticia/[id]` pasa su titular al nexo (país + «simular en este país»); `/mundos/[iso]` monta `enlacesDePais` + la redacción + los cables del país **sin romper el prerenderizado de los 249** (el bloque los pide al núcleo desde el cliente); `/mundos` abre sus puertas al núcleo.
+4. **Las familias** — `src/lib/nucleo/fusiones.ts` (nuevo) y su sección en `/nucleo`: seis preguntas, seis puertas canónicas, y el papel declarado de cada sala. **Fusionar aquí no es borrar**: es decir en voz alta qué puerta es la buena y por qué las demás no sobran.
+5. **Pruebas** — `scripts/pruebas-nucleo.mjs`: 17 → **25** comprobaciones offline. Las 8 nuevas vigilan el censo, las familias, los ISO del nexo, los ambiguos, la pureza del nexo, la ficha conectada, el cable con país y las familias publicadas.
+
+**Lo que NO se hizo, y por qué:** no se ha fusionado ni una ruta (ley de la casa: la evolución es aditiva). Las cinco puertas de la redacción sirven la misma tabla con distinto orden y las seis del planeta comparten identidad ISO: se declaran familias, no se cierran puertas. Un módulo solo se retiraría con la firma del Dueño.
+
+**Para la siguiente IA (cola con nombre):** (a) `/mundo` y `/mapas` pueden montar ya `contextoDePais()` con el país seleccionado en el globo; (b) `/global`, `/pulso-mundial` y `/mundo` no están en el censo — comprobar si son salas propias o vistas de `/mapas`; (c) el bloque `CablesDelPais` de las fichas hace una petición por visita: si el tráfico de las 249 fichas crece, conviene un `cache()` de 5 min en `/api/nucleo/busqueda`.

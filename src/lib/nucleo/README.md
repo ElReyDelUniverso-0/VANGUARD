@@ -120,6 +120,36 @@ dependencias existentes), búsqueda con resultados reales y sin fuentes
 privadas, fichas de entidad con enlaces que responden 200, navegación
 (/nucleo, sitemap) y muro anti-ráfaga.
 
+### Paso 5 — Conéctalo (v406.4)
+
+Un módulo registrado que nadie enlaza sigue siendo una herramienta aislada. Hay
+tres costuras ya escritas; úsalas antes de inventar otra:
+
+- **`nexo.ts`** — de un texto a un país: `paisesEnTexto()` (devuelve el término
+  exacto que delató al país), `enlacesDePaisEnTexto()` y `contextoDePais()`
+  (ficha, mapa, simulador con coordenadas y búsqueda global). Es puro: sin BD,
+  sin red, sin reloj, así que se prueba. Los nombres ambiguos (Chad, Georgia,
+  Congo, Corea, Guinea) solo cuentan dentro de un nombre completo.
+- **`relaciones.ts`** — `enlacesDeCable()` (con `titulo`, añade los países del
+  titular y el simulador), `enlacesDePais(iso, { incluirFicha })`,
+  `enlacesDeRegion()`, `enlacesDeModulo()` y `fichaEntidad(id)`.
+- **`fusiones.ts`** — las FAMILIAS: si tu módulo responde a una pregunta que ya
+  tiene dueño, decláralo aquí con su papel y su puerta canónica. Fusionar no es
+  borrar: es decir en voz alta qué puerta es la buena.
+
+```ts
+// en la página, en el servidor, sin JS:
+<EnlacesNucleo
+  enlaces={[...enlacesDePais(iso), ...enlacesDePaisARedaccion(iso)]}
+  titulo="CONECTA CON EL NÚCLEO"
+/>
+```
+
+Y si la página es **estática** (como `/mundos/[iso]`, 249 países desde el CDN),
+los datos vivos se piden al núcleo desde un componente cliente — ver
+`src/app/mundos/[iso]/cables-del-pais.tsx`. Estático para el CDN, vivo para el
+lector.
+
 ## Seguridad y fiabilidad (lo que JAMÁS se rompe)
 
 - **Autorización en el servidor.** El permiso del censo se juzga en server
