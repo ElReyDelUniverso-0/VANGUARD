@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
 import { MODULOS, SALAS_INTERNAS } from "@/components/portada/modulos";
+import { MODELOS } from "@/lib/labs/registro"; // v411.0: los quince laboratorios
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -654,6 +655,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...subregiones().map((x) => ({ url: `${SITE_URL}/regiones/${x.slug}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
     ...ORGANIZACIONES.map((o) => ({ url: `${SITE_URL}/organizaciones/${o.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...COLECCIONES.map((c) => ({ url: `${SITE_URL}/colecciones/${c.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
+    // v411.0 EL LABORATORIO — dieciséis puertas estáticas: el catálogo y una
+    // ficha por modelo. No hay URL por combinación de mandos: el estado vive en
+    // el navegador, así que no existen combinaciones que indexar ni duplicar.
+    {
+      url: `${SITE_URL}/labs`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    ...MODELOS.map((m) => ({
+      url: `${SITE_URL}/labs/${m.id}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.72,
+    })),
   ];
 
   // ② y ③: fuera las salas noindex; lastmod real o ninguno

@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v411.0",
+    nombre: "EL LABORATORIO",
+    hitos: [
+      "QUINCE SIMULADORES, CINCO FAMILIAS: economía nacional, presupuesto público, comercio en red, recursos con EROI, población por edades, urbanización, un modelo acoplado de economía y demografía, clima, agua, suelo, imperios, rutas históricas, red eléctrica, energía y movilidad. Cada uno con su mecánica, no quince versiones del mismo gráfico",
+      "CADA NÚMERO DECLARA SU ORIGEN: las variables se pintan como dato real (cian), supuesto del modelo (ámbar) o decisión del visitante (dorado). Los datos reales van citados con fuente y con la sala donde comprobarlos; los supuestos se listan antes de mover un mando",
+      "LOS LÍMITES ANTES QUE LOS MANDOS: cada ficha abre con la pregunta del modelo y su lista de límites. /labs/clima dice en la primera pantalla que una caja de carbono no tiene permafrost ni casquetes; /labs/demografia, que tres grupos de edad no son una pirámide",
+      "MOTOR DETERMINISTA CON HUELLA: mismos parámetros, horizonte y semilla devuelven la misma corrida. Cada resultado lleva una huella que se puede citar, guardar y volver a cargar",
+      "MESA DE TRABAJO COMPLETA: editor de variables con rango y unidad, control de tiempo, comparador A/B, gráficos SVG con lectura al pasar el cursor, panel de resultados, experimentos guardados en el navegador y exportación a CSV y JSON con los supuestos dentro del archivo",
+      "DOS MAPAS NUEVOS: la red comercial de seis bloques y las rutas históricas entre Asia y Europa se dibujan sobre una retícula real, con el grosor del trazo proporcional al tráfico calculado. Sin fronteras de fondo: el modelo no sabe de fronteras",
+      "DIECISÉIS PUERTAS Y CERO RELLENO: /labs y una ficha estática por modelo, con canónica, JSON-LD y migas. Los mandos no crean URLs: el estado vive en el navegador",
+      "MIL QUINIENTAS CINCUENTA Y CUATRO PRUEBAS: los modelos reales se cargan sin base de datos y se comprueban ficha a ficha — rangos, series finitas, determinismo por huella, presets, exportación, comparador y mapas. Todo limpio (1.554/1.554)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v407.1",
     nombre: "EL PLANETA EN CIFRAS",
     hitos: [

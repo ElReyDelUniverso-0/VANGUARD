@@ -1,5 +1,6 @@
 import { SITE_URL } from "@/lib/site";
 import { CONSTELACIONES, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
+import { MODELOS, estadisticasLabs } from "@/lib/labs/registro"; // v411.0: el laboratorio
 
 // ============================================================
 // v405.6 LA CARTA A LAS MÁQUINAS — /llms.txt — ia3 (Arena)
@@ -51,6 +52,14 @@ export function GET() {
   }
 
   lineas.push(
+    "",
+    "## Laboratorio de sistemas (VANGUARD LABS)",
+    "",
+    `- [VANGUARD LABS](${c("/labs")}): ${MODELOS.length} simuladores de economía, sociedad, geografía, historia y ` +
+      "sistemas complejos. Cada variable declara si es dato real, supuesto o decisión; cada modelo publica sus " +
+      `supuestos y sus límites (${estadisticasLabs().limites} límites escritos, ${estadisticasLabs().datosReales} datos reales citados). ` +
+      "Motor determinista: mismos mandos y misma semilla dan la misma corrida. No son predicciones.",
+    ...MODELOS.map((m) => `- [${m.nombre}](${c(`/labs/${m.id}`)}): ${m.pregunta}`),
     "",
     "## Datos y mapas del sitio",
     "",

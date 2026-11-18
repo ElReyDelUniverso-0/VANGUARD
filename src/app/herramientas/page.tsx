@@ -333,7 +333,11 @@ export default async function HerramientasPage() {
             <Link href="/archivo-mundial" className="text-amber-300 underline underline-offset-2">
               EL ARCHIVO
             </Link>{" "}
-            (las guerras en una sola escala).
+            (las guerras en una sola escala). Y de{" "}
+            <Link href="/labs" className="text-fuchsia-300 underline underline-offset-2">
+              VANGUARD LABS
+            </Link>{" "}
+            (quince simuladores con variables que se mueven a mano y límites escritos).
           </p>
         </section>
       </main>

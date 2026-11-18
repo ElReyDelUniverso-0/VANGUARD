@@ -6371,8 +6371,35 @@
 //      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
 //    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
 //    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
-export const APP_VERSION = "v407.1";
-export const APP_CODENAME = "EL PLANETA EN CIFRAS";
+// ═══════════════════════════════════════════════════════════════════
+// v411.0 EL LABORATORIO — quince simuladores con límites a la vista.
+//
+// La casa tenía UN escenario (v224, cuatro pesos sobre nueve teatros). Esta
+// ronda construye otro edificio al lado, con motor propio y sin tocar el que
+// ya existía:
+//   ① EL CONTRATO (src/lib/labs/tipos.ts): cada variable declara unidad, rango
+//      y ORIGEN —dato real, supuesto del modelo o decisión del visitante—; cada
+//      modelo declara la pregunta que responde, sus supuestos y sus LÍMITES.
+//   ② EL MOTOR (src/lib/labs/motor.ts): función pura y determinista. Misma
+//      semilla y mismos mandos dan la misma corrida, y cada corrida lleva una
+//      huella FNV-1a para poder citarla. Exporta CSV y JSON con los supuestos y
+//      los límites dentro del propio archivo.
+//   ③ QUINCE MODELOS con mecánicas distintas: economía nacional, presupuesto
+//      público, red comercial gravitatoria, recursos con EROI, población por
+//      edades, urbanización, clima, agua, suelo, imperios, rutas históricas,
+//      red eléctrica en cascada, mezcla energética, movilidad urbana y un
+//      modelo acoplado de economía y demografía.
+//   ④ LA MESA DE TRABAJO (components/labs/): editor de variables, control de
+//      tiempo, comparador A/B, gráficos SVG con lectura, panel de resultados,
+//      experimentos guardados en el navegador, exportación y reinicio.
+//   ⑤ DIECISÉIS PUERTAS y ninguna de relleno: /labs + una ficha estática por
+//      modelo, con canónica, JSON-LD y migas. Sin URLs por combinación.
+//   ⑥ LA LEY: dato real citado con fuente y con la sala donde comprobarlo;
+//      supuesto etiquetado; y aviso permanente de que NO es una predicción.
+// ═══════════════════════════════════════════════════════════════════
+export const APP_VERSION = "v411.0";
+export const APP_CODENAME = "EL LABORATORIO";
+// (codename anterior) export const APP_CODENAME = "EL PLANETA EN CIFRAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,

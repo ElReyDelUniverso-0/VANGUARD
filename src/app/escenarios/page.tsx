@@ -343,6 +343,41 @@ export default async function EscenariosPage() {
           </div>
         </section>
 
+        {/* v411.0 — la puerta del laboratorio grande */}
+        <section className="mt-12" aria-label="El laboratorio de sistemas">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+            MÁS ALLÁ DE ESTE ESCENARIO — EL LABORATORIO
+          </p>
+          <div className="mt-3 rounded-md border border-zinc-800 bg-zinc-900/50 p-5">
+            <p className="text-sm leading-relaxed text-zinc-300">
+              Este escenario combina cuatro factores sobre nueve teatros. Al lado vive{" "}
+              <Link href="/labs" className="text-amber underline decoration-amber/40 underline-offset-4">
+                VANGUARD LABS
+              </Link>
+              : quince simuladores con motor propio donde se puede cambiar todo —capital, fecundidad, lluvia, aranceles,
+              bosque, legitimidad— y comparar dos escenarios uno contra otro.
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {[
+                { id: "macro", n: "Economía nacional" },
+                { id: "demografia", n: "Población por edades" },
+                { id: "clima", n: "Clima y carbono" },
+                { id: "imperios", n: "Imperios" },
+                { id: "energia", n: "Mezcla energética" },
+              ].map((m) => (
+                <li key={m.id}>
+                  <Link
+                    href={`/labs/${m.id}`}
+                    className="inline-block rounded border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:border-amber/60 hover:text-amber"
+                  >
+                    {m.n}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         {/* v233.0 — la cadena de procedencia, navegable (patrón v230) */}
         <EnlacesNucleo
           titulo="CONECTA CON EL NÚCLEO"
