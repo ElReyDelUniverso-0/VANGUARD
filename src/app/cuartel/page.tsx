@@ -247,9 +247,14 @@ const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
   obras: () => import("@/components/vanguard/panels/muro-obras-panel"),
   studios: () => import("@/components/vanguard/panels/studios-panel"),
   agenteia: () => import("@/components/vanguard/panels/agente-ia-panel"),
+  // HERRAMIENTAS
+  tools: () => import("@/components/vanguard/panels/tools-panel"),
 };
 // NOTA Next 16: las opciones de dynamic() deben ir inline en cada llamada
 // (no se puede compartir un objeto literal entre llamadas).
+
+// VANGUARD TOOLS
+const ToolsPanel = dynamic(() => import("@/components/vanguard/panels/tools-panel").then((m) => m.ToolsPanel), { ssr: false, loading: PanelSkeleton });
 
 // PORTADA / INICIO
 const NewsPanel = dynamic(() => import("@/components/vanguard/panels/news-panel").then((m) => m.NewsPanel), { ssr: false, loading: PanelSkeleton });
@@ -673,6 +678,8 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "bolsamonedas" && <BolsaPanel />}
         {/* v28 — PARA TI: feed de la comunidad */}
         {tab === "foryou" && <ForYouPanel />}
+        {/* v406.7 — VANGUARD TOOLS: suite operativa de análisis, creación y exploración */}
+        {tab === "tools" && <ToolsPanel />}
     </PanelErrorBoundary>
   );
 }

@@ -26,7 +26,7 @@ import { IlustracionViva } from "@/components/vanguard/ilustraciones-vivas";
 import { projectLatLng } from "@/components/vanguard/world-map-svg";
 import worldPaths from "@/lib/world-paths.json";
 import { cn } from "@/lib/utils";
-import { Search, MapPin, Clock3, Users, Globe2, Crosshair, X, Landmark, Coins, FlaskConical, Clapperboard, Building2, ChevronRight, Route, Scale } from "lucide-react";
+import { Search, MapPin, Clock3, Users, Globe2, Crosshair, X, Landmark, Coins, FlaskConical, Clapperboard, Building2, ChevronRight, Route, Scale, BookOpen } from "lucide-react";
 import {
   PAISES_ATLAS, PERSONAS_ATLAS, COLOR_CATEGORIA, RUTAS_PODER, personaPorId, compararPaises,
   buscarPaises, buscarPersonas, fmtKm2, fmtMillones, paisDelDia, figuraDelDia, recordsDelPlaneta,
@@ -604,6 +604,18 @@ function FichaPais({ pais, now, onCerrar, inline }: { pais: PaisAtlas; now: Date
         <span className="font-mono text-[9px] font-bold text-cyan-hud tracking-wider">DATO VANGUARD · </span>
         {pais.dato}
       </p>
+
+      <div className="mt-2.5 pt-2 border-t border-border/40">
+        <button
+          onClick={(ev) => {
+            ev.stopPropagation();
+            window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "enciclopedia" }));
+          }}
+          className="w-full flex items-center justify-center gap-1.5 py-1 px-2 border border-cyan-hud/50 bg-cyan-hud/10 text-cyan-hud rounded font-mono text-[9px] uppercase font-bold hover:bg-cyan-hud/25 transition-all"
+        >
+          <BookOpen className="w-3 h-3" /> Ver en la Enciclopedia Mundial →
+        </button>
+      </div>
     </div>
   );
 }

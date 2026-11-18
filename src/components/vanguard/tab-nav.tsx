@@ -24,7 +24,7 @@ import {
   History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
   Hammer, ShieldCheck, LayoutPanelLeft,
   LayoutDashboard,
-  Compass, BedDouble, Gem,
+  Compass, BedDouble, Gem, Wrench,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -167,7 +167,9 @@ export type TabKey =
   // MENÚ LO NUEVO + EXPANSIÓN 10X (10 funciones nuevas con links directos)
   | "novedades"
   // THE DAILY UNIVERSE (Credits, 8 Colecciones 3D, Marketplace Ético, Base Personal)
-  | "universo";
+  | "universo"
+  // v406.7 VANGUARD TOOLS: suite operativa de análisis, creación, exploración, laboratorios y workspace
+  | "tools";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -396,6 +398,7 @@ export const TABS: Record<TabKey, TabDef> = {
   teatro3d:      { key: "teatro3d",      label: "VANGUARD 3D (Cualquier lugar del planeta en 3D y 2D + frentes activos en vivo + uniformes, escuadrones y armas interactivas)", short: "VANGUARD 3D", icon: <Crown className="w-3.5 h-3.5" />, color: "amber" },
   novedades:     { key: "novedades",     label: "LO NUEVO · EXPANSIÓN 10X (Registro de todo lo recién añadido a VANGUARD con links directos + 10 funciones nuevas en vivo)", short: "LO NUEVO 10X", icon: <Sparkles className="w-3.5 h-3.5" />, color: "cyan" },
   universo:      { key: "universo",      label: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Colecciones con Cartas 3D mejorables, Marketplace Ético 7 categorías y Base Personal)", short: "DAILY UNIVERSE", icon: <Gem className="w-3.5 h-3.5" />, color: "amber" },
+  tools:         { key: "tools",         label: "VANGUARD TOOLS (Análisis, Creación y Exploración)", short: "TOOLS", icon: <Wrench className="w-3.5 h-3.5" />, color: "amber" },
   dron:          { key: "dron",          label: "Dron Strike 3D",   short: "DRON",     icon: <Rocket className="w-3.5 h-3.5" />, color: "red" },
   ayuda:         { key: "ayuda",         label: "Ayuda",             short: "AYUDA", icon: <HelpCircle className="w-3.5 h-3.5" />, color: "amber" },
 };
@@ -424,6 +427,12 @@ export const SECTIONS: SectionDef[] = [
     key: "universo", label: "DAILY UNIVERSE", short: "DAILY UNIVERSE", icon: <Gem className="w-4 h-4" />, color: "amber",
     desc: "Vanguard Credits (VC), VANGUARD Collections (8 álbumes con cartas 3D mejorables), Marketplace Ético y Base Personal",
     tabs: [TABS.universo],
+  },
+  {
+    // #4 VANGUARD TOOLS: suite operativa de análisis, creación, exploración, laboratorios y workspace
+    key: "herramientas", label: "HERRAMIENTAS", short: "TOOLS", icon: <Wrench className="w-4 h-4" />, color: "amber",
+    desc: "VANGUARD TOOLS: comparadores de países, mapas temáticos, cronologías, simuladores what-if, calculadoras CINC, megapuertos y espacio personal de trabajo",
+    tabs: [TABS.tools],
   },
   {
     // v67.0 EL HANGAR: la base 3D del agente
@@ -566,6 +575,7 @@ export const SECTION_ACCENT: Record<string, string> = {
   teatro3d:      "#FFC94D", // oro — #1 VANGUARD 3D (motor global 2D/3D)
   novedades:     "#38BDF8", // cian vivo — Panel Lo Nuevo + 10 Funciones Nuevas
   universo:      "#A855F7", // amatista cósmica — THE DAILY UNIVERSE & Collections
+  herramientas:  "#F59E0B", // ámbar táctico — VANGUARD TOOLS
   nueva:         "#FFC94D", // oro — la identidad de Vanguard en la nueva pestaña
   hangar:        "#52D5E0", // turquesa metálico — tu base 3D
   inicio:        "#FFC94D", // ORO — la identidad dorada de Vanguard

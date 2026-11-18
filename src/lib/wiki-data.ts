@@ -1,33 +1,32 @@
-// Vanguard v12 — ENCICLOPEDIA MUNDIAL: fichas enciclopedicas de guerras,
-// politica, lideres, partidos y religiones. Fotos reales en /assets/wiki/.
-// Cada ficha enlaza con la API de Wikipedia en vivo (src/app/api/wiki).
+// Vanguard v12 / v406.6 — GRAN ENCICLOPEDIA MUNDIAL & CENTRO DE CONOCIMIENTO GLOBAL
+// Fichas estructuradas de 13 grandes disciplinas:
+// Guerras, Politica, Lideres, Partidos, Religiones, Paises y sus Historias,
+// Geografia Fisica y Politica, Economia y Comercio Global, Civilizaciones Antiguas,
+// Ciencia y Tecnologia, Organizaciones Internacionales, Recursos Naturales y Energia,
+// Cultura y Sociedades.
+// Incluye datos, estadisticas, mapas de contexto y conexiones intermodulares vivas (vanguard:navigate).
 
-export type WikiCat = "GUERRAS" | "POLITICA" | "LIDERES" | "PARTIDOS" | "RELIGIONES";
-
-export interface WikiEntry {
-  id: string;
-  cat: WikiCat;
-  title: string;
-  subtitle: string;
-  dates: string;
-  region: string;
-  img?: string;
-  stats: { label: string; value: string }[];
-  desc: string;
-  facts: string[];
-  timeline: { year: string; text: string }[];
-  wiki: string;
-}
+import { EXPANDED_KNOWLEDGE_ENTRIES } from "./knowledge";
+export * from "./knowledge/types";
+import type { WikiCat, WikiEntry } from "./knowledge/types";
 
 export const WIKI_CATS: { cat: WikiCat; label: string; desc: string }[] = [
-  { cat: "GUERRAS", label: "Guerras", desc: "Los conflictos que redibujaron el mapa" },
-  { cat: "POLITICA", label: "Politica e ideologias", desc: "Sistemas y doctrinas que gobiernan naciones" },
-  { cat: "LIDERES", label: "Presidentes y lideres", desc: "Rostros reales del poder en la historia" },
-  { cat: "PARTIDOS", label: "Partidos politicos", desc: "Las maquinas electorales del mundo" },
-  { cat: "RELIGIONES", label: "Religiones", desc: "Fech, mapas y civilizacion" },
+  { cat: "PAISES_HISTORIA", label: "Países y sus Historias", desc: "Evolución histórica, doctrinas constitucionales y arcos de poder" },
+  { cat: "GEOGRAFIA", label: "Geografía Física y Política", desc: "Estrechos, cordilleras, cuencas hídricas y chokepoints estratégicos" },
+  { cat: "ECONOMIA", label: "Economía y Comercio Global", desc: "Cadenas de valor, semiconductores, logística marítima y divisas" },
+  { cat: "CIVILIZACIONES", label: "Civilizaciones Antiguas", desc: "Cunas de la escritura, la ingeniería, el derecho y el imperio" },
+  { cat: "CIENCIA_TECNOLOGIA", label: "Ciencia y Tecnología", desc: "Era nuclear, satélites, inteligencia artificial, cuántica y sigilo" },
+  { cat: "ORGANIZACIONES", label: "Organizaciones Internacionales", desc: "ONU, OTAN, BRICS+, Unión Europea, OIEA y OPEP+" },
+  { cat: "ENERGIA_RECURSOS", label: "Recursos Naturales y Energía", desc: "Petróleo, gas natural, litio, uranio y estrés hídrico" },
+  { cat: "CULTURA_SOCIEDAD", label: "Cultura y Sociedades", desc: "Demografía, familias lingüísticas, patrimonio UNESCO y soft power" },
+  { cat: "GUERRAS", label: "Guerras y Conflictos", desc: "Los conflictos que redibujaron el mapa" },
+  { cat: "POLITICA", label: "Política e Ideologías", desc: "Sistemas y doctrinas que gobiernan naciones" },
+  { cat: "LIDERES", label: "Presidentes y Líderes", desc: "Rostros reales del poder en la historia" },
+  { cat: "PARTIDOS", label: "Partidos Políticos", desc: "Las máquinas electorales del mundo" },
+  { cat: "RELIGIONES", label: "Religiones y Cosmovisiones", desc: "Fe, mapas y civilización" },
 ];
 
-export const WIKI_ENTRIES: WikiEntry[] = [
+const ORIGINAL_WIKI_ENTRIES: WikiEntry[] = [
   // ================= GUERRAS =================
   {
     id: "ww1", cat: "GUERRAS", title: "Primera Guerra Mundial", subtitle: "La Gran Guerra", dates: "1914–1918", region: "Europa, Medio Oriente, Africa, Oceanía",
@@ -393,6 +392,10 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
 ];
 
+export const WIKI_ENTRIES: WikiEntry[] = [
+  ...EXPANDED_KNOWLEDGE_ENTRIES,
+  ...ORIGINAL_WIKI_ENTRIES,
+];
 
 // v332: LA ENTRADA DEL DÍA — la enciclopedia respira con el anillo de la
 // escuela (DÉCIMO consumidor del patrón compartido: mando v313, instituto
