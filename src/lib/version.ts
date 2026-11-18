@@ -1,3 +1,40 @@
+// v405.15 SIN UN CUADRO DE MÁS — el 3D dejó de quemar lo que nadie mira.
+// El encargo del Dueño, textual: «necesita mejorar los 3D la verdad, y hay lag».
+// Antes de tocar una línea se midió, con navegador real, la casa publicada
+// (v405.14) en dos frentes: arranque y REPOSO (4 s con la pestaña abierta y las
+// manos quietas, leyendo TaskDuration/ScriptDuration por CDP).
+// ① EL LAG NO ERA DEL DIBUJADO, ERA DEL REPOSO: /teatro-3d gastaba 107,3% de un
+//    núcleo (98,6% de script) sin que el usuario tocara nada; /mapas 71,5%;
+//    /cuartel 66,9% con SIETE lienzos vivos; /zona-cero 22,1%; /mundo 21,1%. Las
+//    salas sin 3D (/ , /atlas, /armeria, /mundos) iban a 60 fps con ~1%: la casa
+//    ya sabía hacerlo bien, las salas 3D no lo aplicaban.
+// ② NADIE PREGUNTABA SI SE VE: ni un solo componente usaba IntersectionObserver
+//    sobre su lienzo. El canvas seguía rasterizando detrás del pliegue, en otra
+//    pestaña del panel y con la pestaña oculta (varios pedían rAF ANTES de mirar
+//    document.hidden).
+// ③ BASURA A 60 CUADROS: el teatro global creaba Sprite + SpriteMaterial nuevos
+//    por cada chispa de cada proyectil, cada cuadro, con su dispose; y un
+//    Vector3 por arco y cuadro. Eso es el 98,6% de script medido.
+// ④ EL DPR SE HEREDABA: topes fijos de 2 / 1,75 / 1,5 / 1,25 escritos a mano,
+//    sin mirar el aparato. Un móvil DPR 3 rasterizaba 9× los píxeles CSS.
+// LO QUE ENTRA (aditivo, cero salas cerradas, cero textos visibles cambiados):
+//   `src/lib/3d/vivo.ts` — EL DIRECTOR DE ESCENAS. Una regla: ninguna escena
+//   pinta si no se ve, y ninguna pinta a 60 fps si nadie la toca. Visibilidad
+//   (IntersectionObserver con margen + visibilitychange), reposo a 20 fps (12 en
+//   aparatos flojos) que se rompe con el primer gesto, presupuesto por aparato
+//   (núcleos, memoria, DPR real, puntero grueso) y respeto de «reducir
+//   movimiento». No importa three: cualquier motor lo usa sin arrastrar la
+//   librería.
+//   Se enganchan los seis motores que ardían: teatro-global-3d, hangar-3d
+//   (/cuartel), frente-3d, terreno-guerra-3d, zc3d-engine (/zona-cero) y el
+//   globo compartido (globe-map-3d, que además se congela de verdad fuera de
+//   pantalla con pauseAnimation de globe.gl). El teatro global, además, deja de
+//   fabricar sprites: los fogonazos salen de una reserva de 64 con tope.
+// LO QUE **NO** SE TOCA: ninguna sala se cierra, ningún dato cambia, ningún
+// texto visible cambia, y los fps del sandbox de pruebas no se presentan como
+// la experiencia del usuario (allí el WebGL va por CPU): la medida que manda es
+// CPU en reposo, tareas largas, KB de JS y lienzos vivos.
+
 // v405.14 EL PLANETA ENTERO — el mapa cortaba el sur.
 // El cartógrafo de la v405.12 fijó el lienzo en 1000×500 «porque es el de la
 // casa», sin medir el planeta. Medido ahora sobre el propio dato: con la
@@ -6100,8 +6137,8 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
-export const APP_VERSION = "v405.14";
-export const APP_CODENAME = "EL PLANETA ENTERO";
+export const APP_VERSION = "v405.15";
+export const APP_CODENAME = "SIN UN CUADRO DE MÁS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6161,7 +6198,7 @@ export const APP_CODENAME = "EL PLANETA ENTERO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.13";
+export const APP_VERSION_ANTERIOR = "v405.14";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

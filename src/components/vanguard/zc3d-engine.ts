@@ -10,6 +10,7 @@
 import * as THREE from "three";
 import { RelojTres } from "@/lib/reloj-tres";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { escenaViva, presupuesto3D, type EscenaViva } from "@/lib/3d/vivo";
 
 // ---------------------------------------------------------------- tipos ----
 
@@ -365,6 +366,8 @@ export class ZC3DEngine {
   private clock = new RelojTres();
   private raf = 0;
   private disposed = false;
+  // v405.15: director de escenas (visibilidad + reposo)
+  private vivo3d: EscenaViva | null = null;
 
   // mundo
   private terrain!: THREE.Mesh;
@@ -436,6 +439,7 @@ export class ZC3DEngine {
     this.buildWorld();
     this.applySave(opts.initial);
     this.bindEvents();
+    this.vivo3d = escenaViva(host, { reposoSeg: 3, fpsReposo: 15 });
     this.loop();
   }
 
@@ -443,10 +447,11 @@ export class ZC3DEngine {
 
   private initRenderer() {
     const r = this.renderer = new THREE.WebGLRenderer({
-      antialias: (typeof window !== "undefined" && window.devicePixelRatio || 1) < 2,
+      antialias: presupuesto3D().antialias,
       powerPreference: "high-performance",
     });
-    this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
+    // v405.15: DPR y antialias del presupuesto del aparato
+    this.pixelRatio = presupuesto3D().dpr;
     r.setPixelRatio(this.pixelRatio);
     r.setSize(this.host.clientWidth || 640, this.host.clientHeight || 360);
     r.domElement.style.display = "block";
@@ -1501,6 +1506,8 @@ getStats(): ZC3DStats {
 
 dispose() {
   this.disposed = true;
+  this.vivo3d?.parar();
+  this.vivo3d = null;
   cancelAnimationFrame(this.raf);
   const el = this.renderer.domElement;
   el.removeEventListener("pointerdown", this.onDown);
@@ -2260,7 +2267,11 @@ private updateDirector(dt: number) {
 
 private loop = () => {
   if (this.disposed) return;
-  this.raf = requestAnimationFrame(this.loop);
+  // v405.15: la zona cero no simula 17 sistemas si no se ve
+  const seguir = this.vivo3d
+    ? this.vivo3d.programar(this.loop)
+    : (this.raf = requestAnimationFrame(this.loop), true);
+  if (!seguir) return;
   const dt = Math.min(this.clock.getDelta(), 0.05);
   if (typeof document !== "undefined" && document.hidden) return;
   this.t += dt;

@@ -13,6 +13,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { escenaViva } from "@/lib/3d/vivo";
 
 // ---- ciclo día/noche (duplicado ligero para evitar import circular) ----
 type Phase = "noche" | "amanecer" | "día" | "ocaso";
@@ -730,9 +731,15 @@ export function Frente3D({ stateRef, front, onStrike }: {
 
       renderer.render(scene, cam);
       cam.position.set(bx, by, bz);
-      raf = requestAnimationFrame(loop);
+      const seguir = vivo3d
+        ? vivo3d.programar(loop)
+        : (raf = requestAnimationFrame(loop), true);
+      if (!seguir) raf = 0;
     };
-    raf = requestAnimationFrame(loop);
+    // v405.15: el frente no pinta si no se ve ni a 60 fps si nadie lo toca
+    const vivo3d = escenaViva(host, { reposoSeg: 3, fpsReposo: 15 });
+    if (vivo3d) vivo3d.programar(loop);
+    else raf = requestAnimationFrame(loop);
 
     // flash de impacto (capa DOM sobre el lienzo 3D)
     const flashEl = document.createElement("div");
@@ -747,6 +754,7 @@ export function Frente3D({ stateRef, front, onStrike }: {
 
     return () => {
       disposed = true;
+      vivo3d?.parar();
       cancelAnimationFrame(raf);
       ro.disconnect();
       renderer.domElement.removeEventListener("pointerdown", onDown);

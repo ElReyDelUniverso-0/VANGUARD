@@ -21,6 +21,7 @@ import {
   elevacionEn,
   type SimEstado,
 } from "@/lib/teatro-sim-engine";
+import { escenaViva } from "@/lib/3d/vivo";
 import {
   aplicarEntornoPBR,
   crearPipelinePBR,
@@ -1035,8 +1036,15 @@ export function TerrenoGuerra3D({
     );
     ioGL.observe(el);
 
+    // v405.15: al director de escenas se le suma el freno de reposo (el
+    // terreno tenía ya su IntersectionObserver, pero seguía pidiendo 60
+    // cuadros por segundo para no pintar ninguno).
+    const vivo3d = escenaViva(el, { reposoSeg: 3, fpsReposo: 15 });
     const animate = (now: number) => {
-      raf = requestAnimationFrame(animate);
+      const seguir = vivo3d
+        ? vivo3d.programar(() => animate(performance.now()))
+        : (raf = requestAnimationFrame(animate), true);
+      if (!seguir) return;
       if (!visibleGL || document.hidden) {
         lastNow = now;
         return;
@@ -1230,7 +1238,8 @@ export function TerrenoGuerra3D({
       pipeline.render();
     };
 
-    raf = requestAnimationFrame(animate);
+    if (vivo3d) vivo3d.programar(() => animate(performance.now()));
+    else raf = requestAnimationFrame(animate);
 
     const ro = new ResizeObserver(() => {
       if (!el) return;

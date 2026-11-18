@@ -15,6 +15,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { RelojTres } from "@/lib/reloj-tres";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { escenaViva, presupuesto3D, type EscenaViva } from "@/lib/3d/vivo";
 import { Globe2, Radio, Plane, Activity, Volume2, VolumeX } from "lucide-react";
 
 // ------------------------------------------------------------- geografía ----
@@ -236,17 +237,26 @@ class TeatroGlobalEngine {
   private nextArc = 6;
   private fpsRoll: number[] = [];
   private pixelRatio: number;
+  // v405.15 EL DIRECTOR: si la mesa no se ve (fuera de pantalla, pestaña
+  // oculta, o nadie la toca) no se pinta a 60 fps. Y los fogonazos salen de
+  // una reserva de sprites: antes cada chispa era un Sprite + material
+  // nuevos (basura a 60 fps, que es el 98% de script medido en reposo).
+  private vivo3d: EscenaViva | null = null;
+  private scratch = new THREE.Vector3();
+  private chispas: { s: THREE.Sprite; vivo: boolean }[] = [];
   onTick?: (s: TGStats) => void;
 
   constructor(host: HTMLElement) {
     this.host = host;
-    this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+    // v405.15: el DPR lo decide el aparato (núcleos/memoria/DPR real), no un
+    // 1,5 fijo: un móvil DPR 3 rasterizaba 4× los píxeles de un portátil.
+    this.pixelRatio = presupuesto3D().dpr;
     this.init();
   }
 
   private init() {
     const r = this.renderer = new THREE.WebGLRenderer({
-      antialias: this.pixelRatio < 1.5, powerPreference: "high-performance",
+      antialias: presupuesto3D().antialias, powerPreference: "high-performance",
     });
     r.setPixelRatio(this.pixelRatio);
     r.setSize(this.host.clientWidth || 640, this.host.clientHeight || 360);
@@ -358,6 +368,7 @@ class TeatroGlobalEngine {
       });
     }
 
+    this.vivo3d = escenaViva(this.host, { reposoSeg: 2.5 });
     this.loop();
   }
 
@@ -470,8 +481,37 @@ class TeatroGlobalEngine {
     this.arcs.push({ mesh, a, b, t: 0, dur: R2(1.4, 2.2), peak: R2(10, 20) });
   }
 
+  /** v405.15: chispa libre de la reserva (se crea una vez, se reutiliza) */
+  private tomarChispa(): THREE.Sprite | null {
+    for (const c of this.chispas) {
+      if (!c.vivo) {
+        c.vivo = true;
+        c.s.visible = true;
+        return c.s;
+      }
+    }
+    if (this.chispas.length >= 64) return null; // tope: nunca mil sprites
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: this.texSpark, color: 0xcfcfcf, transparent: true, opacity: 0.35, depthWrite: false,
+    }));
+    s.visible = false;
+    this.scene.add(s);
+    this.chispas.push({ s, vivo: true });
+    s.visible = true;
+    return s;
+  }
+
+  private soltarChispa(s: THREE.Sprite) {
+    s.visible = false;
+    s.position.set(0, -999, 0);
+    const c = this.chispas.find((x) => x.s === s);
+    if (c) c.vivo = false;
+  }
+
   dispose() {
     this.disposed = true;
+    this.vivo3d?.parar();
+    this.vivo3d = null;
     cancelAnimationFrame(this.raf);
     this.controls.dispose();
     for (const d of this.milDots) this.removeMil(d);
@@ -498,7 +538,12 @@ class TeatroGlobalEngine {
 
   private loop = () => {
     if (this.disposed) return;
-    this.raf = requestAnimationFrame(this.loop);
+    // v405.15: el cuadro siguiente lo programa el director de escenas. Si la
+    // mesa no se ve, `programar` devuelve false y NO se pinta ni se simula.
+    const seguir = this.vivo3d
+      ? this.vivo3d.programar(this.loop)
+      : (this.raf = requestAnimationFrame(this.loop), true);
+    if (!seguir) return;
     const dt = Math.min(this.clockT.getDelta(), 0.05);
     if (typeof document !== "undefined" && document.hidden) return;
     this.t += dt;
@@ -543,17 +588,17 @@ class TeatroGlobalEngine {
         this.arcs.splice(i, 1);
         continue;
       }
-      const p = new THREE.Vector3().lerpVectors(a.a, a.b, k);
+      const p = this.scratch.lerpVectors(a.a, a.b, k);
       p.y += Math.sin(k * Math.PI) * a.peak;
       a.mesh.position.copy(p);
+      // v405.15: la estela sale de la reserva (cero asignaciones por cuadro)
       if (Math.random() < 0.5) {
-        const sm = new THREE.Sprite(new THREE.SpriteMaterial({
-          map: this.texSpark, color: 0xcfcfcf, transparent: true, opacity: 0.35, depthWrite: false,
-        }));
-        sm.position.copy(p);
-        sm.scale.setScalar(1.4);
-        this.scene.add(sm);
-        this.flashes.push({ s: sm, t: 0, dur: 0.8, max: 1.4 });
+        const sm = this.tomarChispa();
+        if (sm) {
+          sm.position.copy(p);
+          sm.scale.setScalar(1.4);
+          this.flashes.push({ s: sm, t: 0, dur: 0.8, max: 1.4 });
+        }
       }
     }
 
@@ -575,8 +620,7 @@ class TeatroGlobalEngine {
       f.t += dt;
       const k = f.t / f.dur;
       if (k >= 1) {
-        this.scene.remove(f.s);
-        f.s.material.dispose();
+        this.soltarChispa(f.s);
         this.flashes.splice(i, 1);
         continue;
       }
