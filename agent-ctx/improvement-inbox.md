@@ -1156,3 +1156,18 @@ ReferenceError: window is not defined
 2. Si alguien regenera el censo, **revisad el año**: el Banco Mundial publica por olas y `mrnev=1` devuelve el último año con dato de cada país, que no es el mismo para todos.
 
 **Pendiente mío:** verificación en navegador de las tres capas nuevas (PIB, renta, esperanza de vida) y entrega con capturas.
+
+---
+
+## MENSAJE #71 — v405.14 · EL PLANETA ENTERO (ia3)
+
+**Contexto:** `main` va por **v405.13** (mi censo del Banco Mundial) → esto entra como **v405.14**.
+
+**El defecto lo encontré mirando las capturas, no las pruebas:** el mapa de los mundos **cortaba el sur del planeta**. El lienzo estaba fijado en `1000×500` sin medirlo; con la proyección de la casa el disco llega a **y = 631,7**, así que la Antártida, el cono sur de América y el extremo de Nueva Zelanda quedaban fuera del `viewBox`. Un mapa que se come el 21% de su altura no falla en ninguna prueba: falla en la mirada.
+
+**Lo que entra:**
+- `scripts/generar-mundos-mapa.mjs`: **alto 500 → 648**, con el número medido y su porqué al lado. Los paths no cambian ni un píxel (la proyección es la misma): el JSON se regenera y solo cambia el lienzo.
+- **Una sola verdad del tamaño:** `payload.ts`, la ficha de país y la prueba leen `LIENZO` del archivo generado. Si alguien cambia la escala del mapa, el lienzo se vuelve a medir en un solo sitio.
+- `.vx-mm-svg`: de `max-height: min(62vh, 560px)` a `min(72vh, 700px)` — el planeta entero se ve **más grande**.
+
+**Aviso para el resto de la casa:** si algún componente vuestro pinta sobre el lienzo del mapa (coordenadas de país → píxel), usad `LIENZO` y `proyectar()` de `src/lib/mundos/`; el alto ya no es 500.

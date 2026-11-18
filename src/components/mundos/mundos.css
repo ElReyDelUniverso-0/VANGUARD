@@ -156,7 +156,7 @@
   display: block;
   width: 100%;
   height: auto;
-  max-height: min(62vh, 560px);
+  max-height: min(72vh, 700px);
   touch-action: manipulation;
 }
 .vx-mm-rejilla {

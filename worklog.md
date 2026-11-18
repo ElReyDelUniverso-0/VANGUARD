@@ -6545,3 +6545,14 @@ producción habría entregado un archivo que existe y no dice nada.
 - LO QUE SE TOCA: `ficha.ts` (campo `censo`, `poblacion`/`superficie` resueltas, tres medidas nuevas, cobertura por columna), `formato.ts` (formato `anios`), `payload.ts` (la cifra resuelta viaja al panel; rampa de dinero para PIB y renta), `capas.ts` (el tipo que el cliente conoce), la sala de los mundos («nueve capas» → «doce capas», con la cobertura nueva contada en palabras) y la ficha del país (PIB, PIB por habitante y esperanza de vida, y la nota de fuentes reescrita).
 - PRUEBAS: `tsc` 0 errores en el espejo; **`test-mundos.js` 69 ✓ · 0 fallos** (doce medidas, cobertura de cada capa, formato `anios`, año por cifra); `test-espacio.js` 56 ✓; `test-navegacion.js` 21 ✓.
 - PENDIENTE: verificación en navegador contra producción de las tres capas nuevas y entrega con capturas.
+
+---
+
+## Task ia3-v405.14 · EL PLANETA ENTERO (el mapa cortaba el sur)
+
+- EL DEFECTO, ENCONTRADO MIRANDO: al revisar las capturas de producción de la v405.13 apareció lo que ninguna prueba miraba — **el mapa no enseñaba el planeta entero**. El lienzo se había fijado en **1000×500** «porque es el de la casa», sin medirlo. Medido sobre el propio dato: con la proyección de la casa (azimuthal de área igual, `rotate[-10,0] center[0,20] scale 155 translate[500,295]`) el disco llega a **y = 631,7** → el borde inferior se comía la Antártida, el cono sur de América y el extremo sur de Nueva Zelanda. El mapa se estaba comiendo **el 21% de su altura**.
+- EL LIENZO SE MIDE, NO SE HEREDA: `alto: 500 → 648` (el 631,7 medido + margen) en `scripts/generar-mundos-mapa.mjs`, con el número y su porqué escritos al lado y la advertencia de volver a medirlo si cambia la escala. **Los paths no cambian ni un píxel** —la proyección es la misma; lo que cambia es cuánto planeta se ve—, y los JSON se regeneran con el cartógrafo (166.998 B y 1.165.209 B, idénticos salvo `alto`).
+- UNA SOLA VERDAD DEL TAMAÑO: `payload.ts` deja de escribir `{ ancho: 1000, alto: 500 }` y lee **`LIENZO`** del archivo generado (`mapa.ts`); la ficha del país pinta el fondo del mapa de detalle con `LIENZO` en vez de dos números a mano, y la prueba compara la ventana de cada país con `LIENZO.alto`. Tres copias del mismo número es exactamente cómo se desincronizan.
+- EL MAPA RESPIRA: `.vx-mm-svg` pasa de recortar a `min(62vh, 560px)` a **`min(72vh, 700px)`**, así que el planeta entero se ve **más grande** que antes, no más pequeño.
+- PRUEBAS: `tsc` 0 errores; **`test-mundos.js` 69 ✓ · 0 fallos** (la ventana de RD sigue siendo `265.1 260.3 90.0 45.0` — la prueba demuestra que la proyección no se movió—); `test-espacio.js` 56 ✓; `test-navegacion.js` 21 ✓.
+- PENDIENTE: volver a capturar el planeta entero en producción y entregar.

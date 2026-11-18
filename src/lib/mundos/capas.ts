@@ -105,7 +105,7 @@ function bruto(lat: number, lng: number): [number, number] {
 const CENTRO = bruto(20, 0);
 const OFF: [number, number] = [500 - K * CENTRO[0], 295 - K * CENTRO[1]];
 
-/** lat/lng reales → píxel del lienzo 1000×500. */
+/** lat/lng reales → píxel del lienzo del mapa (1000×648, medido del dato). */
 export function proyectar(lat: number, lng: number): [number, number] {
   const [x, y] = bruto(lat, lng - 10);
   return [x * K + OFF[0], y * K + OFF[1]];

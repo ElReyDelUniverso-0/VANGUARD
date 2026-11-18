@@ -1172,7 +1172,7 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
   display: block;
   width: 100%;
   height: auto;
-  max-height: min(62vh, 560px);
+  max-height: min(72vh, 700px);
   touch-action: manipulation;
 }
 .vx-mm-rejilla {
@@ -1532,13 +1532,4 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
   .vx-mm-tabla { font-size: 11.5px; }
   .vx-mm-tabla th:nth-child(3),
   .vx-mm-tabla td:nth-child(3) { display: none; }
-}
-
-/* v405.12 · EL DEDO MANDA (agente Portada) — en pantallas táctiles el teletipo
-   exigía 34 px de blanco: justo en la franja que más se toca con el pulgar.
-   Con puntero grueso sube a 44 px (objetivo WCAG 2.5.8 / Apple HIG).
-   El foco visible ya lo pone globals.css (:focus-visible) y el salto al
-   contenido ya lo monta el layout (#vg-contenido, clase .vx-saltar). */
-@media (pointer: coarse) {
-  .vx-tele-pista a { min-height: 44px; }
 }
