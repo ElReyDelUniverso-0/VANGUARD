@@ -224,46 +224,11 @@ const jsonLd = {
       url: SITE_URL,
       logo: { "@type": "ImageObject", url: `${SITE_URL}/icons/icon-512.png` },
     },
-    {
-      // v34: FAQPage — preguntas frecuentes visibles en la portada (SeoFaq).
-      // Google puede mostrar estas respuestas directamente en resultados.
-      "@type": "FAQPage",
-      "@id": `${SITE_URL}/#faq`,
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "¿Qué es VANGUARD?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "VANGUARD es la plataforma de conflictos mundiales en tiempo real: reúne noticias de guerras en vivo, un mapa OSINT 3D con capas de inteligencia, tensión global por país y un juego de guerra global multijugador. Todo en un solo lugar, en español y gratis.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿Cuánto cuesta? ¿Hay que pagar algo?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Nada. VANGUARD es 100% gratis: no pide tarjeta, no tiene suscripción y funciona directamente en el navegador del celular o la computadora.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿Necesito instalar una app?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "No es obligatorio: entra y juega directo desde el navegador. Opcionalmente puedes instalarla como app para abrirla en un toque desde tu pantalla de inicio.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿En qué idiomas está disponible?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "VANGUARD está en 8 idiomas: español, inglés, portugués, francés, alemán, italiano, ruso y chino.",
-          },
-        },
-      ],
-    },
+    // v405.7 EL ESCAPARATE: el FAQPage (v34) se muda a src/app/cuartel/layout.tsx.
+    // Viajaba en TODAS las URLs (noticias, salas, constelaciones…) mientras las
+    // preguntas solo se ven en /cuartel (SeoFaq): Google exige que el marcado
+    // describa contenido visible en ESA página y trata lo contrario como
+    // «marcado estructurado engañoso». Mismas preguntas y respuestas, sin tocar.
   ],
 };
 

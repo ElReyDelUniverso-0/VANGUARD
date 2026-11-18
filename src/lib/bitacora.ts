@@ -21,6 +21,15 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.9",
+    nombre: "EL ESCAPARATE",
+    hitos: [
+      "CADA SALA SE VE AL COMPARTIRLA: el enlace de una sala en WhatsApp, X o Telegram enseña su propia tarjeta — nombre, lema y constelación con su color — en vez de la misma imagen genérica para todo",
+      "LAS PREGUNTAS FRECUENTES, DONDE SE VEN: el marcado FAQ para Google salía en las 2.138 páginas y no coincidía con las preguntas visibles; ahora vive solo en el cuartel y sale de la misma lista que se lee",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v405.15",
     nombre: "SIN UN CUADRO DE MÁS",
     hitos: [

@@ -6137,6 +6137,17 @@
 //    a sus hermanas y el botón que abre la sala en /cuartel?sala=<clave>.
 //    51 con texto real entran al sitemap; el resto tiene puerta con «noindex,
 //    follow» (contenido pobre fuera de Google). Cero salas nuevas, cero texto nuevo.
+// v405.9 EL ESCAPARATE (IA de diseño · descubrimiento y crecimiento) — cómo se
+//    ve VANGUARD FUERA de VANGUARD (al compartir y en Google):
+//    ① /sala/<clave>/opengraph-image: tarjeta propia por sala (nombre, lema,
+//      constelación y su color), estática en el build (155 PNG, ~81 KB); la
+//      twitter:card de la puerta ya no hereda la genérica /api/og.
+//    ② FAQPage JSON-LD: salía en TODAS las URLs (2.138) con 4 preguntas que no
+//      se veían en ninguna; ahora vive en /cuartel, la única página con
+//      <SeoFaq/>, y sale de la misma lista que la sección visible
+//      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
+//    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
+//    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
 export const APP_VERSION = "v405.15";
 export const APP_CODENAME = "SIN UN CUADRO DE MÁS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
