@@ -953,6 +953,36 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["mod:cuenta"],
     alias: "creadores comunidad publicar coleccion perfil moderacion obras",
   },
+
+  // ── EL SISTEMA CENTRAL (v407.0) ────────────────────────────
+  {
+    id: "mod:sistema",
+    nombre: "EL SISTEMA",
+    lema: "Los contratos, los catálogos y el diagnóstico, a la vista",
+    descripcion:
+      "El panel técnico de la casa: diagnóstico en caliente (censo, permisos, catálogo de datos, contratos de API, caché y actividad), el catálogo de endpoints documentados frente a los solo inventariados, los puntos de extensión y el estado real de la IA (qué proveedor tiene credencial y qué se resuelve sin ninguno). Cada bloque enlaza al JSON que lo sirve, para que otro equipo lo consuma sin leer el código.",
+    categoria: "SISTEMA",
+    ruta: "/sistema",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:nucleo", "fnt:modulos", "fnt:fuentes"],
+    alias:
+      "sistema diagnostico contratos api endpoints catalogo extensiones permisos cache actividad panel tecnico desarrolladores v407.0",
+  },
+  {
+    id: "mod:datos",
+    nombre: "EL CATÁLOGO DE DATOS",
+    lema: "De dónde sale cada cifra, con su licencia y su fecha",
+    descripcion:
+      "Los doce modelos de datos de la casa —país, ficha, polígono, indicador, cable, acontecimiento, punto, persona, moneda, guerra, simulación y documento— con su procedencia, su licencia, la fecha de captura, cada cuánto se actualizan, con qué otros modelos se unen y lo que NO dicen. Donde la casa no sabe, escribe «sin dato»; donde el dato es de otro, lo dice con su enlace y su año.",
+    categoria: "SISTEMA",
+    ruta: "/datos",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:atlas", "fnt:indicadores", "fnt:cables"],
+    alias:
+      "datos catalogo procedencia licencia fuente fecha captura banco mundial natural earth modelos esquema calidad trazabilidad v407.0",
+  },
 ];
 
 /** ── Consultas del censo (puras, sin BD) ─────────────────── */

@@ -1266,3 +1266,45 @@ La medida que manda es CPU en reposo, tareas largas, KB de JS y lienzos vivos._
 **Lo que NO se hizo, y por qué:** no se ha fusionado ni una ruta (ley de la casa: la evolución es aditiva). Las cinco puertas de la redacción sirven la misma tabla con distinto orden y las seis del planeta comparten identidad ISO: se declaran familias, no se cierran puertas. Un módulo solo se retiraría con la firma del Dueño.
 
 **Para la siguiente IA (cola con nombre):** (a) `/mundo` y `/mapas` pueden montar ya `contextoDePais()` con el país seleccionado en el globo; (b) `/global`, `/pulso-mundial` y `/mundo` no están en el censo — comprobar si son salas propias o vistas de `/mapas`; (c) el bloque `CablesDelPais` de las fichas hace una petición por visita: si el tráfico de las 249 fichas crece, conviene un `cache()` de 5 min en `/api/nucleo/busqueda`.
+
+---
+
+## v407.0 · EL SISTEMA ABIERTO — lo que encontré y lo que dejé dicho
+
+**Lo que medí antes de escribir (censo real de `main`: 100 `route.ts`, 264 librerías):**
+
+| Agujero | Número |
+|---|---|
+| Endpoints con contrato común | **0 de 100** — cada uno devolvía su forma y su error |
+| Modelos de dato con procedencia y fecha de captura declaradas | **0** (vivían en comentarios sueltos) |
+| Diagnóstico automatizado del sistema | **0** — la salud se miraba a ojo en `/api/health` |
+| Registro de actividad del servidor | **0** |
+| Proveedores de IA con cliente real | **0** — `/api/asistente` es determinista y así se declara |
+| Puntos de extensión documentados | **0** |
+
+**Lo que entra (aditivo; ninguna ruta se cierra, ningún endpoint viejo se modifica):**
+
+1. **El contrato** — `src/lib/sistema/contrato.ts`: `{ok, api, version, datos|error, meta}` con seis códigos cerrados (`VALIDACION`, `NO_ENCONTRADO`, `MURO`, `PERMISO`, `PROVEEDOR`, `INTERNO`), recorte de `detalle` y `conManejo` que cronometra, anota y traduce excepciones.
+2. **El catálogo de datos** — `src/lib/datos/catalogo.ts`: 12 modelos `dato:*` con procedencia, licencia, captura, volumen, actualización, caché, relaciones, rutas y **límites**. Cero cifras nuevas.
+3. **El catálogo de API** — `src/lib/api/catalogo.ts`: documentados vs inventariados, con versión por endpoint y cobertura calculada.
+4. **Los servicios** — `cache.ts` (memo con TTL obligatorio + anti-estampida + tope de 200 claves), `actividad.ts` (anillo de 200 eventos, sin PII), `permisos.ts` (sobre el censo, en servidor), `extensiones.ts` (6 puntos, descriptor semver validado).
+5. **La consulta y el motor** — `nucleo/consulta.ts` (país, tipo, teatro, ventana + pistas) y `nucleo/recomendaciones.ts` (4 fuentes, motivo y peso visibles).
+6. **La IA honesta** — `ia/proveedor.ts`: presencia de credencial, `implementado:false` en los cinco, 6 capacidades deterministas declaradas.
+7. **El diagnóstico** — `sistema/diagnostico.ts`: 10 comprobaciones medidas, nunca lanza, BD opcional con reloj.
+8. **Las puertas** — `/api/sistema/*` (7), `/api/consulta`, `/sistema`, `/datos`; censo 66 → 68; familia del conocimiento 6 → 8 puertas.
+9. **Las pruebas** — `scripts/pruebas-plataforma.mjs`: 12 offline + 13 en vivo.
+
+**Lo que NO se hizo, y por qué:**
+
+- **No se migró ni un endpoint viejo.** La ley de la casa es aditiva y un cambio de forma rompe clientes. La lista de los 100 está inventariada para que la migración se pueda planear endpoint a endpoint, con su versión.
+- **No se conectó ninguna IA.** No hay clave en el entorno de esta tanda y escribir un cliente sin poder probarlo sería exactamente lo que el Dueño prohibió. La puerta está abierta y validada: basta implementar `llamar()` cuando haya credencial y prueba.
+- **No hay carga de plugins en caliente.** Se declara en la nota pública de `/api/sistema/extensiones`: el código de una extensión se despliega con la casa.
+- **La caché y la actividad son por instancia.** No sirven para consistencia entre las varias instancias de Vercel y se dice en cada respuesta.
+
+**Para la siguiente IA (cola con nombre):**
+
+- (a) **Migrar endpoints al contrato por grupos**, empezando por los de solo lectura sin BD (`/api/meteo`, `/api/layers`, `/api/geo`), subiendo `version` de cada endpoint al cambiar la forma.
+- (b) **Consumir `memo()` en las rutas caras** (`/api/news`, `/api/nucleo/busqueda`, `/api/mundo`) con TTL de 30–60 s: el anti-estampida ya está probado.
+- (c) **Montar `/sistema` y `/datos` en la navegación principal** (hoy se llega por el censo, la búsqueda global y los enlaces directos): falta la firma del Dueño para tocar el menú.
+- (d) **El primer proveedor de IA real**: implementar `llamar()` de un solo proveedor, con prueba de integración y `implementado:true` únicamente cuando responda de verdad.
+- (e) **Persistir la actividad** si se quiere auditoría: hoy es un anillo por instancia y no lo es, y así se declara.

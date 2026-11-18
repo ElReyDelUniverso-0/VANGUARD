@@ -1,3 +1,48 @@
+// v407.0 EL SISTEMA ABIERTO — la casa deja de ser cien endpoints sueltos.
+// El encargo del Dueño, textual: «capacidades nuevas… sistema central, API y
+// conectividad, sistema de datos, búsqueda global, motor de relaciones, panel de
+// rendimiento, permisos, extensiones… que se note en toda la plataforma», con dos
+// límites que ordenan todo lo demás: «no inventes APIs que no existen ni publiques
+// claves privadas» y «no destruyas sistemas que funcionen».
+//
+// ① LO MEDIDO ANTES DE ESCRIBIR (censo real de main: 100 route.ts, 264 librerías):
+//    ningún contrato común —cada endpoint devolvía su propia forma y su propio
+//    error—, ningún catálogo de datos (la procedencia y la fecha vivían sueltas en
+//    comentarios), ningún diagnóstico (la salud se miraba a ojo), ningún registro
+//    de actividad y una IA que solo existía como palabra: /api/asistente es
+//    determinista y no hay un solo cliente de modelo en el repositorio.
+// ② EL CONTRATO (`src/lib/sistema/contrato.ts`): una forma para todas las
+//    respuestas nuevas `{ok, api, version, datos|error, meta}` y seis códigos de
+//    error cerrados. `api` versiona la INTERFAZ; `version`, el producto. Los
+//    endpoints viejos NO se tocan: migrar es otra decisión y se hace de uno en uno.
+// ③ EL CATÁLOGO DE DATOS (`src/lib/datos/catalogo.ts`): doce modelos con
+//    procedencia, licencia, fecha de captura, volumen, actualización, caché,
+//    relaciones y —lo que faltaba— sus LÍMITES escritos. Cero cifras nuevas: solo
+//    las que ya existían, con su origen declarado. Se ve en /datos.
+// ④ EL CATÁLOGO DE API (`src/lib/api/catalogo.ts`): los endpoints documentados
+//    (contrato revisado a mano) frente a los solo inventariados (la ruta existe y
+//    la prueba lo comprueba, pero nadie ha verificado su forma). La diferencia se
+//    dice en voz alta en vez de disimularse.
+// ⑤ LOS SERVICIOS: caché `memo` con TTL obligatorio y anti-estampida, registro de
+//    actividad en anillo de 200 eventos sin PII, permisos juzgados en servidor
+//    sobre el censo, y un registro de extensiones con seis puntos validados
+//    (sin carga en caliente ni eval: se declara).
+// ⑥ LA CONSULTA Y EL NEXO: `interpretarConsulta()` entiende país, tipo, teatro y
+//    ventana con reglas y devuelve SUS PISTAS; `recomendar()` propone el siguiente
+//    paso con motivo y peso desde cuatro fuentes reales. Deterministas los dos.
+// ⑦ LA IA, HONESTA: `src/lib/ia/proveedor.ts` comprueba PRESENCIA de credencial
+//    (nunca su valor) y declara `implementado:false` en los cinco proveedores.
+//    Cero llamadas, cero simulación. Lo que sí funciona sin proveedor está listado.
+// ⑧ EL DIAGNÓSTICO Y LAS PUERTAS: /api/sistema/{endpoints,diagnostico,novedades,
+//    actividad,extensiones,datos,ia}, /api/consulta, y dos salas nuevas: /sistema
+//    (el panel técnico) y /datos (el catálogo para personas). Ambas entran en el
+//    censo (66 → 68) y en la familia del conocimiento: se nota en /nucleo, en la
+//    búsqueda global y en el censo que sirven otras seis rutas.
+// ⑨ PRUEBAS: `scripts/pruebas-plataforma.mjs` — 12 comprobaciones offline que
+//    vigilan que los catálogos cuadren con el repositorio (ningún endpoint
+//    documentado que no exista, ningún endpoint vivo sin inventariar) + 13 en vivo
+//    contra producción (contrato, diagnóstico sano, consulta real, IA sin proveedor,
+//    páginas y muro 429). Las 26 de `pruebas-nucleo.mjs` siguen pasando.
 // v406.4 LA PLATAFORMA ENTERA — la casa deja de ser setenta herramientas sueltas.
 // El encargo del Dueño, textual: «analiza todos los módulos, fusiona los que hacen
 // lo mismo, conecta noticias, mapas, simuladores y centros de información, mejora;
@@ -6298,8 +6343,8 @@
 //      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
 //    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
 //    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
-export const APP_VERSION = "v406.4b";
-export const APP_CODENAME = "LA PLATAFORMA ENTERA";
+export const APP_VERSION = "v407.0";
+export const APP_CODENAME = "EL SISTEMA ABIERTO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6359,7 +6404,7 @@ export const APP_CODENAME = "LA PLATAFORMA ENTERA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v406.3";
+export const APP_VERSION_ANTERIOR = "v406.4b";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
