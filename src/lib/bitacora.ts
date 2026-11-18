@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v406.3",
+    nombre: "EDITORIAL COMMAND",
+    hitos: [
+      "LA REDACCIÓN: /editorial, una biblioteca de artículos con fuentes en diez áreas que unen el Vanguard moderno y el clásico",
+      "LAS PRIMERAS 13 PIEZAS: Ormuz, COP31, midterms, APEC y G20, tierras raras, el español, Westfalia, chips, verificación, Estados a medias, víctimas de guerra y dos rankings de datos vivos",
+      "EL CALENDARIO: 30 días con cuatro prioridades semanales y una cola de 29 piezas con ángulo, fuentes previstas y el informe con el que se coordinan",
+      "EL SISTEMA: plan de revisiones calculado, criterios de calidad, verificación y registro de cambios en cada artículo",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v406.2",
     nombre: "LA PORTADA NUEVA",
     hitos: [
@@ -32,6 +43,16 @@ export const BITACORA: EntradaBitacora[] = [
       "NADA SE PIERDE: historias, noticia grande, última hora, destacadas, módulos, spot, mapa vivo, teatros y salas siguen en su sitio, con la jerarquía ordenada y el móvil a dos columnas",
     ],
     tipo: "nav",
+  },
+  {
+    version: "v406.1",
+    nombre: "LA FORJA",
+    hitos: [
+      "EL ECOSISTEMA DE CREADORES: mapas, escenarios, investigaciones, simulaciones y proyectos hechos por la comunidad",
+      "PÁGINAS DE CREADOR Y COLECCIONES: cada obra con versiones, comentarios, valoraciones y reconocimiento",
+      "PERMISOS Y MODERACIÓN: quién puede ver, editar o publicar, con bitácora de cada decisión",
+    ],
+    tipo: "reten",
   },
   {
     version: "v406.0",
