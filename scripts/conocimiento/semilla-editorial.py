@@ -24,7 +24,7 @@ sources=[
 ('usgs','Water Science School','USGS','https://www.usgs.gov/special-topics/water-science-school','manual','Procesos hidrológicos y métodos de medición.'),
 ('undp','Human Development Reports · Data Center','PNUD','https://hdr.undp.org/data-center','datos','Desarrollo humano e índices compuestos; leer notas técnicas.'),
 ('unpop','World Population Prospects','ONU · División de Población','https://population.un.org/wpp/','datos','Estimaciones y proyecciones demográficas; no son censos continuos.'),
-('habitat','World Cities Report','ONU-Hábitat','https://unhabitat.org/wcr/','sintesis','Urbanización, vivienda y políticas territoriales; definiciones comparables con cautela.'),
+('habitat','World Cities Report','ONU-Hábitat','https://unhabitat.org/knowledge/publications/world-cities-report-2024-cities-and-climate-action','sintesis','Urbanización, vivienda y políticas territoriales; definiciones comparables con cautela.'),
 ('unctad','Review of Maritime Transport','UNCTAD','https://unctad.org/topic/transport-and-trade-logistics/review-of-maritime-transport','sintesis','Transporte marítimo y conectividad; separar volumen, valor y capacidad.'),
 ('ocean','Ocean Literacy','UNESCO · Comisión Oceanográfica Intergubernamental','https://oceanliteracy.unesco.org/','manual','Procesos oceánicos y alfabetización; remite a recursos y publicaciones.'),
 ('cbd','Convention on Biological Diversity','Secretaría del CDB','https://www.cbd.int/convention','primaria','Texto y marco institucional de biodiversidad; no prueba ejecución nacional.'),

@@ -52,6 +52,10 @@ El primer build de preview en Vercel ejecutó el `tsc --noEmit` global seguido d
 - `<title>` SVG: se emite una cadena única para evitar advertencias de React en SSR.
 - Memoria: servidor de pruebas y TypeScript simultáneos saturaron el sandbox; se detuvieron procesos y se ejecutaron secuencialmente. No se relajaron las reglas de tipos del producto.
 
+## Comprobación adicional de fuentes
+
+Se consultaron los 28 destinos del registro para comprobar disponibilidad (no para validar todas sus afirmaciones): 21 devolvieron HTTP 200, seis bloquearon al comprobador con HTTP 403 y uno devolvió 404. Se corrigió el enlace de ONU-Habitat a la ficha oficial del World Cities Report 2024 y se confirmó HTTP 200. Resultado final: 22 accesibles desde el comprobador y seis restringidos. El informe de disponibilidad conserva el destino anterior y la corrección; no equipara accesibilidad con credibilidad ni revisión académica.
+
 ## Pendientes y motivos
 
 Las 22 misiones son un programa progresivo, no 22 departamentos completos en una sola entrega. El registro canónico conserva por departamento infraestructura existente, carencias y siguiente expansión. «En pie» indica una base funcional, no totalidad de la misión.

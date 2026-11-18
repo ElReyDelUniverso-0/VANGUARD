@@ -1,0 +1,226 @@
+{
+  "fecha": "2026-11-18T21:35:06.203966+00:00",
+  "metodo": "GET de disponibilidad limitado a 2048 bytes por destino. No verifica afirmaciones ni autoría, licencia o vigencia del contenido. Los errores HTTP no prueban que una fuente sea inválida.",
+  "resultados": [
+    {
+      "id": "wb",
+      "url": "https://data.worldbank.org/",
+      "nombre": "Indicadores del Desarrollo Mundial",
+      "status": 403,
+      "error": "HTTP error; puede existir bloqueo de robots o restricción de acceso."
+    },
+    {
+      "id": "un",
+      "url": "https://www.un.org/en/about-us/un-charter",
+      "nombre": "Carta de las Naciones Unidas",
+      "status": 200,
+      "finalUrl": "https://www.un.org/en/about-us/un-charter",
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "id": "imf",
+      "url": "https://www.imf.org/en/Publications/fandd/issues/Series/Back-to-Basics",
+      "nombre": "Finance & Development · Back to Basics",
+      "status": 403,
+      "error": "HTTP error; puede existir bloqueo de robots o restricción de acceso."
+    },
+    {
+      "id": "wto",
+      "url": "https://www.wto.org/english/thewto_e/whatis_e/tif_e/tif_e.htm",
+      "nombre": "Understanding the WTO",
+      "status": 200,
+      "finalUrl": "https://www.wto.org/english/thewto_e/whatis_e/tif_e/tif_e.htm",
+      "contentType": "text/html"
+    },
+    {
+      "id": "ipcc",
+      "url": "https://www.ipcc.ch/report/ar6/syr/",
+      "nombre": "Climate Change 2023 · Synthesis Report",
+      "status": 403,
+      "error": "HTTP error; puede existir bloqueo de robots o restricción de acceso."
+    },
+    {
+      "id": "bio",
+      "url": "https://openstax.org/details/books/biology-2e",
+      "nombre": "Biology 2e",
+      "status": 200,
+      "finalUrl": "https://openstax.org/details/books/biology-2e",
+      "contentType": "text/html"
+    },
+    {
+      "id": "fis",
+      "url": "https://openstax.org/details/books/university-physics-volume-1",
+      "nombre": "University Physics",
+      "status": 200,
+      "finalUrl": "https://openstax.org/details/books/university-physics-volume-1",
+      "contentType": "text/html"
+    },
+    {
+      "id": "quim",
+      "url": "https://openstax.org/details/books/chemistry-2e",
+      "nombre": "Chemistry 2e",
+      "status": 200,
+      "finalUrl": "https://openstax.org/details/books/chemistry-2e",
+      "contentType": "text/html"
+    },
+    {
+      "id": "astro",
+      "url": "https://openstax.org/details/books/astronomy-2e",
+      "nombre": "Astronomy 2e",
+      "status": 200,
+      "finalUrl": "https://openstax.org/details/books/astronomy-2e",
+      "contentType": "text/html"
+    },
+    {
+      "id": "nasa",
+      "url": "https://science.nasa.gov/solar-system/",
+      "nombre": "Science · Solar System",
+      "status": 200,
+      "finalUrl": "https://science.nasa.gov/solar-system/",
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "id": "unesco",
+      "url": "https://whc.unesco.org/en/list/",
+      "nombre": "Lista del Patrimonio Mundial",
+      "status": 200,
+      "finalUrl": "https://whc.unesco.org/en/list/",
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "id": "hist",
+      "url": "https://openstax.org/details/books/world-history-volume-1",
+      "nombre": "World History Volume 1",
+      "status": 200,
+      "finalUrl": "https://openstax.org/details/books/world-history-volume-1",
+      "contentType": "text/html"
+    },
+    {
+      "id": "hist2",
+      "url": "https://openstax.org/details/books/world-history-volume-2",
+      "nombre": "World History Volume 2",
+      "status": 200,
+      "finalUrl": "https://openstax.org/details/books/world-history-volume-2",
+      "contentType": "text/html"
+    },
+    {
+      "id": "fao",
+      "url": "https://www.fao.org/faostat/en/",
+      "nombre": "FAOSTAT · definiciones y estadísticas",
+      "status": 200,
+      "finalUrl": "https://www.fao.org/faostat/en/",
+      "contentType": "text/html"
+    },
+    {
+      "id": "iea",
+      "url": "https://www.iea.org/energy-system",
+      "nombre": "Energy system",
+      "status": 403,
+      "error": "HTTP error; puede existir bloqueo de robots o restricción de acceso."
+    },
+    {
+      "id": "usgs",
+      "url": "https://www.usgs.gov/special-topics/water-science-school",
+      "nombre": "Water Science School",
+      "status": 200,
+      "finalUrl": "https://www.usgs.gov/water-science-school",
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "id": "undp",
+      "url": "https://hdr.undp.org/data-center",
+      "nombre": "Human Development Reports · Data Center",
+      "status": 200,
+      "finalUrl": "https://hdr.undp.org/data-center",
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "id": "unpop",
+      "url": "https://population.un.org/wpp/",
+      "nombre": "World Population Prospects",
+      "status": 200,
+      "finalUrl": "https://population.un.org/wpp/",
+      "contentType": "text/html"
+    },
+    {
+      "id": "habitat",
+      "url": "https://unhabitat.org/knowledge/publications/world-cities-report-2024-cities-and-climate-action",
+      "nombre": "World Cities Report",
+      "status": 200,
+      "statusAnterior": 404,
+      "urlAnterior": "https://unhabitat.org/wcr/",
+      "finalUrl": "https://unhabitat.org/knowledge/publications/world-cities-report-2024-cities-and-climate-action",
+      "correccion": "Enlace corregido a la ficha oficial del informe 2024; contenido consultado."
+    },
+    {
+      "id": "unctad",
+      "url": "https://unctad.org/topic/transport-and-trade-logistics/review-of-maritime-transport",
+      "nombre": "Review of Maritime Transport",
+      "status": 200,
+      "finalUrl": "https://unctad.org/topic/transport-and-trade-logistics/review-of-maritime-transport",
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "id": "ocean",
+      "url": "https://oceanliteracy.unesco.org/",
+      "nombre": "Ocean Literacy",
+      "status": 200,
+      "finalUrl": "https://oceanliteracy.unesco.org/",
+      "contentType": "text/html"
+    },
+    {
+      "id": "cbd",
+      "url": "https://www.cbd.int/convention",
+      "nombre": "Convention on Biological Diversity",
+      "status": 200,
+      "finalUrl": "https://www.cbd.int/convention",
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "id": "itu",
+      "url": "https://www.itu.int/itu-d/reports/statistics/",
+      "nombre": "Facts and Figures",
+      "status": 200,
+      "finalUrl": "https://www.itu.int/itu-d/reports/statistics/connectivity-in-the-least-developed-countries-status-report-2021/",
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "id": "uis",
+      "url": "https://uis.unesco.org/",
+      "nombre": "UNESCO Institute for Statistics",
+      "status": 200,
+      "finalUrl": "https://www.uis.unesco.org/en",
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "id": "wipo",
+      "url": "https://www.wipo.int/global_innovation_index/en/",
+      "nombre": "Global Innovation Index",
+      "status": 200,
+      "finalUrl": "https://www.wipo.int/en/web/global-innovation-index/",
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "id": "unido",
+      "url": "https://www.unido.org/resources-publications-flagship-publications/industrial-development-report-series",
+      "nombre": "Industrial Development Report",
+      "status": 403,
+      "error": "HTTP error; puede existir bloqueo de robots o restricción de acceso."
+    },
+    {
+      "id": "imf-fiscal",
+      "url": "https://www.imf.org/external/Pubs/FT/GFS/Manual/2014/gfsfinal.pdf",
+      "nombre": "Government Finance Statistics Manual 2014",
+      "status": 403,
+      "error": "HTTP error; puede existir bloqueo de robots o restricción de acceso."
+    },
+    {
+      "id": "ushmm",
+      "url": "https://encyclopedia.ushmm.org/",
+      "nombre": "Holocaust Encyclopedia",
+      "status": 200,
+      "finalUrl": "https://encyclopedia.ushmm.org/",
+      "contentType": "text/html; charset=UTF-8"
+    }
+  ]
+}
