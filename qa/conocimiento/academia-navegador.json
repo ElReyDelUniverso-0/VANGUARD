@@ -1,0 +1,16 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "passed": 9,
+  "checks": [
+    "Academia: cuatro rutas, lección original y expediente enlazado",
+    "Respuesta incorrecta explica el error y no suma progreso",
+    "Respuesta correcta guarda progreso una sola vez",
+    "Progreso persiste tras recarga y puede borrarse",
+    "Navegación de lecciones y cambio de ruta cambian contenido",
+    "API explicativa usa contrato central, límites y 404 sin invención",
+    "Departamentos: 22 auditorías, contratos e inventario filtrable",
+    "Academia móvil sin desbordamiento horizontal y controles accesibles",
+    "Sin excepciones JavaScript en academia ni departamentos"
+  ],
+  "errors": []
+}

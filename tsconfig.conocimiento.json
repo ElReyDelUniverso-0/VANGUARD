@@ -18,7 +18,8 @@
     "scripts/conocimiento/pruebas.ts",
     "src/app/sistema/departamentos/page.tsx",
     "src/app/sistema/page.tsx",
-    "src/lib/api/catalogo.ts"
+    "src/lib/api/catalogo.ts",
+    "scripts/conocimiento/pruebas-departamentos.ts"
   ],
   "exclude": [
     "node_modules"
