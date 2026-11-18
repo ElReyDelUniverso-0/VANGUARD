@@ -1,18 +1,18 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-18",
-  "paginas": 94,
-  "rutasApi": 113,
-  "total": 207,
-  "bienConectadas": 89,
+  "paginas": 96,
+  "rutasApi": 114,
+  "total": 210,
+  "bienConectadas": 91,
   "huerfanas": [],
-  "paginasConReferencias": 94,
-  "mediaReferencias": 14.84,
+  "paginasConReferencias": 96,
+  "mediaReferencias": 14.89,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 86,
+      "referencias": 87,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -568,6 +568,14 @@
       ]
     },
     {
+      "ruta": "/api/investigacion",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "lib/version.ts"
+      ]
+    },
+    {
       "ruta": "/api/juegos",
       "tipo": "api",
       "referencias": 3,
@@ -1111,7 +1119,7 @@
     {
       "ruta": "/armeria",
       "tipo": "pagina",
-      "referencias": 13,
+      "referencias": 14,
       "desde": [
         "components/portada/areas.ts",
         "components/portada/modulos.ts",
@@ -1177,7 +1185,7 @@
     {
       "ruta": "/centinela",
       "tipo": "pagina",
-      "referencias": 10,
+      "referencias": 11,
       "desde": [
         "app/cronica/page.tsx",
         "components/portada/modulos.ts",
@@ -1409,7 +1417,7 @@
     {
       "ruta": "/cuartel",
       "tipo": "pagina",
-      "referencias": 34,
+      "referencias": 36,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
         "app/cuartel/layout.tsx",
@@ -1463,7 +1471,7 @@
     {
       "ruta": "/divisas",
       "tipo": "pagina",
-      "referencias": 19,
+      "referencias": 20,
       "desde": [
         "app/mapas/page.tsx",
         "app/navegacion/navegacion-sala.tsx",
@@ -1578,7 +1586,7 @@
     {
       "ruta": "/espia",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/en-vivo/page.tsx",
         "app/mundo/mundo-3d-vivo.tsx",
@@ -1650,9 +1658,31 @@
       ]
     },
     {
+      "ruta": "/investigacion",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "app/investigacion/[slug]/page.tsx",
+        "app/labs/[modelo]/page.tsx",
+        "components/conocimiento/explorador.tsx",
+        "components/portada/areas.ts"
+      ]
+    },
+    {
+      "ruta": "/investigacion/[slug]",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "app/investigacion/page.tsx",
+        "app/labs/[modelo]/page.tsx",
+        "components/conocimiento/explorador.tsx",
+        "components/portada/areas.ts"
+      ]
+    },
+    {
       "ruta": "/labs",
       "tipo": "pagina",
-      "referencias": 9,
+      "referencias": 10,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -1663,7 +1693,7 @@
     {
       "ruta": "/labs/[modelo]",
       "tipo": "pagina",
-      "referencias": 9,
+      "referencias": 10,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -1694,7 +1724,7 @@
     {
       "ruta": "/mapas",
       "tipo": "pagina",
-      "referencias": 25,
+      "referencias": 27,
       "desde": [
         "app/espacio/page.tsx",
         "app/mundos/page.tsx",
@@ -1760,7 +1790,7 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 36,
+      "referencias": 38,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -1771,7 +1801,7 @@
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 36,
+      "referencias": 38,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -1903,7 +1933,7 @@
     {
       "ruta": "/poder",
       "tipo": "pagina",
-      "referencias": 16,
+      "referencias": 17,
       "desde": [
         "app/mapas/page.tsx",
         "components/portada/modulos.ts",
@@ -1991,7 +2021,7 @@
     {
       "ruta": "/sala/[clave]",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
         "components/planeta/directorio.tsx",
@@ -2002,7 +2032,7 @@
     {
       "ruta": "/servicios",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
         "components/portada/areas.ts",
         "components/portada/modulos.ts",

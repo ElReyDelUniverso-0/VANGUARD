@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v413.0",
+    nombre: "INVESTIGACIÓN SISTÉMICA",
+    hitos: [
+      "ECOSISTEMA GLOBAL DE CONOCIMIENTO: conecta los seis verbos esenciales —Descubrir, Comprender, Investigar, Visualizar, Comparar y Simular— en una sola arquitectura unificada sin silos",
+      "DIEZ DOSSIERS ESTRATÉGICOS DE ALTA DENSIDAD: semiconductores y litografía EUV, cuellos de botella de Malaca y Ormuz, minerales críticos y transición energética, estrés hídrico y presa GERD en el Nilo, arquitectura financiera y desdolarización, guerra de cables submarinos, armas hipersónicas y disuasión, cuenca ártica y deshielo, fertilizantes y seguridad alimentaria, y gobernanza de la IA de frontera",
+      "METODOLOGÍA RIGUROSA CON FUENTES OFICIALES: cada indicador cuantificable cita año, unidad, fuente primaria oficial (AIE, Banco Mundial, SIPRI, UNCTAD, IMO, USGS, FAO) y declara explícitamente sus puntos ciegos e incertidumbres",
+      "CARTOGRAFÍA GEOESTRATÉGICA SVG INTERACTIVA: proyección equirrectangular con nodos tácticos (chokepoints, centros de producción, infraestructura crítica, puntos de conflicto), selector interactivo con coordenadas reales y enlace al globo 3D",
+      "COMPARATIVA MULTIDIMENSIONAL ASIMÉTRICA: matrices interactivas con barras proporcionales normalizadas que enfrentan las capacidades, costes y vulnerabilidades de los actores centrales de cada tema",
+      "CONEXIÓN TOTAL CON LABS Y TOOLS: cada dossier enlaza directamente con los simuladores matemáticos pertinentes de /labs (comercio en red, mezcla energética, agua, suelo, cascada) y con las herramientas analíticas de /cuartel?tab=tools",
+      "EXPORTACIÓN Y CITACIÓN ACADÉMICA: botón para copiar cita académica formal formateada y descargador de dossier completo en JSON abierto",
+      "ONCE PUERTAS PÚBLICAS INDEXADAS: /investigacion y diez rutas canónicas con Schema.org ScholarlyArticle, sitemap.xml, llms.txt y registro en el Núcleo",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v412.0",
     nombre: "LA CASA CONECTADA",
     hitos: [

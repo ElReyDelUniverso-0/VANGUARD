@@ -2,6 +2,7 @@ import { SITE_URL } from "@/lib/site";
 import { CONSTELACIONES, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
 import { MODELOS, estadisticasLabs } from "@/lib/labs/registro"; // v411.0: el laboratorio
 import CENSO from "@/lib/arquitectura/censo.json"; // v412.0: el censo real del árbol
+import { TEMAS_INVESTIGACION } from "@/lib/investigacion"; // v413.0: investigación sistémica
 
 // ============================================================
 // v405.6 LA CARTA A LAS MÁQUINAS — /llms.txt — ia3 (Arena)
@@ -71,6 +72,13 @@ export function GET() {
       "`node tools/arquitectura/probar.mjs`.",
     `- [Catálogo de datos](${c("/datos")}): procedencia, licencia, fecha de captura y límites de cada modelo de datos del sitio.`,
     `- [Sala de la calidad](${c("/calidad")}): las pruebas de la casa y qué mide cada una.`,
+    "",
+    "## Investigación Sistémica (VANGUARD DOSSIERS)",
+    "",
+    `- [Investigación Sistémica](${c("/investigacion")}): ${TEMAS_INVESTIGACION.length} dossiers globales que ` +
+      "integran teoría, indicadores auditados de la AIE, Banco Mundial y SIPRI, mapas geoestratégicos SVG, " +
+      "comparativas asimétricas y conexión con simuladores matemáticos.",
+    ...TEMAS_INVESTIGACION.map((t) => `- [${t.titulo}](${c(`/investigacion/${t.id}`)}): ${t.subtitulo}`),
     "",
     "## Datos y mapas del sitio",
     "",

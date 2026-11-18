@@ -101,6 +101,7 @@ export const AREAS: Area[] = [
     cta: "Los rostros del poder",
     color: "#60a5fa",
     atajos: [
+      { href: "/investigacion", label: "Dossiers sistémicos" },
       { href: "/servicios", label: "Inteligencia" },
       { href: "/pulso-mundial", label: "Pulso mundial" },
       { href: "/divisas", label: "Divisas" },
@@ -130,6 +131,7 @@ export const AREAS: Area[] = [
     color: "#3ddc97",
     dato: `${PAISES_ATLAS.length} naciones`,
     atajos: [
+      { href: "/investigacion", label: "Investigación" },
       { href: "/archivo-mundial#curiosidades", label: `${CURIOSITIES.length} curiosidades` },
       { href: "/sala/quiz", label: "Quiz" },
     ],

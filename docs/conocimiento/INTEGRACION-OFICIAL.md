@@ -4,7 +4,7 @@
 
 ## Auditoría inicial y coordinación
 
-La base oficial al comenzar era `5aa37aec4286cb2942711dbe93ea270d32c94bf9`. Durante la implementación entró en `main` `bba18dce25d00f16cab29b0173e915dc8c0ff97a` (arquitectura v412). Se incorporó mediante merge, conservando sus nexos, censo, contratos, laboratorios y página `/arquitectura`. La única colisión textual fue en la ficha de país: se conservaron tanto la banda de nexos nueva como el puente específico a Conocimiento.
+La base oficial al comenzar era `5aa37aec4286cb2942711dbe93ea270d32c94bf9`. Durante la implementación entró en `main` `bba18dce25d00f16cab29b0173e915dc8c0ff97a` (arquitectura v412). Se incorporó mediante merge, conservando sus nexos, censo, contratos, laboratorios y página `/arquitectura`. Posteriormente se integraron también `9376fee` y `23959d6` (Investigación Sistémica y su corrección de tipos), conservando íntegramente esa contribución y añadiendo un enlace desde Conocimiento. Se regeneró el censo compartido en vez de resolver a mano su JSON generado. La colisión de contenido funcional fue en la ficha de país: se conservaron tanto la banda de nexos nueva como el puente específico a Conocimiento.
 
 Se descartaron el segundo inventario y el segundo registro de departamentos que se habían preparado en paralelo. **La autoridad única es `src/lib/arquitectura/departamentos.ts` y la puerta pública `/arquitectura`.** Su censo se regenera con `node tools/arquitectura/censar.mjs`. El filtro de departamentos se añadió a esta página existente.
 
