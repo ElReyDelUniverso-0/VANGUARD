@@ -29,6 +29,7 @@ export const BITACORA: EntradaBitacora[] = [
       "LA COSTURA COSIDA: enlacesDePais() existía desde la v218 y no la montaba nadie; 249 fichas de país estrenan chips al núcleo y los cables del país sin dejar de ser estáticas",
       "LAS FAMILIAS: seis preguntas, seis puertas canónicas y el papel declarado de cada sala — el planeta, la redacción, la simulación, las personas, el conocimiento y la casa. Ninguna se cierra",
       "PRUEBAS: 17 → 25 comprobaciones offline en scripts/pruebas-nucleo.mjs, las 8 nuevas vigilan la costura",
+      "LA PRUEBA EN VIVO CAZÓ EL PLURAL (v406.4b): el primer cable real decía «ucranianos» y el nexo solo conocía el singular — el índice aprende las tres formas del plural español (vocal +s, consonante +es, z → ces) y sube a 26 comprobaciones",
     ],
     tipo: "mundo",
   },

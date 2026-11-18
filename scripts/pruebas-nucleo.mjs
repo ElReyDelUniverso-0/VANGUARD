@@ -377,6 +377,15 @@ async function parteA() {
     afirmar(rel.includes("incluirFicha"), "enlacesDePais no puede llevar a la ficha del país");
   });
 
+  await verificar("v406.4b · el nexo entiende el plural, no solo el singular", () => {
+    const nexo = readFileSync(join(RAIZ, "src/lib/nucleo/nexo.ts"), "utf8");
+    afirmar(nexo.includes("function pluralDe"), "el nexo no declara la regla de plurales");
+    afirmar(/const plural = pluralDe\(clave\)/.test(nexo), "el índice no calcula el plural");
+    afirmar(/if \(plural && !mapa\.has\(plural\)\) mapa\.set\("?/.test(nexo) || nexo.includes("mapa.set(plural, iso2)"), "el plural no se registra en el índice");
+    afirmar(nexo.includes('"ucraniano"'), "falta el gentilicio de Ucrania: el cable real no abriría su ficha");
+    afirmar(nexo.includes('ces"'), "la regla del plural no cubre las palabras terminadas en z («franceses» es «francés»)");
+  });
+
   await verificar("v406.4 · /nucleo publica las familias y sus puertas canónicas", () => {
     const pag = readFileSync(join(RAIZ, "src/app/nucleo/page.tsx"), "utf8");
     afirmar(pag.includes("FAMILIAS_MODULO"), "/nucleo no monta las familias de módulos");
