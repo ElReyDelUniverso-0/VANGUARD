@@ -983,6 +983,102 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     alias:
       "datos catalogo procedencia licencia fuente fecha captura banco mundial natural earth modelos esquema calidad trazabilidad v407.0",
   },
+
+  // ── v406.5 EL PLANETA EN CIFRAS · LA EXPANSIÓN DEL UNIVERSO ────────────
+  // Cinco centros que ponen la ficha del país en contexto (todos leen la MISMA
+  // tabla: src/lib/planeta/datos.ts → ficha.ts → Banco Mundial con su año) y
+  // dos piezas del sistema de módulos: el directorio y las colecciones.
+  {
+    id: "mod:comparador",
+    nombre: "EL COMPARADOR INTERNACIONAL",
+    lema: "Hasta cuatro países, cifra a cifra",
+    descripcion:
+      "Elige de dos a cuatro países y míralos lado a lado en ocho indicadores (población, superficie, densidad, PIB, renta por habitante, gasto y esfuerzo militar, esperanza de vida), con su puesto mundial, cuántas veces es uno respecto del otro y el año de cada dato. El enlace guarda la comparación y se puede llevar a tu espacio.",
+    categoria: "MUNDO",
+    ruta: "/comparador",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:mundos", "fnt:indicadores", "fnt:atlas"],
+    alias: "comparar comparador paises versus vs frente a frente cara a cara pib poblacion renta esperanza de vida diferencias",
+  },
+  {
+    id: "mod:rankings",
+    nombre: "LOS RANKINGS DEL PLANETA",
+    lema: "Ocho listas mundiales completas",
+    descripcion:
+      "Cada indicador del planeta ordenado de mayor a menor, con TODOS los países que tienen dato (no un top 10), su año, su peso sobre el total mundial y el acumulado. Cada fila lleva a la ficha del país y al comparador.",
+    categoria: "MUNDO",
+    ruta: "/rankings",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:mundos", "fnt:indicadores"],
+    alias: "ranking clasificacion lista top mayores menores puesto mundial pib poblacion superficie densidad gasto militar esperanza",
+  },
+  {
+    id: "mod:demografia",
+    nombre: "POBLACIÓN Y DEMOGRAFÍA",
+    lema: "Cuántos somos, dónde y cuánto vivimos",
+    descripcion:
+      "El centro de población del planeta: la suma mundial con su cobertura, cuántos países concentran la mitad de la humanidad, los más y menos densos, la brecha de esperanza de vida, el reparto por regiones y por tamaño de país. Todo con el Banco Mundial (SP.POP.TOTL, SP.DYN.LE00.IN) y su año.",
+    categoria: "MUNDO",
+    ruta: "/demografia",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:mundos", "fnt:indicadores"],
+    alias: "demografia poblacion habitantes humanidad densidad esperanza de vida natalidad personas censo cuantos somos",
+  },
+  {
+    id: "mod:regiones",
+    nombre: "TERRITORIOS Y REGIONES",
+    lema: "Las 24 subregiones del mundo, sumadas",
+    descripcion:
+      "Los cinco continentes del censo y sus 24 subregiones (Caribe, Sudeste asiático, África occidental…) con la población, la superficie, el PIB, el gasto militar y la esperanza de vida SUMADOS o ponderados, sus gigantes y la tabla de cada país. Cada subregión tiene su propia página.",
+    categoria: "MUNDO",
+    ruta: "/regiones",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:mundos", "fnt:indicadores"],
+    alias: "regiones subregiones continentes territorios caribe centroamerica sudamerica europa africa asia oceania",
+  },
+  {
+    id: "mod:organizaciones",
+    nombre: "LAS ORGANIZACIONES INTERNACIONALES",
+    lema: "Quién se sienta con quién, y cuánto pesa",
+    descripcion:
+      "Dieciséis bloques (Consejo de Seguridad, OTAN, UE, G7, G20, BRICS, OPEP, OCS, ASEAN, Unión Africana, Liga Árabe, Mercosur, CAN, SICA, CARICOM y T-MEC) con sus miembros de pleno derecho, su fuente oficial, los cambios recientes y su peso real en población, PIB y gasto militar. Cada país muestra en su ficha los bloques a los que pertenece.",
+    categoria: "MUNDO",
+    ruta: "/organizaciones",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:mundos", "fnt:indicadores"],
+    alias: "organizaciones internacionales bloques alianzas otan ue union europea brics opep g7 g20 asean mercosur sica caricom onu consejo de seguridad",
+  },
+  {
+    id: "mod:directorio",
+    nombre: "EL DIRECTORIO DE LA CASA",
+    lema: "Todas las puertas, buscables",
+    descripcion:
+      "El índice único de Vanguard: cruza los módulos de la cabecera, el censo del Núcleo y las familias de módulos. Buscador instantáneo, once temas inteligentes, tus favoritos, tus recientes (el rastro de la Travesía) y recomendaciones de lo que sigue según lo que ya viste. Cualquier puerta se guarda en tu espacio con un toque.",
+    categoria: "SISTEMA",
+    ruta: "/directorio",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:catalogo", "mod:navegacion", "mod:espacio"],
+    alias: "directorio indice herramientas buscar modulos salas favoritos recientes historial recomendaciones todo",
+  },
+  {
+    id: "mod:colecciones",
+    nombre: "LAS COLECCIONES",
+    lema: "Recorridos guiados por temas",
+    descripcion:
+      "Rutas de cinco a siete paradas que responden una pregunta (¿quién manda en el planeta?, entender una guerra, tu país en el mundo…) enlazando salas que ya existen, con el porqué de cada parada y el tiempo estimado.",
+    categoria: "SISTEMA",
+    ruta: "/colecciones",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:directorio"],
+    alias: "colecciones recorridos rutas guias descubrir empezar aprender tematicas",
+  },
 ];
 
 /** ── Consultas del censo (puras, sin BD) ─────────────────── */

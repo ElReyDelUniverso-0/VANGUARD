@@ -38,7 +38,7 @@ import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
 import { BotonMundos } from "@/components/mundos/puerta-mundos";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 // v406.0 LA TRAVESÍA — el hilo (continúa donde lo dejaste) y la puerta a la entrada inmersiva
-import { HiloPortada, BotonTravesia } from "@/components/travesia/hilo-portada";
+import { HiloPortada, BotonTravesia, BotonDirectorio } from "@/components/travesia/hilo-portada";
 import { HeroeVanguard, AreasRejilla, DescubreHoy, NovedadesPortada } from "@/components/portada/portada-nueva";
 
 
@@ -206,11 +206,12 @@ export default async function Portada() {
 
         {/* v402.6 LOS NUEVE MÓDULOS — lo que la casa tiene además de noticias, a la vista */}
         <section id="modulos" className="vx-sec vxp-ancla" aria-label="Los módulos de Vanguard">
-          <TituloSeccion sello={`Sección 04 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
+          <TituloSeccion sello={`Sección 04 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Países en cifras, conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
           <ModulosRejilla compacta />
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: 12, marginTop: 18 }}>
             <BotonMundos />
             <BotonTravesia />
+            <BotonDirectorio />
           </div>
         </section>
 

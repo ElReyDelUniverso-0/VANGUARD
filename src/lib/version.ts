@@ -1,3 +1,31 @@
+// v407.1 EL PLANETA EN CIFRAS — LA EXPANSIÓN DEL UNIVERSO. Encargo del Dueño:
+// «conecta funciones aisladas, convierte módulos pequeños en centros completos,
+// crea categorías nuevas y un catálogo global de herramientas; cada mejora con
+// utilidad real, navegación funcional, datos y conexión con el ecosistema».
+//
+// ① LO MEDIDO: 249 fichas de país y NINGUNA forma de ponerlas una al lado de
+//    otra, ordenarlas, sumarlas por regiones o por bloques. /mundos no colgaba
+//    de ningún módulo de la cabecera. Tres censos de puertas (cabecera, Núcleo,
+//    familias) que no se hablaban, y 155 salas del cuartel fuera de cualquier
+//    búsqueda por tema. El rastro de la Travesía y los favoritos existían, pero
+//    ninguna página los usaba para recomendar lo siguiente.
+// ② UNA SOLA TABLA (src/lib/planeta/datos.ts): lee la ficha canónica del país
+//    (ficha.ts → atlas + Banco Mundial con su año), así que todo lo nuevo dice
+//    la MISMA cifra que /mundos/<iso>. Ocho indicadores; nada se estima.
+// ③ CINCO CENTROS NUEVOS en el módulo nuevo «Planeta en cifras» (con /mundos
+//    dentro): /comparador (2-4 países, puestos, «cuántas veces», enlace que se
+//    comparte y se guarda), /rankings + 8 listas completas, /demografia,
+//    /regiones + 24 subregiones, /organizaciones + 16 bloques con miembros,
+//    fuente oficial, cambios recientes (salida de Emiratos de la OPEP, ingreso
+//    de Timor Oriental en la ASEAN), mapa de miembros y peso real.
+// ④ EL SISTEMA DE MÓDULOS: /directorio (215 destinos: 60 centros + 155 salas,
+//    11 temas inteligentes, búsqueda, ★ favoritos, recientes del rastro,
+//    «porque visitaste…», guardar en el espacio) y /colecciones (7 recorridos
+//    guiados con el porqué de cada parada).
+// ⑤ LA COSTURA: cada ficha de país muestra sus puestos mundiales, sus bloques y
+//    su región; enlacesDePais() suma COMPARAR / SU REGIÓN / BLOQUE; nueva familia
+//    «¿cuánto pesa un país frente a los demás?»; 7 módulos más en el censo (68 →
+//    75); sitemap con 62 URLs nuevas; pruebas 26 → 30.
 // v407.0 EL SISTEMA ABIERTO — la casa deja de ser cien endpoints sueltos.
 // El encargo del Dueño, textual: «capacidades nuevas… sistema central, API y
 // conectividad, sistema de datos, búsqueda global, motor de relaciones, panel de
@@ -6343,8 +6371,8 @@
 //      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
 //    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
 //    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
-export const APP_VERSION = "v407.0";
-export const APP_CODENAME = "EL SISTEMA ABIERTO";
+export const APP_VERSION = "v407.1";
+export const APP_CODENAME = "EL PLANETA EN CIFRAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6404,7 +6432,7 @@ export const APP_CODENAME = "EL SISTEMA ABIERTO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v406.4b";
+export const APP_VERSION_ANTERIOR = "v407.0b";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

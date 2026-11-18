@@ -43,3 +43,12 @@ export function BotonTravesia() {
     </Link>
   );
 }
+
+/** v406.5 — la puerta al directorio: todas las salas, buscables, con favoritos */
+export function BotonDirectorio() {
+  return (
+    <Link href="/directorio" className="tv-hp-boton">
+      Buscar cualquier herramienta · El directorio →
+    </Link>
+  );
+}

@@ -20,6 +20,12 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { enlacesDePais } from "@/lib/nucleo/relaciones";
 import { enlacesDePaisARedaccion as enlacesRedaccion } from "@/lib/nucleo/nexo";
 import { CablesDelPais } from "./cables-del-pais";
+// v406.5 · EL PLANETA EN CIFRAS — la ficha en contexto: puestos mundiales,
+// región sumada y bloques a los que pertenece (misma tabla que /comparador).
+import { puestoDe } from "@/lib/planeta/datos";
+import { INDICADOR } from "@/lib/planeta/indicadores";
+import { organizacionesDePais } from "@/lib/planeta/organizaciones";
+import { rutaRegionDe, SUBREGIONES_ES } from "@/lib/planeta/subregiones";
 
 // ═══════════════════════════════════════════════════════════════════
 // v405.12 · /mundos/[iso] — LA FICHA DE UN PAÍS
@@ -91,6 +97,13 @@ export default async function PaisPage({ params }: Props) {
     .slice(0, 5);
 
   const puentes = PUENTES.map((p) => ({ ...p, href: resolverPuente(p, f) }));
+
+  // v406.5 — dónde queda este país en las listas del planeta
+  const puestos = (["pob", "sup", "pib", "pibPC", "mil", "vida"] as const)
+    .map((id) => ({ id, nombre: INDICADOR[id].nombre, p: puestoDe(id, f.iso2) }))
+    .filter((x) => x.p !== null);
+  const bloques = organizacionesDePais(f.iso2);
+  const rutaRegion = rutaRegionDe(f.subregion);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -456,6 +469,46 @@ export default async function PaisPage({ params }: Props) {
               {f.lng.toFixed(2)}); «Divisas» abre el tablero de monedas; «Guardar en mi espacio» deja esta ficha como
               pieza en tu proyecto activo.
             </p>
+          </div>
+
+          {/* ── v406.5 · EN EL PLANETA ── */}
+          <div className="vx-mp-bloque">
+            <h2>{f.nombre} en el planeta</h2>
+            {puestos.length > 0 ? (
+              <div className="vx-mp-acciones">
+                {puestos.map((x) => (
+                  <Link key={x.id} href={`/rankings/${x.id}#${f.iso2}`} className="vx-mo-puente" title={`Ranking mundial de ${x.nombre.toLowerCase()}`}>
+                    <span className="vx-mo-puente-clase">{x.nombre}</span>
+                    puesto {x.p!.puesto} de {x.p!.de}
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="vx-mp-nota">El Banco Mundial no publica cifras de este territorio: no entra en las listas mundiales.</p>
+            )}
+            {bloques.length > 0 ? (
+              <>
+                <p className="vx-mp-nota" style={{ marginBottom: 6 }}>Miembro pleno de:</p>
+                <div className="vx-mp-acciones">
+                  {bloques.map((o) => (
+                    <Link key={o.clave} href={`/organizaciones/${o.clave}`} className="vx-mo-puente" title={o.nombre}>
+                      <span className="vx-mo-puente-clase">bloque</span>
+                      {o.sigla}
+                    </Link>
+                  ))}
+                </div>
+              </>
+            ) : null}
+            <div className="vx-mp-acciones" style={{ marginTop: 10 }}>
+              <Link href={`/comparador?p=${f.iso2}`} style={{ color: "#5eead4", textDecoration: "none", fontSize: 12.5 }}>
+                Compararlo con otros países →
+              </Link>
+              {rutaRegion ? (
+                <Link href={rutaRegion} style={{ color: "#5eead4", textDecoration: "none", fontSize: 12.5 }}>
+                  {SUBREGIONES_ES[f.subregion] ?? f.subregion}, sumada →
+                </Link>
+              ) : null}
+            </div>
           </div>
 
           {/* ── VECINOS ── */}

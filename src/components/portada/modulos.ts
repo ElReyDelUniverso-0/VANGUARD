@@ -83,6 +83,27 @@ export const MODULOS: Modulo[] = [
       { href: "/traductor", label: "Traductor", img: "/ilustraciones/osint.jpg", txt: "Las noticias del mundo en tu idioma." },
     ],
   },
+  // v406.5 EL PLANETA EN CIFRAS — el módulo de los países: la ficha de cada
+  // uno (que ya existía en /mundos sin colgar de ningún módulo) más los cinco
+  // centros que la ponen en contexto: comparar, ordenar, sumar por regiones,
+  // contar la población y ver quién se sienta con quién.
+  {
+    id: "planeta",
+    nombre: "Planeta en cifras",
+    corto: "Planeta",
+    lema: "Países, regiones y bloques medidos con datos abiertos",
+    nav: "/mundos",
+    img: "/ilustraciones/maps.jpg",
+    gancho: "Compara países, ordénalos, súmalos por regiones y mira qué pesa cada bloque, con las cifras del Banco Mundial y su año.",
+    pestanas: [
+      { href: "/mundos", label: "Países", img: "/ilustraciones/mi-pais.jpg", txt: "El mapa de los mundos: la ficha de cada país con sus fronteras reales." },
+      { href: "/comparador", label: "Comparador", img: "/ilustraciones/estadisticas.jpg", txt: "Hasta cuatro países cara a cara: población, economía, defensa y años de vida." },
+      { href: "/rankings", label: "Rankings", img: "/ilustraciones/ranking.jpg", txt: "Ocho listas mundiales completas, con el año del dato de cada país." },
+      { href: "/demografia", label: "Población", img: "/ilustraciones/edad.jpg", txt: "Cuántos somos, dónde nos concentramos y cuántos años vivimos." },
+      { href: "/regiones", label: "Regiones", img: "/ilustraciones/planeta.jpg", txt: "Las 24 subregiones del mundo con su población y su economía sumadas." },
+      { href: "/organizaciones", label: "Organizaciones", img: "/ilustraciones/alianzas.jpg", txt: "OTAN, UE, BRICS, OPEP, SICA y once bloques más: quién está y cuánto pesan." },
+    ],
+  },
   {
     id: "secretos",
     nombre: "Secretos",
@@ -174,6 +195,8 @@ export const MODULOS: Modulo[] = [
       { href: "/novedades", label: "Novedades", img: "/ilustraciones/notificaciones.jpg", txt: "Todo lo nuevo, con enlace directo." },
       { href: "/calidad", label: "Calidad", img: "/ilustraciones/evaluacion.jpg", txt: "La auditoría de la casa, con sus defectos abiertos." },
       { href: "/torre", label: "Torre de control", img: "/ilustraciones/operaciones.jpg", txt: "La salud real del arranque, noche a noche." },
+      { href: "/directorio", label: "Directorio", img: "/ilustraciones/enciclopedia.jpg", txt: "Todas las puertas de la casa, buscables, con tus favoritos y tus recientes." },
+      { href: "/colecciones", label: "Colecciones", img: "/ilustraciones/misiones.jpg", txt: "Recorridos guiados por temas: de la pregunta a las salas que la responden." },
       { href: "/catalogo", label: "Catálogo", img: "/ilustraciones/enciclopedia.jpg", txt: "El índice de lo que ya existe en Vanguard." },
       { href: "/nucleo", label: "Núcleo", img: "/ilustraciones/fusion.jpg", txt: "El censo de módulos y la búsqueda global." },
       { href: "/escudo", label: "Escudo", img: "/ilustraciones/ciber.jpg", txt: "El buscador de llaves: que ningún secreto se publique." },
