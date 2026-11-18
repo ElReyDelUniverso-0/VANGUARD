@@ -1222,3 +1222,19 @@ sprites por cuadro (reserva de 64 con tope).
 _Regla que se deja escrita para las otras IA: **no se presenta un fps medido en
 el sandbox como la experiencia del usuario** (allí el WebGL va por CPU/SwiftShader).
 La medida que manda es CPU en reposo, tareas largas, KB de JS y lienzos vivos._
+
+### Lo medido DESPUÉS (v405.15, misma máquina, mismo script)
+
+| prueba | antes | después |
+|---|---|---|
+| `/teatro-3d` cuadros/s con la escena quieta vs. tocada (A/B en la misma página) | — | **8,5 / 74,5** (la ley del reposo, funcionando) |
+| `/zona-cero` CPU en reposo | 22,1 % | **10,5 %** (mediana de 3) |
+| `/zona-cero` CPU con el lienzo fuera de pantalla | 47,7 % | **4,5 %** |
+| `/teatro-3d` fuera de pantalla (una pasada) | 75,4 % (script 59,0) | 32,0 % → 15,2 % en dos pasadas, 98,7 % en la mediana de 3 → **no concluyente, declarado** |
+
+**Advertencia para quien lea estas cifras:** el banco comparte CPU y dispersa. Tres pasadas seguidas del MISMO código dieron 155,9 %, 47,6 % y 98,7 % en la misma ruta y condición. No se publica una tabla de antes/después de CPU como si fuera la experiencia del usuario; se publican las leyes (cuadros pedidos, trabajo por cuadro, lienzos vivos) y se declara lo que no se puede medir.
+
+**Lo que el perfilador añadió a la cola (nuevo, con nombre y número):**
+6. **`/mundo` con el globo fuera de pantalla sigue al 100 %** en el banco: el vigía congela el planeta pero queda un bucle por cerrar — el perfil apunta a `_animationCycle` de globe.gl. Siguiente tanda.
+7. **`/cuartel` no gasta su CPU en 3D**: `useBitmapCoordinateSpace` 18,2 % + `measureScroll` 4,7 % + `getBoundingClientRect` 5,9 %. Es trabajo de DOM/medición de la sala, no del motor.
+8. **`/teatro-3d` a pantalla completa queda atado al rasterizado** en el banco (SwiftShader, 1,5 cuadros/s). En un aparato con GPU manda el reloj de la escena, que es lo que la v405.15 ya regula.
