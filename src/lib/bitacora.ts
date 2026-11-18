@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v407.0",
+    nombre: "EL SISTEMA ABIERTO",
+    hitos: [
+      "EL CONTRATO: una forma para todas las respuestas nuevas ({ok, api, version, datos|error, meta}) y seis códigos de error cerrados — los endpoints viejos no se tocan",
+      "EL CATÁLOGO DE DATOS: doce modelos con procedencia, licencia, fecha de captura, caché y sus límites escritos; cero cifras nuevas. Se ve en /datos",
+      "EL CATÁLOGO DE API: los endpoints documentados (contrato revisado) separados de los solo inventariados; la prueba falla si un endpoint vivo no está en ninguno de los dos",
+      "EL DIAGNÓSTICO: /api/sistema/diagnostico revisa versión, censo, permisos, datos, API, extensiones, motor, caché y actividad en caliente, con la BD opcional y reloj de 3,5 s",
+      "LA CONSULTA ESTRUCTURADA: /api/consulta entiende país, tipo, teatro y ventana con reglas y devuelve SUS PISTAS para poder corregirla — sin proveedor de IA",
+      "LA IA, HONESTA: cinco proveedores comprobados por PRESENCIA de credencial y declarados sin implementar — cero llamadas, cero simulación; lo que se resuelve sin IA está listado",
+      "LOS SERVICIOS COMPARTIDOS: caché memo con TTL y anti-estampida, actividad en anillo de 200 eventos sin PII, permisos juzgados en servidor, extensiones con seis puntos validados (sin carga en caliente)",
+      "LAS PUERTAS: /sistema (panel técnico) y /datos (catálogo para personas) entran en el censo (66 → 68) y en la familia del conocimiento; se notan en /nucleo y en la búsqueda global",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v406.4",
     nombre: "LA PLATAFORMA ENTERA",
     hitos: [

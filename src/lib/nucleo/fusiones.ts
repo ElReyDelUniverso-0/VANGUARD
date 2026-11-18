@@ -232,10 +232,20 @@ export const FAMILIAS_MODULO: FamiliaModulos[] = [
         nombre: "La editorial",
         papel: "Lo que la casa escribe de sí misma: artículos con fecha y área.",
       },
+      {
+        ruta: "/sistema",
+        nombre: "El sistema",
+        papel: "Los contratos, los catálogos y el diagnóstico: la casa por dentro, con sus límites declarados.",
+      },
+      {
+        ruta: "/datos",
+        nombre: "El catálogo de datos",
+        papel: "Qué modelo hay, de dónde sale, con qué licencia y de qué fecha — y qué no dice.",
+      },
     ],
     motivo:
       "Seis puertas para «¿qué hay aquí?». El núcleo es el índice (censo + búsqueda + fichas); las otras cinco son vistas del mismo inventario y ahora se enlazan entre sí por los chips contextuales.",
-    cifra: "6 puertas · 1 censo · búsqueda global única",
+    cifra: "8 puertas · 1 censo · búsqueda global única",
   },
   {
     id: "familia-cuartel",
