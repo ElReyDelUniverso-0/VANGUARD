@@ -74,6 +74,8 @@ export const MODULOS: Modulo[] = [
     gancho: "Las fichas que explican quién es quién, cuánto pesa cada país y de dónde viene todo.",
     pestanas: [
       { href: "/atlas", label: "Atlas", img: "/ilustraciones/planeta.jpg", txt: "Las naciones, las personas y las rutas del poder." },
+      // v412.0 INVESTIGACIÓN SISTÉMICA — dossiers interconectados con datos, mapas, comparador y simuladores
+      { href: "/investigacion", label: "Investigación", img: "/ilustraciones/radar.jpg", txt: "Dossiers sistémicos conectados: comprender, investigar, visualizar, comparar y simular." },
       // v406.3 EDITORIAL COMMAND — la biblioteca de artículos con fuentes, en diez áreas.
       { href: "/editorial", label: "Redacción", img: "/ilustraciones/biblioteca.jpg", txt: "Artículos con fuentes en diez áreas: geopolítica, historia, economía, conflictos y más." },
       { href: "/rostros", label: "Rostros del poder", img: "/ilustraciones/gobierno.jpg", txt: "Quién decide y quién ejecuta: las fichas del poder." },

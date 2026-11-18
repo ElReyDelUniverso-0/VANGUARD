@@ -653,6 +653,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     idEntidadComo: "vg:mapa:mapas",
   },
   {
+    id: "mod:investigacion",
+    nombre: "INVESTIGACIÓN SISTÉMICA",
+    lema: "Diez dossiers globales que conectan datos, mapas, comparador y simuladores",
+    descripcion:
+      "El nexo que une todos los formatos de Vanguard: descubre un tema, comprende sus conceptos, investiga sus indicadores oficiales, visualízalo en cartografía SVG, compara actores asimétricos y simúlalo con los modelos de /labs.",
+    categoria: "MUNDO",
+    ruta: "/investigacion",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:indicadores", "fnt:atlas"],
+    alias: "investigacion dossiers temas sistemica semiconductores malaca agua nilo fertilizantes artico hipersonicos desdolarizacion cables submarinos v412.0",
+    idEntidadComo: "vg:mapa:investigacion",
+  },
+  {
     id: "mod:atlas",
     nombre: "EL ATLAS DEL PLANETA",
     lema: "Capital, gobierno y líder de cada nación",

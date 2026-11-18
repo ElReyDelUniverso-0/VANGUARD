@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
 import { MODULOS, SALAS_INTERNAS } from "@/components/portada/modulos";
 import { MODELOS } from "@/lib/labs/registro"; // v411.0: los quince laboratorios
+import { TEMAS_INVESTIGACION } from "@/lib/investigacion"; // v412.0: los diez dossiers de investigación sistémica
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -676,6 +677,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    // v413.0 INVESTIGACIÓN SISTÉMICA — dossiers conectados
+    {
+      url: `${SITE_URL}/investigacion`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    ...TEMAS_INVESTIGACION.map((t) => ({
+      url: `${SITE_URL}/investigacion/${t.id}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
   ];
 
   // ② y ③: fuera las salas noindex; lastmod real o ninguno

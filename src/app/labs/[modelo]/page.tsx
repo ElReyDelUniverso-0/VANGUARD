@@ -8,6 +8,7 @@ import { SITE_URL } from "@/lib/site";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { BandaNexos } from "@/components/arquitectura/banda-nexos";
 import { nexosDeModelo } from "@/lib/arquitectura/nexos";
+import { temasPorModeloLab } from "@/lib/investigacion";
 
 // ═══════════════════════════════════════════════════════════════════
 // v411.0 · LA FICHA DE UN LABORATORIO — /labs/<modelo>
@@ -206,6 +207,44 @@ export default async function ModeloPage({ params }: Props) {
           nexos={nexosDeModelo(m.id)}
           nota="Este modelo no simula un país concreto: sus cifras de partida son genéricas y están declaradas arriba. Las salidas de abajo llevan a los datos reales y a las fichas de los países cuyos totales se parecen a lo que estás moviendo."
         />
+
+        {/* v413.0 INVESTIGACIÓN SISTÉMICA — temas del mundo real conectados a este simulador */}
+        {(() => {
+          const temasConectados = temasPorModeloLab(m.id);
+          if (temasConectados.length === 0) return null;
+          return (
+            <section className="mt-12 rounded-lg border border-amber-400/40 bg-amber-400/5 p-5">
+              <div className="flex items-center justify-between">
+                <h2 className="font-mono text-[11px] uppercase tracking-[0.25em] text-amber-300 font-bold">
+                  Dossiers de Investigación Sistémica conectados
+                </h2>
+                <span className="font-mono text-[10px] text-zinc-400">Datos reales · mapas · comparativa</span>
+              </div>
+              <p className="mt-1 text-[13px] text-zinc-300">
+                Pasa de la simulación matemática al análisis geopolítico y empírico con fuentes auditadas de este mismo fenómeno:
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {temasConectados.map((t) => (
+                  <Link
+                    key={t.id}
+                    href={`/investigacion/${t.id}`}
+                    className="rounded border border-zinc-800 bg-zinc-900/70 p-3 hover:border-amber-400/60 transition-colors block group"
+                  >
+                    <span className="font-mono text-[10px] text-amber-400 uppercase tracking-wider block">
+                      {t.categoria.replace("_", " & ")}
+                    </span>
+                    <span className="font-mono text-[13px] font-bold text-zinc-100 group-hover:text-amber-200 transition-colors block mt-0.5">
+                      {t.titulo} →
+                    </span>
+                    <p className="text-[11px] text-zinc-400 mt-1 line-clamp-2">
+                      {t.subtitulo}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {hermanos.length > 0 && (
           <section className="mt-12 border-t border-zinc-800 pt-6">

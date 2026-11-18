@@ -6398,6 +6398,39 @@
 //      supuesto etiquetado; y aviso permanente de que NO es una predicción.
 // ═══════════════════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════════════════
+// v413.0 INVESTIGACIÓN SISTÉMICA — DIRECTIVA GLOBAL DE EXPANSIÓN MISIÓN:
+// Arquitectura global de investigación y conocimiento que interconecta los seis
+// verbos operativos de Vanguard: Descubrir, Comprender, Investigar, Visualizar,
+// Comparar y Simular.
+//
+// ① DIEZ DOSSIERS ESTRATÉGICOS GLOBALES:
+//    1. Semiconductores y Litografía EUV (chokepoint Taiwán / ASML / TSMC)
+//    2. Cuellos de Botella Marítimos Globales (Malaca y Ormuz)
+//    3. Minerales Críticos y Transición Energética (Litio, Cobalto, Tierras Raras)
+//    4. Estrés Hídrico y Megaproyectos (Cuenca del Nilo y Presa GERD)
+//    5. Geoeconomía y Desdolarización (Reservas globales, BRICS, SWIFT)
+//    6. Infraestructura Crítica Submarina (Cables de fibra y riesgos de sabotaje)
+//    7. Carrera de Armas Hipersónicas y Disuasión Estratégica (HGV, scramjet, ABM)
+//    8. Cuenca Ártica y Deshielo (Ruta Marítima del Norte y soberanía polar)
+//    9. Seguridad Alimentaria y Cadena de Fertilizantes (Haber-Bosch, potasa, NPK)
+//    10. Frontera de la Inteligencia Artificial y Gobernanza (Compute clusters, H100s)
+// ② NINGUNA CIFRA FALSA O DEMO VACÍA:
+//    Cada indicador cuenta con fuente oficial primaria (AIE, Banco Mundial, SIPRI,
+//    UNCTAD, IMO, USGS, FAO), año de corte, unidad de medida e incertidumbres
+//    declaradas abiertamente.
+// ③ PUENTES BIDIRECCIONALES CON /labs Y /cuartel?tab=tools:
+//    Simuladores de red comercial gravitatoria, mezcla energética, agua, suelo y
+//    cascada eléctrica enlazados directamente desde y hacia cada investigación.
+// ④ INTERACTIVIDAD MULTIDIMENSIONAL:
+//    Mesa de investigación con 5 modos: Comprender (resumen ejecutivo, preguntas
+//    críticas, cronología), Investigar (indicadores verificados y brechas), Visualizar
+//    (mapa SVG con coordenadas reales y selector de nodos), Comparar (matrices
+//    asimétricas normalizadas) y Conectar/Simular (puentes directos a simuladores).
+// ⑤ EXPORTABILIDAD ACADÉMICA Y API:
+//    Descarga en JSON estructurado, botón de copiado de cita académica formal, y
+//    endpoint `/api/investigacion` con filtros por categoría, búsqueda y exportación.
+// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 // v412.0 LA CASA CONECTADA — encargo del Dueño: el plan de los veintidós
 // departamentos, con una regla que ordena todo lo demás: «no marques como
 // completada una función que solamente tenga una interfaz visual».
@@ -6433,9 +6466,9 @@
 //    un departamento citan una ruta que ya no existe, si el registro no tiene
 //    22 entradas o si un departamento «en pie» no tiene ninguna pieza.
 // ═══════════════════════════════════════════════════════════════════
-export const APP_VERSION = "v412.0";
-export const APP_CODENAME = "LA CASA CONECTADA";
-// (codename anterior) export const APP_CODENAME = "EL PLANETA EN CIFRAS";
+export const APP_VERSION = "v413.0";
+export const APP_CODENAME = "INVESTIGACIÓN SISTÉMICA";
+// (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -6495,7 +6528,7 @@ export const APP_CODENAME = "LA CASA CONECTADA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v407.0b";
+export const APP_VERSION_ANTERIOR = "v411.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
