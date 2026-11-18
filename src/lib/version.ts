@@ -6448,7 +6448,7 @@
 // ③ EL MOTOR DE NEXOS (`src/lib/arquitectura/nexos.ts`): cada uno de los
 //    quince laboratorios declara sus salidas a países, datos, mapas,
 //    cronologías, otros simuladores y herramientas, con el motivo escrito; y
-//    cada ficha de país declara siete. Cincuenta y siete enlaces declarados,
+//    cada ficha de país declara siete. Cincuenta y seis salidas en los quince modelos y siete en cada una de las doscientas cuarenta y nueve fichas de país.
 //    todos comprobados contra el censo antes de publicar.
 // ④ LAS BANDAS MONTADAS: /labs, las quince fichas de modelo y las 249 fichas
 //    de país enseñan «sigue por aquí» con familia, etiqueta y por qué. Donde

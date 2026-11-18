@@ -83,12 +83,12 @@ for (const b of bloques) {
 ok(sinPiezas.length === 0, `departamentos «en pie» sin ninguna pieza con ruta: ${sinPiezas.join(", ")}`);
 
 // ── informe ───────────────────────────────────────────────────────
-const totalNexos = [...textoNexos.matchAll(/familia: "/g)].length;
+const totalNexos = [...textoNexos.matchAll(/ruta:\s*[`"']/g)].length;
 console.log("ARQUITECTURA · prueba de honestidad");
 console.log(`  censo            ${censo.paginas} páginas · ${censo.rutasApi} rutas de API (${censo.fecha})`);
 console.log(`  rutas citadas    ${citadas.size} · todas existen: ${inexistentes.length === 0 ? "sí" : "NO"}`);
 console.log(`  laboratorios     ${idsNexos.length} · en el registro: ${faltanEnRegistro.length === 0 ? "todos" : "faltan " + faltanEnRegistro.join(", ")}`);
-console.log(`  nexos declarados ${totalNexos}`);
+console.log(`  rutas de nexo    ${totalNexos} literales en el motor (modelos, base y ficha de país)`);
 console.log(`  departamentos    ${nDepts}`);
 
 if (fallos.length) {
