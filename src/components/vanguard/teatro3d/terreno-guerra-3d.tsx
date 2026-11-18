@@ -21,7 +21,7 @@ import {
   elevacionEn,
   type SimEstado,
 } from "@/lib/teatro-sim-engine";
-import { escenaViva } from "@/lib/3d/vivo";
+import { escenaViva, quietud } from "@/lib/3d/vivo";
 import {
   aplicarEntornoPBR,
   crearPipelinePBR,
@@ -766,7 +766,15 @@ export function TerrenoGuerra3D({
         syncSimToMap();
       };
       syncSimToMap();
-      timerSync = window.setInterval(syncChecked, modoEco ? 140 : 75);
+      // v405.15: el volcado deja de ser un metrónomo de 13 Hz pase lo que pase.
+      // Con la página quieta baja a 300 ms (3 Hz) — el mapa sigue vivo, pero no
+      // gasta lo que nadie mira; el primer gesto lo devuelve a su ritmo.
+      const cadenciaSync = () => (quietud() > 3000 ? 300 : modoEco ? 140 : 90);
+      const latidoSync = () => {
+        syncChecked();
+        timerSync = window.setTimeout(latidoSync, cadenciaSync());
+      };
+      timerSync = window.setTimeout(latidoSync, cadenciaSync());
       map.once("remove", () => io.disconnect());
     });
 
@@ -796,7 +804,7 @@ export function TerrenoGuerra3D({
     ro.observe(container);
 
     return () => {
-      if (timerSync !== null) window.clearInterval(timerSync);
+      if (timerSync !== null) window.clearTimeout(timerSync);
       if (rafOrbit) cancelAnimationFrame(rafOrbit);
       ro.disconnect();
       if (mapInstRef.current === map) mapInstRef.current = null;
