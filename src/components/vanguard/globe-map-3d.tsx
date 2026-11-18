@@ -283,13 +283,26 @@ export function GlobeMap3D({
         /* noop */
       }
     };
+    let enPantalla = true;
     const io = typeof IntersectionObserver !== "undefined"
       ? new IntersectionObserver(
-          (entradas) => congelar(!entradas.some((e) => e.isIntersecting) || document.hidden),
+          (entradas) => {
+            enPantalla = entradas.some((e) => e.isIntersecting);
+            congelar(!enPantalla || document.hidden);
+          },
           { rootMargin: "160px", threshold: 0 }
         )
       : null;
     io?.observe(el);
+    // v405.15: un solo pauseAnimation no basta. globe.gl REANUDA solo su bucle
+    // cuando llegan datos nuevos (y los globos de la casa se refrescan en vivo),
+    // así que al hacer scroll el planeta seguía rasterizándose a 60 cuadros por
+    // segundo fuera de pantalla: /mundo llegaba al 100% de un núcleo con el
+    // lienzo invisible. Este vigía barato (una comprobación por segundo) lo
+    // vuelve a congelar mientras siga sin verse.
+    const vigia = window.setInterval(() => {
+      if (!enPantalla || document.hidden) congelar(true);
+    }, 900);
 
     // pausa la rotacion al pasar el raton (facilita clicar territorios)
     const setRot = (on: boolean) => {
@@ -311,6 +324,7 @@ export function GlobeMap3D({
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.clearInterval(vigia);
       io?.disconnect();
       document.removeEventListener("visibilitychange", onVis);
       el.removeEventListener("mouseenter", onEnter);
