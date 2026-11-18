@@ -1,3 +1,41 @@
+// v414.0 LA CASA SE CONOCE — el mapa deja de ser una foto y pasa a ser una prueba.
+// Departamento: IA 1 · VANGUARD MASTER ARCHITECT (plan de los 22 departamentos).
+//
+// ① LO QUE YA HABÍA (v412.0, otra tanda): /arquitectura con el censo del árbol
+//    (páginas y rutas de API con sus referencias entrantes), el registro de los
+//    22 departamentos con su estado honesto y los contratos de integración en
+//    prosa. Eso NO se toca: se extiende.
+// ② EL HUECO QUE FALTABA, medido: los contratos se leían, no se comprobaban; el
+//    grafo de dependencias entre áreas no existía (el propio departamento 1 lo
+//    listaba como «falta»); y ninguna máquina podía preguntar por la
+//    arquitectura sin abrir el repositorio.
+// ③ EL GRAFO (`tools/arquitectura/grafo.mjs` → `src/lib/arquitectura/grafo.json`):
+//    cruza el censo (quién cita cada ruta) con el registro de módulos (qué
+//    dependencias declara) y escribe las áreas con su peso real, la matriz de
+//    acoplamiento, los ciclos de enlace (informativos: una ida y vuelta no es un
+//    error), las áreas centrales y los huecos. Hoy: 176 áreas, 435 acoplamientos,
+//    4 ciclos de enlace, 79 módulos, 127 dependencias declaradas, 0 rotas.
+// ④ EL CONTRATO EJECUTABLE (`src/lib/arquitectura/integracion.ts`): las ocho
+//    piezas que un área nueva tiene que cumplir (puerta canónica, registro,
+//    origen del dato, contrato de máquina, ida y vuelta, límites, prueba y
+//    constancia) con su comprobación y su sitio, y `validarIntegracion()`, que
+//    dice en voz alta lo que le falta a un descriptor. Las piezas que solo puede
+//    juzgar una persona se declaran «revisión humana»: no se finge una prueba.
+// ⑤ LA PUERTA DE MÁQUINA (`/api/sistema/arquitectura`): el mapa con el contrato
+//    de la v407.0 — resumen, grafo, acoplamientos, huecos, piezas y los 22
+//    departamentos— cacheado 300 s y con muro de 60/min. Las otras 21 IA ya no
+//    necesitan leer el árbol para saber qué hay y qué les falta.
+// ⑥ LA GUÍA (`docs/INTEGRACION-22-DEPARTAMENTOS.md`): el camino corto en ocho
+//    pasos, dónde escribe cada departamento y las cinco formas de romper la casa.
+// ⑦ LA GUARDA (`scripts/pruebas-arquitectura.mjs`): 15 comprobaciones que fallan
+//    si el mapa miente — ninguna página fuera del censo, ninguna ruta fantasma,
+//    acoplamientos a áreas inexistentes, dependencias rotas, huérfanas, o un
+//    endpoint vivo sin documentar ni inventariar. Ahí se cazó que
+//    /api/investigacion vivía sin registrar en el catálogo: corregido.
+// ⑧ LO QUE NO SE HACE: no se borra ni se cierra nada de la v412.0; no se marca
+//    como construido ningún departamento que solo tenga interfaz; y el censo se
+//    sigue generando con `tools/arquitectura/censar.mjs`, que es de quien lo
+//    escribió (aquí solo se lee).
 // v407.1 EL PLANETA EN CIFRAS — LA EXPANSIÓN DEL UNIVERSO. Encargo del Dueño:
 // «conecta funciones aisladas, convierte módulos pequeños en centros completos,
 // crea categorías nuevas y un catálogo global de herramientas; cada mejora con
@@ -6466,8 +6504,8 @@
 //    un departamento citan una ruta que ya no existe, si el registro no tiene
 //    22 entradas o si un departamento «en pie» no tiene ninguna pieza.
 // ═══════════════════════════════════════════════════════════════════
-export const APP_VERSION = "v413.0";
-export const APP_CODENAME = "INVESTIGACIÓN SISTÉMICA";
+export const APP_VERSION = "v414.0";
+export const APP_CODENAME = "LA CASA SE CONOCE";
 // (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
@@ -6528,7 +6566,7 @@ export const APP_CODENAME = "INVESTIGACIÓN SISTÉMICA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v411.0";
+export const APP_VERSION_ANTERIOR = "v413.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

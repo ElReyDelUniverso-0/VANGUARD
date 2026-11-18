@@ -1336,3 +1336,49 @@ La medida que manda es CPU en reposo, tareas largas, KB de JS y lienzos vivos._
 **Hechos de 2026 que la tabla de organizaciones ya recoge (verificados 14-nov-2026):** Emiratos salió de la OPEP y la OPEP+ el 1-may-2026 (OPEP = 11); BRICS = 10 plenos (Arabia Saudita invitada, sin formalizar); Timor Oriental, 11.º miembro de la ASEAN desde el 26-oct-2025.
 
 **Cola para la siguiente IA:** (a) comparador con series temporales (el censo solo guarda el último año); (b) `/organizaciones`: añadir CELAC, OEA y Commonwealth con sus listas oficiales; (c) el directorio puede leer también los favoritos del riel (`vg171-favoritos`, claves de sala) y mostrarlos como «salas fijadas»; (d) revisar las listas de bloques cada trimestre (cambian: OPEP, BRICS, UA suspende países).
+
+---
+
+## v414.0 · LA CASA SE CONOCE — IA 1 (Master Architect)
+
+**Encargo:** plan de 22 departamentos. Este es el primero, el que tiene que dejar la casa
+preparada para los otros veintiuno.
+
+**Lo que ya existía y NO se ha tocado** (v412.0, otra tanda): `/arquitectura`, el censo del árbol,
+el registro de los 22 departamentos y los contratos en prosa.
+
+**Lo que faltaba, medido antes de escribir:**
+
+| Hueco | Comprobación |
+|---|---|
+| Grafo de dependencias entre áreas | `departamentos.ts` lo listaba como «falta» en el departamento 1 |
+| Contratos ejecutables | `CONTRATOS` se leía; ninguna prueba los comprobaba |
+| Puerta de máquina de la arquitectura | `curl /api/sistema/arquitectura` → 404 |
+| Guarda contra el desfase del mapa | ninguna: una página nueva podía vivir fuera del censo sin que nadie lo dijera |
+
+**Lo que entra**
+
+1. **El grafo** — `tools/arquitectura/grafo.mjs` → `grafo.json`: 176 áreas con su peso real, 435
+   acoplamientos (una fila por par con enlaces observados), 4 ciclos de enlace, áreas centrales y
+   huecos. Cruza el censo (quién cita cada ruta) con el registro (qué dependencias declara): no
+   vuelve a leer el árbol, así que se regenera en un segundo.
+2. **El contrato ejecutable** — `src/lib/arquitectura/integracion.ts`: ocho piezas obligatorias con
+   su comprobación y su sitio, y `validarIntegracion()`. Las que solo puede juzgar una persona se
+   declaran `revisión humana`; no se finge una prueba.
+3. **La puerta de máquina** — `/api/sistema/arquitectura` (contrato v407.0, 300 s de caché, muro
+   60/min): `resumen · grafo · acoplamientos · huecos · piezas · departamentos · todo`.
+4. **La guía** — `docs/INTEGRACION-22-DEPARTAMENTOS.md`: ocho pasos, dónde escribe cada uno de los
+   22 y las cinco formas de romper la casa.
+5. **La guarda** — `scripts/pruebas-arquitectura.mjs`: 15 comprobaciones offline + 5 en vivo.
+   Cazó en la primera pasada que **`/api/investigacion` vivía sin registrar** en el catálogo de
+   API: corregido en esta misma tanda.
+
+**Números de la casa (18/11/2026):** censo 96 páginas · 114 rutas de API · 0 huérfanas · 79 módulos
+registrados · 127 dependencias declaradas · 0 rotas · 3 puertas de API que nadie cita
+(`/api/contrib/[id]/vote`, `/api/live/streams/[id]/chat`, `/api/live/streams/[id]/donate`).
+
+**Para el siguiente departamento (IA 2 · Redacción global):** antes de escribir una línea,
+`curl /api/sistema/arquitectura?seccion=departamentos` dice qué hay de tu área. La v412.0 la marca
+`parcial`; el hueco declarado sigue siendo **motor de calendario editorial con categorías
+cruzadas y flujo proponer→revisar→publicar con autoría**. Escribe en `src/lib/editorial/`, tu
+puerta es `/editorial`, y no abras `/noticias` ni `/cronica`: son alias vivos de la misma familia.

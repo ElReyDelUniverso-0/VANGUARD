@@ -1,0 +1,1991 @@
+{
+  "version": "v414.0",
+  "generado": "2026-11-18",
+  "fuente": {
+    "censo": "src/lib/arquitectura/censo.json · 2026-11-18 · 96 páginas · 114 rutas de API",
+    "registro": "79 módulos · 127 dependencias declaradas"
+  },
+  "areas": [
+    {
+      "id": "components/vanguard",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 139,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/api",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 96,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "components/portada",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 58,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/catalogo-real.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 41,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "components/creadores",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 30,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/mundos",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 20,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "api/auth",
+      "tipo": "ruta",
+      "rutas": 6,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 23,
+      "paginas": 0,
+      "api": 6
+    },
+    {
+      "id": "api/creadores",
+      "tipo": "ruta",
+      "rutas": 7,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 22,
+      "paginas": 0,
+      "api": 7
+    },
+    {
+      "id": "app/editorial",
+      "tipo": "ruta",
+      "rutas": 4,
+      "enlacesSalientes": 10,
+      "enlacesEntrantes": 12,
+      "paginas": 4,
+      "api": 0
+    },
+    {
+      "id": "app/audios",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 14,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/datos",
+      "tipo": "ruta",
+      "rutas": 5,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 18,
+      "paginas": 0,
+      "api": 5
+    },
+    {
+      "id": "app/conflicto",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 10,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "app/conocimiento",
+      "tipo": "ruta",
+      "rutas": 5,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 17,
+      "paginas": 5,
+      "api": 0
+    },
+    {
+      "id": "app/creadores",
+      "tipo": "ruta",
+      "rutas": 6,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 17,
+      "paginas": 6,
+      "api": 0
+    },
+    {
+      "id": "app/labs",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 9,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "api/live",
+      "tipo": "ruta",
+      "rutas": 9,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 16,
+      "paginas": 0,
+      "api": 9
+    },
+    {
+      "id": "components/conocimiento",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 16,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/sistema",
+      "tipo": "ruta",
+      "rutas": 7,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 15,
+      "paginas": 0,
+      "api": 7
+    },
+    {
+      "id": "app/arquitectura",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 10,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/sistema",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 10,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/navegacion",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 9,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/ugc",
+      "tipo": "ruta",
+      "rutas": 3,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 12,
+      "paginas": 0,
+      "api": 3
+    },
+    {
+      "id": "app/regiones",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "app/en-vivo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 7,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/escudo",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 5,
+      "enlacesEntrantes": 6,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "app/mundo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 7,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/nucleo",
+      "tipo": "ruta",
+      "rutas": 5,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 11,
+      "paginas": 0,
+      "api": 5
+    },
+    {
+      "id": "lib/arquitectura",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 11,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "components/mundos",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 11,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "components/planeta",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 11,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/demografia",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 7,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/organizaciones",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "app/colecciones",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "app/investigacion",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "app/rankings",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
+      "id": "app/modo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 5,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/contrib",
+      "tipo": "ruta",
+      "rutas": 4,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 9,
+      "paginas": 0,
+      "api": 4
+    },
+    {
+      "id": "app/mapas",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 5,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/denuncias",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 8,
+      "paginas": 0,
+      "api": 2
+    },
+    {
+      "id": "api/memes",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 8,
+      "paginas": 0,
+      "api": 2
+    },
+    {
+      "id": "app/herramientas",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/calidad",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/catalogo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/perfil",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/espacio",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/atlas",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/datos",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/agente",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 7,
+      "paginas": 0,
+      "api": 2
+    },
+    {
+      "id": "app/estado",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/torre",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/cronica",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/conflictos",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/constelacion",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/musica",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/historia",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/escenarios",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/noticia",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/ambassadors",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 6,
+      "paginas": 0,
+      "api": 2
+    },
+    {
+      "id": "app/traductor",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/ver-guerra",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/centinela",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/cruce",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/mision",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/archivo-mundial",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/armeria",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/vertigo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/sala",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/cuartel",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/divisas",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/guerra-hoy",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/zona-cero",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/pulso-mundial",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/privacidad",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/modulo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/modulos",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/objetivos",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/servicios",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/voz",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/(portada)",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/cronica",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/currencies",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/datos",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/earthquakes",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/efemerides",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/version.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/geo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/geo-tablero",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/health",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/nucleo",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/news",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/noticias",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/presence",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/pulso",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/traductor",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/visits",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "app/page.tsx",
+      "tipo": "ruta",
+      "rutas": 0,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/agente",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/clasico",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/comparador",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/directorio",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/entrar",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/espia",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/galeria",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/lectura",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/novedades",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/nucleo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/offline",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/oscura",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/poder",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/rostros",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/teatro-3d",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/universo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/vanguard2",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/verdad-cruda",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "api/arquitecto",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/audios",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/consejo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/consulta",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/drone-scores",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/duelo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/escudo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/espectro",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/fortaleza",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/foto",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/indexnow",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/bitacora.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/juegos",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/maestro",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/media",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "components/vanguard2",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/mente",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/mercado",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/meteo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/portada",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/telegram",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 2
+    },
+    {
+      "id": "lib/conocimiento",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/layout.tsx",
+      "tipo": "ruta",
+      "rutas": 0,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/descubrimiento.json",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 3,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/agent-ping",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/asistente",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/game-store.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/conocimiento",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 2
+    },
+    {
+      "id": "lib/ia",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/geopolitics",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/goal",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/government",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/faro.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/layers",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/mp",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/mundo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/naciones",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/neurona",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/notifications",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/planeta",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/reclutar",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/sharegoal",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/system",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/telemetria",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/torre",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/verify",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/vertigo",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/wiki",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "components/travesia",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/navegacion",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/llms.txt",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/editorial",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/arquitecto.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/productor-vivo.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/agentes-autonomos.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "api/investigacion",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 1,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "lib/mercado-vivo.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/vanguard",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "components/noticia",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/feed.xml",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 1,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "app/not-found.tsx",
+      "tipo": "ruta",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    }
+  ],
+  "acoplamientos": [
+    {
+      "desde": "components/creadores",
+      "hacia": "app/creadores",
+      "n": 15
+    },
+    {
+      "desde": "components/creadores",
+      "hacia": "api/creadores",
+      "n": 13
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/ugc",
+      "n": 11
+    },
+    {
+      "desde": "app/editorial",
+      "hacia": "app/editorial",
+      "n": 10
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/live",
+      "n": 9
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/datos",
+      "n": 8
+    },
+    {
+      "desde": "components/conocimiento",
+      "hacia": "app/conocimiento",
+      "n": 8
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/creadores",
+      "n": 7
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/live",
+      "n": 7
+    },
+    {
+      "desde": "app/sistema",
+      "hacia": "api/sistema",
+      "n": 7
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/sistema",
+      "n": 7
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/auth",
+      "n": 6
+    },
+    {
+      "desde": "app/modo",
+      "hacia": "api/auth",
+      "n": 5
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/auth",
+      "n": 5
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/datos",
+      "n": 5
+    },
+    {
+      "desde": "lib/catalogo-real.ts",
+      "hacia": "api/datos",
+      "n": 5
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/nucleo",
+      "n": 5
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/denuncias",
+      "n": 4
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/geo-tablero",
+      "n": 4
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/memes",
+      "n": 4
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/news",
+      "n": 4
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/presence",
+      "n": 4
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/visits",
+      "n": 4
+    },
+    {
+      "desde": "components/planeta",
+      "hacia": "app/colecciones",
+      "n": 4
+    },
+    {
+      "desde": "app/audios",
+      "hacia": "app/conflicto",
+      "n": 4
+    },
+    {
+      "desde": "lib/arquitectura",
+      "hacia": "app/conocimiento",
+      "n": 4
+    },
+    {
+      "desde": "app/mundos",
+      "hacia": "app/organizaciones",
+      "n": 4
+    },
+    {
+      "desde": "app/mundos",
+      "hacia": "app/rankings",
+      "n": 4
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/agente",
+      "n": 3
+    },
+    {
+      "desde": "lib/catalogo-real.ts",
+      "hacia": "api/auth",
+      "n": 3
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/contrib",
+      "n": 3
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/contrib",
+      "n": 3
+    },
+    {
+      "desde": "lib/catalogo-real.ts",
+      "hacia": "api/contrib",
+      "n": 3
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/earthquakes",
+      "n": 3
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/noticias",
+      "n": 3
+    },
+    {
+      "desde": "lib/conocimiento",
+      "hacia": "app/conocimiento",
+      "n": 3
+    },
+    {
+      "desde": "app/audios",
+      "hacia": "api/",
+      "n": 2
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/agente",
+      "n": 2
+    },
+    {
+      "desde": "lib/catalogo-real.ts",
+      "hacia": "api/agente",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/ambassadors",
+      "n": 2
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/ambassadors",
+      "n": 2
+    },
+    {
+      "desde": "lib/catalogo-real.ts",
+      "hacia": "api/ambassadors",
+      "n": 2
+    },
+    {
+      "desde": "components/creadores",
+      "hacia": "api/auth",
+      "n": 2
+    },
+    {
+      "desde": "lib/game-store.ts",
+      "hacia": "api/auth",
+      "n": 2
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/conocimiento",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/cronica",
+      "n": 2
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/denuncias",
+      "n": 2
+    },
+    {
+      "desde": "lib/catalogo-real.ts",
+      "hacia": "api/denuncias",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/geo",
+      "n": 2
+    },
+    {
+      "desde": "app/estado",
+      "hacia": "api/health",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/juegos",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/maestro",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard2",
+      "hacia": "api/memes",
+      "n": 2
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/memes",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/mente",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/meteo",
+      "n": 2
+    },
+    {
+      "desde": "lib/datos",
+      "hacia": "api/nucleo",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/nucleo",
+      "n": 2
+    },
+    {
+      "desde": "components/portada",
+      "hacia": "api/portada",
+      "n": 2
+    },
+    {
+      "desde": "components/vanguard",
+      "hacia": "api/pulso",
+      "n": 2
+    }
+  ],
+  "ciclosDeEnlace": [
+    [
+      "app/arquitectura",
+      "app/atlas",
+      "app/audios",
+      "app/calidad",
+      "app/catalogo",
+      "app/centinela",
+      "app/conflicto",
+      "app/conflictos",
+      "app/cronica",
+      "app/cruce",
+      "app/datos",
+      "app/demografia",
+      "app/divisas",
+      "app/en-vivo",
+      "app/escenarios",
+      "app/guerra-hoy",
+      "app/herramientas",
+      "app/historia",
+      "app/labs",
+      "app/mapas",
+      "app/mundo",
+      "app/mundos",
+      "app/musica",
+      "app/navegacion",
+      "app/noticia",
+      "app/sistema",
+      "app/torre",
+      "app/ver-guerra",
+      "app/voz",
+      "app/zona-cero"
+    ],
+    [
+      "app/escudo",
+      "app/estado"
+    ],
+    [
+      "app/modulo",
+      "app/modulos"
+    ],
+    [
+      "app/constelacion",
+      "app/sala"
+    ]
+  ],
+  "registro": {
+    "modulos": 79,
+    "dependencias": 127,
+    "unicas": 29,
+    "rotas": []
+  },
+  "huecos": {
+    "huerfanas": [],
+    "apiSinConsumidor": [
+      "/api/contrib/[id]/vote",
+      "/api/live/streams/[id]/chat",
+      "/api/live/streams/[id]/donate"
+    ],
+    "paginasDeUnEnlace": [],
+    "apiMasUsadas": [
+      {
+        "ruta": "/api",
+        "consumidores": 148
+      },
+      {
+        "ruta": "/api/news",
+        "consumidores": 27
+      },
+      {
+        "ruta": "/api/ugc",
+        "consumidores": 10
+      },
+      {
+        "ruta": "/api/ugc/[id]",
+        "consumidores": 10
+      },
+      {
+        "ruta": "/api/auth/me",
+        "consumidores": 9
+      },
+      {
+        "ruta": "/api/pulso",
+        "consumidores": 8
+      },
+      {
+        "ruta": "/api/geo-tablero",
+        "consumidores": 7
+      },
+      {
+        "ruta": "/api/visits",
+        "consumidores": 7
+      }
+    ]
+  }
+}

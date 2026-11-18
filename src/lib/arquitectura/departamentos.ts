@@ -48,12 +48,16 @@ export const DEPARTAMENTOS: Departamento[] = [
       { etiqueta: "El catálogo de destinos", ruta: "/directorio", nota: "Los destinos de la casa cruzados por ruta, con sus temas y las fusiones declaradas." },
       { etiqueta: "Los espacios de trabajo", ruta: "/navegacion", nota: "Diez espacios con las herramientas de cada oficio, sin inventar ninguna ruta." },
       { etiqueta: "El motor de nexos", nota: "src/lib/arquitectura/nexos.ts: las salidas de cada laboratorio y de cada país, con su motivo." },
+      { etiqueta: "El grafo de dependencias", ruta: "/api/sistema/arquitectura?seccion=grafo", nota: "grafo.json (v414.0): 176 áreas con su peso, 435 acoplamientos área→área, ciclos de enlace y áreas centrales, generado por tools/arquitectura/grafo.mjs." },
+      { etiqueta: "El contrato ejecutable", ruta: "/api/sistema/arquitectura?seccion=piezas", nota: "integracion.ts (v414.0): ocho piezas obligatorias con su comprobación y validarIntegracion(), que dice qué le falta a un área antes de entrar." },
+      { etiqueta: "La puerta de máquina", ruta: "/api/sistema/arquitectura", nota: "El mapa con el contrato de la casa: resumen, grafo, huecos, piezas y los 22 departamentos, para que las otras IA no tengan que leer el árbol." },
+      { etiqueta: "La guarda", nota: "scripts/pruebas-arquitectura.mjs: 15 comprobaciones que fallan si el censo, el grafo o el catálogo dejan de cuadrar con el árbol." },
     ],
     falta: [
-      "Un grafo persistente de dependencias entre librerías (hoy se declaran a mano en el Núcleo).",
       "Detección automática de funciones duplicadas por comportamiento, no solo por ruta.",
+      "El censo cuenta referencias, no calidad: dos páginas con el mismo contenido puntúan igual que dos que se complementan.",
     ],
-    siguiente: "Cruzar el censo con el Núcleo para que ninguna página pública quede fuera del registro y ninguna ruta registrada deje de existir.",
+    siguiente: "Cruzar el grafo con los 22 departamentos para avisar a cada área cuando su puerta pierda referencias entrantes (hoy la huérfana se publica, no se avisa).",
   },
   {
     n: 2,
