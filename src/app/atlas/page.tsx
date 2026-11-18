@@ -226,7 +226,8 @@ export default function AtlasPage() {
                   {PAISES_ATLAS.filter((p) => p.region === reg).map((p) => (
                     <article
                       key={p.id}
-                      className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4"
+                      id={`pais-${p.id}`}
+                      className="scroll-mt-24 rounded-lg border border-zinc-800 bg-zinc-900/40 p-4"
                       aria-label={p.nombre}
                     >
                       <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
