@@ -35,6 +35,12 @@
 // ⑤ PRUEBAS: `scripts/pruebas-nucleo.mjs` pasa de 17 a 25 comprobaciones en la
 //    parte offline — las 8 nuevas vigilan censo, familias, ISO del nexo, ambiguos,
 //    pureza, ficha conectada, cable con país y familias publicadas.
+//
+// v406.4b — LA PRUEBA EN VIVO CAZÓ EL PLURAL. El primer cable verificado en
+// producción decía «drones rusos destruyen un punto de… ucranianos» y el nexo no
+// abría la ficha de Ucrania: la tabla estaba en singular. El índice aprende las
+// tres formas del plural español (vocal +s, consonante +es, z → ces) y ahora el
+// titular en plural también lleva a su país. 25 → 26 comprobaciones offline.
 // v405.15 SIN UN CUADRO DE MÁS — el 3D dejó de quemar lo que nadie mira.
 // El encargo del Dueño, textual: «necesita mejorar los 3D la verdad, y hay lag».
 // Antes de tocar una línea se midió, con navegador real, la casa publicada
@@ -6292,7 +6298,7 @@
 //      (src/lib/seo-faq-data.ts, movida tal cual desde seo-faq.tsx).
 //    NO SE HACE: un /llms.txt propio — ia3 ya lo publicó en v405.6 (LA CARTA A
 //    LAS MÁQUINAS); duplicarlo rompería la regla de una sola verdad.
-export const APP_VERSION = "v406.4";
+export const APP_VERSION = "v406.4b";
 export const APP_CODENAME = "LA PLATAFORMA ENTERA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:

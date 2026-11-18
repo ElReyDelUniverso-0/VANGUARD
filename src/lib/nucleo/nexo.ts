@@ -184,12 +184,38 @@ const GENTILICIOS: Record<string, string[]> = {
 // ── EL ÍNDICE (se construye una vez) ──────────────────────────────
 let CACHE: Map<string, string> | null = null;
 
+/**
+ * El plural de un término, en las tres formas del español: vocal → +s,
+ * consonante → +es, z → ces. Se aplica a la ÚLTIMA palabra («emiratos árabes
+ * unidos» → «… unidos», que ya es plural y no cambia).
+ *
+ * Existe porque el titular no dice «ucraniano», dice «drones ucranianos»: la
+ * primera versión de este módulo se quedó en el singular y la prueba en vivo lo
+ * cazó con un cable real («VIDEO: Drones rusos destruyen… ucranianos»).
+ */
+function pluralDe(clave: string): string | null {
+  const partes = clave.split(" ");
+  const ult = partes[partes.length - 1];
+  if (ult.length < 3) return null;
+  const cierre = ult.slice(-1);
+  let plural: string;
+  if ("aeiouáéíóú".includes(cierre)) plural = ult + "s";
+  else if (cierre === "z") plural = ult.slice(0, -1) + "ces";
+  else if (/[a-zñ]/.test(cierre)) plural = ult + "es";
+  else return null;
+  if (plural === ult) return null;
+  return [...partes.slice(0, -1), plural].join(" ");
+}
+
 function poner(mapa: Map<string, string>, termino: string, iso2: string) {
   const clave = normalizar(termino);
   if (!clave) return;
   if (AMBIGUOS.has(clave)) return; // sola no vale; los nombres completos van por n-grama
   if (!POR_ISO2.has(iso2)) return; // jamás un país que la casa no conoce
   if (!mapa.has(clave)) mapa.set(clave, iso2);
+  // v406.4b: el plural también es el país («ucranianos», «rusos», «franceses»)
+  const plural = pluralDe(clave);
+  if (plural && !mapa.has(plural)) mapa.set(plural, iso2);
 }
 
 function indice(): Map<string, string> {
