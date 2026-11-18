@@ -166,6 +166,24 @@ export const ENDPOINTS_DOCUMENTADOS: EndpointVanguard[] = [
     version: "1",
   },
   {
+    ruta: "/api/sistema/busqueda-google",
+    metodos: ["GET"],
+    grupo: "sistema",
+    descripcion:
+      "VANGUARD SEARCH OPPORTUNITIES: estado de la conexión con Google Search Console (público) y, con sesión del Dueño blindada, prueba real de conexión y oportunidades a partir de consultas, impresiones, clics, CTR y posición media.",
+    params: [
+      { nombre: "accion", donde: "query", tipo: "texto", requerido: false, descripcion: "estado (por defecto, público) · probar · informe (privados)" },
+      { nombre: "dias", donde: "query", tipo: "numero", requerido: false, descripcion: "7, 28 o 90 días cerrados (informe)" },
+      { nombre: "tipo", donde: "query", tipo: "texto", requerido: false, descripcion: "filtra el informe: CTR_BAJO, CONTENIDO_A_MEJORAR, SIN_IMPRESIONES, CANIBALIZACION, PAGINA_MEJOR, HUECO" },
+    ],
+    respuesta: "{ ok, datos: { conexion, acceso, comprobaciones, umbrales } | { conectado, pasos[], totales7d } | { periodo, totales, oportunidades[], porTipo, porCategoria, franjas, control } }",
+    muro: "20/min por IP",
+    cache: "no-store (el informe se memoriza 6 h en el servidor)",
+    auth: "dueno",
+    documentado: true,
+    version: "1",
+  },
+  {
     ruta: "/api/sistema/ia",
     metodos: ["GET"],
     grupo: "sistema",

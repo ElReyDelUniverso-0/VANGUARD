@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v415.0",
+    nombre: "VANGUARD SEARCH OPPORTUNITIES",
+    hitos: [
+      "LA CONEXIÓN CON GOOGLE SEARCH CONSOLE: cliente propio de la API oficial (searchAnalytics.query) con cuenta de servicio u OAuth, solo lectura, paginado y con los errores de Google explicados en castellano. Sin credenciales no pide nada y no enseña nada.",
+      "SEIS OPORTUNIDADES CON REGLA ESCRITA: CTR bajo frente al CTR de la propia casa en su franja de posición, contenido a mejorar, puertas importantes sin impresiones, canibalización, página más adecuada y huecos sin página.",
+      "CADA CONSULTA, UNIDA A UNA PÁGINA REAL: el motor compara la búsqueda con las páginas del directorio y con las 249 fichas de país; propone otra página solo si existe.",
+      "EL PANEL /oportunidades: consulta, página relacionada, impresiones, clics, CTR, posición media, oportunidad detectada y acción recomendada; por tipo, por categoría y con la referencia de CTR a la vista. Ninguna acción promete un puesto.",
+      "DATOS PRIVADOS DE VERDAD: el estado de la conexión es público; las consultas solo las ve el Dueño, y solo si AUTH_SECRET y OWNER_PASSWORD están definidas en el servidor.",
+      "COMPROBACIONES PÚBLICAS SIN CREDENCIALES: meta de verificación de Google, sitemap y robots, medidos en caliente contra la casa oficial.",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v414.0",
     nombre: "LA CASA SE CONOCE",
     hitos: [

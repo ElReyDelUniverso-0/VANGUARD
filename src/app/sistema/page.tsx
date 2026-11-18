@@ -9,6 +9,7 @@ import { resumen as resumenActividad } from "@/lib/sistema/actividad";
 import { repartoPermisos } from "@/lib/sistema/permisos";
 import { estadoMotor } from "@/lib/nucleo/recomendaciones";
 import { estadoProveedores } from "@/lib/ia/proveedor";
+import { configuracion as configuracionGsc } from "@/lib/busqueda-google/cliente";
 
 // ============================================================
 // v407.0 · /sistema — EL PANEL TÉCNICO DE LA CASA
@@ -44,6 +45,7 @@ export default async function SistemaPage() {
   const permisos = repartoPermisos();
   const motor = estadoMotor();
   const ia = estadoProveedores();
+  const gsc = configuracionGsc();
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -56,6 +58,16 @@ export default async function SistemaPage() {
       </p>
 
       <Link href="/arquitectura" className="mt-6 inline-block rounded border border-amber/40 px-4 py-3 text-sm text-amber">Los 22 departamentos · inventario, dependencias y plan de expansión ▸</Link>
+      {/* ── v415.0 BÚSQUEDA ORGÁNICA ── */}
+      <section className="mt-6">
+        <Link href="/oportunidades" className={`${caja} block hover:border-amber/50`}>
+          <p className={titulo}>VANGUARD SEARCH OPPORTUNITIES · GOOGLE SEARCH CONSOLE</p>
+          <p className="mt-1 text-sm text-zinc-200">
+            <span className={gsc.lista ? "text-emerald-400" : "text-zinc-500"}>{gsc.lista ? "✓ conectado" : "· sin conexión"}</span>{" "}
+            — consultas, impresiones, clics, CTR, posición media y la oportunidad de cada página. ▸
+          </p>
+        </Link>
+      </section>
 
       {/* ── DIAGNÓSTICO ── */}
       <section className="mt-8">

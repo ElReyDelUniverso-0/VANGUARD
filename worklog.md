@@ -75,3 +75,29 @@ regresiones); probar.mjs de la v412.0 sigue en verde.
 Lo que no se hizo, y por qué: no se regenera el censo a mano (es de `tools/arquitectura/censar.mjs`,
 de la tanda que lo escribió); no se marcan departamentos como construidos; la detección de
 duplicados por comportamiento sigue pendiente y así se declara en el registro.
+
+## v415.0 · VANGUARD SEARCH OPPORTUNITIES (MISIÓN 22) · 2026-11-18
+
+Encargo: motor de inteligencia de búsqueda de Google — consultas, impresiones, clics, CTR y
+posición media reales; oportunidades por categoría unidas a páginas reales; sección «VANGUARD
+SEARCH OPPORTUNITIES». Límites textuales: «no inventes posiciones ni prometas llegar al primer
+puesto»; sin credenciales, preparar la integración sin inventar resultados.
+
+Medido antes de escribir: meta google-site-verification publicada en la portada; sitemap 200
+(≈2.495 URLs); robots no bloquea; 0 líneas que llamen a la API de Search Console; Vercel con 2
+variables (DATABASE_URL, NEXT_PUBLIC_REALTIME_URL): ninguna GSC_*, y tampoco AUTH_SECRET ni
+OWNER_PASSWORD (la sesión del Dueño se firma con la clave de reserva del repositorio público).
+
+Entregado:
+· `src/lib/busqueda-google/{tipos,analisis,cliente,servicio,acceso}.ts` — cliente sin dependencias
+  (JWT RS256 con node:crypto / OAuth refresh), searchAnalytics paginado, periodo cerrado (hoy − 3
+  días), 6 reglas declaradas en UMBRALES, referencia de CTR = la propia casa por franja.
+· `/api/sistema/busqueda-google` (estado público · probar · informe) y `/oportunidades` (noindex).
+· Censo: mod:oportunidades (permiso dueno); dato:busqueda-google (13 modelos); endpoint
+  documentado; departamentos 18 y 21 con la pieza nueva y lo que falta.
+· `scripts/pruebas-busqueda-google.mjs`: 17 ✓ con filas de prueba que viven solo en el script.
+
+Prueba de conexión real: no se puede hacer con datos — no hay credenciales. El panel en producción
+lo declara («sin conexión») y la API responde `conexion.lista:false` con las variables que faltan.
+Acción del Dueño: cuenta de servicio + API activada + usuario en Search Console +
+GSC_SERVICE_ACCOUNT_JSON, AUTH_SECRET y OWNER_PASSWORD en Vercel.

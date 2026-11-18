@@ -1,18 +1,18 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-18",
-  "paginas": 96,
-  "rutasApi": 114,
-  "total": 210,
-  "bienConectadas": 91,
+  "paginas": 97,
+  "rutasApi": 116,
+  "total": 213,
+  "bienConectadas": 92,
   "huerfanas": [],
-  "paginasConReferencias": 96,
-  "mediaReferencias": 14.89,
+  "paginasConReferencias": 97,
+  "mediaReferencias": 14.86,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 87,
+      "referencias": 90,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -23,7 +23,7 @@
     {
       "ruta": "/api",
       "tipo": "api",
-      "referencias": 148,
+      "referencias": 151,
       "desde": [
         "app/audios/grabador.tsx",
         "app/audios/page.tsx",
@@ -570,8 +570,9 @@
     {
       "ruta": "/api/investigacion",
       "tipo": "api",
-      "referencias": 1,
+      "referencias": 2,
       "desde": [
+        "lib/api/catalogo.ts",
         "lib/version.ts"
       ]
     },
@@ -922,6 +923,26 @@
       "desde": [
         "app/sistema/page.tsx",
         "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/arquitectura",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/arquitectura/departamentos.ts",
+        "lib/version.ts"
+      ]
+    },
+    {
+      "ruta": "/api/sistema/busqueda-google",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "app/oportunidades/page.tsx",
+        "lib/api/catalogo.ts",
+        "lib/datos/catalogo.ts"
       ]
     },
     {
@@ -1460,12 +1481,12 @@
     {
       "ruta": "/directorio",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 8,
       "desde": [
         "app/arquitectura/page.tsx",
+        "app/oportunidades/page.tsx",
         "components/planeta/marco.tsx",
-        "components/portada/modulos.ts",
-        "components/travesia/hilo-portada.tsx"
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -1790,7 +1811,7 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 38,
+      "referencias": 39,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -1801,7 +1822,7 @@
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 38,
+      "referencias": 39,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -1884,6 +1905,17 @@
         "components/portada/carcasa.tsx",
         "components/vanguard/navegacion/barra-adaptativa.tsx",
         "lib/catalogo-real.ts"
+      ]
+    },
+    {
+      "ruta": "/oportunidades",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/sistema/page.tsx",
+        "lib/arquitectura/departamentos.ts",
+        "lib/datos/catalogo.ts",
+        "lib/nucleo/registro.ts"
       ]
     },
     {
@@ -2043,12 +2075,12 @@
     {
       "ruta": "/sistema",
       "tipo": "pagina",
-      "referencias": 4,
+      "referencias": 6,
       "desde": [
         "app/datos/page.tsx",
+        "app/oportunidades/page.tsx",
         "lib/arquitectura/departamentos.ts",
-        "lib/nucleo/fusiones.ts",
-        "lib/nucleo/registro.ts"
+        "lib/datos/catalogo.ts"
       ]
     },
     {

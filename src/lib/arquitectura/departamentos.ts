@@ -356,14 +356,15 @@ export const DEPARTAMENTOS: Departamento[] = [
     existe: [
       { etiqueta: "Enciclopedia en el Núcleo", ruta: "/conocimiento", nota: "63 expedientes con rutas indexables, canonical, JSON-LD, sitemap y proveedor de búsqueda central." },
       { etiqueta: "El Núcleo", ruta: "/nucleo", nota: "Búsqueda global por módulo, ruta y tema." },
-      { etiqueta: "El directorio", ruta: "/directorio", nota: "217 destinos con temas, favoritos y recientes." },
+      { etiqueta: "El directorio", ruta: "/directorio", nota: "218 destinos públicos con temas, favoritos y recientes." },
       { etiqueta: "Sitemap y llms.txt", nota: "Mapa para rastreadores y fichero de contexto para modelos, generados desde los registros." },
       { etiqueta: "La arquitectura", ruta: "/arquitectura", nota: "El mapa que dice qué existe, cómo se conecta y qué falta." },
+      { etiqueta: "VANGUARD SEARCH OPPORTUNITIES", ruta: "/oportunidades", nota: "Integración con la API de Search Console y motor de oportunidades por consulta y página; sin credenciales en el servidor no enseña ni una fila." },
     ],
     falta: [
       "Búsqueda por fecha y por persona dentro del archivo.",
       "Datos estructurados por ficha de país (hoy hay JSON-LD de sitio y de colección).",
-      "Análisis de consultas reales: la casa no recibe datos de Search Console por API.",
+      "Credenciales de Search Console en Vercel: la integración existe (/oportunidades), pero hasta que el Dueño las cree no llega ninguna consulta real.",
     ],
     siguiente: "JSON-LD de tipo Place en las 249 fichas de país, con la misma cifra que muestra la página.",
   },
@@ -407,10 +408,13 @@ export const DEPARTAMENTOS: Departamento[] = [
     nombre: "Auditoría de crecimiento",
     mision: "Que la casa conozca su crecimiento real, sin inventarlo.",
     estado: "sin construir",
-    existe: [{ etiqueta: "El diagnóstico técnico", ruta: "/sistema", nota: "Estado de servicios y endpoints: es salud del sistema, no audiencia." }],
+    existe: [
+      { etiqueta: "El diagnóstico técnico", ruta: "/sistema", nota: "Estado de servicios y endpoints: es salud del sistema, no audiencia." },
+      { etiqueta: "Search Console por API", ruta: "/oportunidades", nota: "Impresiones, clics, CTR y posición de Google cuando haya credenciales; hoy declara «sin conexión» en vez de un número." },
+    ],
     falta: [
       "Medición de visitantes, sesiones y recurrencia.",
-      "Procedencia del tráfico y datos de Search Console.",
+      "Procedencia del tráfico (Search Console ya tiene conector; faltan sus credenciales y el resto de fuentes).",
       "Persistencia, deduplicación y política de identificadores.",
     ],
     siguiente: "Un panel que declare «no disponible» cada métrica que la casa no mide, en vez de mostrar un número sin origen.",

@@ -1382,3 +1382,8 @@ registrados · 127 dependencias declaradas · 0 rotas · 3 puertas de API que na
 `parcial`; el hueco declarado sigue siendo **motor de calendario editorial con categorías
 cruzadas y flujo proponer→revisar→publicar con autoría**. Escribe en `src/lib/editorial/`, tu
 puerta es `/editorial`, y no abras `/noticias` ni `/cronica`: son alias vivos de la misma familia.
+
+---
+
+## v415.0 · VANGUARD SEARCH OPPORTUNITIES · 2026-11-18
+Notas: integración con Google Search Console por API (sin credenciales todavía: el panel /oportunidades lo dice y no muestra filas). Pendiente del Dueño: GSC_SERVICE_ACCOUNT_JSON, AUTH_SECRET y OWNER_PASSWORD en Vercel. Siguiente pieza natural: guardar un histórico semanal del informe para ver la evolución de cada oportunidad.

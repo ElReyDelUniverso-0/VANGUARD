@@ -379,6 +379,43 @@ export const MODELOS_DATO: ModeloDato[] = [
     rutas: ["/oscura", "/verdad-cruda", "/editorial"],
     limites: ["Es archivo curado, no un repositorio exhaustivo de documentos."],
   },
+  {
+    id: "dato:busqueda-google",
+    nombre: "Rendimiento en la búsqueda de Google",
+    descripcion:
+      "Consultas con las que Google muestra la casa, la página que muestra, impresiones, clics, CTR y posición media, leídos de la API oficial de Search Console. Alimenta VANGUARD SEARCH OPPORTUNITIES. Es un dato PRIVADO del Dueño: solo se sirve con su sesión blindada.",
+    origen: "fuente-externa",
+    vive: "src/lib/busqueda-google/ (cliente.ts, analisis.ts, servicio.ts)",
+    volumen: "Hasta 25.000 filas consulta × página y 5.000 páginas por periodo (7, 28 o 90 días); 0 filas mientras no haya credenciales",
+    campos: [
+      { nombre: "consulta", tipo: "texto", descripcion: "la búsqueda tal como la escribió la gente (las poco frecuentes llegan anonimizadas)" },
+      { nombre: "pagina", tipo: "texto", descripcion: "URL que Google mostró" },
+      { nombre: "impresiones / clics", tipo: "numero", descripcion: "recuentos del periodo" },
+      { nombre: "ctr", tipo: "numero", descripcion: "clics / impresiones (0–1), calculado por Google" },
+      { nombre: "posicion", tipo: "numero", descripcion: "posición media del resultado más alto de la casa, calculada por Google" },
+    ],
+    procedencia: [
+      {
+        quien: "Google Search Console API (searchAnalytics.query)",
+        licencia: "datos del propietario verificado de la propiedad; uso según las condiciones de las API de Google",
+        captura: null,
+        enlace: "https://developers.google.com/webmaster-tools/v1/searchanalytics/query",
+      },
+    ],
+    relaciones: [
+      { con: "dato:pais", por: "texto de la consulta", nota: "el nexo reconoce el país y propone su ficha /mundos/<iso>" },
+    ],
+    actualizacion: "Google publica con 2–3 días de retraso; el periodo termina hace tres días y el informe se memoriza 6 h.",
+    cache: 21600,
+    rutas: ["/oportunidades", "/sistema"],
+    endpoint: "/api/sistema/busqueda-google",
+    limites: [
+      "Las consultas poco frecuentes no llegan como fila (anonimización de Google): las filas no suman el total del sitio.",
+      "La posición es una media de Google, no un puesto fijo; cambia por país, aparato y persona.",
+      "Sin credenciales en el servidor no hay ni una fila: el panel no muestra ejemplos.",
+      "La referencia de CTR es la propia casa por franja de posición, no una curva del sector.",
+    ],
+  },
 ];
 
 /** Todos los campos del catálogo, plano (para el diagnóstico y las pruebas). */

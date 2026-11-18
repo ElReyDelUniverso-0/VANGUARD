@@ -1011,7 +1011,7 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     nombre: "EL CATÁLOGO DE DATOS",
     lema: "De dónde sale cada cifra, con su licencia y su fecha",
     descripcion:
-      "Los doce modelos de datos de la casa —país, ficha, polígono, indicador, cable, acontecimiento, punto, persona, moneda, guerra, simulación y documento— con su procedencia, su licencia, la fecha de captura, cada cuánto se actualizan, con qué otros modelos se unen y lo que NO dicen. Donde la casa no sabe, escribe «sin dato»; donde el dato es de otro, lo dice con su enlace y su año.",
+      "Los trece modelos de datos de la casa —país, ficha, polígono, indicador, cable, acontecimiento, punto, persona, moneda, guerra, simulación, documento y rendimiento en Google— con su procedencia, su licencia, la fecha de captura, cada cuánto se actualizan, con qué otros modelos se unen y lo que NO dicen. Donde la casa no sabe, escribe «sin dato»; donde el dato es de otro, lo dice con su enlace y su año.",
     categoria: "SISTEMA",
     ruta: "/datos",
     permiso: "publico",
@@ -1115,6 +1115,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     estado: "VIVO",
     dependencias: ["mod:directorio"],
     alias: "colecciones recorridos rutas guias descubrir empezar aprender tematicas",
+  },
+  // ── v415.0 VANGUARD SEARCH OPPORTUNITIES ─────────────────────────────────
+  {
+    id: "mod:oportunidades",
+    nombre: "VANGUARD SEARCH OPPORTUNITIES",
+    lema: "Qué busca la gente cuando Google enseña la casa",
+    descripcion:
+      "Panel conectado a Google Search Console: consultas, página relacionada, impresiones, clics, CTR y posición media, con la oportunidad detectada (CTR bajo, contenido a mejorar, puertas sin impresiones, canibalización, página más adecuada, huecos) y la acción recomendada. Sin credenciales no muestra ni una fila; los datos solo los ve el Dueño.",
+    categoria: "SISTEMA",
+    ruta: "/oportunidades",
+    permiso: "dueno",
+    estado: "BETA",
+    dependencias: ["mod:sistema", "mod:directorio"],
+    alias: "seo search console google busqueda organica oportunidades consultas impresiones clics ctr posicion panel",
   },
 ];
 

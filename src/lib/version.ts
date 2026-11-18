@@ -1,3 +1,26 @@
+// v415.0 VANGUARD SEARCH OPPORTUNITIES — MISIÓN 22. Encargo del Dueño: un
+// sistema que encuentre oportunidades reales de crecimiento orgánico con datos
+// de Google Search Console; «no inventes posiciones ni prometas llegar al
+// primer puesto»; sin credenciales, preparar la integración sin inventar.
+//
+// ① LO MEDIDO: la propiedad está verificada por meta (layout.tsx), sitemap y
+//    robots responden, pero NINGUNA línea del repositorio hablaba con la API de
+//    Search Console y Vercel no tiene ninguna credencial GSC_*.
+// ② EL CLIENTE (src/lib/busqueda-google/cliente.ts): cuenta de servicio (JWT
+//    RS256 firmado con node:crypto, sin dependencias) u OAuth con refresh token;
+//    alcance webmasters.readonly; searchAnalytics.query paginado; reintento solo
+//    en 429/5xx; errores de Google traducidos (API sin activar, sin permiso,
+//    propiedad mal escrita). Nunca devuelve ni registra un secreto.
+// ③ EL ANÁLISIS (analisis.ts, puro): seis oportunidades —CTR bajo frente al
+//    CTR de la PROPIA casa en su franja de posición, contenido a mejorar,
+//    puertas importantes sin impresiones, canibalización, página más adecuada,
+//    huecos— con las consultas unidas a las 214 páginas reales del directorio y
+//    a las fichas de país del nexo.
+// ④ EL PANEL (/oportunidades, noindex) y la API (/api/sistema/busqueda-google):
+//    estado público; filas solo para el Dueño con AUTH_SECRET y OWNER_PASSWORD
+//    propios. Sin conexión, la tabla queda vacía y lo dice.
+// ⑤ LA PRUEBA: scripts/pruebas-busqueda-google.mjs (17 comprobaciones).
+//
 // v414.0 LA CASA SE CONOCE — el mapa deja de ser una foto y pasa a ser una prueba.
 // Departamento: IA 1 · VANGUARD MASTER ARCHITECT (plan de los 22 departamentos).
 //
@@ -6504,8 +6527,9 @@
 //    un departamento citan una ruta que ya no existe, si el registro no tiene
 //    22 entradas o si un departamento «en pie» no tiene ninguna pieza.
 // ═══════════════════════════════════════════════════════════════════
-export const APP_VERSION = "v414.0";
-export const APP_CODENAME = "LA CASA SE CONOCE";
+export const APP_VERSION = "v415.0";
+export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
+// (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";
 // (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:

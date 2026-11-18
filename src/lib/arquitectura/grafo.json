@@ -2,8 +2,8 @@
   "version": "v414.0",
   "generado": "2026-11-18",
   "fuente": {
-    "censo": "src/lib/arquitectura/censo.json · 2026-11-18 · 96 páginas · 114 rutas de API",
-    "registro": "79 módulos · 127 dependencias declaradas"
+    "censo": "src/lib/arquitectura/censo.json · 2026-11-18 · 97 páginas · 116 rutas de API",
+    "registro": "80 módulos · 129 dependencias declaradas"
   },
   "areas": [
     {
@@ -19,7 +19,7 @@
       "id": "lib/api",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 96,
+      "enlacesSalientes": 99,
       "enlacesEntrantes": 0,
       "paginas": 0,
       "api": 0
@@ -86,6 +86,15 @@
       "enlacesEntrantes": 12,
       "paginas": 4,
       "api": 0
+    },
+    {
+      "id": "api/sistema",
+      "tipo": "ruta",
+      "rutas": 9,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 21,
+      "paginas": 0,
+      "api": 9
     },
     {
       "id": "app/audios",
@@ -160,13 +169,13 @@
       "api": 0
     },
     {
-      "id": "api/sistema",
+      "id": "app/sistema",
       "tipo": "ruta",
-      "rutas": 7,
-      "enlacesSalientes": 0,
-      "enlacesEntrantes": 15,
-      "paginas": 0,
-      "api": 7
+      "rutas": 1,
+      "enlacesSalientes": 11,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
     },
     {
       "id": "app/arquitectura",
@@ -178,12 +187,12 @@
       "api": 0
     },
     {
-      "id": "app/sistema",
-      "tipo": "ruta",
-      "rutas": 1,
-      "enlacesSalientes": 10,
-      "enlacesEntrantes": 4,
-      "paginas": 1,
+      "id": "lib/arquitectura",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 13,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
       "api": 0
     },
     {
@@ -248,15 +257,6 @@
       "enlacesEntrantes": 11,
       "paginas": 0,
       "api": 5
-    },
-    {
-      "id": "lib/arquitectura",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 11,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
     },
     {
       "id": "components/mundos",
@@ -439,7 +439,25 @@
       "api": 2
     },
     {
+      "id": "lib/datos",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 7,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "app/estado",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/oportunidades",
       "tipo": "ruta",
       "rutas": 1,
       "enlacesSalientes": 3,
@@ -589,6 +607,15 @@
       "enlacesSalientes": 1,
       "enlacesEntrantes": 4,
       "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "lib/version.ts",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 5,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
       "api": 0
     },
     {
@@ -745,15 +772,6 @@
       "api": 1
     },
     {
-      "id": "lib/datos",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 4,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
-    },
-    {
       "id": "api/earthquakes",
       "tipo": "ruta",
       "rutas": 1,
@@ -770,15 +788,6 @@
       "enlacesEntrantes": 4,
       "paginas": 0,
       "api": 1
-    },
-    {
-      "id": "lib/version.ts",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 4,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
     },
     {
       "id": "api/geo",
@@ -806,15 +815,6 @@
       "enlacesEntrantes": 4,
       "paginas": 0,
       "api": 1
-    },
-    {
-      "id": "lib/nucleo",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 4,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
     },
     {
       "id": "api/news",
@@ -1177,6 +1177,15 @@
       "api": 1
     },
     {
+      "id": "lib/nucleo",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "components/vanguard2",
       "tipo": "soporte",
       "rutas": 0,
@@ -1339,6 +1348,15 @@
       "api": 0
     },
     {
+      "id": "api/investigacion",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 2,
+      "paginas": 0,
+      "api": 1
+    },
+    {
       "id": "api/layers",
       "tipo": "ruta",
       "rutas": 1,
@@ -1474,15 +1492,6 @@
       "api": 1
     },
     {
-      "id": "components/travesia",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 2,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
-    },
-    {
       "id": "lib/navegacion",
       "tipo": "soporte",
       "rutas": 0,
@@ -1537,15 +1546,6 @@
       "api": 0
     },
     {
-      "id": "api/investigacion",
-      "tipo": "ruta",
-      "rutas": 1,
-      "enlacesSalientes": 0,
-      "enlacesEntrantes": 1,
-      "paginas": 0,
-      "api": 1
-    },
-    {
       "id": "lib/mercado-vivo.ts",
       "tipo": "soporte",
       "rutas": 0,
@@ -1565,6 +1565,15 @@
     },
     {
       "id": "components/noticia",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "components/travesia",
       "tipo": "soporte",
       "rutas": 0,
       "enlacesSalientes": 1,
@@ -1618,6 +1627,11 @@
       "n": 9
     },
     {
+      "desde": "lib/api",
+      "hacia": "api/sistema",
+      "n": 9
+    },
+    {
       "desde": "components/vanguard",
       "hacia": "api/datos",
       "n": 8
@@ -1639,11 +1653,6 @@
     },
     {
       "desde": "app/sistema",
-      "hacia": "api/sistema",
-      "n": 7
-    },
-    {
-      "desde": "lib/api",
       "hacia": "api/sistema",
       "n": 7
     },
@@ -1920,6 +1929,7 @@
       "app/musica",
       "app/navegacion",
       "app/noticia",
+      "app/oportunidades",
       "app/sistema",
       "app/torre",
       "app/ver-guerra",
@@ -1940,9 +1950,9 @@
     ]
   ],
   "registro": {
-    "modulos": 79,
-    "dependencias": 127,
-    "unicas": 29,
+    "modulos": 80,
+    "dependencias": 129,
+    "unicas": 30,
     "rotas": []
   },
   "huecos": {
@@ -1956,7 +1966,7 @@
     "apiMasUsadas": [
       {
         "ruta": "/api",
-        "consumidores": 148
+        "consumidores": 151
       },
       {
         "ruta": "/api/news",
