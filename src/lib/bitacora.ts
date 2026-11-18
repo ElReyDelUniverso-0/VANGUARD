@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v412.0",
+    nombre: "LA CASA CONECTADA",
+    hitos: [
+      "EL CENSO, HECHO POR MÁQUINA: 88 páginas y 111 rutas de API contadas recorriendo src/app, con las referencias entrantes de cada una. Solo cuentan los enlaces que un visitante puede pulsar: el sitemap y las API mencionan rutas, pero no llevan a ningún sitio",
+      "EL MOTOR DE NEXOS: cada uno de los quince laboratorios declara sus salidas a países, datos, mapas, cronologías y otros simuladores con el motivo escrito; cada ficha de país declara las suyas. Cincuenta y siete enlaces, ninguno inventado: la prueba los cruza con el censo",
+      "LAS BANDAS MONTADAS: /labs, las quince fichas de modelo y las 249 fichas de país enseñan «sigue por aquí», agrupado por familia —país, dato, mapa, cronología, simulador, herramienta— y con el porqué de cada salida",
+      "LA FICHA DE PAÍS DEJA DE SER UN CALLEJÓN: decía cuánto y no decía por qué. Ahora lleva al comparador, al globo, al catálogo de datos y a los dos modelos que explican los mecanismos que enseña, avisando de que esos modelos son genéricos y no proyectan ese país",
+      "LA AUDITORÍA DE LOS VEINTIDÓS DEPARTAMENTOS: cada uno con su estado real —cinco en pie, once parciales y seis sin construir—, sus piezas con ruta viva, lo que falta y la siguiente pieza concreta. Ninguna pantalla sin motor cuenta como hecha",
+      "OCHO CONTRATOS DE INTEGRACIÓN: una ruta por concepto, registro antes que página, cada número con su origen, ningún modelo como predicción, enlaces de ida y vuelta, el sitemap no se rellena, cero dependencias nuevas de interfaz y lo que no funciona se dice",
+      "DOS HERRAMIENTAS EN EL REPOSITORIO: el censador que recuenta el árbol y la prueba de honestidad que falla si un nexo apunta a una ruta que ya no existe. Cualquiera puede ejecutarlas y comparar",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v411.0",
     nombre: "EL LABORATORIO",
     hitos: [

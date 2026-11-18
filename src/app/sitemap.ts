@@ -669,6 +669,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.72,
     })),
+    // v412.0 LA CASA CONECTADA — una sola puerta nueva: el mapa de la
+    // arquitectura. No genera URLs derivadas: cuenta lo que existe en un
+    // sitio y publica los nexos, los departamentos y los contratos.
+    {
+      url: `${SITE_URL}/arquitectura`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
   ];
 
   // ② y ③: fuera las salas noindex; lastmod real o ninguno
@@ -680,7 +688,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // + sin duplicados
   const vistas = new Set<string>();
-  return [...fijas, ...["/conocimiento/aprender", "/sistema/departamentos"].map(r=>({url:`${SITE_URL}${r}`,changeFrequency:"monthly" as const,priority:0.6})), ...teatros, ...noticias, ...rutasConocimiento().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority:0.6}))].filter((e) => {
+  return [...fijas, ...["/conocimiento/aprender"].map(r=>({url:`${SITE_URL}${r}`,changeFrequency:"monthly" as const,priority:0.6})), ...teatros, ...noticias, ...rutasConocimiento().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority:0.6}))].filter((e) => {
     if (vistas.has(e.url)) return false;
     vistas.add(e.url);
     return true;

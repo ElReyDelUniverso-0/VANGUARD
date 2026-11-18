@@ -3,6 +3,8 @@ import Link from "next/link";
 import { CATEGORIAS, MODELOS, estadisticasLabs, modelosDeCategoria } from "@/lib/labs/registro";
 import { CATEGORIA_LAB, ORIGEN_ETIQUETA } from "@/lib/labs/tipos";
 import { SITE_URL } from "@/lib/site";
+import { BandaNexos } from "@/components/arquitectura/banda-nexos";
+import { nexosDeModelo } from "@/lib/arquitectura/nexos";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 
 // ═══════════════════════════════════════════════════════════════════
@@ -181,6 +183,12 @@ export default function LabsPage() {
           </p>
         </section>
 
+        <BandaNexos
+          nexos={nexosDeModelo("macro")}
+          titulo="De dónde sale lo que simulas"
+          nota="Las salidas comunes a los quince modelos: el catálogo de datos con su procedencia, la ficha de cada país cuyos totales mueve el laboratorio, la otra forma de simular de la casa y los recorridos guiados. Cada ficha de modelo añade las suyas."
+        />
+
         <nav className="mt-10 flex flex-wrap gap-x-6 gap-y-2 border-t border-zinc-800 pt-5 text-[12px]">
           <Link href="/escenarios" className="text-amber-300 underline decoration-amber-400/40 underline-offset-4">
             El Estratega de escenarios (v224)
@@ -196,6 +204,9 @@ export default function LabsPage() {
           </Link>
           <Link href="/pulso-mundial" className="text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-amber-200">
             El pulso mundial
+          </Link>
+          <Link href="/arquitectura" className="text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-amber-200">
+            La arquitectura de la casa
           </Link>
         </nav>
       </div>

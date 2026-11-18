@@ -56,7 +56,6 @@ export interface ModuloNucleo {
 
 export const MODULOS_NUCLEO: ModuloNucleo[] = [
   { id:"mod:academia-conocimiento", nombre:"VANGUARD ACADEMY", lema:"Aprender conectando", descripcion:"Piloto de cuatro rutas, doce actividades con respuestas explicadas, expedientes existentes y progreso local borrable. No certifica competencias.", categoria:"MUNDO", ruta:"/conocimiento/aprender", permiso:"publico", estado:"BETA", dependencias:["mod:conocimiento-global"], alias:"academia lecciones cuestionarios aprendizaje ciencia datos historia energia" },
-  { id:"mod:departamentos", nombre:"LOS 22 DEPARTAMENTOS", lema:"Una arquitectura común", descripcion:"Auditoría inicial y plan progresivo, inventario estático reproducible de rutas y dependencias declaradas. Todos los departamentos con alcance parcial explícito.", categoria:"SISTEMA", ruta:"/sistema/departamentos", permiso:"publico", estado:"BETA", dependencias:["mod:conocimiento-global"], alias:"arquitectura inventario departamentos contratos integracion auditoria" },
   {
     id: "mod:conocimiento-global",
     nombre: "CONOCIMIENTO GLOBAL",
@@ -417,6 +416,19 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     estado: "VIVO",
     dependencias: ["fnt:modulos"],
     alias: "nucleo mapa modulos arquitectura busqueda entidades sistema",
+  },
+  {
+    id: "mod:arquitectura",
+    nombre: "LA ARQUITECTURA",
+    lema: "Qué existe, cómo se conecta y qué falta",
+    descripcion:
+      "El censo real del árbol (páginas y rutas de API contadas desde src/app, con sus referencias entrantes), el motor de nexos entre países, datos, mapas, cronologías y simuladores, y el estado honesto de los veintidós departamentos del plan con lo que queda por construir.",
+    categoria: "SISTEMA",
+    ruta: "/arquitectura",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:nucleo", "fnt:modulos"],
+    alias: "arquitectura censo inventario departamentos nexos conexiones mapa de la casa auditoria",
   },
   {
     id: "mod:privacidad",
