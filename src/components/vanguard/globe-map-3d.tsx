@@ -301,7 +301,26 @@ export function GlobeMap3D({
     // lienzo invisible. Este vigía barato (una comprobación por segundo) lo
     // vuelve a congelar mientras siga sin verse.
     const vigia = window.setInterval(() => {
-      if (!enPantalla || document.hidden) congelar(true);
+      if (document.hidden) {
+        congelar(true);
+        return;
+      }
+      if (!enPantalla) {
+        congelar(true);
+        return;
+      }
+      // El aviso del IntersectionObserver puede tardar segundos en páginas
+      // cargadas; el vigía no espera a nadie: mide el lienzo y decide.
+      try {
+        const r = el.getBoundingClientRect();
+        const dentro = r.bottom > -160 && r.top < (window.innerHeight || 0) + 160;
+        if (!dentro) {
+          enPantalla = false;
+          congelar(true);
+        }
+      } catch {
+        /* si el lienzo ya no existe, el desmontaje limpia el vigía */
+      }
     }, 900);
 
     // pausa la rotacion al pasar el raton (facilita clicar territorios)
