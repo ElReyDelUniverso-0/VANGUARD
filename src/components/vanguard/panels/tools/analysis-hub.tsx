@@ -9,7 +9,6 @@ import React, { useState, useMemo } from "react";
 import {
   Scale,
   Globe2,
-  ScatterPlot,
   Calculator,
   History,
   TrendingUp,
@@ -488,7 +487,7 @@ export function AnalysisHub({ activeTool }: { activeTool: string }) {
       {(activeTool === "analizador-indicadores" || activeTool === "todos") && (
         <section className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 md:p-6 shadow-xl">
           <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs tracking-wider uppercase mb-1">
-            <ScatterPlot className="w-4 h-4" />
+            <BarChart3 className="w-4 h-4" />
             <span>Gráficos de Correlación & Dispersión</span>
           </div>
           <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight mb-2">
