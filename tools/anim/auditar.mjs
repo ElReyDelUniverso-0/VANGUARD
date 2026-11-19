@@ -89,6 +89,31 @@ for (const f of tsx) {
   analizar(texto, f, true);
 }
 
+// ── las que van en `style={{…}}` ─────────────────────────────────────
+// Ningún selector alcanza un estilo en línea, así que ninguna hoja las apagaba:
+// el barrido de radar del panel de juego seguía girando en «reducidas». La
+// salida es doble: el componente marca el elemento con `data-vg-anim-inline`
+// y la hoja generada apaga ahí con !important (que sí gana a un estilo en
+// línea sin !important). El auditor comprueba que ningún archivo se olvide.
+const enLinea = [];
+for (const f of tsx) {
+  const texto = readFileSync(f, "utf8");
+  const rel = relative(RAIZ, f).split(sep).join("/");
+  const re = /animation\s*:\s*"([^"]*infinite[^"]*)"/g;
+  let m;
+  let cuantas = 0;
+  while ((m = re.exec(texto))) cuantas++;
+  if (!cuantas) continue;
+  const marcados = (texto.match(/data-vg-anim-inline/g) ?? []).length;
+  enLinea.push({
+    archivo: rel,
+    cuantas,
+    marcados,
+    nombre: (texto.match(/animation\s*:\s*"([A-Za-z0-9_-]+)/) ?? [])[1] ?? "?",
+  });
+}
+const sinMarcar = enLinea.filter((e) => e.marcados < e.cuantas);
+
 // ── hoja de apagado para «reducidas» ────────────────────────────────
 const selectores = [...new Set(infinitas.map((i) => i.selector))].sort();
 
@@ -117,6 +142,16 @@ html[data-vg-anim="reducidas"] ${sel}::before,
 html[data-vg-anim="reducidas"] ${sel}::after { animation: none !important; }`;
   })
   .join("\n")}
+
+/* Las animaciones que viven en un estilo en línea no las alcanza ningún
+   selector; el componente marca su elemento con data-vg-anim-inline y aquí se
+   apagan. Son los barridos y pulsos de pantalla completa: decoración, no
+   función. */
+html[data-vg-anim="reducidas"] [data-vg-anim-inline],
+html[data-vg-anim="reducidas"] [data-vg-anim-inline]::before,
+html[data-vg-anim="reducidas"] [data-vg-anim-inline]::after {
+  animation: none !important;
+}
 
 /* El desenfoque de fondo es lo más caro por píxel en un teléfono modesto:
    en «reducidas» se retira y queda el color de respaldo. */
@@ -151,6 +186,7 @@ const informe = {
     .slice(0, 20)
     .map(([archivo, cuantas]) => ({ archivo, cuantas })),
   selectores,
+  enLinea: { archivos: enLinea, total: enLinea.reduce((n, e) => n + e.cuantas, 0), sinMarcar: sinMarcar.length },
   peores: infinitas.slice(0, 40).map((i) => `${i.selector} (${i.nombres.join(" ") || "?"})`),
 };
 
@@ -161,6 +197,11 @@ console.log(`  CSS leídos           ${css.length}`);
 console.log(`  bloques .tsx leídos  ${tsx.length}`);
 console.log(`  infinitas            ${infinitas.length} reglas · ${selectores.length} selectores únicos`);
 console.log(`  de entrada (1 vez)   ${entradas.length}`);
+console.log(`  en estilo en línea   ${enLinea.reduce((n, e) => n + e.cuantas, 0)} infinitas en ${enLinea.length} archivos · ${sinMarcar.length} sin marcar`);
 console.log(`  hoja generada        src/app/animaciones-generadas.css`);
+if (sinMarcar.length) {
+  console.log("  ⚠ estos archivos tienen animaciones en línea sin marcar:");
+  for (const e of sinMarcar) console.log(`    ${e.archivo} (${e.marcados}/${e.cuantas})`);
+}
 console.log("  los cinco archivos con más animaciones sin fin:");
 for (const p of informe.porArchivo.slice(0, 5)) console.log(`    ${String(p.cuantas).padStart(4)}  ${p.archivo}`);

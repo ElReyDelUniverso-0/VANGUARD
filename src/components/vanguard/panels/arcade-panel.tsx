@@ -228,7 +228,7 @@ function GameArt({ id }: { id: GameId }) {
         <div className={wrap} style={base}>
           <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-amber-hud/60">
             <div className="absolute inset-0 rounded-full bg-amber/10" />
-            <div className="absolute inset-0 rounded-full" style={{ background: "conic-gradient(from 0deg, rgba(255,179,71,0.75) 0deg, transparent 80deg)", animation: "barridoRadar 2.2s linear infinite" }} />
+            <div data-vg-anim-inline="si" className="absolute inset-0 rounded-full" style={{ background: "conic-gradient(from 0deg, rgba(255,179,71,0.75) 0deg, transparent 80deg)", animation: "barridoRadar 2.2s linear infinite" }} />
             <span className="absolute left-[30%] top-[38%] h-1 w-1 rounded-full bg-red-hud" style={{ boxShadow: "0 0 6px rgba(255,59,48,0.9)" }} />
             <span className="absolute left-[64%] top-[62%] h-1 w-1 rounded-full bg-green-hud" style={{ boxShadow: "0 0 6px rgba(61, 220, 151,0.9)" }} />
           </div>

@@ -27,7 +27,7 @@ const GlobeMap3D = dynamic(
       <div
         style={{ height: "min(58vh, 520px)", minHeight: 300, display: "grid", placeItems: "center" }}
       >
-        <p className="vx-mapas-pie" style={{ animation: "pulse 1.6s ease-in-out infinite" }}>
+        <p data-vg-anim-inline="si" className="vx-mapas-pie" style={{ animation: "pulse 1.6s ease-in-out infinite" }}>
           DESPLEGANDO EL PLANETA…
         </p>
       </div>

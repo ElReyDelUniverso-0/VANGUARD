@@ -2,8 +2,8 @@
   "version": "v416.0",
   "fecha": "2026-11-19",
   "archivos": {
-    "css": 12,
-    "tsx": 590
+    "css": 13,
+    "tsx": 601
   },
   "infinitas": 246,
   "selectoresUnicos": 246,
@@ -286,6 +286,42 @@
     ".vx-tele-pista",
     ".vxp-punto"
   ],
+  "enLinea": {
+    "archivos": [
+      {
+        "archivo": "src/components/vanguard/centro-mapas.tsx",
+        "cuantas": 1,
+        "marcados": 1,
+        "nombre": "pulse"
+      },
+      {
+        "archivo": "src/components/vanguard/costo-guerra.tsx",
+        "cuantas": 1,
+        "marcados": 1,
+        "nombre": "vg-crisis-pulse"
+      },
+      {
+        "archivo": "src/components/vanguard/frente-total-sim.tsx",
+        "cuantas": 1,
+        "marcados": 1,
+        "nombre": "ft-ticker"
+      },
+      {
+        "archivo": "src/components/vanguard/panels/arcade-panel.tsx",
+        "cuantas": 1,
+        "marcados": 1,
+        "nombre": "barridoRadar"
+      },
+      {
+        "archivo": "src/components/vanguard/protocolo-rojo.tsx",
+        "cuantas": 4,
+        "marcados": 4,
+        "nombre": "vg-crisis-pulse"
+      }
+    ],
+    "total": 8,
+    "sinMarcar": 0
+  },
   "peores": [
     ".aurora-orb-1 (auroraA)",
     ".aurora-orb-2 (auroraB)",

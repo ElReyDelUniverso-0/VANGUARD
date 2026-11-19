@@ -41,12 +41,25 @@ ok(/will-change: transform/.test(css), "falta la promoción de capa de lo que gi
 ok(selector.includes("aria-pressed"), "el selector no marca el estado con aria-pressed");
 ok(selector.includes("guardarNivel"), "el selector no guarda la elección");
 
-// ⑥ medidor presente para poder repetir la prueba
+// ⑥ las que van en estilo en línea: el único camino es la marca + !important
+const generada = readFileSync("src/app/animaciones-generadas.css", "utf8");
+ok(
+  /\[data-vg-anim-inline\]/.test(generada) && /animation: none !important/.test(generada),
+  "la hoja generada no apaga las animaciones que viven en un estilo en línea"
+);
+ok(
+  (auditoria.enLinea?.sinMarcar ?? 1) === 0,
+  `${auditoria.enLinea?.sinMarcar ?? "?"} archivo(s) con animación en línea sin marca data-vg-anim-inline`
+);
+ok((auditoria.enLinea?.total ?? 0) > 0, "el auditor no censa las animaciones en línea");
+
+// ⑦ medidor presente para poder repetir la prueba
 ok(existsSync("tools/anim/medir.mjs"), "falta el medidor reproducible");
 
 console.log("SISTEMA DE ANIMACIONES · prueba estática");
 console.log(`  animaciones infinitas censadas   ${auditoria.infinitas ?? "?"}`);
 console.log(`  selectores apagados en reducidas ${censados.length} (${selectoresCss} líneas de regla)`);
+console.log(`  en estilo en línea               ${auditoria.enLinea?.total ?? "?"} marcadas (0 sin marcar)`);
 console.log(`  niveles                          3 (completas · reducidas · desactivadas)`);
 if (fallos.length) {
   console.error("\nFALLOS:");

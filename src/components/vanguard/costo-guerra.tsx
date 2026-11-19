@@ -64,7 +64,7 @@ export function CostoGuerra() {
         <div className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-crisis mb-1">
           <Banknote className="w-3.5 h-3.5" /> Contador de costo de guerra · en vivo
         </div>
-        <div
+        <div data-vg-anim-inline="si"
           className="font-tech text-2xl sm:text-3xl font-black tabular-nums text-crisis"
           style={{ textShadow: "0 0 22px rgba(255,59,48,0.5)", animation: "vg-crisis-pulse 2.4s ease-in-out infinite" }}
         >

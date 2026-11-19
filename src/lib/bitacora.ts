@@ -21,6 +21,16 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v416.2",
+    nombre: "LA CASA LIGERA · la fuga del estilo en línea",
+    hitos: [
+      "OCHO ANIMACIONES QUE NINGUNA HOJA ALCANZABA: el barrido de radar del panel de juego, los pulsos de crisis y el ticker viven en style={{…}} dentro del componente, y un estilo en línea solo lo gana un !important de hoja. El auditor las censa ahora, el componente marca su elemento con data-vg-anim-inline y la hoja generada las apaga en «reducidas»",
+      "LA PRUEBA SE HIZO EN BRAVE, EL NAVEGADOR DEL INFORME: Brave 141 descargado y ejecutado contra el sitio publicado, con la misma emulación de teléfono y el mismo freno de CPU. Mismas cifras que en Chromium: hilo principal 0,991 s/s → 0,106 s/s y 27 animaciones en curso → 0. El motor se elige con VG_NAVEGADOR",
+      "EL SELECTOR, PROBADO PULSANDO: tools/anim/probar-navegador.mjs abre las dos puertas (los ajustes del cuartel y /modo), pulsa las tres opciones, comprueba que el cambio se aplica sin recargar, que sobrevive a la recarga y que «volver a la elección automática» borra la decisión. 22 comprobaciones en Chromium y en Brave",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v416.0",
     nombre: "EL MUNDO EN CIFRAS",
     hitos: [

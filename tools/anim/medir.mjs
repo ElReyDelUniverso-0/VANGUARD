@@ -16,13 +16,19 @@
 // ═══════════════════════════════════════════════════════════════════
 import puppeteer from "puppeteer";
 
+// Otro motor: VG_NAVEGADOR=/ruta/al/binario. Sirve para repetir la misma
+// medida en Brave o Chrome de verdad sin instalar nada en el proyecto.
+const EJECUTABLE = process.env.VG_NAVEGADOR || undefined;
+
 const URL = process.argv[2] || "http://localhost:3210/";
 const SEG = Number(process.argv[3] || 3);
 const CPU = Number(process.argv[4] || 6);
 const NIVELES = ["completas", "reducidas", "desactivadas"];
 
 const navegador = await puppeteer.launch({
-  headless: "shell",
+  executablePath: EJECUTABLE,
+  // Brave no es chrome-headless-shell: si se apunta a otro binario, headless nuevo.
+  headless: EJECUTABLE ? true : "shell",
   args: ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu-vsync"],
 });
 

@@ -6562,7 +6562,7 @@
 // (versión anterior) export const APP_VERSION = "v416.0";
 // (codename anterior) export const APP_CODENAME = "EL MUNDO EN CIFRAS";
 
-// v416.1 LA CASA LIGERA — el informe del visitante con un Galaxy A06 y Brave:
+// v416.2 LA CASA LIGERA — el informe del visitante con un Galaxy A06 y Brave:
 // «aproximadamente 10 FPS» en una animación que giraba.
 //
 // ① LO MEDIDO, ANTES DE TOCAR NADA: la casa declaraba 246 animaciones que se
@@ -6592,7 +6592,17 @@
 //    «reducidas»; fotogramas lentos 105 → 0. El medidor se queda en el
 //    repositorio (`tools/anim/medir.mjs`) para que la próxima ronda lo repita
 //    en vez de creerse.
-export const APP_VERSION = "v416.1";
+// ⑦ LA FUGA QUE FALTABA (v416.2): ocho animaciones no viven en ninguna hoja,
+//    sino en `style={{…}}` dentro del componente —el barrido de radar del panel
+//    de juego, entre ellas— y ningún selector las alcanza. Ahora el auditor
+//    las censa, el componente marca su elemento con `data-vg-anim-inline` y la
+//    hoja generada apaga ahí con `!important`, que sí gana a un estilo en
+//    línea. Cero archivos sin marcar, comprobado en `tools/anim/probar.mjs`.
+// ⑧ LA PRUEBA EN BRAVE, QUE ERA EL NAVEGADOR DEL INFORME: se descargó Brave
+//    141 y se repitió la medida y toda la prueba del selector sobre el sitio
+//    publicado: mismas cifras que en Chromium (0,991 s/s → 0,106 s/s; 27 → 0
+//    animaciones en curso). El motor se elige con `VG_NAVEGADOR`.
+export const APP_VERSION = "v416.2";
 export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";

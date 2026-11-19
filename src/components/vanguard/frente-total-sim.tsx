@@ -1084,7 +1084,7 @@ export default function FrenteTotalSim() {
             TELETIPO
           </span>
           <div className="relative flex-1 overflow-hidden ml-1">
-            <div
+            <div data-vg-anim-inline="si"
               className="whitespace-nowrap font-mono text-[10px] text-zinc-300"
               style={{
                 animation: "ft-ticker 36s linear infinite",

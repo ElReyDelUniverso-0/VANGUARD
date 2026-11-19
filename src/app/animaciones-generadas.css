@@ -709,6 +709,16 @@ html[data-vg-anim="reducidas"] .vxp-punto,
 html[data-vg-anim="reducidas"] .vxp-punto::before,
 html[data-vg-anim="reducidas"] .vxp-punto::after { animation: none !important; }
 
+/* Las animaciones que viven en un estilo en línea no las alcanza ningún
+   selector; el componente marca su elemento con data-vg-anim-inline y aquí se
+   apagan. Son los barridos y pulsos de pantalla completa: decoración, no
+   función. */
+html[data-vg-anim="reducidas"] [data-vg-anim-inline],
+html[data-vg-anim="reducidas"] [data-vg-anim-inline]::before,
+html[data-vg-anim="reducidas"] [data-vg-anim-inline]::after {
+  animation: none !important;
+}
+
 /* El desenfoque de fondo es lo más caro por píxel en un teléfono modesto:
    en «reducidas» se retira y queda el color de respaldo. */
 html[data-vg-anim="reducidas"] *,

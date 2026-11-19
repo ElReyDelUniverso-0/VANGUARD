@@ -138,7 +138,7 @@ export function ProtocoloRojo() {
             className="fixed inset-0 pointer-events-none z-[70]"
             aria-hidden
           >
-            <div
+            <div data-vg-anim-inline="si"
               className="absolute inset-0 vg-crisis-vignette"
               style={{
                 background:
@@ -147,8 +147,8 @@ export function ProtocoloRojo() {
               }}
             />
             {/* barras rojas giratorias en las esquinas */}
-            <div className="absolute top-0 left-0 w-24 h-1 bg-crisis/80" style={{ animation: "vg-sweep 3.2s linear infinite" }} />
-            <div className="absolute bottom-0 right-0 w-24 h-1 bg-crisis/80" style={{ animation: "vg-sweep 3.2s linear infinite reverse" }} />
+            <div data-vg-anim-inline="si" className="absolute top-0 left-0 w-24 h-1 bg-crisis/80" style={{ animation: "vg-sweep 3.2s linear infinite" }} />
+            <div data-vg-anim-inline="si" className="absolute bottom-0 right-0 w-24 h-1 bg-crisis/80" style={{ animation: "vg-sweep 3.2s linear infinite reverse" }} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -164,6 +164,7 @@ export function ProtocoloRojo() {
             className="fixed bottom-3 right-3 z-[72] pointer-events-auto"
           >
             <button
+              data-vg-anim-inline="si"
               onClick={() => {
                 sfx.beep();
                 toast(`PROTOCOLO ROJO ACTIVO · x2 monedas`, {
