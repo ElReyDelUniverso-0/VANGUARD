@@ -115,6 +115,7 @@ const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").t
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
 // v32 CIELO DE ACERO: badge global del estado del socket multijugador
 const RealtimeStatus = dynamic(() => import("@/components/realtime-status").then((m) => m.RealtimeStatus), { ssr: false });
+const BandejaMovil = dynamic(() => import("@/components/vanguard/bandeja-movil").then((m) => m.BandejaMovil), { ssr: false });
 // v84.0 FORTUNA DE GUERRA: lluvia de monedas del GOLPE DE FORTUNA (global)
 const FortunaLluvia = dynamic(() => import("@/components/vanguard/fortuna-lluvia").then((m) => m.FortunaLluvia), { ssr: false });
 // v40 GEOPOLÍTICA EN VIVO: el tablón del planeta con datos reales (Banco Mundial/USGS/Wikipedia)
@@ -1586,6 +1587,8 @@ export default function Home() {
           la pantalla móvil queda con UNA capa de información, no cinco */}
       <RealtimeStatus />
       <MusicPlayer />
+      {/* v416.0 móvil: los flotantes secundarios esperan tras «MÁS» (≤640px) */}
+      <BandejaMovil />
       <FortunaLluvia />
       <ConnectionWatchdog />
       {/* v34 — recepción del recluta: procesa ?ref= y da bono de bienvenida */}

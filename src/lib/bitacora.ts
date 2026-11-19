@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v417.0",
+    nombre: "COMPATIBILIDAD MÓVIL",
+    hitos: [
+      "LA CAUSA, MEDIDA: en un Galaxy A06 la cinemática del estreno quedaba atrapada dentro de la sala 3D — un telón negro de 29.000 px con el botón SALTAR fuera de la pantalla y la página bloqueada. Ahora se monta sobre la página entera y siempre se puede saltar.",
+      "LOS TELONES DE LOS PANELES, A SALVO: cualquier ventana a pantalla completa que nazca dentro de la sala 3D aplana el movimiento mientras está abierta y vuelve a ser la pantalla de verdad.",
+      "LA CABECERA DE LA PORTADA CABE EN 360 PX: el botón EN VIVO ya no se corta por la mitad en /, /sistema, /directorio ni en las fichas de país.",
+      "EL HUD DEL CUARTEL RESPIRA EN MÓVIL: el logotipo ya no se pisa con las monedas; Cuenta, Búnker y Sonido viven en el menú ☰ bajo 480 px.",
+      "EL MUELLE INFERIOR ORDENADO: nueve flotantes que se tapaban tienen ahora carril propio; radio, cofre, temporada, combo y CARA esperan tras «MÁS» sin dejar de funcionar.",
+      "PROBADO EN 360×740 Y 384×854 CON CADENA ANDROID/BRAVE, CON EL ALMACENAMIENTO BLOQUEADO (modo privado / Shields) Y EN ESCRITORIO 1280 PX.",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v416.3",
     nombre: "LA CASA LIGERA · las dos fugas que quedaban",
     hitos: [

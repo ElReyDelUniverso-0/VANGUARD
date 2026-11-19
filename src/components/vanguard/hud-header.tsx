@@ -197,7 +197,10 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             >
               <VanguardEmblem size={40} idPrefix="hud-mark" className="w-full h-full" />
             </div>
-            <div className="leading-tight min-w-0">
+            {/* v416.0 MÓVIL: bajo 480px la fila no cabe (356px de acciones en 344
+                útiles): el emblema queda y el wordmark se apoya en la barra de
+                abajo (GoogleBar ya dice VANGUARD). La cuenta pasa al menú ☰. */}
+            <div className="leading-tight min-w-0 max-[479px]:hidden">
               {/* v139 3D BRUTAL: el wordmark ya no es texto — es un HOLOGRAMA
                   que gira solo (rotateY ±14° constante) con DOS capas fantasma
                   reales detrás (::before/::after a translateZ −16/−32px): al
@@ -326,7 +329,7 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
               aria-label="Abrir Modo 3D Teatro Total"
               className="h-6 sm:h-8 px-1.5 sm:px-2.5 hud-corner flex-shrink-0 flex items-center gap-1 border border-[#38BDF8] bg-[#38BDF8]/15 text-[#38BDF8] hover:bg-[#38BDF8] hover:text-black transition-colors font-mono text-[9px] sm:text-[10px] font-black tracking-wider"
             >
-              <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5 max-[479px]:hidden" />
               <span>3D</span>
             </Link>
             {/* Menú VANGUARD de Lo Nuevo + Links Directos + 10 Funciones Nuevas */}
@@ -368,14 +371,14 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
               onClick={toggleBunker}
               title={bunkerOn ? "Sonido del búnker ON · la atmósfera respira con la tensión del mundo (clic para apagar)" : "Sonido del búnker OFF · drone generativo + estática de satélite reactiva a la tensión global"}
               aria-pressed={bunkerOn}
-              className={cn("w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center transition-colors", bunkerOn ? "border-cyan-hud text-cyan-hud v135-bunker-on" : "border-amber-hud text-amber hover:bg-amber-hud")}
+              className={cn("w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center transition-colors max-[479px]:hidden", bunkerOn ? "border-cyan-hud text-cyan-hud v135-bunker-on" : "border-amber-hud text-amber hover:bg-amber-hud")}
             >
               <AudioLines className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={toggleMute}
               title={muted ? t("hud.soundOn") : t("hud.soundOff")}
-              className="w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center border-amber-hud text-amber hover:bg-amber-hud transition-colors"
+              className="w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center border-amber-hud text-amber hover:bg-amber-hud transition-colors max-[479px]:hidden"
             >
               {muted ? <VolumeX className="w-3 h-3 sm:w-4 sm:h-4" /> : <Volume2 className="w-3 h-3 sm:w-4 sm:h-4" />}
             </button>
@@ -413,7 +416,7 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
               exit={{ height: 0, opacity: 0 }}
               className="sm:hidden overflow-hidden"
             >
-              <div className="flex gap-2 pt-2">
+              <div className="flex flex-wrap gap-2 pt-2">
                 <button
                   onClick={() => { onOpenLog?.(); setMenuOpen(false); }}
                   className="flex-1 flex items-center justify-center gap-1.5 h-8 hud-corner border-amber-hud text-amber hover:bg-amber-hud font-mono text-[10px] uppercase"
@@ -425,6 +428,29 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
                   className="flex-1 flex items-center justify-center gap-1.5 h-8 hud-corner border-amber-hud text-amber hover:bg-amber-hud font-mono text-[10px] uppercase"
                 >
                   <Settings className="w-3.5 h-3.5" /> {t("hud.settings")}
+                </button>
+                {/* v416.0 MÓVIL: lo que la fila superior no puede mostrar bajo
+                    480px vive aquí — mismas acciones, mismo estado */}
+                <button
+                  onClick={() => { onOpenAccount?.(); setMenuOpen(false); }}
+                  className="hidden max-[479px]:flex flex-1 min-w-[28%] items-center justify-center gap-1.5 h-8 hud-corner border-amber-hud text-amber hover:bg-amber-hud font-mono text-[10px] uppercase"
+                >
+                  {account?.isOwner ? <Crown className="w-3.5 h-3.5" /> : <UserRound className="w-3.5 h-3.5" />}
+                  <span className="truncate">{account ? t("hud.myAccount") : t("hud.enter")}</span>
+                </button>
+                <button
+                  onClick={toggleBunker}
+                  aria-pressed={bunkerOn}
+                  className={cn("hidden max-[479px]:flex flex-1 min-w-[28%] items-center justify-center gap-1.5 h-8 hud-corner font-mono text-[10px] uppercase", bunkerOn ? "border-cyan-hud text-cyan-hud" : "border-amber-hud text-amber hover:bg-amber-hud")}
+                >
+                  <AudioLines className="w-3.5 h-3.5" /> Búnker
+                </button>
+                <button
+                  onClick={toggleMute}
+                  className="hidden max-[479px]:flex flex-1 min-w-[28%] items-center justify-center gap-1.5 h-8 hud-corner border-amber-hud text-amber hover:bg-amber-hud font-mono text-[10px] uppercase"
+                >
+                  {muted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                  <span className="truncate">{muted ? t("hud.soundOn") : t("hud.soundOff")}</span>
                 </button>
               </div>
             </motion.div>

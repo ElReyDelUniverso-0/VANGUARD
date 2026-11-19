@@ -101,3 +101,27 @@ Prueba de conexión real: no se puede hacer con datos — no hay credenciales. E
 lo declara («sin conexión») y la API responde `conexion.lista:false` con las variables que faltan.
 Acción del Dueño: cuenta de servicio + API activada + usuario en Search Console +
 GSC_SERVICE_ACCOUNT_JSON, AUTH_SECRET y OWNER_PASSWORD en Vercel.
+
+## v416.0 · COMPATIBILIDAD MÓVIL · 2026-11-18
+
+Incidencia: usuario con Samsung Galaxy A06 + Brave — «la mitad de la interfaz no aparece».
+Reproducción: Chromium (motor de Brave) emulando el A06 — 360×740, DPR 2, táctil, UA
+`Android 14; SM-A065M … Chrome/131 Mobile` — contra la casa oficial; scripts en el espacio de
+trabajo (`movil-qa/`), no en el repositorio.
+
+Causas medidas:
+1. `/cuartel`: la cinemática vg191 (`fixed inset-0 z-[90]`) vive dentro de panel-stagger →
+   diorama-v137 → cuna-v139 → flotador-v138, que llevan transform / will-change: transform. El
+   fijo se volvía relativo a la sala: rect −305…29183 px, SALTAR en y=−293, body con overflow
+   hidden → telón negro sin salida sobre todo el contenido.
+2. Portada (`/`, `/sistema`, `/directorio`, `/mundos/*`): `.vx-cab-der` llegaba a x=398 (vw 360);
+   «EN VIVO» cortado por `overflow-x: clip`.
+3. HUD del cuartel: 356 px de acciones con flex-shrink 0 → el wordmark medía 0 px y se pisaba con
+   las monedas; la fila llegaba a x=371.
+4. Muelle inferior: 9 flotantes en los mismos 160 px → 10 solapes medidos, incluida la barra de zonas.
+
+Correcciones: portal a `<body>` para el cine; regla `:has` que aplana la cadena 3D mientras exista
+un fijo dentro de la sala (protege a los ~30 paneles con lightbox); cabecera que encoge (≤560 px)
+y deja el punto rojo con etiqueta accesible bajo 380 px; HUD: bajo 480 px Cuenta/Búnker/Sonido en
+el menú ☰; muelle con carriles y la bandeja «MÁS» (`bandeja-movil.tsx`), que solo oculta por CSS,
+sin desmontar nada. Cero módulos eliminados. Con almacenamiento bloqueado todo cae a memoria.

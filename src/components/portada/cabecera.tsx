@@ -74,8 +74,8 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
         <div className="vx-cab-der">
           <Reloj />
           <BuscadorUniversal />
-          <Link href="/en-vivo" className="vx-vivo">
-            <span className="vx-punto" /> EN VIVO
+          <Link href="/en-vivo" className="vx-vivo" aria-label="EN VIVO">
+            <span className="vx-punto" /> <span className="vx-vivo-t">EN VIVO</span>
           </Link>
         </div>
       </div>

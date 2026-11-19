@@ -89,7 +89,7 @@ export function RealtimeStatus() {
   if (shown === "ok" && quiet) {
     return (
       <div
-        className="fixed bottom-3 left-2 sm:left-3 z-40 flex items-center gap-1.5 px-1.5 py-1 rounded-full border border-green-hud/40 bg-black/60 cursor-pointer"
+        className="vg-dock-rt fixed bottom-3 left-2 sm:left-3 z-40 flex items-center gap-1.5 px-1.5 py-1 rounded-full border border-green-hud/40 bg-black/60 cursor-pointer"
         onClick={() => setQuiet(false)}
         aria-label={t("rt.conectado")}
       >
@@ -120,7 +120,7 @@ export function RealtimeStatus() {
         }
       }}
       className={cn(
-        "fixed bottom-3 left-2 sm:left-3 z-40 flex items-center gap-1.5 px-2 py-1 rounded-sm border font-mono text-[8px] uppercase tracking-widest backdrop-blur-sm select-none active:scale-95 transition-transform",
+        "vg-dock-rt fixed bottom-3 left-2 sm:left-3 z-40 flex items-center gap-1.5 px-2 py-1 rounded-sm border font-mono text-[8px] uppercase tracking-widest backdrop-blur-sm select-none active:scale-95 transition-transform",
         st.cls
       )}
       aria-live="polite"

@@ -6572,3 +6572,117 @@ html[data-vg-theme="carmesi"] {
   img { max-width: 100% !important; break-inside: avoid; }
   article, section { break-inside: avoid-page; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   v416.0 MÓVIL — INCIDENCIA GALAXY A06 · BRAVE
+   ① La sala 3D (panel-stagger → diorama → cuna → flotador lleva
+     transform / will-change) convertía todo «position: fixed» de su
+     interior en relativo a la sala: telones y lightboxes de ~30 paneles
+     medían miles de px y sus botones quedaban fuera de la pantalla.
+     Mientras haya un fijo dentro, la cadena 3D se aplana (no se borra:
+     vuelve sola al cerrarlo).
+   ② El muelle inferior en pantallas ≤640px: 9 flotantes compartían los
+     mismos 160px y se tapaban entre sí y con la barra de zonas. Ahora
+     cada uno tiene SU carril; los secundarios viven en la bandeja «MÁS»
+     (un toque) — ninguno se elimina.
+   ════════════════════════════════════════════════════════════ */
+.escenario-v137:has([class~="fixed"], [data-vg191-cine]) :is(.panel-stagger, .diorama-v137, .cuna-v139, .flotador-v138) {
+  transform: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  perspective: none !important;
+}
+
+.vg416-bandeja { display: none; }
+
+@media (max-width: 640px) {
+  html:has(.vg140-nav) { --vg416-base: calc(80px + env(safe-area-inset-bottom, 0px)); }
+
+  /* fila 1 — sobre la barra de zonas: JUEGO · estado · MÁS */
+  html:has(.vg140-nav) .vx-nav-fab { left: 8px; bottom: var(--vg416-base); }
+  html:has(.vg140-nav) .vg-dock-rt {
+    left: 50% !important;
+    bottom: calc(var(--vg416-base) + 5px) !important;
+    transform: none;
+    translate: -50% 0;
+    max-width: calc(100vw - 210px);
+    overflow: hidden;
+  }
+  .vg416-bandeja {
+    position: fixed;
+    right: 8px;
+    bottom: var(--vg416-base);
+    z-index: 46;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid rgba(245, 197, 66, 0.45);
+    border-radius: 999px;
+    background: rgba(9, 9, 11, 0.94);
+    color: #f5c542;
+    font: 700 9.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+  .vg416-bandeja[aria-expanded="true"] { border-color: #5eead4; color: #5eead4; }
+  .vg416-bandeja-punto { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+  .vg416-bandeja[data-cofre="1"] .vg416-bandeja-punto { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; animation: vg416Latido 1.4s ease-in-out infinite; }
+  @keyframes vg416Latido { 50% { opacity: 0.35; } }
+
+  /* orbe de voz: siempre a mano, en su carril sobre MÁS */
+  html:has(.vg140-nav) [data-vg-asistente] {
+    right: 10px !important;
+    bottom: calc(var(--vg416-base) + 42px) !important;
+  }
+
+  /* bandeja CERRADA: los secundarios esperan (siguen montados: la radio sigue sonando) */
+  html:has(.vg140-nav):not([data-vg416-bandeja="1"]) :is(.vg-dock-radio, [data-vg-retencion="cluster"], [data-vg-retencion="cofre"], [data-vg-retencion="ocultar"], .vg208-cara-lote, .vg208-estreno) {
+    display: none !important;
+  }
+
+  /* bandeja ABIERTA — fila 2: temporada/combo (izq.) · cofre (der.) */
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) [data-vg-retencion="cluster"] {
+    left: 8px !important;
+    bottom: calc(var(--vg416-base) + 40px) !important;
+    max-width: calc(100vw - 162px) !important;
+  }
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) [data-vg-retencion="cluster"] .font-mono { flex-wrap: wrap; column-gap: 4px; row-gap: 0; }
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) [data-vg-retencion="cofre"] {
+    right: 8px !important;
+    bottom: calc(var(--vg416-base) + 40px) !important;
+    max-width: 130px;
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+  }
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) [data-vg-retencion="ocultar"] {
+    left: calc(100vw - 148px) !important;
+    bottom: calc(var(--vg416-base) + 84px) !important;
+    transform: none !important;
+  }
+  /* el orbe sube sobre el cofre cuando la bandeja se abre */
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) [data-vg-asistente] { bottom: calc(var(--vg416-base) + 82px) !important; }
+  /* fila 3: CARA e intro a la izquierda */
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) .vg208-cara-lote {
+    left: 8px;
+    right: auto;
+    align-items: flex-start;
+    bottom: calc(var(--vg416-base) + 124px);
+  }
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) .vg208-estreno {
+    left: 8px;
+    right: auto;
+    bottom: calc(var(--vg416-base) + 156px);
+  }
+  /* fila 4: la radio, que crece hacia arriba sin pisar a nadie */
+  html[data-vg416-bandeja="1"]:has(.vg140-nav) .vg-dock-radio {
+    right: 8px !important;
+    bottom: calc(var(--vg416-base) + 148px) !important;
+    max-width: calc(100vw - 16px);
+  }
+  /* el contenido termina por encima del muelle */
+  html:has(.vg140-nav) .escenario-v137 { padding-bottom: 150px !important; }
+}

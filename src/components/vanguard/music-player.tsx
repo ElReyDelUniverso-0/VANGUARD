@@ -863,7 +863,7 @@ export function MusicPlayer() {
   // 104px — antes la radio convivía con el COFRE en el mismo carril
   // (sm:bottom-3 vs bottom-2) y se tapaban: el Dueño lo cantó.
   return (
-    <div className="fixed bottom-14 right-2 sm:bottom-14 sm:right-3 z-40 select-none">
+    <div className="vg-dock-radio fixed bottom-14 right-2 sm:bottom-14 sm:right-3 z-40 select-none">
       <div
         className={cn(
           "hud-panel border-amber-hud overflow-hidden transition-all",

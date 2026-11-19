@@ -1737,3 +1737,22 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
   .vxp-heroe-txt h1 { font-size: 34px; }
 }
 @media (max-width: 599px) { .vxp-heroe-cta .vx-btn, .vxp-boton-mundos { white-space: nowrap; letter-spacing: .06em !important; } }
+
+/* v416.0 MÓVIL — la cabecera de la portada cabe en 360px (Galaxy A06):
+   «EN VIVO» medía 398px de borde derecho y quedaba cortado por el
+   overflow-x: clip. Ahora todo encoge con dignidad; nada se esconde
+   salvo, bajo 380px, la PALABRA «EN VIVO» (queda el punto rojo con su
+   etiqueta accesible). */
+.vx-cab-der { min-width: 0; }
+@media (max-width: 560px) {
+  .vx-cab-in { gap: 10px; }
+  .vx-logo { gap: 8px; }
+  .vx-logo svg { width: 30px; height: 30px; }
+  .vx-logo-t b { font-size: 15px; letter-spacing: .2em; }
+  .vx-cab-der { gap: 6px; }
+  .vx-vivo { padding: 7px 10px; letter-spacing: .12em; gap: 6px; }
+}
+@media (max-width: 379px) {
+  .vx-vivo { padding: 0; width: 38px; height: 38px; justify-content: center; }
+  .vx-vivo-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}

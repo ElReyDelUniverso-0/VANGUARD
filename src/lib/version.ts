@@ -1,3 +1,27 @@
+// v417.0 COMPATIBILIDAD MÓVIL — incidencia de alta prioridad: un usuario en un
+// Samsung Galaxy A06 con Brave veía «la mitad de la interfaz» sin aparecer.
+// Reproducido con Chromium emulando el A06 (360×740, DPR 2, UA Android Chrome,
+// el mismo motor y la misma cadena que Brave) contra la casa oficial.
+// ① LA CAUSA PRINCIPAL: la cinemática del estreno (vg191) se monta dentro de la
+//    sala 3D, y panel-stagger/diorama/cuna/flotador llevan transform. Un
+//    ancestro con transform vuelve relativo a él todo «position: fixed»: el
+//    telón negro medía 29.000 px, SALTAR quedaba a −293 px (fuera de pantalla)
+//    y el body se bloqueaba con overflow hidden. Ahora el cine se monta en
+//    <body> por portal, y cualquier fijo que nazca dentro de la sala aplana la
+//    cadena 3D mientras viva (regla :has en globals.css) — los ~30 paneles con
+//    lightbox o telón quedan protegidos sin tocarlos uno a uno.
+// ② LA CABECERA DE LA PORTADA (/, /sistema, /directorio, /mundos/*): «EN VIVO»
+//    terminaba en x=398 en una pantalla de 360 y el overflow-x: clip la cortaba
+//    por la mitad. Encoge en ≤560px; bajo 380px queda el punto rojo con su
+//    etiqueta accesible.
+// ③ EL HUD DEL CUARTEL: 356 px de acciones en 344 útiles — el wordmark medía 0
+//    y se pisaba con las monedas. Bajo 480px queda el emblema, el icono del 3D
+//    cede su sitio a la palabra y Cuenta, Búnker y Sonido pasan al menú ☰.
+// ④ EL MUELLE INFERIOR: nueve flotantes en los mismos 160 px (10 solapes
+//    medidos). En ≤640px cada uno tiene carril propio; radio, cofre, temporada,
+//    combo, CARA e intro esperan tras «MÁS» (siguen montados: la música no se
+//    corta). Cero módulos eliminados.
+// ═══════════════════════════════════════════════════════════════════
 // v415.0 VANGUARD SEARCH OPPORTUNITIES — MISIÓN 22. Encargo del Dueño: un
 // sistema que encuentre oportunidades reales de crecimiento orgánico con datos
 // de Google Search Console; «no inventes posiciones ni prometas llegar al
@@ -6609,8 +6633,10 @@
 //    atributo entra dentro del propio `html` en esos selectores y las cuatro
 //    utilidades se apagan por clase: 254 reglas, 253 selectores, ni una fuga
 //    en la prueba de navegador del panel de juego.
-export const APP_VERSION = "v416.3";
-export const APP_CODENAME = "LA CASA LIGERA";
+// (versión anterior) export const APP_VERSION = "v416.3";
+export const APP_VERSION = "v417.0";
+export const APP_CODENAME = "COMPATIBILIDAD MÓVIL";
+// (codename anterior) export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";
 // (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";
@@ -6673,7 +6699,7 @@ export const APP_CODENAME = "LA CASA LIGERA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v413.0";
+export const APP_VERSION_ANTERIOR = "v416.3";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

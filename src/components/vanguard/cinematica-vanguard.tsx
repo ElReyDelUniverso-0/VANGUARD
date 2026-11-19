@@ -19,6 +19,7 @@
 // ============================================================
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Clapperboard, X } from "lucide-react";
 import { APP_VERSION_LABEL } from "@/lib/version";
 import { sfx, isMuted } from "@/lib/sound";
@@ -151,7 +152,15 @@ export function CinematicaVanguard({ abierto, alCerrar, auto = true }: Props) {
 
   if (!reproduciendo || escena < 0) return null;
 
-  return (
+  // v416.0 MÓVIL — el cine vivía dentro de la sala 3D (panel-stagger →
+  // diorama → cuna → flotador, todos con transform). Un ancestro con
+  // transform convierte «position: fixed» en relativo a ESE ancestro: en
+  // el Galaxy A06 el telón medía 29.000 px, SALTAR quedaba fuera de la
+  // pantalla y el body bloqueado (overflow hidden) — media casa en negro
+  // sin salida. Se monta en <body> vía portal: fixed vuelve a ser la pantalla.
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-[90] bg-black select-none vg191-cine"
       role="dialog"
@@ -176,10 +185,10 @@ export function CinematicaVanguard({ abierto, alCerrar, auto = true }: Props) {
       {escena === 0 && (
         <div className="absolute inset-0 grid place-items-center px-6">
           <div className="text-center">
-            <p className="vg191-maquina font-mono text-[11px] sm:text-sm tracking-[0.4em] text-white/70 uppercase">
+            <p className="vg191-maquina font-mono text-[9px] sm:text-sm tracking-[0.2em] sm:tracking-[0.4em] text-white/70 uppercase">
               AGENCIA VANGUARD · DOCUMENTO CLASIFICADO
             </p>
-            <p className="mt-4 font-mono text-[10px] tracking-[0.3em] text-red-400/80 uppercase vg191-sello">
+            <p className="mt-4 font-mono text-[10px] tracking-[0.2em] sm:tracking-[0.3em] text-red-400/80 uppercase vg191-sello">
               SOLO PARA LOS OJOS DEL COMANDANTE
             </p>
           </div>
@@ -305,14 +314,15 @@ export function CinematicaVanguard({ abierto, alCerrar, auto = true }: Props) {
       )}
 
       <style dangerouslySetInnerHTML={{ __html: VG191_CINE_CSS }} />
-    </div>
+    </div>,
+    document.body,
   );
 }
 
 const VG191_CINE_CSS = `
 .vg191-cine { background: radial-gradient(circle at 50% 40%, #10101A 0%, #050508 70%, #000 100%); }
 .vg191-maquina { overflow: hidden; white-space: nowrap; border-right: 2px solid rgba(232,197,106,0.8);
-  animation: vg191-tipear 2.6s steps(38, end) forwards; width: 0; max-width: 100vw; }
+  animation: vg191-tipear 2.6s steps(38, end) forwards; width: 0; max-width: calc(100vw - 3rem); }
 @keyframes vg191-tipear { to { width: 100%; } }
 .vg191-sello { opacity: 0; animation: vg191-aparecer 0.35s ease forwards; animation-delay: 2.7s; }
 @keyframes vg191-aparecer { from { opacity: 0; transform: scale(1.6); } to { opacity: 0.9; transform: scale(1); } }
