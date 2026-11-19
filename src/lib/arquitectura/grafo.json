@@ -2,8 +2,8 @@
   "version": "v414.0",
   "generado": "2026-11-19",
   "fuente": {
-    "censo": "src/lib/arquitectura/censo.json · 2026-11-19 · 127 páginas · 126 rutas de API",
-    "registro": "86 módulos · 138 dependencias declaradas"
+    "censo": "src/lib/arquitectura/censo.json · 2026-11-19 · 137 páginas · 130 rutas de API",
+    "registro": "90 módulos · 144 dependencias declaradas"
   },
   "areas": [
     {
@@ -19,7 +19,7 @@
       "id": "lib/api",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 103,
+      "enlacesSalientes": 113,
       "enlacesEntrantes": 0,
       "paginas": 0,
       "api": 0
@@ -40,6 +40,15 @@
       "enlacesSalientes": 57,
       "enlacesEntrantes": 0,
       "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/memoria",
+      "tipo": "ruta",
+      "rutas": 8,
+      "enlacesSalientes": 26,
+      "enlacesEntrantes": 22,
+      "paginas": 8,
       "api": 0
     },
     {
@@ -79,21 +88,21 @@
       "api": 0
     },
     {
-      "id": "app/mundos",
-      "tipo": "ruta",
-      "rutas": 2,
-      "enlacesSalientes": 21,
-      "enlacesEntrantes": 8,
-      "paginas": 2,
-      "api": 0
-    },
-    {
       "id": "app/datos-mundiales",
       "tipo": "ruta",
       "rutas": 4,
-      "enlacesSalientes": 10,
+      "enlacesSalientes": 14,
       "enlacesEntrantes": 16,
       "paginas": 4,
+      "api": 0
+    },
+    {
+      "id": "app/mundos",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 19,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
       "api": 0
     },
     {
@@ -131,6 +140,15 @@
       "enlacesEntrantes": 21,
       "paginas": 0,
       "api": 9
+    },
+    {
+      "id": "app/organizaciones",
+      "tipo": "ruta",
+      "rutas": 4,
+      "enlacesSalientes": 3,
+      "enlacesEntrantes": 16,
+      "paginas": 4,
+      "api": 0
     },
     {
       "id": "app/audios",
@@ -239,6 +257,15 @@
       "enlacesEntrantes": 4,
       "paginas": 1,
       "api": 0
+    },
+    {
+      "id": "api/centro",
+      "tipo": "ruta",
+      "rutas": 6,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 12,
+      "paginas": 0,
+      "api": 6
     },
     {
       "id": "api/ugc",
@@ -358,21 +385,21 @@
       "api": 4
     },
     {
+      "id": "lib/datos",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 9,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "app/demografia",
       "tipo": "ruta",
       "rutas": 1,
       "enlacesSalientes": 5,
       "enlacesEntrantes": 4,
       "paginas": 1,
-      "api": 0
-    },
-    {
-      "id": "app/organizaciones",
-      "tipo": "ruta",
-      "rutas": 2,
-      "enlacesSalientes": 1,
-      "enlacesEntrantes": 8,
-      "paginas": 2,
       "api": 0
     },
     {
@@ -400,15 +427,6 @@
       "enlacesSalientes": 4,
       "enlacesEntrantes": 4,
       "paginas": 1,
-      "api": 0
-    },
-    {
-      "id": "lib/datos",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 8,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
       "api": 0
     },
     {
@@ -601,15 +619,6 @@
       "api": 2
     },
     {
-      "id": "api/centro",
-      "tipo": "ruta",
-      "rutas": 6,
-      "enlacesSalientes": 0,
-      "enlacesEntrantes": 6,
-      "paginas": 0,
-      "api": 6
-    },
-    {
       "id": "app/traductor",
       "tipo": "ruta",
       "rutas": 1,
@@ -692,6 +701,15 @@
     },
     {
       "id": "api/lingua",
+      "tipo": "ruta",
+      "rutas": 3,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 5,
+      "paginas": 0,
+      "api": 3
+    },
+    {
+      "id": "api/memoria",
       "tipo": "ruta",
       "rutas": 3,
       "enlacesSalientes": 0,
@@ -898,6 +916,15 @@
       "api": 1
     },
     {
+      "id": "lib/nucleo",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 4,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "api/news",
       "tipo": "ruta",
       "rutas": 1,
@@ -926,6 +953,15 @@
     },
     {
       "id": "api/pulso",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 4,
+      "paginas": 0,
+      "api": 1
+    },
+    {
+      "id": "api/redes",
       "tipo": "ruta",
       "rutas": 1,
       "enlacesSalientes": 0,
@@ -1256,15 +1292,6 @@
       "enlacesEntrantes": 3,
       "paginas": 0,
       "api": 1
-    },
-    {
-      "id": "lib/nucleo",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 3,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
     },
     {
       "id": "components/vanguard2",
@@ -1663,6 +1690,24 @@
       "api": 0
     },
     {
+      "id": "components/redes",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/redes",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "lib/vanguard",
       "tipo": "soporte",
       "rutas": 0,
@@ -1708,6 +1753,15 @@
       "api": 1
     },
     {
+      "id": "components/memoria",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "app/not-found.tsx",
       "tipo": "ruta",
       "rutas": 0,
@@ -1722,6 +1776,11 @@
       "desde": "lib/lingua",
       "hacia": "app/lingua",
       "n": 37
+    },
+    {
+      "desde": "app/memoria",
+      "hacia": "app/memoria",
+      "n": 20
     },
     {
       "desde": "components/creadores",
@@ -1805,6 +1864,11 @@
     },
     {
       "desde": "components/vanguard",
+      "hacia": "api/centro",
+      "n": 6
+    },
+    {
+      "desde": "lib/api",
       "hacia": "api/centro",
       "n": 6
     },
@@ -1894,7 +1958,12 @@
       "n": 4
     },
     {
-      "desde": "app/mundos",
+      "desde": "app/datos-mundiales",
+      "hacia": "app/organizaciones",
+      "n": 4
+    },
+    {
+      "desde": "app/memoria",
       "hacia": "app/organizaciones",
       "n": 4
     },
@@ -1936,6 +2005,11 @@
     {
       "desde": "lib/api",
       "hacia": "api/lingua",
+      "n": 3
+    },
+    {
+      "desde": "lib/api",
+      "hacia": "api/memoria",
       "n": 3
     },
     {
@@ -1997,26 +2071,6 @@
       "desde": "components/vanguard",
       "hacia": "api/cronica",
       "n": 2
-    },
-    {
-      "desde": "lib/api",
-      "hacia": "api/denuncias",
-      "n": 2
-    },
-    {
-      "desde": "lib/catalogo-real.ts",
-      "hacia": "api/denuncias",
-      "n": 2
-    },
-    {
-      "desde": "components/vanguard",
-      "hacia": "api/geo",
-      "n": 2
-    },
-    {
-      "desde": "app/estado",
-      "hacia": "api/health",
-      "n": 2
     }
   ],
   "ciclosDeEnlace": [
@@ -2073,9 +2127,9 @@
     ]
   ],
   "registro": {
-    "modulos": 86,
-    "dependencias": 138,
-    "unicas": 33,
+    "modulos": 90,
+    "dependencias": 144,
+    "unicas": 37,
     "rotas": []
   },
   "huecos": {
@@ -2087,12 +2141,14 @@
     ],
     "paginasDeUnEnlace": [
       "/conocimiento/enciclopedia/buscar",
-      "/conocimiento/enciclopedia/categoria/[id]"
+      "/conocimiento/enciclopedia/categoria/[id]",
+      "/memoria/coleccion/[slug]",
+      "/memoria/periodo/[slug]"
     ],
     "apiMasUsadas": [
       {
         "ruta": "/api",
-        "consumidores": 154
+        "consumidores": 158
       },
       {
         "ruta": "/api/news",

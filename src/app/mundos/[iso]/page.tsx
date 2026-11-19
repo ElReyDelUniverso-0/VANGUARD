@@ -480,6 +480,7 @@ export default async function PaisPage({ params }: Props) {
           {/* ── v407.1 · EN EL PLANETA ── */}
           <div className="vx-mp-bloque">
             <h2>{f.nombre} en el planeta</h2>
+            <p className="vx-mp-nota"><Link href={`/organizaciones/redes?pais=${f.iso2}`}>Explorar las conexiones institucionales documentadas de {f.nombre} →</Link></p>
             {puestos.length > 0 ? (
               <div className="vx-mp-acciones">
                 {puestos.map((x) => (

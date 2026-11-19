@@ -1387,3 +1387,22 @@ puerta es `/editorial`, y no abras `/noticias` ni `/cronica`: son alias vivos de
 
 ## v415.0 · VANGUARD SEARCH OPPORTUNITIES · 2026-11-18
 Notas: integración con Google Search Console por API (sin credenciales todavía: el panel /oportunidades lo dice y no muestra filas). Pendiente del Dueño: GSC_SERVICE_ACCOUNT_JSON, AUTH_SECRET y OWNER_PASSWORD en Vercel. Siguiente pieza natural: guardar un histórico semanal del informe para ver la evolución de cada oportunidad.
+
+
+## MISIÓN 07 · VANGUARD WORLD NETWORKS · candidata local v419.1 · 2026-11-18
+- Base oficial: 431f0c81655340e36765982ef43179128574664f; rama feature/world-networks.
+- Auditoría: 16 bloques existentes, 24 perfiles Knowledge, bibliotecas y fichas nacionales. Se preservan; /organizaciones/redes es una ampliación aditiva.
+- 28 instituciones, 7 instrumentos, 250 países/territorios (249 del registro y Kosovo según BIRF), 937 relaciones con tipo y fuente. Censos completos ONU/BIRF/OMC/OCDE/CERN/ESA/UE/CARICOM; los demás no se infieren.
+- Mapa SVG interactivo con zoom, pan, selección por teclado, evidencia por arista y lista tabular; paginación de vecinos. Directorio, fichas SSG, biblioteca, cronología y BFS de caminos con límites expresos.
+- Integración: organizaciones, /mundos/[iso], /datos-mundiales/pais/[iso], conocimiento, biblioteca del cuartel, Núcleo/directorio, modelo dato:red-institucional y API común /api/redes (60/min por cliente en memoria, validación, paginación, 400/404/429).
+- QA local: 36 integridad/API, 15 arquitectura, 26 navegador aislado; tsc focal y build optimizado aislado correctos. No se declara build global ni regresión de la carcasa completa.
+- Correcciones reales durante QA: longitud de consulta rechazada, rótulos accesibles de origen/destino, distinción UNCTAD órgano, entidades institucionales antes de países en mapa y nomenclatura de membresía aduanera OMC.
+- Problemas: npm ci agotó la RAM; detenido y sustituidas dependencias por instalación existente idéntica. Fuente CARICOM con pie sospechoso: no se ingirió HTML ni enlaces ajenos; asociados no publicados sin segunda confirmación.
+- PUBLICACIÓN PENDIENTE: no hay credencial GitHub disponible. Vercel conectado no sincroniza esta rama local; no sustituir la aplicación oficial por el arnés aislado. El trabajo Documentary local anterior sigue separado y no se eliminó.
+- Expansión siguiente: membresías por agencia, más organismos regionales y participación en tratados con reservas/denuncias/versiones; revisión editorial y regresión global antes de promover producción.
+
+
+## World Networks · continuación de publicación autorizada
+Acceso Git confirmado por el propietario. Rebase sobre ce83c8c preservando Cámara de Inteligencia y ambos enlaces de país. Resolución de versión: v419.2, sin sustituir el registro v419.1 previo. Despliegue y validación pública pendientes de resultado. No se guarda la credencial en archivos del proyecto.
+
+Publicación: se incorporó main c97ef5a (Cámara, Lingua, Memory Archive); versión final v420.2. Enlaces recíprocos de la biblioteca /memoria y sitemap de las fichas. Se corrigió el normalizador del censo para prefijos con varios segmentos dinámicos consecutivos: /memoria/documento/[fuente]/[id] generaba barras dobles y un falso huérfano pese a enlaces reales en TarjetaDocumento. No se suprimió la prueba.
