@@ -27,6 +27,10 @@ import "./animaciones-generadas.css";
 // 24×24 de tacto, campos a 16 px y ventanas que quepan. Va la ÚLTIMA a
 // propósito: a igual especificidad gana el orden, y así no hace falta un solo
 // !important. Ver src/app/movil.css para las medidas que lo justifican.
+// v420.1 ARCHIVO DE LA MEMORIA — la hoja vx-mem-* entra una sola vez, aquí,
+// como el resto de hojas de la casa (nunca por página: una ruta profunda
+// rompía la resolución del módulo).
+import "./memoria/memoria.css";
 import "./movil.css";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";

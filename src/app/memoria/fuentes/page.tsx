@@ -4,7 +4,6 @@ import { FUENTES_ARCHIVO, PUERTAS_AUSENTES } from "@/lib/memoria/fuentes";
 import { DERECHOS } from "@/lib/memoria/tipos";
 import { veredicto } from "@/lib/memoria/derechos";
 import { SITE_URL } from "@/lib/site";
-import "../../memoria/memoria.css";
 
 // ═══════════════════════════════════════════════════════════════════
 // v419.0 · /memoria/fuentes — procedencia, licencias y puertas ausentes

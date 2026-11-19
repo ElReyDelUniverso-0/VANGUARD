@@ -7,7 +7,6 @@ import { obtenerDocumento } from "@/lib/memoria/documento";
 import { fuente as datosFuente } from "@/lib/memoria/fuentes";
 import { SITE_URL } from "@/lib/site";
 import { TarjetaDocumento } from "@/components/memoria/tarjeta-documento";
-import "../../../memoria/memoria.css";
 
 // ═══════════════════════════════════════════════════════════════════
 // v419.0 · /memoria/coleccion/[slug] — una colección es una consulta

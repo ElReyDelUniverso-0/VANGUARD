@@ -6,7 +6,6 @@ import { FUENTES, type FichaDocumento, type FuenteId } from "@/lib/memoria/tipos
 import { fuente as datosFuente } from "@/lib/memoria/fuentes";
 import { SITE_URL } from "@/lib/site";
 import { SelloDerechos } from "@/components/memoria/tarjeta-documento";
-import "../../memoria/memoria.css";
 
 // ═══════════════════════════════════════════════════════════════════
 // v419.0 · /memoria/comparar — dos documentos, cara a cara

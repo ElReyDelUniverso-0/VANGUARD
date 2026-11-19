@@ -5,7 +5,6 @@ import { FUENTES, TIPOS, type FuenteId, type TipoDocumento } from "@/lib/memoria
 import { SITE_URL } from "@/lib/site";
 import { BuscadorMemoria, Cronologia } from "@/components/memoria/buscador-memoria";
 import { TarjetaDocumento } from "@/components/memoria/tarjeta-documento";
-import "../../memoria/memoria.css";
 
 // ═══════════════════════════════════════════════════════════════════
 // v419.0 · /memoria/buscar — la consulta

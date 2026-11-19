@@ -8,7 +8,6 @@ import { fuente as datosFuente } from "@/lib/memoria/fuentes";
 import { SITE_URL } from "@/lib/site";
 import { SelloDerechos, TarjetaDocumento } from "@/components/memoria/tarjeta-documento";
 import { VisorDocumento } from "@/components/memoria/visor-documento";
-import "../../../memoria/memoria.css";
 
 // ═══════════════════════════════════════════════════════════════════
 // v419.0 · /memoria/documento/[fuente]/[id] — la ficha y el visor

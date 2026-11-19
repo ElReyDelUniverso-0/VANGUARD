@@ -5,7 +5,6 @@ import { COLECCIONES_MEMORIA, PERIODOS } from "@/lib/memoria/colecciones";
 import { FUENTES_ARCHIVO, PUERTAS_AUSENTES } from "@/lib/memoria/fuentes";
 import { SITE_URL } from "@/lib/site";
 import { BuscadorMemoria } from "@/components/memoria/buscador-memoria";
-import "../memoria/memoria.css";
 
 // ═══════════════════════════════════════════════════════════════════
 // v419.0 · MEMORY ARCHIVE — la portada del archivo documental

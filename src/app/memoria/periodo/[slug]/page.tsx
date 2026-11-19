@@ -6,7 +6,6 @@ import { buscarEnArchivo } from "@/lib/memoria/buscar";
 import { ACONTECIMIENTOS } from "@/lib/memoria/acontecimientos";
 import { SITE_URL } from "@/lib/site";
 import { TarjetaDocumento } from "@/components/memoria/tarjeta-documento";
-import "../../../memoria/memoria.css";
 
 // ═══════════════════════════════════════════════════════════════════
 // v419.0 · /memoria/periodo/[slug] — explorar un siglo
