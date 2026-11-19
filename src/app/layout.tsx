@@ -18,6 +18,12 @@ import "./globals.css";
 // v401.0 LA FUSIÓN — el sistema visual de la casa y su piel, para todas las salas
 import "./portada.css";
 import "./piel.css";
+// v416.0 EL SISTEMA DE ANIMACIONES — tres niveles (completas/reducidas/desactivadas).
+// Primero la hoja escrita a mano y después la generada por el auditor, que es
+// la que apaga una a una las animaciones infinitas en el nivel «reducidas».
+import "./animaciones.css";
+import "./animaciones-generadas.css";
+import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
 // v405.10 · LA BARRA ADAPTATIVA: las herramientas del espacio en el que estás.
@@ -244,6 +250,23 @@ export default function RootLayout({
       <body
         className={`${orbitron.variable} ${inter.variable} antialiased bg-background text-foreground min-h-screen`}
       >
+        {/* ════════════════════════════════════════════════════════════
+            v416.0 · EL NIVEL DE ANIMACIÓN, ANTES DEL PRIMER PÍXEL.
+            Sin este script, el visitante vería un parpadeo con todas las
+            animaciones y luego el cambio. Lee la elección guardada; si no
+            hay, pregunta al sistema operativo y a la memoria del aparato
+            (una sola vez, sin sondas caras) y escribe `data-vg-anim`, que
+            es lo único que lee el CSS. No envía nada a ningún servidor.
+            ════════════════════════════════════════════════════════════ */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var K='vg-anim',V=['completas','reducidas','desactivadas'],n=null;
+try{n=localStorage.getItem(K)}catch(e){}
+if(V.indexOf(n)<0){n=(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)?'reducidas':((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))?'reducidas':'completas';}
+document.documentElement.setAttribute('data-vg-anim',n);}catch(e){document.documentElement.setAttribute('data-vg-anim','completas');}})();`,
+          }}
+        />
+        <AplicarAnimacion />
         {/* ════════════════════════════════════════════════════════════
             v360.0 LA CASA QUE RESPIRA — el aire vive en TODA la casa.
             La aurora v16 solo existía en la portada SPA; las páginas

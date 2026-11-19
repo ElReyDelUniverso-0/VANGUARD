@@ -9,6 +9,10 @@
 // ============================================================
 import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+// v416.0 · el nivel de animación manda también aquí: en «reducidas» y
+// «desactivadas» esta pieza no monta un componente de movimiento por letra
+// (un título de 24 letras eran 24 nodos animados en cada sala).
+import { useAnima } from "@/components/anim/use-nivel";
 
 interface LetrasAnimadasProps {
   text: string;
@@ -24,7 +28,9 @@ interface LetrasAnimadasProps {
 }
 
 export function LetrasAnimadas({ text, className, delay = 0, step = 0.026, brasa: _brasa = false, letraClass }: LetrasAnimadasProps) {
-  const reduced = useReducedMotion();
+  const calmaDelSistema = useReducedMotion();
+  const anima = useAnima();
+  const reduced = calmaDelSistema || !anima;
   const letras = useMemo(() => Array.from(text), [text]);
 
   if (reduced) return <span className={[className, letraClass].filter(Boolean).join(" ") || undefined}>{text}</span>;
@@ -55,7 +61,9 @@ export function LetrasAnimadas({ text, className, delay = 0, step = 0.026, brasa
 /** Versión BRASA: entra letra a letra y después respira con un
  *  brillo cálido sutil (opacity, sin layout). Para títulos héroe. */
 export function LetrasBrasa({ text, className, delay = 0, step = 0.03, letraClass }: Omit<LetrasAnimadasProps, "brasa">) {
-  const reduced = useReducedMotion();
+  const calmaDelSistema = useReducedMotion();
+  const anima = useAnima();
+  const reduced = calmaDelSistema || !anima;
   const letras = useMemo(() => Array.from(text), [text]);
 
   if (reduced) return <span className={[className, letraClass].filter(Boolean).join(" ") || undefined}>{text}</span>;

@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import { LANGS, useLangStore, useT } from "@/lib/i18n";
 import { isStrict18, setStrict18, subscribeStrict18 } from "@/lib/safety";
 import { Languages } from "lucide-react";
+// v416.0 EL SISTEMA DE ANIMACIONES — tres niveles, guardados en el aparato
+import { SelectorAnimacion } from "@/components/anim/selector-animacion";
 // v110.0 MATRIZ 2100 — TECNOLOGÍA 3D personalizable (el usuario manda en la matriz)
 // v111.0 MÁQUINA DEL TIEMPO — giroscopio (iOS pide permiso con gesto) + era 1950→2100
 // v112.0 SOLSTICIO — presets de era POR SALA + calibración fina del giroscopio
@@ -268,6 +270,13 @@ export function SettingsModal({ open, onOpenChange, contenedor }: SettingsModalP
                   </Button>
                 </div>
                 <p className="text-[10px] text-muted-foreground font-mono">Max 24 caracteres · se muestra en el HUD</p>
+              </div>
+
+              {/* v416.0 · ANIMACIONES: la queja del Galaxy A06 se resuelve aquí.
+                  Tres niveles reales (completas, reducidas, desactivadas) que
+                  apagan animaciones decorativas, nunca funciones. */}
+              <div className="hud-corner p-3 bg-secondary/30">
+                <SelectorAnimacion />
               </div>
 
               {/* Sound */}

@@ -1,0 +1,136 @@
+/* ═══════════════════════════════════════════════════════════════════
+ * v416.0 · EL SISTEMA DE ANIMACIONES — tres niveles, una sola verdad
+ *
+ * El CSS lee `html[data-vg-anim]`, que escribe el script de arranque del
+ * layout (antes del primer pintado) y actualiza el selector de ajustes.
+ * Ningún componente necesita saber nada más.
+ *
+ * REGLA QUE NO SE ROMPE: ningún nivel apaga una función. Se apagan
+ * animaciones decorativas; los estados, los avisos, los gráficos y los
+ * simuladores siguen funcionando exactamente igual.
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. PROMOCIÓN DE CAPA PARA LO QUE GIRA ──────────────────────────
+   Una rotación de un degradado cónico obliga al navegador a repintar el
+   elemento en cada cuadro. Promocionarlo a su propia capa hace que se
+   rasterice UNA vez y el compositor solo gire la textura: es la diferencia
+   entre 10 FPS y 60 en un teléfono modesto. Esto vale para los tres
+   niveles y no cambia un solo píxel del diseño. */
+.vg191-barrido,
+.vg191-globo,
+.vg191-reticula::after,
+.vg191-lluvia,
+.vg191-ventanas,
+.v130-sello,
+.vg193-radar,
+[data-vg-continua] {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ── 2. PESTAÑA OCULTA: se para TODO ────────────────────────────────
+   Ni una animación corre en una pestaña que nadie mira. El atributo lo
+   pone el componente de arranque al escuchar `visibilitychange`. */
+html[data-vg-oculto="1"] *,
+html[data-vg-oculto="1"] *::before,
+html[data-vg-oculto="1"] *::after {
+  animation-play-state: paused !important;
+}
+
+/* ── 3. FUERA DE PANTALLA: se para lo que nadie ve ──────────────────
+   El observador de intersección marca `data-vg-pausa="1"` en las
+   animaciones decorativas que salen del viewport. Es el ahorro más
+   grande en páginas largas: la portada tiene escenas que siguen girando
+   por debajo del pliegue. */
+[data-vg-pausa="1"] {
+  animation-play-state: paused !important;
+}
+
+/* ── 4. NIVEL «DESACTIVADAS» ────────────────────────────────────────
+   Se apaga la animación decorativa y se acortan las transiciones a 1 ms
+   (no a 0: así `transitionend` sigue disparándose y ningún componente
+   que espere ese evento se queda colgado). */
+html[data-vg-anim="desactivadas"] *,
+html[data-vg-anim="desactivadas"] *::before,
+html[data-vg-anim="desactivadas"] *::after {
+  animation: none !important;
+  transition-duration: 1ms !important;
+  transition-delay: 0ms !important;
+}
+
+html[data-vg-anim="desactivadas"] {
+  scroll-behavior: auto !important;
+}
+
+html[data-vg-anim="desactivadas"] *,
+html[data-vg-anim="desactivadas"] *::before,
+html[data-vg-anim="desactivadas"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── 5. EL SELECTOR DE AJUSTES ──────────────────────────────────────
+   Tres botones, sin dependencias. El estado activo se marca con
+   `aria-pressed`, no con un color inventado. */
+.vg-anim-sel {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.vg-anim-op {
+  appearance: none;
+  background: rgba(24, 24, 27, 0.6);
+  border: 1px solid rgba(113, 113, 122, 0.45);
+  border-radius: 4px;
+  color: #d4d4d8;
+  cursor: pointer;
+  font-family: var(--font-mono, ui-monospace), monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 7px 4px;
+  text-transform: uppercase;
+  transition: border-color 120ms ease, color 120ms ease, background-color 120ms ease;
+}
+
+.vg-anim-op:hover,
+.vg-anim-op:focus-visible {
+  border-color: rgba(251, 191, 36, 0.6);
+  color: #fde68a;
+  outline: none;
+}
+
+.vg-anim-op[aria-pressed="true"] {
+  background: rgba(251, 191, 36, 0.12);
+  border-color: rgba(251, 191, 36, 0.8);
+  color: #fcd34d;
+}
+
+.vg-anim-nota {
+  color: #a1a1aa;
+  font-size: 11px;
+  line-height: 1.45;
+  margin-top: 6px;
+}
+
+/* ── 6. LA PROPIA CASA, CON CALMA ───────────────────────────────────
+   Quien pide calma en su sistema operativo recibe el nivel reducido
+   desde el primer cuadro (lo aplica el script de arranque). Esta regla
+   es la red de seguridad para cuando el CSS carga antes que el script. */
+@media (prefers-reduced-motion: reduce) {
+  .vg191-barrido,
+  .vg191-globo,
+  .vg191-reticula::after,
+  .vg191-lluvia,
+  .vg191-ventanas,
+  .vg191-estrellas,
+  .vg191-sol,
+  .v130-sello,
+  .vg193-radar,
+  .vg193-baliza,
+  .vg193-flotar,
+  .casa-aire-orbe {
+    animation: none !important;
+  }
+}

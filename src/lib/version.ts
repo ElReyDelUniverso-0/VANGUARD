@@ -6559,8 +6559,41 @@
 // ⑥ LA PRUEBA: scripts/pruebas-mundial.mjs (catálogo íntegro, series reales,
 //    explicación, contrato de la API) y la regla de no mezclar años.
 // ═══════════════════════════════════════════════════════════════════
-export const APP_VERSION = "v416.0";
-export const APP_CODENAME = "EL MUNDO EN CIFRAS";
+// (versión anterior) export const APP_VERSION = "v416.0";
+// (codename anterior) export const APP_CODENAME = "EL MUNDO EN CIFRAS";
+
+// v416.1 LA CASA LIGERA — el informe del visitante con un Galaxy A06 y Brave:
+// «aproximadamente 10 FPS» en una animación que giraba.
+//
+// ① LO MEDIDO, ANTES DE TOCAR NADA: la casa declaraba 246 animaciones que se
+//    repiten sin parar entre CSS y estilos en línea (225 en globals.css), y
+//    ninguna se pausaba al salir de pantalla. En /, con CPU 6× más lenta y
+//    pantalla de teléfono, el hilo principal pasaba el 97% del tiempo
+//    trabajando (1,025 s por segundo): no es que hubiera «una» animación
+//    lenta, es que no quedaba hueco para pintar.
+// ② EL SISTEMA DE TRES NIVELES: completas, reducidas y desactivadas, en los
+//    ajustes del cuartel y en /modo. Se guardan en el aparato (localStorage,
+//    vg-anim), se aplican ANTES del primer pintado con un script mínimo y se
+//    leen desde el <html> (`data-vg-anim`). Ningún nivel apaga una función.
+// ③ LA HOJA GENERADA (`tools/anim/auditar.mjs` → animaciones-generadas.css):
+//    una regla por cada animación infinita del árbol real. Se descubrió un
+//    fallo silencioso: agrupadas en :is(), los pseudo-elementos se descartan
+//    y los catorce pulsos de los puntos del mapa seguían corriendo; ahora van
+//    sueltas y son cero.
+// ④ LO QUE SIGUE VIÉNDOSE: transiciones de 120 ms en «reducidas» y de 1 ms
+//    en «desactivadas» (no 0: `transitionend` debe seguir disparando), avisos,
+//    estados, gráficos y simuladores intactos.
+// ⑤ EL AHORRO DE VERDAD: promoción de capa (`will-change`) para todo lo que
+//    gira —un degradado cónico rotando repintaba el elemento en cada cuadro—,
+//    pausa total con la pestaña oculta y pausa por intersección para lo que
+//    está fuera de pantalla.
+// ⑥ RESULTADO MEDIDO (misma página, mismo aparato emulado, CPU 6×): hilo
+//    principal 1,025 s/s → 0,125 s/s (−88%); animaciones en curso 27 → 0 en
+//    «reducidas»; fotogramas lentos 105 → 0. El medidor se queda en el
+//    repositorio (`tools/anim/medir.mjs`) para que la próxima ronda lo repita
+//    en vez de creerse.
+export const APP_VERSION = "v416.1";
+export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";
 // (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";

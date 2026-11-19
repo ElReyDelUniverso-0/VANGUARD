@@ -37,6 +37,21 @@ export const BITACORA: EntradaBitacora[] = [
     tipo: "tecno",
   },
   {
+    version: "v416.1",
+    nombre: "LA CASA LIGERA",
+    hitos: [
+      "EL INFORME, MEDIDO: un Galaxy A06 con Brave bajaba a ~10 FPS. La causa no era una animación lenta sino 246 animaciones que se repiten sin parar (225 en la hoja global) y ninguna que se pausara al salir de pantalla: con la CPU frenada 6×, el hilo principal pasaba el 97% del tiempo trabajando",
+      "TRES NIVELES, UNA VERDAD: completas, reducidas y desactivadas, en los ajustes del cuartel y en /modo. Se guardan en el aparato y se aplican ANTES del primer pintado, sin parpadeo. La elección viaja en el atributo data-vg-anim del html",
+      "LA HOJA GENERADA: un auditor recorre el árbol real y escribe una regla por cada animación infinita. Encontró un fallo silencioso —agrupadas en :is(), los pseudo-elementos se descartan y catorce pulsos del mapa seguían corriendo— y ahora las apaga una a una sin tocar el nivel completas",
+      "LO QUE GIRA, EN SU PROPIA CAPA: un degradado cónico rotando obligaba a repintar el elemento en cada cuadro; promocionado, se rasteriza una vez y el compositor solo gira la textura. Igual para los sellos de texto circular y los barridos de radar",
+      "NADA CORRE A OSCURAS: la pestaña oculta pausa toda animación y lo que sale de pantalla se pausa por intersección. En una portada larga, la mitad de las animaciones trabajaban por debajo del pliegue sin que nadie las viera",
+      "MEDIDO Y REPETIBLE: hilo principal 1,025 s/s → 0,125 s/s (−88%), animaciones en curso 27 → 0 en reducidas, fotogramas lentos 105 → 0. El medidor queda en el repositorio (tools/anim/medir.mjs) con emulación de teléfono y freno de CPU, para que la próxima ronda lo repita en vez de creerse",
+      "SIN PERDER LA CASA: las transiciones se acortan, no se borran (120 ms en reducidas, 1 ms en desactivadas) y ninguna función depende de una animación: menús, simuladores, gráficos, mapas y datos funcionan igual en los tres niveles",
+    ],
+    tipo: "tecno",
+  },
+
+  {
     version: "v415.0",
     nombre: "VANGUARD SEARCH OPPORTUNITIES",
     hitos: [

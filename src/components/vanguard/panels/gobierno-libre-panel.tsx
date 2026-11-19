@@ -46,7 +46,7 @@ const ICONO_AGENTE: Record<string, React.ReactNode> = {
 // el sello del palacio: texto circular girando con dignidad
 function SelloPalacio({ size = 96 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 120 120" className="v130-sello" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 120 120" className="v130-sello" aria-hidden data-vg-continua="si">
       <defs>
         <path id="v131-arco" d="M 60,60 m -44,0 a 44,44 0 1,1 88,0 a 44,44 0 1,1 -88,0" fill="none" />
       </defs>

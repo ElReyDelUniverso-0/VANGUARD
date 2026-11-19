@@ -11,6 +11,9 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { SelectorModo } from "./selector-modo";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { MODOS } from "@/lib/modos";
+// v416.0 · LA CASA LIGERA — el nivel de animación también se elige aquí,
+// sin tener que abrir los ajustes del cuartel.
+import { SelectorAnimacion } from "@/components/anim/selector-animacion";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -64,6 +67,18 @@ export default function ModoPage() {
           </header>
 
           <SelectorModo />
+
+          <section className="mt-8 rounded border border-border/60 bg-secondary/20 p-4">
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-amber-300/90">
+              La casa ligera · animaciones
+            </h2>
+            <p className="mt-1.5 mb-3 text-[12.5px] leading-relaxed text-muted-foreground">
+              Si tu teléfono va justo —o si simplemente prefieres el texto quieto— aquí puedes bajar el
+              nivel. Se guarda en este aparato y no se envía a ningún servidor. Ninguna función depende
+              de una animación: los simuladores, los mapas y los datos funcionan igual en los tres niveles.
+            </p>
+            <SelectorAnimacion />
+          </section>
 
           <noscript>
             <p className="mt-8 text-[12.5px] text-muted-foreground">
