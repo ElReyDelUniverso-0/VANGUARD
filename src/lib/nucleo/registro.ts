@@ -1147,6 +1147,15 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     alias: "organizaciones internacionales bloques alianzas otan ue union europea brics opep g7 g20 asean mercosur sica caricom onu consejo de seguridad",
   },
   {
+    id: "mod:redes",
+    nombre: "VANGUARD WORLD NETWORKS",
+    lema: "El mundo, conectado mediante evidencia",
+    descripcion: "Explorador institucional de organizaciones, países y tratados. Mapa interactivo con zoom, selección y fichas; vínculos tipados con fuente primaria, directorio temático, biblioteca documental, cronología y búsqueda de caminos. Selección editorial con cobertura y límites explícitos.",
+    categoria: "MUNDO", ruta: "/organizaciones/redes", permiso: "publico", estado: "VIVO",
+    dependencias: ["mod:organizaciones", "mod:mundos"],
+    alias: "world networks redes instituciones organismos agencias organizaciones miembros asociados cooperacion tratados acuerdos onu unesco omc ocde cern esa birf biblioteca cronologia",
+  },
+  {
     id: "mod:directorio",
     nombre: "EL DIRECTORIO DE LA CASA",
     lema: "Todas las puertas, buscables",

@@ -20,6 +20,14 @@ export interface EntradaBitacora {
   tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten" | "luxe";
 }
 export const BITACORA: EntradaBitacora[] = [
+  {version:"v420.2",nombre:"VANGUARD WORLD NETWORKS",tipo:"mundo",hitos:[
+    "WORLD NETWORKS: /organizaciones/redes amplía el centro existente sin reemplazar sus dieciséis bloques y preserva Cámara de Inteligencia, Lingua y Memory Archive.",
+    "MAPA CON EVIDENCIA: 28 instituciones y 7 instrumentos públicos, 937 conexiones tipadas; zoom, desplazamiento, selección, fichas y lista equivalente accesible.",
+    "NO TODAS LAS LÍNEAS SON MEMBRESÍA: asociados, cooperación, observación, candidatura, agencias autónomas, entidades del sistema, partes de tratados e instrumentos constitutivos se distinguen.",
+    "CENSOS EXPLÍCITOS: ONU 193, BIRF 189, OMC 166, OCDE 38, CERN 25, ESA 23, UE 27 y CARICOM 15; donde no se incorporó una lista se declara, sin inferencias.",
+    "CONEXIÓN CON LA CASA: fichas de países, biblioteca, conocimiento, directorio, catálogo de datos, API /api/redes y contrato común. Cronología y búsqueda de caminos sin atribuir alianza ni influencia a las cadenas.",
+    "VERIFICACIÓN LOCAL: 36 pruebas de integridad/API y 15 de arquitectura; 26 comprobaciones de navegador en arnés optimizado aislado. No equivale a regresión global ni despliegue público."
+  ]},
   {
     version: "v420.1",
     nombre: "VANGUARD MEMORY ARCHIVE",

@@ -91,6 +91,7 @@ export default async function FichaPaisPage({ params, searchParams }: Props) {
         nota: `${ind.unidad} · dato de ${serie?.ultimo?.anio ?? "—"} · ${serie?.puntos.length ?? 0} años con dato`,
       }))}
     >
+      <p><Link href={`/organizaciones/redes?pais=${codigo}`}>Ver relaciones institucionales documentadas de {pais.nombre} →</Link></p>
       <section className="vx-md-panel">
         <h2 className="vx-md-h2">Explorar por categoría</h2>
         <p className="vx-md-h2-sub">

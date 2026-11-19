@@ -1,3 +1,4 @@
+import { NODOS as NODOS_RED, REVISION as REVISION_RED } from "@/lib/redes/indice";
 import { ACONTECIMIENTOS } from "@/lib/memoria/acontecimientos";
 import { COLECCIONES_MEMORIA, PERIODOS } from "@/lib/memoria/colecciones";
 import { rutasConocimiento } from "@/lib/conocimiento/indice";
@@ -660,6 +661,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...INDICADORES.map((i) => ({ url: `${SITE_URL}/rankings/${i.id}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...subregiones().map((x) => ({ url: `${SITE_URL}/regiones/${x.slug}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
+    ...["/organizaciones/redes", ...NODOS_RED.filter(n => n.clase !== "pais").map(n => `/organizaciones/redes/${n.id}`)].map(r => ({url:`${SITE_URL}${r}`,lastModified:new Date(REVISION_RED),changeFrequency:"monthly" as const,priority:r==="/organizaciones/redes"?.8:.6})),
     ...ORGANIZACIONES.map((o) => ({ url: `${SITE_URL}/organizaciones/${o.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...COLECCIONES.map((c) => ({ url: `${SITE_URL}/colecciones/${c.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
     // v419.0 ARCHIVO DE LA MEMORIA — la portada y las puertas de consulta.

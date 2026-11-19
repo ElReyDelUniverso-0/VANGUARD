@@ -59,6 +59,13 @@ export default function OrganizacionesPage() {
         </>
       }
     >
+      <section className="vx-pl-sec" style={{border:'1px solid #395f50',padding:24,borderRadius:8,marginTop:24}}>
+        <p className="vx-pl-volanta">Nuevo · Vanguard World Networks</p>
+        <h2 className="vx-pl-h2">Más allá de los bloques: explora las conexiones.</h2>
+        <p className="vx-pl-h2-sub">Instituciones, países y tratados en una red navegable. Membresía, asociación, cooperación y participación jurídica se distinguen con evidencia oficial.</p>
+        <Link href="/organizaciones/redes">Abrir mapa de conexiones →</Link>{' · '}
+        <Link href="/organizaciones/redes?vista=documentos">Biblioteca de instrumentos públicos →</Link>
+      </section>
       <section className="vx-pl-sec">
         <h2 className="vx-pl-h2">¿A qué bloques pertenece un país?</h2>
         <p className="vx-pl-h2-sub">Escribe el nombre de cualquier país.</p>

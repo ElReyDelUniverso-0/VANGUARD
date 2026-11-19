@@ -186,6 +186,8 @@ export function GranBibliotecaPanel() {
         }
       />
 
+      <a href="/organizaciones/redes?vista=documentos" className="block border border-emerald-500/40 rounded p-3 text-sm text-emerald-200">World Networks · Instrumentos públicos y tratados: texto oficial, instituciones y países conectados →</a>
+
       {/* LAS CUATRO SALAS — chips como la casa usa en la máquina */}
       <div data-testid="biblio-salas" className="flex gap-1.5 flex-wrap">
         <button

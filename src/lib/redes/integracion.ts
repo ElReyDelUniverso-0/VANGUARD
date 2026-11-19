@@ -1,0 +1,2 @@
+import type { Integracion } from '@/lib/arquitectura/integracion';
+export const INTEGRACION_REDES: Integracion = {area:'World Networks',rutaCanonica:'/organizaciones/redes',registro:'mod:redes',datos:['dato:red-institucional'],api:'/api/redes',pruebas:['npx tsx scripts/redes/pruebas.ts','node scripts/pruebas-arquitectura.mjs','QA navegador en arnés aislado'],limitesEscritos:true,constancia:'worklog.md · MISIÓN 07; agent-ctx/improvement-inbox.md: publicación pendiente de autenticación'};

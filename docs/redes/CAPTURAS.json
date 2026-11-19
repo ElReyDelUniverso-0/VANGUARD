@@ -1,0 +1,259 @@
+{
+  "advertencia": "Capturas de investigación, no todas accesibles por HTTP directo. Las fuentes OCDE/OMC/ONU-sistema y otras también se consultaron mediante lector de páginas; un 403 de requests no representa acceso exitoso ni desaparición de la fuente. No se distribuye HTML externo.",
+  "capturas": [
+    {
+      "id": "onu-miembros",
+      "url": "https://www.un.org/en/about-us/member-states",
+      "final": "https://www.un.org/en/about-us/member-states",
+      "status": 200,
+      "bytes": 200748,
+      "sha256": "9853a17c5843cf6e9f300ebcb6fd7fab4f8ecf482ec6c1c773884400022bc673",
+      "consulta": "2026-11-18",
+      "title": "Member States | United Nations"
+    },
+    {
+      "id": "onu-sistema",
+      "url": "https://www.un.org/en/about-us/un-system",
+      "final": "https://www.un.org/en/about-us/un-system",
+      "status": 200,
+      "bytes": 106628,
+      "sha256": "16253c5dbf1fbd98c1dc2cf539a9444ae2233ed6d298633ca7744ec67452e88d",
+      "consulta": "2026-11-18",
+      "title": "UN System | United Nations"
+    },
+    {
+      "id": "onu-carta",
+      "url": "https://www.un.org/en/about-us/un-charter",
+      "final": "https://www.un.org/en/about-us/un-charter",
+      "status": 200,
+      "bytes": 96991,
+      "sha256": "9501d36b3a0cee40cfb37ccc8e12c8e2c1377e9a12d4c5bcb683c60c3f295959",
+      "consulta": "2026-11-18",
+      "title": "UN Charter | United Nations"
+    },
+    {
+      "id": "omc-miembros",
+      "url": "https://www.wto.org/english/thewto_e/whatis_e/tif_e/org6_e.htm",
+      "final": "https://www.wto.org/english/thewto_e/whatis_e/tif_e/org6_e.htm",
+      "status": 200,
+      "bytes": 17800,
+      "sha256": "8f1458ea724350cceec8b973d31d2b4c83df3544beaeb539862fbcdec0baddd1",
+      "consulta": "2026-11-18",
+      "title": "WTO ¦ Members and Observers"
+    },
+    {
+      "id": "omc-cooperacion",
+      "url": "https://www.wto.org/english/thewto_e/coher_e/coher_e.htm",
+      "final": "https://www.wto.org/english/thewto_e/coher_e/coher_e.htm",
+      "status": 200,
+      "bytes": 34270,
+      "sha256": "21e449d7c09fdf8e6c4225a1f1ae9c55ec5a1a84487310d2197ad7799966bf12",
+      "consulta": "2026-11-18",
+      "title": "WTO | The WTO and other organizations"
+    },
+    {
+      "id": "omc-acuerdo",
+      "url": "https://www.wto.org/english/docs_e/legal_e/04-wto_e.htm",
+      "final": "https://www.wto.org/english/docs_e/legal_e/04-wto_e.htm",
+      "status": 200,
+      "bytes": 58265,
+      "sha256": "2d17ffec9b2270079802f004b833300310cf27d851238e336cf2c6440edcb873",
+      "consulta": "2026-11-18",
+      "title": "WTO | legal texts - Marrakesh agreement"
+    },
+    {
+      "id": "ocde-miembros",
+      "url": "https://www.oecd.org/en/about/members-partners.html",
+      "final": "https://www.oecd.org/en/about/members-partners.html",
+      "status": 403,
+      "bytes": 5567,
+      "sha256": "d2fa2be528ecf961859e4601aee850a0ee6157961b82c58879afd84e17f02428",
+      "consulta": "2026-11-18",
+      "title": "Just a moment..."
+    },
+    {
+      "id": "bm-miembros",
+      "url": "https://www.worldbank.org/en/about/leadership/members",
+      "final": "https://www.worldbank.org/en/about/leadership/members",
+      "status": 200,
+      "bytes": 174824,
+      "sha256": "1dccd50c9fb8626fb7d23e347dec30bd94d4507a368e0191ae44d74a99fc70be",
+      "consulta": "2026-11-18",
+      "title": "Member Countries"
+    },
+    {
+      "id": "bm-grupo",
+      "url": "https://www.worldbank.org/en/who-we-are",
+      "final": "https://www.worldbank.org/ext/en/who-we-are",
+      "status": 200,
+      "bytes": 64050,
+      "sha256": "2d9fe073225e75f8510ce83146bbdd15911ec2b070e2a1a4bb1a079dcb7c66b1",
+      "consulta": "2026-11-18",
+      "title": "Who We Are: Our Mission to End Poverty | World Bank Group"
+    },
+    {
+      "id": "birf-articulos",
+      "url": "https://www.worldbank.org/en/about/articles-of-agreement/ibrd-articles-of-agreement",
+      "final": "https://www.worldbank.org/en/about/articles-of-agreement/ibrd-articles-of-agreement",
+      "status": 200,
+      "bytes": 100171,
+      "sha256": "6c584d8e30e4a051cc7ca945cbc253ffbdca2eb991e56d0b9195728e20b45698",
+      "consulta": "2026-11-18",
+      "title": "IBRD Articles of Agreement"
+    },
+    {
+      "id": "fmi-articulos",
+      "url": "https://www.imf.org/external/pubs/ft/aa/index.htm",
+      "final": "https://www.imf.org/external/pubs/ft/aa/index.htm",
+      "status": 403,
+      "bytes": 410,
+      "sha256": "d2ee27595f2543e9fe796203e3fbaa18189b207801455c0dde73bfa044efe81d",
+      "consulta": "2026-11-18",
+      "title": "Access Denied"
+    },
+    {
+      "id": "unesco-miembros",
+      "url": "https://www.unesco.org/en/countries",
+      "status": "error"
+    },
+    {
+      "id": "cern-miembros",
+      "url": "https://home.cern/about/who-we-are/our-stakeholders",
+      "final": "https://home.cern/about/who-we-are/our-stakeholders",
+      "status": 200,
+      "bytes": 281933,
+      "sha256": "251cf32e1f33d1d1ef8fb85f127cfe60dd132b3915e3676efa64afb463cac7ad",
+      "consulta": "2026-11-18",
+      "title": "Our Stakeholders – Home | CERN"
+    },
+    {
+      "id": "esa-miembros",
+      "url": "https://www.esa.int/About_Us/Corporate_news/Member_States_Cooperating_States",
+      "final": "https://www.esa.int/articles/news-media/news/member-states-and-cooperating-states",
+      "status": 200,
+      "bytes": 189076,
+      "sha256": "bfc213c8c2d8af4e5178aa159c52056eb5e25807de4968790d27cc88027638bb",
+      "consulta": "2026-11-18",
+      "title": "Member States & Cooperating States"
+    },
+    {
+      "id": "esa-convenio",
+      "url": "https://www.esa.int/About_Us/Law_at_ESA/ESA_Convention",
+      "final": "https://www.esa.int/articles/about-us/who-we-are/governance/law/esa-convention",
+      "status": 200,
+      "bytes": 168992,
+      "sha256": "11bb012afad8fbf7bf9f6dc4cd2069f01a87012f63fab9cea3a249f9c1ff89ee",
+      "consulta": "2026-11-18",
+      "title": "ESA Convention"
+    },
+    {
+      "id": "ue-miembros",
+      "url": "https://european-union.europa.eu/principles-countries-history/eu-countries_en",
+      "final": "https://european-union.europa.eu/principles-countries-history/eu-countries_en",
+      "status": 200,
+      "bytes": 117465,
+      "sha256": "56d5fe5ded5dd3f994a831af7262a06b2aa9397903bf73b3792bc24fc67398c9",
+      "consulta": "2026-11-18",
+      "title": "EU countries | European Union"
+    },
+    {
+      "id": "caricom-miembros",
+      "url": "https://caricom.org/member-states-and-associate-members/",
+      "final": "https://caricom.org/member-states-and-associate-members/",
+      "status": 200,
+      "bytes": 382880,
+      "sha256": "683c83df0f8a50b5ac85d77afbb9db02620144ae1e793dbaf15b66a4848b4e44",
+      "consulta": "2026-11-18",
+      "title": "Member States and Associate Members - CARICOM"
+    },
+    {
+      "id": "caricom-tratado",
+      "url": "https://caricom.org/treaty/",
+      "final": "https://caricom.org/wp-content/uploads/treaty.jpg",
+      "status": 200,
+      "bytes": 46854,
+      "sha256": "1369ee6e8fd7317384cfaf753b680bf6a80fca1fc088179d255df0bc2590e008",
+      "consulta": "2026-11-18",
+      "title": "caricom-tratado"
+    },
+    {
+      "id": "ipcc",
+      "url": "https://www.ipcc.ch/about/",
+      "final": "https://www.ipcc.ch/about/",
+      "status": 403,
+      "bytes": 5451,
+      "sha256": "f007e049494b5ac4b308994b57ebe6eafa1e38df3ba5f1667cce5ecbeba2ae44",
+      "consulta": "2026-11-18",
+      "title": "Just a moment..."
+    },
+    {
+      "id": "oiea-estatuto",
+      "url": "https://www.iaea.org/about/statute",
+      "final": "https://www.iaea.org/about/statute",
+      "status": 403,
+      "bytes": 5495,
+      "sha256": "4a44dc350bc2b826ce8e4528c545cba30eb10356b2e862ae3fa2377917b253df",
+      "consulta": "2026-11-18",
+      "title": "Just a moment..."
+    },
+    {
+      "id": "oms",
+      "url": "https://www.who.int/about/governance/constitution",
+      "final": "https://www.who.int/about/governance/constitution",
+      "status": 200,
+      "bytes": 108221,
+      "sha256": "00c73227829cea571e7a088e1edeb2fabdc8f8c2353f878f599238ae1189fe79",
+      "consulta": "2026-11-18",
+      "title": "Constitution of the World Health Organization"
+    },
+    {
+      "id": "oit",
+      "url": "https://www.ilo.org/about-ilo",
+      "final": "https://www.ilo.org/about-ilo",
+      "status": 200,
+      "bytes": 98827,
+      "sha256": "6f2f0c5d6f280a7fdb696b409d32067ebe741bb307444733685ce17e940c961c",
+      "consulta": "2026-11-18",
+      "title": "About the ILO | International Labour Organization"
+    },
+    {
+      "id": "unicef",
+      "url": "https://www.unicef.org/history",
+      "final": "https://www.unicef.org/who-we-are/history",
+      "status": 200,
+      "bytes": 238710,
+      "sha256": "f8e7e88fa5c61271de34102cce9f3f726407d6d252343c2c858cb3ff049c5414",
+      "consulta": "2026-11-18",
+      "title": "UNICEF history | UNICEF"
+    },
+    {
+      "id": "tmec",
+      "url": "https://ustr.gov/trade-agreements/free-trade-agreements/united-states-mexico-canada-agreement",
+      "final": "https://ustr.gov/trade-agreements/free-trade-agreements/united-states-mexico-canada-agreement",
+      "status": 200,
+      "bytes": 34984,
+      "sha256": "b94ce96f412a1ebb3b65f25fc3fadb478256a7819ff24d6340baa41db94f5b86",
+      "consulta": "2026-11-18",
+      "title": "United States-Mexico-Canada Agreement | United States Trade Representative"
+    },
+    {
+      "id": "uia",
+      "url": "https://uia.org/",
+      "final": "https://uia.org/",
+      "status": 200,
+      "bytes": 37286,
+      "sha256": "3c218d3d90c5ffcc46855da1b4894f1a684e33660d82cab548a67f87f87a75ab",
+      "consulta": "2026-11-18",
+      "title": "Union of International Associations (UIA) | Union of International Associations"
+    },
+    {
+      "id": "omc-datos-estructurados",
+      "url": "https://www.wto.org/library/news/news_vars_e.js",
+      "status": 200,
+      "consulta": "2026-11-18",
+      "bytes": 273421,
+      "sha256": "8e2ebfc4e54ce3313695dc8d10983de1abafcd17def0f0839279fbb82ffa4b62",
+      "metodo": "Extracción declarativa por campos; no se ejecutó JavaScript externo. Se filtró status MBR y se normalizó el código aduanero/ISO."
+    }
+  ]
+}

@@ -82,7 +82,7 @@ for (const f of fuentes) contenido.set(f, readFileSync(f, "utf8"));
 
 function normalizarRuta(ruta) {
   // una ruta con segmentos dinámicos se busca también por su prefijo literal
-  return ruta.replace(/\[[^\]]+\]/g, "");
+  return ruta.replace(/\[[^\]]+\]/g, "").replace(/\/+/g, "/");
 }
 
 const referencias = new Map(); // ruta -> Set(archivos)

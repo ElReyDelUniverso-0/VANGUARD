@@ -62,6 +62,8 @@ export default function MemoriaPage() {
           </p>
         </header>
 
+        <p className="vx-mem-nota"><Link className="vx-mem-enlace" href="/organizaciones/redes?vista=documentos">Instrumentos públicos y tratados: consultar instituciones, países y conexiones documentadas →</Link></p>
+
         <BuscadorMemoria valores={{ q: "", autor: "", fuente: "todas", tipo: "", desde: "", hasta: "" }} />
         <p className="vx-mem-nota" style={{ marginTop: 10 }}>
           Consulta en vivo las tres fuentes a la vez. Se puede buscar por texto, por autor, por tipo de documento,

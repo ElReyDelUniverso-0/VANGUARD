@@ -47,7 +47,7 @@ export const TEMAS: Tema[] = [
     nombre: "Países y territorios",
     pregunta: "¿Cómo es un país y cómo se compara con otros?",
     color: "#5eead4",
-    rutas: ["/mundos", "/mundos/[iso]", "/atlas", "/comparador", "/regiones", "/organizaciones", "/rankings", "/divisas", "/rostros", "/mapas"],
+    rutas: ["/mundos", "/mundos/[iso]", "/atlas", "/comparador", "/regiones", "/organizaciones", "/organizaciones/redes", "/rankings", "/divisas", "/rostros", "/mapas"],
   },
   // v417.0 VANGUARD KNOWLEDGE — el saber de fondo, independiente de la actualidad
   {
@@ -55,7 +55,7 @@ export const TEMAS: Tema[] = [
     nombre: "Conocimiento y enciclopedia",
     pregunta: "¿Qué hay que saber del mundo para entenderlo a fondo?",
     color: "#a78bfa",
-    rutas: ["/conocimiento/enciclopedia", "/conocimiento", "/conocimiento/aprender", "/lingua", "/historia", "/organizaciones", "/regiones", "/mundos", "/investigacion"],
+    rutas: ["/conocimiento/enciclopedia", "/conocimiento", "/conocimiento/aprender", "/lingua", "/historia", "/organizaciones", "/organizaciones/redes", "/regiones", "/mundos", "/investigacion"],
   },
   // v420.0 VANGUARD LINGUA — lenguas, escrituras y comunicación
   {
