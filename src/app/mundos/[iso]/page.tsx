@@ -32,6 +32,9 @@ import { rutaRegionDe, SUBREGIONES_ES } from "@/lib/planeta/subregiones";
 // modelo explica lo que enseña y dónde se comprueban sus cifras.
 import { BandaNexos } from "@/components/arquitectura/banda-nexos";
 import { nexosDePais } from "@/lib/arquitectura/nexos";
+// v420.3 EL ATLAS DE INFRAESTRUCTURA — la ficha del país enlaza a sus obras
+import { obrasDePais } from "@/lib/infraestructura/catalogo";
+import { nombreCategoria } from "@/lib/infraestructura/formato";
 
 // ═══════════════════════════════════════════════════════════════════
 // v405.12 · /mundos/[iso] — LA FICHA DE UN PAÍS
@@ -110,6 +113,8 @@ export default async function PaisPage({ params }: Props) {
     .filter((x) => x.p !== null);
   const bloques = organizacionesDePais(f.iso2);
   const rutaRegion = rutaRegionDe(f.subregion);
+  // v420.3 — obras de infraestructura documentadas de este país
+  const infraPais = obrasDePais(f.iso2);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -525,6 +530,46 @@ export default async function PaisPage({ params }: Props) {
               ) : null}
             </div>
           </div>
+
+          {/* ── v420.3 · EL ATLAS DE INFRAESTRUCTURA ─────────────────────
+              La ficha enlaza a las obras de infraestructura civil del país
+              documentadas en el Atlas: cada obra con su categoría, su fecha
+              conocida y su estado de verificación. Solo información pública
+              y apropiada. */}
+          {infraPais.length > 0 ? (
+            <div className="vx-mp-bloque">
+              <h2>{f.nombre} en el Atlas de infraestructura · {infraPais.length} obras</h2>
+              <div className="vx-mp-acciones">
+                {infraPais.map((o) => (
+                  <Link key={o.id} href={`/infraestructura/obra/${o.id}`} className="vx-mo-puente" title={`${o.descripcion.slice(0, 120)}…`}>
+                    <span className="vx-mo-puente-clase">{nombreCategoria(o.categoria)}</span>
+                    {o.nombre}
+                  </Link>
+                ))}
+                <Link href={`/infraestructura?pais=${f.iso2}`} style={{ color: "#5eead4", textDecoration: "none", fontSize: 12.5 }}>
+                  Ver todas las obras del país en el Atlas →
+                </Link>
+              </div>
+              <p className="vx-mp-nota">
+                Obras reales y documentadas en fuentes públicas. Cada ficha trae sus nueve campos: nombre, país y
+                ubicación, categoría, descripción, fecha conocida, características documentadas, fotografías
+                autorizadas, fuente de información y estado de verificación.
+              </p>
+            </div>
+          ) : (
+            <div className="vx-mp-bloque">
+              <h2>{f.nombre} en el Atlas de infraestructura</h2>
+              <p className="vx-mp-nota">
+                El Atlas de infraestructura (v420.0) no documenta obras de este país todavía. La casa no inventa
+                obras: cuando haya obras de este país documentadas en fuentes públicas, aparecerán aquí.
+              </p>
+              <div className="vx-mp-acciones">
+                <Link href="/infraestructura" style={{ color: "#5eead4", textDecoration: "none", fontSize: 12.5 }}>
+                  Entrar al Atlas de infraestructura →
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* ── VECINOS ── */}
           {vecinos.length > 0 ? (

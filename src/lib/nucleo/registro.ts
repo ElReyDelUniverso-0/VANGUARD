@@ -1094,6 +1094,65 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["mod:mundos", "fnt:indicadores", "fnt:atlas"],
     alias: "comparar comparador paises versus vs frente a frente cara a cara pib poblacion renta esperanza de vida diferencias",
   },
+  // ── v420.3 EL ATLAS DE INFRAESTRUCTURA · MISIÓN 03 ────────────────────
+  // Catálogo mundial de infraestructura civil: cuatro piezas (el atlas, el
+  // catálogo de grandes obras, el explorador temático y la ficha de obra).
+  // Cada obra documentada en fuentes públicas, con los nueve campos del
+  // mandato: Nombre · País y ubicación · Categoría · Descripción · Fecha
+  // conocida · Características documentadas · Fotografías autorizadas ·
+  // Fuente de información · Estado de verificación.
+  {
+    id: "mod:infraestructura",
+    nombre: "EL ATLAS DE INFRAESTRUCTURA",
+    lema: "La infraestructura del planeta, obra por obra",
+    descripcion:
+      "Catálogo mundial de infraestructura civil: aeropuertos, puertos, ferrocarril, puentes, túneles, centrales energéticas, presas, infraestructura de agua, educación, sanitaria y edificios emblemáticos. Explorador con filtros por categoría, país y texto, cifras por categoría y país, y fichas individuales con los nueve campos obligados. Información pública y apropiada: nada de vulnerabilidades ni detalles operativos de ninguna instalación. v420.3, departamento 6.",
+    categoria: "MUNDO",
+    ruta: "/infraestructura",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:infraestructura", "fnt:atlas"],
+    alias: "atlas infraestructura aeronaves puertos ferrocarril puentes tuneles centrales energia presas embalses agua educacion sanitaria hospitales edificios emblematicos obras ingenieria civil catalogo",
+  },
+  {
+    id: "mod:infra-gran-obra",
+    nombre: "EL CATALÓGO DE GRANDAS OBRAS",
+    lema: "Las obras que marcan hitos",
+    descripcion:
+      "Las grandes obras del Atlas en una sola lista ordenable por fecha, por nombre o por categoría, con cada obra enlazando a su ficha. Sin fechas inventadas: las obras sin fecha documentada van al final de la lista.",
+    categoria: "MUNDO",
+    ruta: "/infraestructura/gran-obra",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:infraestructura", "fnt:infraestructura"],
+    alias: "grandes obras catalogo hitos ingenieria civil lista orden",
+  },
+  {
+    id: "mod:infra-explorador",
+    nombre: "EL EXPLORADOR DE INFRAESTRUCTURA",
+    lema: "Transporte, energía y arquitectura, grupo por grupo",
+    descripcion:
+      "El explorador temático del Atlas: tres grupos (transporte, energía y agua, arquitectura y servicios) con sus categorías, filtros por categoría, país y texto, y tabla ordenable de obras.",
+    categoria: "MUNDO",
+    ruta: "/infraestructura/explorador",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:infraestructura", "fnt:infraestructura"],
+    alias: "explorador infraestructura transporte energia agua arquitectura servicios grupos",
+  },
+  {
+    id: "mod:infra-ficha",
+    nombre: "LA FICHA DE UNA OBRA",
+    lema: "Nueve campos por obra, nada inventados",
+    descripcion:
+      "La ficha individual de cada obra del Atlas: nombre, país y ubicación, categoría, descripción, fecha conocida, características documentadas, fotografías autorizadas, fuente de información y estado de verificación. Fotografías solo autorizadas y en la casa; sin nada de vulnerabilidades ni detalles operativos.",
+    categoria: "MUNDO",
+    ruta: "/infraestructura/obra/[id]",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:infraestructura", "fnt:infraestructura"],
+    alias: "ficha obra detalle infraestructura",
+  },
   {
     id: "mod:rankings",
     nombre: "LOS RANKINGS DEL PLANETA",

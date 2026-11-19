@@ -28,6 +28,8 @@ import { INDICADORES } from "@/lib/planeta/indicadores";
 import { subregiones } from "@/lib/planeta/datos";
 import { ORGANIZACIONES } from "@/lib/planeta/organizaciones";
 import { COLECCIONES } from "@/lib/planeta/directorio";
+// v420.3 EL ATLAS DE INFRAESTRUCTURA — el catálogo, el explorador, las grandes obras y cada ficha de obra
+import { CATALOGO_INFRA } from "@/lib/infraestructura/catalogo";
 
 // v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
 // «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
@@ -679,6 +681,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: r === "/memoria" ? 0.85 : 0.7,
+    })),
+    // v420.3 EL ATLAS DE INFRAESTRUCTURA — atlas, explorador, grandes obras y
+    // una entrada por ficha de obra (cada obra documentada entra sola al mapa)
+    ...["/infraestructura", "/infraestructura/explorador", "/infraestructura/gran-obra"].map((r) => ({
+      url: `${SITE_URL}${r}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.75,
+    })),
+    ...CATALOGO_INFRA.map((o) => ({
+      url: `${SITE_URL}/infraestructura/obra/${o.id}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     // v411.0 EL LABORATORIO — dieciséis puertas estáticas: el catálogo y una
     // ficha por modelo. No hay URL por combinación de mandos: el estado vive en

@@ -150,6 +150,9 @@ export const MODULOS: Modulo[] = [
     gancho: "Sismos, alertas e indicadores oficiales, medidos desde tu casa y avisándote a ti.",
     pestanas: [
       { href: "/pulso-mundial", label: "Pulso mundial", img: "/ilustraciones/pulso.jpg", txt: "Indicadores del Banco Mundial y la cronología del planeta." },
+      // v420.0 EL ATLAS DE INFRAESTRUCTURA — el catálogo mundial de obras de
+      // infraestructura civil entra como pestaña del módulo de los datos
+      { href: "/infraestructura", label: "Atlas infraestructura", img: "/ilustraciones/pulso.jpg", txt: "Aeropuertos, puertos, puentes, presas, centrales y edificios emblemáticos: el catálogo mundial con sus nueve campos por obra." },
       { href: "/cruce", label: "El Cruce", vivo: true, img: "/ilustraciones/sismo.jpg", txt: "Lo que pasó hoy, medido a distancia de tu casa." },
       { href: "/herramientas", label: "Las diez llaves", img: "/ilustraciones/radar.jpg", txt: "Herramientas externas de vigilancia, abiertas dentro de la casa." },
       { href: "/centinela", label: "Mi centinela", img: "/ilustraciones/centinela.jpg", txt: "Elige qué vigilar y la casa te avisa." },

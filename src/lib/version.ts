@@ -6785,32 +6785,41 @@
 // ⑥ LO QUE YA ESTABA BIEN Y SE DEJA EN PAZ: CLS 0,000 en las diez puertas
 //    medidas y cero tareas largas — el trabajo de animaciones de v416–v418
 //    hizo su parte; este departamento no lo toca, lo vigila.
-// v420.0 VANGUARD LINGUA — MISIÓN 05. Encargo del Dueño: «un centro mundial
-// de idiomas y comunicación» — explorar lenguas, traducción, escritura y
-// diversidad lingüística, distinguiendo lenguas, dialectos, variedades y
-// sistemas de escritura, «sin inventar traducciones ni pronunciaciones».
-// ① EL CATÁLOGO (/lingua/idiomas, /lingua/idioma/[id]): 8.243 lenguas de
-//    Glottolog 5.4 con ISO 639-3, familia, ubicación, países, amenaza (AES),
-//    documentación y 13.773 dialectos; variedades y escrituras de CLDR 49.
-// ② EL ÁRBOL INTERACTIVO (/lingua/familias/[id]): elegir familia, abrir ramas
-//    (API /api/lingua/arbol) y ver distribución, rasgos e historia.
-// ③ GEOGRAFÍA: mapa mundial en canvas (8.081 puntos), lenguas por país con
-//    la población hablante de CLDR, lenguas en peligro; bloque «Lenguas» en
-//    las 249 fichas de /mundos.
-// ④ ESCRITURA: 34 sistemas con genealogía, comparación y alfabetos de CLDR.
-// ⑤ PALABRAS: diccionario y comparador (Wikcionario), 20 expresiones,
-//    pronunciación con AFI y grabaciones de Commons con licencia.
-// ⑥ TRADUCTOR: MyMemory, con proveedor y coincidencia visibles y una
-//    verificación del idioma de salida (descarta memorias mal etiquetadas);
-//    /api/traductor lo usa como vía de respaldo etiquetada.
-// ⑦ CONEXIÓN: buscador central (fnt:lingua), registro, directorio (tema
-//    lenguas), espacios, departamentos, sitemap, llms.txt y enciclopedia.
-export const APP_VERSION = "v420.2";
+// v420.3 EL ATLAS DE INFRAESTRUCTURA (MISIÓN 03) — catálogo mundial de
+// infraestructura civil, departamento 6: aeropuertos, puertos, ferrocarril,
+// puentes, túneles, centrales energéticas, presas, agua, educación, sanitaria
+// y edificios emblemáticos. Cada obra documentada en fuentes públicas con los
+// nueve campos del mandato (Nombre, País y ubicación, Categoría, Descripción,
+// Fecha conocida, Características documentadas, Fotografías autorizadas,
+// Fuente de información, Estado de verificación). Nuevo:
+// · src/lib/infraestructura/ — tipos, 11 categorías, 176 obras documentadas
+//   en 11 catálogos de datos, catálogo agrupado (catalogo.ts) y formato
+// · /infraestructura (atlas con explorador y cifras), /infraestructura/explorador
+//   (transporte · energía y agua · arquitectura y servicios),
+//   /infraestructura/gran-obra (catálogo de grandes obras), /infraestructura/obra/[id]
+//   (ficha individual con los nueve campos y JSON-LD)
+// · MarcoInfra: la casa del Atlas (barra, cabecera, cifras, pie con fuentes)
+// · censo del núcleo: mod:infraestructura + mod:infra-gran-obra +
+//   mod:infra-explorador + mod:infra-ficha y fnt:infraestructura; sitemap con
+//   las cuatro puertas + una entrada por ficha; pestaña «Atlas infraestructura»
+//   en el módulo Datos
+// · costura con la ficha de país: /mundos/[iso] enlaza las obras documentadas
+//   del país al Atlas (obrasDePais)
+// · REGRESAS DE HONESTIDAD: fecha null = «sin dato documentado»; fotos solo
+//   autorizadas y en la casa (emblema dibujado en código hasta que existan);
+//   información pública y aprobada, nada de vulnerabilidades ni detalles
+//   operativos de las instalaciones; ISO-2 validado contra geo-paises.
+// (el número salta a v420.3: v420.0 es VANGUARD LINGUA, v420.1 es VANGUARD
+//  MEMORY ARCHIVE y v420.2 es VANGUARD WORLD NETWORKS, ya entregadas)
+export const APP_VERSION = "v420.3";
+// (anterior) export const APP_VERSION = "v420.2";
+// (anterior) export const APP_VERSION = "v420.1";
 // (anterior) export const APP_VERSION = "v420.0";
 // (anterior) export const APP_VERSION = "v419.1";
 // (anterior) export const APP_VERSION = "v419.0";
 // (anterior) export const APP_VERSION = "v418.2";
-export const APP_CODENAME = "VANGUARD WORLD NETWORKS";
+export const APP_CODENAME = "VANGUARD INFRASTRUCTURE ATLAS";
+// (anterior) export const APP_CODENAME = "VANGUARD WORLD NETWORKS";
 // (anterior) export const APP_CODENAME = "VANGUARD MEMORY ARCHIVE";
 // (anterior) export const APP_CODENAME = "VANGUARD LINGUA";
 // (anterior) export const APP_CODENAME = "CÁMARA DE INTELIGENCIA";
@@ -6880,7 +6889,8 @@ export const APP_CODENAME = "VANGUARD WORLD NETWORKS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v420.1";
+export const APP_VERSION_ANTERIOR = "v420.2";
+// (anterior) export const APP_VERSION_ANTERIOR = "v420.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v419.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».

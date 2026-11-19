@@ -110,6 +110,13 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
     descripcion: "El propio registro central: MODULOS_NUCLEO en src/lib/nucleo/registro.ts.",
     publica_tipo: "mapa",
   },
+  {
+    id: "fnt:infraestructura",
+    nombre: "Atlas de infraestructura civil",
+    descripcion:
+      "Catálogo mundial de obras de infraestructura civil documentadas en fuentes públicas: aeropuertos, puertos, ferrocarril, puentes, túneles, centrales, presas, agua, educación, sanitaria y edificios emblemáticos. Cada obra con sus nueve campos, su fecha conocida, sus características, su fuente y su estado de verificación. Información pública y apropiada: nada de vulnerabilidades ni detalles operativos.",
+    publica_tipo: "documento",
+  },
 ];
 
 /** ── PRIVADAS: existen, se declaran, JAMÁS se buscan ── */
