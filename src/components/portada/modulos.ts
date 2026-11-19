@@ -198,6 +198,30 @@ export const MODULOS: Modulo[] = [
       { href: "/modo", label: "Modo y cuenta", img: "/ilustraciones/registro.jpg", txt: "Elige cómo juegas y entra con tu alias." },
     ],
   },
+  // v421.9 MISIÓN 06 — SCIENCE FRONTIER: el departamento científico. No es
+  // otra enciclopedia: es un sistema de descubrimiento (buscador de
+  // publicaciones, tipos editoriales y niveles de evidencia separados).
+  {
+    id: "ciencia",
+    nombre: "Science Frontier",
+    corto: "Ciencia",
+    lema: "Ciencia rastreada hasta su origen",
+    nav: "/ciencia",
+    img: "/ilustraciones/enciclopedia.jpg",
+    gancho: "Publicaciones reales, ideas que evolucionan y la frontera entre medir, modelar y suponer.",
+    pestanas: [
+      { href: "/ciencia", label: "Centro", img: "/ilustraciones/enciclopedia.jpg", txt: "Buscador, cifras y la taxonomía editorial del centro." },
+      { href: "/ciencia/explorador", label: "Explorador", img: "/ilustraciones/radar.jpg", txt: "Elige una idea y recorre sus pasos: qué añadió cada publicación y qué no demuestra." },
+      { href: "/ciencia/buscar", label: "Publicaciones", img: "/ilustraciones/biblioteca.jpg", txt: "Filtros por disciplina, tipo editorial, nivel de evidencia y fecha." },
+      { href: "/ciencia/cronologia", label: "Cronología", txt: "Publicaciones, premios e hitos en el orden en que ocurrieron." },
+      { href: "/ciencia/instituciones", label: "Instituciones", txt: "Laboratorios y centros con su URL comprobada y su vínculo documentado." },
+      { href: "/ciencia/premios", label: "Premios", txt: "Motivación oficial literal y su traducción de trabajo." },
+      { href: "/ciencia/experimentos", label: "Experimentos", txt: "El montaje, el resultado y el límite de cada método." },
+      { href: "/ciencia/tecnologia", label: "Tecnología", txt: "La herramienta detrás del hallazgo, con su madurez real." },
+      { href: "/ciencia/biblioteca", label: "Biblioteca", img: "/ilustraciones/biblioteca.jpg", txt: "Estanterías curadas, índice completo y tu estantería." },
+      { href: "/ciencia/metodo", label: "Método", txt: "Qué se capturó, de dónde y cómo se reproduce." },
+    ],
+  },
   {
     id: "estado",
     nombre: "Estado de Vanguard",

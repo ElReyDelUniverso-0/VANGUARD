@@ -35,6 +35,14 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
     publica_tipo: "documento",
   },
   {
+    // v421.9 SCIENCE FRONTIER
+    id: "fnt:ciencia",
+    nombre: "Science Frontier (índice científico)",
+    descripcion:
+      "Publicaciones reales con DOI o arXiv, tipo editorial y nivel de evidencia separados, lecturas con límite declarado y líneas de evolución entre investigaciones. Metadatos capturados de Crossref, arXiv, Europe PMC y NobelPrize.org; no incluye datos privados.",
+    publica_tipo: "documento",
+  },
+  {
     id: "fnt:cables",
     nombre: "Archivo de cables",
     descripcion:

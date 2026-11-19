@@ -18,7 +18,8 @@
     "db:reset": "prisma migrate reset",
     "improve": "node scripts/improvement-agent.mjs",
     "serve": "node scripts/serve.mjs",
-    "serve:prod": "node scripts/serve.mjs --prod"
+    "serve:prod": "node scripts/serve.mjs --prod",
+    "science:check": "node tools/ciencia/comprobar.mjs"
   },
   "dependencies": {
     "@next/swc-linux-x64-gnu": "16.1.3",

@@ -98,6 +98,7 @@ export const SECCIONES: Seccion[] = [
       "/enciclopedia",
       "/lingua",
       "/memoria",
+      "/ciencia", // v421.9 · el departamento científico
       "/editorial",
       "/investigacion",
       "/historia",

@@ -5,6 +5,7 @@ import CENSO from "@/lib/arquitectura/censo.json"; // v412.0: el censo real del 
 import { TEMAS_INVESTIGACION } from "@/lib/investigacion"; // v413.0: investigación sistémica
 import { FICHAS_FAMILIA } from "@/lib/lingua/familias"; // v420.0
 import { ARTICULOS as ARTICULOS_ENC, CATEGORIAS as CATEGORIAS_ENC, rutaArticulo } from "@/lib/enciclopedia/indice"; // v417.0
+import { ESTADISTICAS as EST_CIENCIA, IDEAS as IDEAS_CIENCIA, DISCIPLINAS as DISC_CIENCIA, CAPTURA as CAPTURA_CIENCIA } from "@/lib/ciencia/indice"; // v421.9
 
 // ============================================================
 // v405.6 LA CARTA A LAS MÁQUINAS — /llms.txt — ia3 (Arena)
@@ -94,6 +95,19 @@ export function GET() {
       "(continentes, países, geografía física y humana, civilizaciones, culturas, ciencia, naturaleza, organismos internacionales y recursos). " +
       "Cada artículo trae datos anotados a su fuente, bibliografía, imágenes de Wikimedia Commons con licencia y fecha de revisión.",
     ...ARTICULOS_ENC.map((a) => `- [${a.titulo}](${c(rutaArticulo(a.slug))}): ${a.bajada}`),
+    "",
+    "## Science Frontier (centro científico)",
+    "",
+    `- [Science Frontier](${c("/ciencia")}): ${EST_CIENCIA.registros} registros bibliográficos (${EST_CIENCIA.publicaciones} publicaciones y 3 registros institucionales), ` +
+      `${EST_CIENCIA.ideas} ideas en evolución y ${EST_CIENCIA.disciplinas} disciplinas. Cada ficha declara POR SEPARADO el tipo editorial ` +
+      "(investigación en revista / prepublicación / revisión / divulgación), el régimen de arbitraje y el nivel de evidencia " +
+      "(medición, experimento, observacional, inferencia con modelo, hipótesis, síntesis, demostración). Enlaza al DOI o a la versión de arXiv; no copia artículos. " +
+      `Metadatos capturados el ${CAPTURA_CIENCIA} de Crossref, arXiv, Europe PMC y NobelPrize.org.`,
+    `- [Explorador de descubrimientos](${c("/ciencia/explorador")}): ${IDEAS_CIENCIA.length} preguntas con sus pasos reales; cada paso dice qué añadió y qué no demuestra.`,
+    `- [Buscador](${c("/ciencia/buscar")}): texto, disciplina, tipo editorial, nivel de evidencia, idea y años. Estado en la URL.`,
+    `- [API](${c("/api/ciencia")}): el índice en JSON con los mismos filtros.`,
+    ...IDEAS_CIENCIA.map((i) => `- [${i.pregunta}](${c(`/ciencia/idea/${i.id}`)}): ${i.estado} — ${i.publicaciones.length} publicaciones, ${i.desde}-${i.hasta}.`),
+    `- Disciplinas: ${DISC_CIENCIA.map((d) => `${d.nombre} (${c(`/ciencia/disciplina/${d.id}`)})`).join("; ")}.`,
     "",
     "## Investigación Sistémica (VANGUARD DOSSIERS)",
     "",

@@ -1,5 +1,12 @@
 import { CONCEPTOS as CONCEPTOS_GLOBALES } from "@/lib/conocimiento/indice";
 import { buscarLingua } from "@/lib/lingua/servidor"; // v420.0
+import { PUBLICACIONES as PUBLICACIONES_CIENCIA, TIPO_INFO as TIPO_INFO_CIENCIA } from "@/lib/ciencia/indice"; // v420.0
+const ETIQUETA_TIPO_CIENCIA: Record<string, string> = {
+  articulo: TIPO_INFO_CIENCIA.articulo.etiqueta,
+  preprint: TIPO_INFO_CIENCIA.preprint.etiqueta,
+  revision: TIPO_INFO_CIENCIA.revision.etiqueta,
+  divulgacion: TIPO_INFO_CIENCIA.divulgacion.etiqueta,
+};
 import { ARTICULOS as ARTICULOS_ENCICLOPEDIA, categoriaDe as categoriaEnciclopedia } from "@/lib/enciclopedia/indice"; // v417.0
 // ============================================================
 // v218.0 EL NÚCLEO — BÚSQUEDA GLOBAL (server-only)
@@ -130,6 +137,28 @@ const PROVEEDORES: ProveedorBusqueda[] = [
         ruta: r.tipo === "familia" ? `/lingua/familias/${r.id}` : `/lingua/idioma/${r.id}`,
         origen: "fnt:lingua",
       }));
+    },
+  },
+  {
+    fuente: fuentePublica("fnt:ciencia"),
+    // v421.9 SCIENCE FRONTIER — artículos del índice científico. Se puntúa el
+    // título (doble), los autores y la idea; la búsqueda fina (disciplina, tipo,
+    // nivel) vive en /ciencia/buscar.
+    async buscar(q, limite) {
+      const terms = terminosDe(q);
+      return mejores(
+        PUBLICACIONES_CIENCIA.map((p) => ({
+          cosa: {
+            entidad: { id: idEntidad("documento", `ciencia-${p.id}`), tipo: "documento" as const, nombre: p.titulo },
+            titulo: p.titulo,
+            subtitulo: `${p.medio} · ${p.anio} · ${ETIQUETA_TIPO_CIENCIA[p.tipo]} · ${p.nivelEtiqueta}`,
+            ruta: `/ciencia/publicacion/${p.id}`,
+            origen: "fnt:ciencia",
+          } as ResultadoNucleo,
+          puntos: puntua(`${p.titulo} ${p.tituloOriginal} ${p.autores.map((a) => a.nombre).join(" ")} ${p.lectura} ${p.medio}`, q, terms),
+        })).filter((c) => c.puntos > 0),
+        limite
+      );
     },
   },
   // 1. MÓDULOS — la navegación primero: aterrizarte en la puerta correcta
@@ -450,6 +479,7 @@ const ORDEN_ORIGEN = [
   "fnt:modulos",
   "fnt:conocimiento",
   "fnt:lingua",
+  "fnt:ciencia", // v421.9 — el índice científico responde antes que los cables
   "fnt:teatros",
   "fnt:acontecimientos",
   "fnt:atlas",

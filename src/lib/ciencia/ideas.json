@@ -1,0 +1,257 @@
+[
+ {
+  "id": "ondas",
+  "disciplinaId": "fisica",
+  "pregunta": "¿Cómo se detecta una onda gravitacional?",
+  "sintesis": "La relatividad general describe la gravedad como geometría que puede propagarse como una onda. Durante cuarenta años la evidencia fue indirecta: una órbita que perdía energía. En 2015 dos interferómetros registraron la forma de la onda de una fusión de agujeros negros y, dos años después, la de dos estrellas de neutrones.",
+  "estado": "demostrado",
+  "estadoDetalle": "La existencia de ondas gravitacionales se acepta sobre dos bases independientes: la pérdida de energía orbital medida en un púlsar binario y la señal directa registrada por interferómetros desde 2015.",
+  "abiertas": [
+   "Cómo se forman los agujeros negros de las masas observadas y qué poblaciones existen.",
+   "Cómo se separa una señal débil de cada fuente de ruido instrumental en cada evento.",
+   "Qué otros fenómenos producen ondas gravitacionales por encima del ruido actual."
+  ],
+  "pasos": {
+   "pulso": "Un púlsar no está solo: sus pulsos llegan antes o después según la órbita de una compañera invisible.",
+   "orbita": "Esa órbita se acorta en la cantidad que predice la relatividad general: energía que se pierde, todavía sin medir la onda.",
+   "ondas-bh": "Cuarenta años después, dos interferómetros registran la forma de la onda de una fusión: primera detección directa.",
+   "onda-v1": "Un lector puede abrir además el manuscrito público de la misma observación: arXiv no añade arbitraje.",
+   "ondas-ns": "Otra clase de fuente, dos estrellas de neutrones, produce una señal más larga que permite contrastar el método."
+  },
+  "publicaciones": [
+   "pulso",
+   "orbita",
+   "ondas-bh",
+   "onda-v1",
+   "ondas-ns"
+  ],
+  "desde": 1975,
+  "hasta": 2017
+ },
+ {
+  "id": "fondo",
+  "disciplinaId": "fisica",
+  "pregunta": "¿De dónde viene el exceso de microondas que llega de todas las direcciones?",
+  "sintesis": "Una antena de radio midió un exceso de temperatura que no se podía atribuir a la instalación. Un trabajo compañero lo interpretó como radiación residual de un universo caliente. Tres décadas después, un satélite midió su espectro y sus pequeñas anisotropías, y los modelos cosmológicos aprendieron a leer parámetros en esas diferencias.",
+  "estado": "demostrado",
+  "estadoDetalle": "El fondo cósmico de microondas está medido: su espectro es compatible con un cuerpo negro y sus anisotropías han sido cartografiadas por varios instrumentos. La interpretación de los parámetros depende del modelo cosmológico elegido.",
+  "abiertas": [
+   "Qué explica las diferencias de temperatura a las escalas más pequeñas.",
+   "Cómo separar la señal cosmológica de la emisión de nuestra propia galaxia.",
+   "Qué puede inferirse del período anterior a la recombinación, si algo puede inferirse."
+  ],
+  "pasos": {
+   "ruido": "Primero es solo una molestia medida con cuidado: un exceso persistente de temperatura en una antena.",
+   "interpretacion": "Un segundo artículo propone que ese exceso puede ser radiación residual del universo caliente.",
+   "espectro": "COBE mide el espectro completo: la señal se parece a un cuerpo negro, ya no es una sola frecuencia.",
+   "anisotropia": "Los mismos datos muestran diferencias minúsculas entre direcciones: estructura sobre un fondo casi uniforme.",
+   "planck-v1": "La versión pública del análisis de Planck permite ver cómo se pasa de mapas a parámetros.",
+   "planck": "El artículo final publica los parámetros con sus incertidumbres y sus supuestos de modelo."
+  },
+  "publicaciones": [
+   "ruido",
+   "interpretacion",
+   "espectro",
+   "anisotropia",
+   "planck-v1",
+   "planck"
+  ],
+  "desde": 1965,
+  "hasta": 2020
+ },
+ {
+  "id": "planetas",
+  "disciplinaId": "astronomia",
+  "pregunta": "¿Hay planetas alrededor de otras estrellas?",
+  "sintesis": "La primera evidencia vino del bamboleo de una estrella, no de una imagen. El tránsito de un planeta frente a su estrella añadió el tamaño, y la espectroscopía de transmisión, la química de la atmósfera. Cada técnica responde a una pregunta distinta sobre el mismo objeto.",
+  "estado": "demostrado",
+  "estadoDetalle": "Miles de planetas en torno a otras estrellas están confirmados por métodos independientes. La composición atmosférica se infiere de espectros con modelos, y solo para objetos favorables.",
+  "abiertas": [
+   "Cuántos planetas rocosos con atmósferas medibles existen cerca de sus estrellas.",
+   "Cómo distinguir una señal atmosférica de la actividad de la estrella.",
+   "Qué rango real de masas y radios separa un planeta de un objeto más denso."
+  ],
+  "pasos": {
+   "pegaso": "Una oscilación periódica en la luz de una estrella revela una compañera de masa planetaria y órbita corta.",
+   "transito": "Si el planeta cruza el disco estelar, la caída de brillo informa de su radio.",
+   "transito-henry": "Otro equipo publica su propia fotometría del mismo sistema: dos mediciones comparables de un mismo objeto.",
+   "sodio": "Durante el tránsito, el color de la luz cambia: se empieza a leer la atmósfera del planeta.",
+   "co2-planeta": "Con el telescopio Webb, la misma idea revela una banda de dióxido de carbono en un gigante gaseoso distinto."
+  },
+  "publicaciones": [
+   "pegaso",
+   "transito",
+   "transito-henry",
+   "sodio",
+   "co2-planeta"
+  ],
+  "desde": 1995,
+  "hasta": 2022
+ },
+ {
+  "id": "placas",
+  "disciplinaId": "tierra",
+  "pregunta": "¿Se mueven los continentes y cómo se organiza ese movimiento?",
+  "sintesis": "Las franjas magnéticas del fondo oceánico y las fallas que desplazan dorsales dieron forma a una idea incómoda: la corteza está dividida en bloques que se mueven. El modelo se volvió cuantitativo cuando se describió como rotaciones sobre una esfera y se contrastó con datos geofísicos.",
+  "estado": "demostrado",
+  "estadoDetalle": "La tectónica de placas es el marco aceptado de la geología: explica sismicidad, vulcanismo y geometría de márgenes. Las velocidades publicadas son promedios sobre intervalos largos.",
+  "abiertas": [
+   "Cómo se deforma el interior de las placas, que el modelo rígido simplifica.",
+   "Qué controla la velocidad de cada placa y cómo cambió en el pasado.",
+   "Cómo pasar de velocidades geológicas a la probabilidad de un terremoto concreto."
+  ],
+  "pasos": {
+   "bandas": "Un patrón simétrico de anomalías magnéticas alrededor de una dorsal sugiere expansión del fondo oceánico.",
+   "fallas": "Las fallas transformantes explican por qué una dorsal aparece desplazada, sin inventar un mecanismo nuevo.",
+   "pacifico": "El movimiento relativo se describe como rotación sobre una esfera y se contrasta con observaciones.",
+   "placas-rigidas": "El conjunto se ordena en bloques móviles con dorsales, fosas y grandes fallas.",
+   "morvel": "Un modelo reciente integra datos geológicos y geofísicos para estimar velocidades relativas actuales."
+  },
+  "publicaciones": [
+   "bandas",
+   "fallas",
+   "pacifico",
+   "placas-rigidas",
+   "morvel"
+  ],
+  "desde": 1963,
+  "hasta": 2010
+ },
+ {
+  "id": "clima",
+  "disciplinaId": "tierra",
+  "pregunta": "¿Cuánto cambia el clima cuando cambia el CO₂?",
+  "sintesis": "El efecto del CO₂ sobre el balance radiativo se calculó antes de poder medirlo con precisión. La serie de medidas atmosféricas y los archivos de hielo mostraron que CO₂ y temperatura han variado juntos en el pasado. Los modelos actuales proyectan escenarios; el mecanismo físico está establecido, la magnitud futura depende de decisiones y de la sensibilidad del sistema.",
+  "estado": "parcial",
+  "estadoDetalle": "El forzamiento radiativo del CO₂ y el aumento observado de su concentración están demostrados. La magnitud del calentamiento futuro y sus efectos regionales se estiman con modelos y escenarios, con incertidumbre declarada.",
+  "abiertas": [
+   "Cuánto amplifican o amortiguan las nubes el calentamiento.",
+   "Cómo cambian los extremos regionales, no solo la media global.",
+   "Qué parte del cambio reciente corresponde a cada forzamiento."
+  ],
+  "pasos": {
+   "arrhenius": "Un cálculo del siglo XIX estima cómo el CO₂ altera la temperatura de la superficie con un modelo simplificado.",
+   "keeling": "Una serie de mediciones precisas separa la variabilidad local de la tendencia de fondo del CO₂.",
+   "calentamiento": "El cálculo radiativo se convierte en escenarios: qué pasaría con más CO₂, con supuestos explícitos.",
+   "hielo": "Un archivo natural de 420 000 años muestra climas y composiciones atmosféricas anteriores a cualquier instrumento."
+  },
+  "publicaciones": [
+   "arrhenius",
+   "keeling",
+   "calentamiento",
+   "hielo"
+  ],
+  "desde": 1896,
+  "hasta": 1999
+ },
+ {
+  "id": "grafeno",
+  "disciplinaId": "materiales",
+  "pregunta": "¿Qué ocurre cuando el carbono tiene una sola capa?",
+  "sintesis": "Aislar una capa de carbono y medirla convirtió una curiosidad teórica en un material de laboratorio. Sus portadores se comportan como partículas sin masa efectiva y aparecen efectos cuánticos medibles. La investigación posterior amplió el sistema a bicapas giradas, con fenómenos que dependen de un ángulo.",
+  "estado": "parcial",
+  "estadoDetalle": "Las propiedades electrónicas del grafeno están medidas y reproducidas en muchos laboratorios. Las aplicaciones industriales y los dispositivos a escala siguen siendo objeto de investigación, no un resultado establecido.",
+  "abiertas": [
+   "Cómo producir láminas grandes y uniformes de forma reproducible.",
+   "Qué estabilidad tienen los fenómenos de bicapa girada fuera del laboratorio.",
+   "Cómo pasar de una muestra de laboratorio a un dispositivo útil."
+  ],
+  "pasos": {
+   "lamina": "Una película de carbono de espesor atómico se aísla y se mide: el material deja de ser una hipótesis.",
+   "dirac": "El transporte eléctrico se comporta como el de partículas sin masa efectiva: una descripción de cuasipartículas.",
+   "hall": "Un segundo equipo observa efectos cuánticos inusuales en condiciones concretas.",
+   "revision-grafeno": "Una revisión ordena lo aprendido y separa propiedades medidas de promesas tecnológicas.",
+   "giro": "Al girar dos capas, el ángulo se vuelve una variable: aparece superconductividad a temperaturas criogénicas."
+  },
+  "publicaciones": [
+   "lamina",
+   "dirac",
+   "hall",
+   "revision-grafeno",
+   "giro"
+  ],
+  "desde": 2004,
+  "hasta": 2018
+ },
+ {
+  "id": "resonancia",
+  "disciplinaId": "medicina",
+  "pregunta": "¿Se puede observar el cerebro vivo sin abrirlo?",
+  "sintesis": "La resonancia magnética permite reconstruir una imagen a partir de señales de núcleos atómicos. El contraste depende de la oxigenación de la sangre, lo que hizo posible registrar respuestas hemodinámicas durante una tarea. Es una medida indirecta: el debate sobre qué puede concluirse de ella sigue abierto.",
+  "estado": "parcial",
+  "estadoDetalle": "La imagen por resonancia y el contraste dependiente de la oxigenación están demostrados. Interpretar una región activada como una función cognitiva concreta es una inferencia discutida, no un hecho establecido.",
+  "abiertas": [
+   "Qué relación exacta hay entre actividad neuronal y respuesta vascular.",
+   "Cómo separar una diferencia individual de un efecto de grupo.",
+   "Qué conclusiones sobre cognición admite una señal hemodinámica."
+  ],
+  "pasos": {
+   "imagen-rm": "El principio de imagen se demuestra: un campo que varía en el espacio permite reconstruir una distribución.",
+   "oxigenacion": "El contraste cambia con la oxigenación de la sangre: aparece la base física de la señal funcional.",
+   "cerebro": "La señal se registra en personas durante estimulación: nace la resonancia funcional como método.",
+   "revision-bold": "Una revisión separa lo que la señal hemodinámica mide de lo que se le atribuye."
+  },
+  "publicaciones": [
+   "imagen-rm",
+   "oxigenacion",
+   "cerebro",
+   "revision-bold"
+  ],
+  "desde": 1973,
+  "hasta": 2008
+ },
+ {
+  "id": "geometria",
+  "disciplinaId": "matematicas",
+  "pregunta": "¿Es la esfera tridimensional la única variedad cerrada simplemente conexa?",
+  "sintesis": "La conjetura de Poincaré se formuló en 1904. Casi un siglo después, un programa basado en el flujo de Ricci propuso deformar la métrica hasta una forma reconocible. Tres manuscritos y una exposición detallada permitieron a la comunidad matemática verificar el argumento; el Instituto Clay declaró el problema resuelto.",
+  "estado": "demostrado",
+  "estadoDetalle": "La conjetura de Poincaré se considera demostrada tras la verificación comunitaria de los argumentos de Perelman. En matemáticas la verificación es lógica: no hay réplica experimental, sino comprobación de cada paso y de sus hipótesis.",
+  "abiertas": [
+   "Cómo se extiende el método a otras variedades y dimensiones.",
+   "Qué otros problemas geométricos admite el mismo tipo de flujo.",
+   "Cómo se organizan verificaciones formales de argumentos muy largos."
+  ],
+  "pasos": {
+   "entropia": "Una fórmula de entropía aporta una herramienta nueva para controlar el flujo de Ricci.",
+   "cirugia": "Cuando el flujo forma singularidades, el segundo manuscrito propone continuar con cirugía matemática.",
+   "extincion": "El tercer manuscrito trata la extinción en tiempo finito en un caso relevante.",
+   "notas": "Una exposición detallada permite recorrer los pasos y comprobar hipótesis: la verificación no es arbitraje editorial."
+  },
+  "publicaciones": [
+   "entropia",
+   "cirugia",
+   "extincion",
+   "notas"
+  ],
+  "desde": 2002,
+  "hasta": 2008
+ },
+ {
+  "id": "corazon",
+  "disciplinaId": "medicina",
+  "pregunta": "¿Qué factores acompañan al infarto y cuáles se pueden modificar?",
+  "sintesis": "Una cohorte de largo seguimiento identificó características asociadas a la enfermedad coronaria. Para pasar de asociación a intervención hicieron falta ensayos con asignación aleatoria. El estudio INTERHEART trasladó la pregunta a 52 países y mostró cuánto depende el resultado del diseño del estudio.",
+  "estado": "parcial",
+  "estadoDetalle": "Hay factores de riesgo asociados de forma consistente y ensayos que muestran efectos de intervenciones concretas sobre la presión arterial. Cuánto se traduce eso en reducción de infartos y en cada población sigue siendo una estimación.",
+  "abiertas": [
+   "Qué parte de la asociación es causal y en qué poblaciones.",
+   "Cómo se combinan varios factores en una misma persona.",
+   "Qué efecto tienen intervenciones sostenidas durante décadas."
+  ],
+  "pasos": {
+   "framingham": "Una cohorte seguida durante años conecta características iniciales con enfermedad coronaria posterior.",
+   "dash": "Un ensayo con asignación aleatoria mide el efecto de un patrón alimentario sobre la presión arterial.",
+   "sal": "El ensayo se refina: se separa el patrón alimentario del aporte de sodio.",
+   "interheart": "La pregunta se traslada a 52 países con un diseño de casos y controles: consistencia y límites distintos."
+  },
+  "publicaciones": [
+   "framingham",
+   "dash",
+   "sal",
+   "interheart"
+  ],
+  "desde": 1961,
+  "hasta": 2004
+ }
+]

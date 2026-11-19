@@ -6847,21 +6847,73 @@
 //    del Núcleo, los departamentos, el mapa de nexos, el mapa partido de SEO
 //    y el catálogo de API. Nada de lo anterior se borra ni se simplifica.
 //
-export const APP_VERSION = "v421.8";
+// (anterior) export const APP_VERSION = "v421.8";
 // (anterior) export const APP_VERSION = "v420.3";
 // (anterior) export const APP_VERSION = "v420.2";
+// v420.0 VANGUARD LINGUA — MISIÓN 05. Encargo del Dueño: «un centro mundial
+// de idiomas y comunicación» — explorar lenguas, traducción, escritura y
+// diversidad lingüística, distinguiendo lenguas, dialectos, variedades y
+// sistemas de escritura, «sin inventar traducciones ni pronunciaciones».
+// ① EL CATÁLOGO (/lingua/idiomas, /lingua/idioma/[id]): 8.243 lenguas de
+//    Glottolog 5.4 con ISO 639-3, familia, ubicación, países, amenaza (AES),
+//    documentación y 13.773 dialectos; variedades y escrituras de CLDR 49.
+// ② EL ÁRBOL INTERACTIVO (/lingua/familias/[id]): elegir familia, abrir ramas
+//    (API /api/lingua/arbol) y ver distribución, rasgos e historia.
+// ③ GEOGRAFÍA: mapa mundial en canvas (8.081 puntos), lenguas por país con
+//    la población hablante de CLDR, lenguas en peligro; bloque «Lenguas» en
+//    las 249 fichas de /mundos.
+// ④ ESCRITURA: 34 sistemas con genealogía, comparación y alfabetos de CLDR.
+// ⑤ PALABRAS: diccionario y comparador (Wikcionario), 20 expresiones,
+//    pronunciación con AFI y grabaciones de Commons con licencia.
+// ⑥ TRADUCTOR: MyMemory, con proveedor y coincidencia visibles y una
+//    verificación del idioma de salida (descarta memorias mal etiquetadas);
+//    /api/traductor lo usa como vía de respaldo etiquetada.
+// ⑦ CONEXIÓN: buscador central (fnt:lingua), registro, directorio (tema
+//    lenguas), espacios, departamentos, sitemap, llms.txt y enciclopedia.
 // (anterior) export const APP_VERSION = "v420.1";
 // (anterior) export const APP_VERSION = "v420.0";
 // (anterior) export const APP_VERSION = "v419.1";
 // (anterior) export const APP_VERSION = "v419.0";
 // (anterior) export const APP_VERSION = "v418.2";
-export const APP_CODENAME = "VANGUARD CIVIL RESILIENCE";
+// (anterior) export const APP_CODENAME = "VANGUARD CIVIL RESILIENCE";
 // (anterior) export const APP_CODENAME = "VANGUARD INFRASTRUCTURE ATLAS";
 // (anterior) export const APP_CODENAME = "VANGUARD WORLD NETWORKS";
 // (anterior) export const APP_CODENAME = "VANGUARD MEMORY ARCHIVE";
 // (anterior) export const APP_CODENAME = "VANGUARD LINGUA";
 // (anterior) export const APP_CODENAME = "CÁMARA DE INTELIGENCIA";
 // (anterior) export const APP_CODENAME = "VANGUARD EARTH SYSTEM";
+// (anterior) export const APP_VERSION = "v419.0";
+// (anterior) export const APP_CODENAME = "VANGUARD EARTH SYSTEM";
+
+// v421.9 VANGUARD SCIENCE FRONTIER — MISIÓN 06 · EL DEPARTAMENTO CIENTÍFICO.
+// Encargo del Dueño: «No quiero repetir los artículos educativos de Vanguard.
+// Quiero un sistema de descubrimiento científico» y «no presentes hipótesis
+// como descubrimientos demostrados».
+//
+// ① EL ÍNDICE, capturado y verificable: 42 publicaciones reales (34 artículos
+//    de revista, 5 prepublicaciones de arXiv, 3 revisiones) + 3 registros
+//    institucionales, con DOI/arXiv, autores, fecha, revista y huella SHA-256 de
+//    la respuesta de Crossref/arXiv. 6 DOI y 1 versión de arXiv se comprobaron
+//    con Europe PMC y con la ficha del propio depósito.
+// ② DOS SELLOS QUE NO SE MEZCLAN: tipo editorial (artículo / prepublicación /
+//    revisión / divulgación) y nivel de evidencia (medición, experimento,
+//    observacional, inferencia con modelo, hipótesis, síntesis, demostración,
+//    registro). Una hipótesis se marca en la ficha, en el buscador, en la
+//    cronología y en el explorador; hay 4 registros así.
+// ③ EL EXPLORADOR DE DESCUBRIMIENTOS: nueve preguntas con sus pasos reales y,
+//    en cada paso, qué añadió y qué no demuestra. Grafo de citas verificadas
+//    contra Crossref, preguntas abiertas y estado declarado de la idea.
+// ④ EL CENTRO COMPLETO: buscador con estado en la URL, fichas conectadas,
+//    cronología de 53 entradas, 10 instituciones con URL comprobada, 6 premios
+//    con motivación literal, 9 experimentos con su límite, 7 tecnologías con su
+//    madurez y biblioteca con estanterías + estantería personal.
+// ⑤ ENGANCHADO A LA CASA: núcleo (3 módulos + fnt:ciencia), búsqueda global,
+//    portada, espacios de trabajo, sitemap, llms.txt, catálogo de la API y
+//    departamento de arquitectura. 1.237 comprobaciones propias
+//    (tools/ciencia/comprobar.mjs).
+export const APP_VERSION = "v421.9";
+export const APP_CODENAME = "VANGUARD SCIENCE FRONTIER";
+// (anterior) export const APP_VERSION = "v418.2";
 // (anterior) export const APP_CODENAME = "EL ARO DE CONTROL";
 // (anterior) export const APP_VERSION = "v418.1";
 // (anterior) export const APP_CODENAME = "LA CASA LIGERA";

@@ -1,0 +1,2950 @@
+[
+ {
+  "id": "anisotropia",
+  "titulo": "Pequeñas diferencias entre direcciones del cielo",
+  "tituloOriginal": "Structure in the COBE differential microwave radiometer first-year maps",
+  "ideaId": "fondo",
+  "disciplinaId": "fisica",
+  "fecha": "1992-09",
+  "anio": 1992,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Medición",
+  "lectura": "Los radiómetros diferenciales de COBE revelaron estructura a gran escala en los mapas del primer año. Las pequeñas variaciones se superponen a un fondo casi uniforme.",
+  "cautela": "La resolución angular y el tratamiento de señales de primer plano limitan qué estructuras pueden distinguirse.",
+  "original": "https://doi.org/10.1086/186504",
+  "identificador": "10.1086/186504",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/186504",
+  "sha256": "f8c700f47ebb2f305c14bdf245ac39fced4bf0d38b1351c3523d259bf8f8506e",
+  "autores": [
+   {
+    "nombre": "G. F. Smoot",
+    "orcid": null
+   },
+   {
+    "nombre": "C. L. Bennett",
+    "orcid": null
+   },
+   {
+    "nombre": "A. Kogut",
+    "orcid": null
+   },
+   {
+    "nombre": "E. L. Wright",
+    "orcid": null
+   },
+   {
+    "nombre": "J. Aymon",
+    "orcid": null
+   },
+   {
+    "nombre": "N. W. Boggess",
+    "orcid": null
+   },
+   {
+    "nombre": "E. S. Cheng",
+    "orcid": null
+   },
+   {
+    "nombre": "G. de Amici",
+    "orcid": null
+   },
+   {
+    "nombre": "S. Gulkis",
+    "orcid": null
+   },
+   {
+    "nombre": "M. G. Hauser",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 28,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "planck"
+  ],
+  "relacionadas": [
+   "planck"
+  ]
+ },
+ {
+  "id": "arrhenius",
+  "titulo": "Una estimación temprana del efecto del CO2",
+  "tituloOriginal": "XXXI. <i>On the influence of carbonic acid in the air upon the temperature of the ground</i>",
+  "ideaId": "clima",
+  "disciplinaId": "tierra",
+  "fecha": "1896-04",
+  "anio": 1896,
+  "medio": "The London, Edinburgh, and Dublin Philosophical Magazine and Journal of Science",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "hipotesis",
+  "nivelEtiqueta": "Hipótesis y cálculo",
+  "lectura": "Arrhenius calculó cómo cambios de CO2 podían afectar la temperatura de la superficie. Es una pieza histórica en el desarrollo de los modelos de balance radiativo.",
+  "cautela": "El cálculo usa simplificaciones del siglo XIX. No debe citarse como una medición instrumental del calentamiento actual.",
+  "original": "https://doi.org/10.1080/14786449608620846",
+  "identificador": "10.1080/14786449608620846",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1080/14786449608620846",
+  "sha256": "0ea1e41939bdf03166e39a29adc42917bbb3cb7a2e2e984b7dd805bc7a5b9790",
+  "autores": [
+   {
+    "nombre": "Svante Arrhenius",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "bandas",
+  "titulo": "Leer las franjas magnéticas del fondo marino",
+  "tituloOriginal": "Magnetic Anomalies Over Oceanic Ridges",
+  "ideaId": "placas",
+  "disciplinaId": "tierra",
+  "fecha": "1963-09",
+  "anio": 1963,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "hipotesis",
+  "nivelEtiqueta": "Hipótesis contrastable",
+  "lectura": "Vine y Matthews propusieron que la expansión del fondo y las inversiones del campo terrestre explicaban las anomalías magnéticas alrededor de dorsales.",
+  "cautela": "Una explicación de un patrón no es por sí sola una medición global de la velocidad de todas las placas.",
+  "original": "https://doi.org/10.1038/199947a0",
+  "identificador": "10.1038/199947a0",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/199947a0",
+  "sha256": "25d5ea37cd05c724bb23d76bc9dc8d4e95792658066dfa19f080bbec2af955c0",
+  "autores": [
+   {
+    "nombre": "F. J. VINE",
+    "orcid": null
+   },
+   {
+    "nombre": "D. H. MATTHEWS",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "pacifico"
+  ],
+  "relacionadas": [
+   "pacifico"
+  ]
+ },
+ {
+  "id": "calentamiento",
+  "titulo": "Del balance radiativo a los escenarios de clima",
+  "tituloOriginal": "Climate Impact of Increasing Atmospheric Carbon Dioxide",
+  "ideaId": "clima",
+  "disciplinaId": "tierra",
+  "fecha": "1981-08-28",
+  "anio": 1981,
+  "medio": "Science",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Modelo",
+  "lectura": "Hansen y colaboradores evaluaron el efecto climático del aumento de CO2 comparando cálculos y observaciones disponibles. Sus escenarios dependían de supuestos explícitos.",
+  "cautela": "Un escenario publicado en 1981 no es una temperatura ya observada en el futuro que aquel artículo consideraba.",
+  "original": "https://doi.org/10.1126/science.213.4511.957",
+  "identificador": "10.1126/science.213.4511.957",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1126/science.213.4511.957",
+  "sha256": "fd7a7b86562fcb587641a5f70a6f3d8b9692839f51bd874b589f2592a97cf059",
+  "autores": [
+   {
+    "nombre": "J. Hansen",
+    "orcid": null
+   },
+   {
+    "nombre": "D. Johnson",
+    "orcid": null
+   },
+   {
+    "nombre": "A. Lacis",
+    "orcid": null
+   },
+   {
+    "nombre": "S. Lebedeff",
+    "orcid": null
+   },
+   {
+    "nombre": "P. Lee",
+    "orcid": null
+   },
+   {
+    "nombre": "D. Rind",
+    "orcid": null
+   },
+   {
+    "nombre": "G. Russell",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 7,
+  "resumenOriginal": "The global temperature rose by 0.2°C between the middle 1960's and 1980, yielding a warming of 0.4°C in the past century. This temperature increase is consistent with the calculated greenhouse effect due to measured increases of atmospheric carbon dioxide. Variations of volcanic aerosols and possibly solar luminosity appear to be primary causes of observed fluctuations about the mean trend of increasing temperature. It is shown that the anthropogenic carbon dioxide warming should emerge from the noise level of natural climate variability by the end of the century, and there is a high probability of warming in the 1980's. Potential effects on climate in the 21st century include the creation of drought-prone regions in North America and central Asia as part of a shifting of climatic zones, erosion of the West Antarctic ice sheet with a consequent worldwide rise in sea level, and opening of the fabled Northwest Passage.",
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "cerebro",
+  "titulo": "De la oxigenación a la actividad cerebral humana",
+  "tituloOriginal": "Dynamic magnetic resonance imaging of human brain activity during primary sensory stimulation.",
+  "ideaId": "resonancia",
+  "disciplinaId": "medicina",
+  "fecha": "1992-06-15",
+  "anio": 1992,
+  "medio": "Proceedings of the National Academy of Sciences",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Medición funcional",
+  "lectura": "Kwong y colaboradores registraron cambios de señal con resonancia magnética durante estimulación sensorial en personas. Usaron una señal hemodinámica para localizar respuestas.",
+  "cautela": "La respuesta vascular es indirecta y tiene su propia escala temporal; una zona activada no prueba causalidad.",
+  "original": "https://doi.org/10.1073/pnas.89.12.5675",
+  "identificador": "10.1073/pnas.89.12.5675",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1073/pnas.89.12.5675",
+  "sha256": "b912944ff49813df5604c9fdb21ecff4542166073c5899f3891b1caf816702d2",
+  "autores": [
+   {
+    "nombre": "K K Kwong",
+    "orcid": null
+   },
+   {
+    "nombre": "J W Belliveau",
+    "orcid": null
+   },
+   {
+    "nombre": "D A Chesler",
+    "orcid": null
+   },
+   {
+    "nombre": "I E Goldberg",
+    "orcid": null
+   },
+   {
+    "nombre": "R M Weisskoff",
+    "orcid": null
+   },
+   {
+    "nombre": "B P Poncelet",
+    "orcid": null
+   },
+   {
+    "nombre": "D N Kennedy",
+    "orcid": null
+   },
+   {
+    "nombre": "B E Hoppel",
+    "orcid": null
+   },
+   {
+    "nombre": "M S Cohen",
+    "orcid": null
+   },
+   {
+    "nombre": "R Turner",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 10,
+  "resumenOriginal": "Neuronal activity causes local changes in cerebral blood flow, blood volume, and blood oxygenation. Magnetic resonance imaging (MRI) techniques sensitive to changes in cerebral blood flow and blood oxygenation were developed by high-speed echo planar imaging. These techniques were used to obtain completely noninvasive tomographic maps of human brain activity, by using visual and motor stimulus paradigms. Changes in blood oxygenation were detected by using a gradient echo (GE) imaging sequence sensitive to the paramagnetic state of deoxygenated hemoglobin. Blood flow changes were evaluated by a spin-echo inversion recovery (IR), tissue relaxation parameter T1-sensitive pulse sequence. A series of images were acquired continuously with the same imaging pulse sequence (either GE or IR) during task activation. Cine display of subtraction images (activated minus baseline) directly demonstrates activity-induced changes in brain MR signal observed at a temporal resolution of seconds. During 8-Hz patterned-flash photic stimulation, a significant increase in signal intensity (paired t test; P less than 0.001) of 1.8% +/- 0.8% (GE) and 1.8% +/- 0.9% (IR) was observed in the primary visual cortex (V1) of seven normal volunteers. The mean rise-time constant of the signal change was 4.4 +/- 2.2 s for the GE images and 8.9 +/- 2.8 s for the IR images. The stimulation frequency dependence of visual activation agrees with previous positron emission tomography observations, with the largest MR signal response occurring at 8 Hz. Similar signal changes were observed within the human primary motor cortex (M1) during a hand squeezing task and in animal models of increased blood flow by hypercapnia. By using intrinsic blood-tissue contrast, functional MRI opens a spatial-temporal window onto individual brain physiology.",
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "cirugia",
+  "titulo": "Continuar el flujo cuando aparecen singularidades",
+  "tituloOriginal": "Ricci flow with surgery on three-manifolds",
+  "ideaId": "geometria",
+  "disciplinaId": "matematicas",
+  "fecha": "2003-03-10",
+  "anio": 2003,
+  "medio": "arXiv",
+  "tipo": "preprint",
+  "arbitraje": "repositorio",
+  "nivel": "demostracion",
+  "nivelEtiqueta": "Argumento matemático",
+  "lectura": "El segundo manuscrito desarrolló el flujo de Ricci con cirugía en variedades tridimensionales. Trata cómo continuar el análisis cuando se forman singularidades.",
+  "cautela": "La cirugía aquí es una operación matemática. La comprobación de los argumentos no depende del arbitraje de arXiv.",
+  "original": "https://arxiv.org/abs/math/0303109v1",
+  "identificador": "math/0303109v1",
+  "idTipo": "arxiv",
+  "metadatos": "https://arxiv.org/abs/math/0303109v1",
+  "sha256": "2d364acc25a30c3c6aa181698b6537fd8dc5dddc4ebd7be6cf09fba375546ea5",
+  "autores": [
+   {
+    "nombre": "Perelman, Grisha",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "co2-planeta",
+  "titulo": "Una huella de CO2 en WASP-39 b",
+  "tituloOriginal": "Identification of carbon dioxide in an exoplanet atmosphere",
+  "ideaId": "planetas",
+  "disciplinaId": "astronomia",
+  "fecha": "2022-09-02",
+  "anio": 2022,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Espectroscopia",
+  "lectura": "Un espectro de transmisión del telescopio Webb identificó una banda de dióxido de carbono en WASP-39 b. Es una aplicación del tránsito a la caracterización química.",
+  "cautela": "Es un gigante gaseoso distinto de HD 209458 b. Detectar CO2 no equivale a detectar una biosfera.",
+  "original": "https://doi.org/10.1038/s41586-022-05269-w",
+  "identificador": "10.1038/s41586-022-05269-w",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/s41586-022-05269-w",
+  "sha256": "8f3a3d9867ac4ae42e8794127c027628985f15a9e21677254a63475aa7511ace",
+  "autores": [
+   {
+    "nombre": "JWST Transiting Exoplanet Community Early Release Science Team",
+    "orcid": null
+   },
+   {
+    "nombre": "Eva-Maria Ahrer",
+    "orcid": null
+   },
+   {
+    "nombre": "Lili Alderson",
+    "orcid": null
+   },
+   {
+    "nombre": "Natalie M. Batalha",
+    "orcid": "https://orcid.org/0000-0002-7030-9519"
+   },
+   {
+    "nombre": "Natasha E. Batalha",
+    "orcid": null
+   },
+   {
+    "nombre": "Jacob L. Bean",
+    "orcid": null
+   },
+   {
+    "nombre": "Thomas G. Beatty",
+    "orcid": null
+   },
+   {
+    "nombre": "Taylor J. Bell",
+    "orcid": null
+   },
+   {
+    "nombre": "Björn Benneke",
+    "orcid": null
+   },
+   {
+    "nombre": "Zachory K. Berta-Thompson",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 132,
+  "resumenOriginal": "Abstract Carbon dioxide (CO 2 ) is a key chemical species that is found in a wide range of planetary atmospheres. In the context of exoplanets, CO 2 is an indicator of the metal enrichment (that is, elements heavier than helium, also called ‘metallicity’) 1–3 , and thus the formation processes of the primary atmospheres of hot gas giants 4–6 . It is also one of the most promising species to detect in the secondary atmospheres of terrestrial exoplanets 7–9 . Previous photometric measurements of transiting planets with the Spitzer Space Telescope have given hints of the presence of CO 2 , but have not yielded definitive detections owing to the lack of unambiguous spectroscopic identification 10–12 . Here we present the detection of CO 2 in the atmosphere of the gas giant exoplanet WASP-39b from transmission spectroscopy observations obtained with JWST as part of the Early Release Science programme 13,14 . The data used in this study span 3.0–5.5 micrometres in wavelength and show a prominent CO 2 absorption feature at 4.3 micrometres (26-sigma significance). The overall spectrum is well matched by one-dimensional, ten-times solar metallicity models that assume radiative–convective–thermochemical equilibrium and have moderate cloud opacity. These models predict that the atmosphere should have water, carbon monoxide and hydrogen sulfide in addition to CO 2 , but little methane. Furthermore, we also tentatively detect a small absorption feature near 4.0 micrometres that is not reproduced by these models.",
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "dash",
+  "titulo": "Someter un patrón alimentario a un ensayo controlado",
+  "tituloOriginal": "A Clinical Trial of the Effects of Dietary Patterns on Blood Pressure",
+  "ideaId": "corazon",
+  "disciplinaId": "medicina",
+  "fecha": "1997-04-17",
+  "anio": 1997,
+  "medio": "New England Journal of Medicine",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Ensayo controlado",
+  "lectura": "El ensayo DASH comparó patrones alimentarios mediante asignación aleatoria y midió el cambio de presión arterial. Es un diseño distinto del seguimiento observacional.",
+  "cautela": "El resultado principal es la presión arterial durante el ensayo, no una medición directa de infartos evitados a largo plazo.",
+  "original": "https://doi.org/10.1056/nejm199704173361601",
+  "identificador": "10.1056/nejm199704173361601",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1056/nejm199704173361601",
+  "sha256": "37e79d08c2c6a7662e2cf786e7158370866e9ca47bf8efddb70eed3b96d366ed",
+  "autores": [
+   {
+    "nombre": "Lawrence J. Appel",
+    "orcid": null
+   },
+   {
+    "nombre": "Thomas J. Moore",
+    "orcid": null
+   },
+   {
+    "nombre": "Eva Obarzanek",
+    "orcid": null
+   },
+   {
+    "nombre": "William M. Vollmer",
+    "orcid": null
+   },
+   {
+    "nombre": "Laura P. Svetkey",
+    "orcid": null
+   },
+   {
+    "nombre": "Frank M. Sacks",
+    "orcid": null
+   },
+   {
+    "nombre": "George A. Bray",
+    "orcid": null
+   },
+   {
+    "nombre": "Thomas M. Vogt",
+    "orcid": null
+   },
+   {
+    "nombre": "Jeffrey A. Cutler",
+    "orcid": null
+   },
+   {
+    "nombre": "Marlene M. Windhauser",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 19,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "sal"
+  ],
+  "relacionadas": [
+   "sal"
+  ]
+ },
+ {
+  "id": "dirac",
+  "titulo": "Cuando la carga en grafeno se comporta de otro modo",
+  "tituloOriginal": "Two-dimensional gas of massless Dirac fermions in graphene",
+  "ideaId": "grafeno",
+  "disciplinaId": "materiales",
+  "fecha": "2005-11",
+  "anio": 2005,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Experimento",
+  "lectura": "Las mediciones de transporte en grafeno mostraron un comportamiento compatible con portadores descritos como fermiones de Dirac sin masa efectiva en el modelo.",
+  "cautela": "Es una descripción de cuasipartículas en un material, no una afirmación de que los electrones libres pierdan su masa.",
+  "original": "https://doi.org/10.1038/nature04233",
+  "identificador": "10.1038/nature04233",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/nature04233",
+  "sha256": "3ce42a5e3330a54344f6e9ed83c9c3cfbae0b9ba00ded87153ef1b4e0c7b99d2",
+  "autores": [
+   {
+    "nombre": "K. S. Novoselov",
+    "orcid": null
+   },
+   {
+    "nombre": "A. K. Geim",
+    "orcid": null
+   },
+   {
+    "nombre": "S. V. Morozov",
+    "orcid": null
+   },
+   {
+    "nombre": "D. Jiang",
+    "orcid": null
+   },
+   {
+    "nombre": "M. I. Katsnelson",
+    "orcid": null
+   },
+   {
+    "nombre": "I. V. Grigorieva",
+    "orcid": null
+   },
+   {
+    "nombre": "S. V. Dubonos",
+    "orcid": null
+   },
+   {
+    "nombre": "A. A. Firsov",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 8,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "lamina"
+  ],
+  "citadaPor": [
+   "revision-grafeno"
+  ],
+  "relacionadas": [
+   "lamina",
+   "revision-grafeno"
+  ]
+ },
+ {
+  "id": "entropia",
+  "titulo": "Una nueva herramienta para el flujo de Ricci",
+  "tituloOriginal": "The entropy formula for the Ricci flow and its geometric applications",
+  "ideaId": "geometria",
+  "disciplinaId": "matematicas",
+  "fecha": "2002-11-11",
+  "anio": 2002,
+  "medio": "arXiv",
+  "tipo": "preprint",
+  "arbitraje": "repositorio",
+  "nivel": "demostracion",
+  "nivelEtiqueta": "Argumento matemático",
+  "lectura": "Perelman presentó una fórmula de entropía y resultados sobre el flujo de Ricci, dentro del programa geométrico para estudiar variedades tridimensionales.",
+  "cautela": "Este primer manuscrito no es por sí solo toda la demostración de la conjetura de Poincaré.",
+  "original": "https://arxiv.org/abs/math/0211159v1",
+  "identificador": "math/0211159v1",
+  "idTipo": "arxiv",
+  "metadatos": "https://arxiv.org/abs/math/0211159v1",
+  "sha256": "0b975cc4468fe6203ca5e306799ff611d28216454aa653239e479b100da241e5",
+  "autores": [
+   {
+    "nombre": "Perelman, Grisha",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "espectro",
+  "titulo": "COBE examina el espectro del fondo de microondas",
+  "tituloOriginal": "A preliminary measurement of the cosmic microwave background spectrum by the Cosmic Background Explorer (COBE) satellite",
+  "ideaId": "fondo",
+  "disciplinaId": "fisica",
+  "fecha": "1990-05",
+  "anio": 1990,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Medición",
+  "lectura": "El instrumento FIRAS a bordo de COBE midió un espectro consistente con radiación de cuerpo negro. El contraste con modelos ya no descansaba en una sola frecuencia.",
+  "cautela": "Es una medición de espectro, distinta de la búsqueda de anisotropías en el cielo.",
+  "original": "https://doi.org/10.1086/185717",
+  "identificador": "10.1086/185717",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/185717",
+  "sha256": "540e29000de64c82752fc163e91dd3d530e41a9a6b01feb83be880e34f9d1e1a",
+  "autores": [
+   {
+    "nombre": "J. C. Mather",
+    "orcid": null
+   },
+   {
+    "nombre": "E. S. Cheng",
+    "orcid": null
+   },
+   {
+    "nombre": "R. E., Jr. Eplee",
+    "orcid": null
+   },
+   {
+    "nombre": "R. B. Isaacman",
+    "orcid": null
+   },
+   {
+    "nombre": "S. S. Meyer",
+    "orcid": null
+   },
+   {
+    "nombre": "R. A. Shafer",
+    "orcid": null
+   },
+   {
+    "nombre": "R. Weiss",
+    "orcid": null
+   },
+   {
+    "nombre": "E. L. Wright",
+    "orcid": null
+   },
+   {
+    "nombre": "C. L. Bennett",
+    "orcid": null
+   },
+   {
+    "nombre": "N. W. Boggess",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 21,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "extincion",
+  "titulo": "Cuándo se extingue el flujo en tiempo finito",
+  "tituloOriginal": "Finite extinction time for the solutions to the Ricci flow on certain three-manifolds",
+  "ideaId": "geometria",
+  "disciplinaId": "matematicas",
+  "fecha": "2003-07-17",
+  "anio": 2003,
+  "medio": "arXiv",
+  "tipo": "preprint",
+  "arbitraje": "repositorio",
+  "nivel": "demostracion",
+  "nivelEtiqueta": "Argumento matemático",
+  "lectura": "El tercer manuscrito abordó la extinción en tiempo finito para determinadas variedades. Es una pieza del argumento que conduce al caso de Poincaré.",
+  "cautela": "El enunciado tiene hipótesis matemáticas específicas; no afirma que cualquier variedad se extinga de la misma manera.",
+  "original": "https://arxiv.org/abs/math/0307245v1",
+  "identificador": "math/0307245v1",
+  "idTipo": "arxiv",
+  "metadatos": "https://arxiv.org/abs/math/0307245v1",
+  "sha256": "0aaa7e756029a9e6003654c41a7c560034a0c41954517c77b2e9256a08238f42",
+  "autores": [
+   {
+    "nombre": "Perelman, Grisha",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "fallas",
+  "titulo": "Por qué una dorsal aparece desplazada",
+  "tituloOriginal": "A New Class of Faults and their Bearing on Continental Drift",
+  "ideaId": "placas",
+  "disciplinaId": "tierra",
+  "fecha": "1965-07",
+  "anio": 1965,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "hipotesis",
+  "nivelEtiqueta": "Modelo geométrico",
+  "lectura": "Wilson introdujo las fallas transformantes como conexiones entre límites de placas. La geometría permitía formular predicciones sobre el sentido del movimiento relativo.",
+  "cautela": "El modelo clasifica límites; no determina por sí solo cuándo ocurrirá un terremoto.",
+  "original": "https://doi.org/10.1038/207343a0",
+  "identificador": "10.1038/207343a0",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/207343a0",
+  "sha256": "1422e0728663d0c2806a631a0a32b519b09f00247b6283e4b0fd52c4fa34bcfe",
+  "autores": [
+   {
+    "nombre": "J. TUZO WILSON",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "pacifico",
+   "placas-rigidas"
+  ],
+  "relacionadas": [
+   "pacifico",
+   "placas-rigidas"
+  ]
+ },
+ {
+  "id": "framingham",
+  "titulo": "Seguir una cohorte para identificar factores de riesgo",
+  "tituloOriginal": "Factors of Risk in the Development of Coronary Heart Disease—Six-Year Follow-up Experience",
+  "ideaId": "corazon",
+  "disciplinaId": "medicina",
+  "fecha": "1961-07-01",
+  "anio": 1961,
+  "medio": "Annals of Internal Medicine",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "observacional",
+  "nivelEtiqueta": "Cohorte",
+  "lectura": "El seguimiento de Framingham relacionó características iniciales con enfermedad coronaria posterior. Ilustra cómo se formula una pregunta de riesgo a partir de observaciones longitudinales.",
+  "cautela": "Una asociación en una cohorte no basta para atribuir un efecto causal ni para trasladar una cifra a cualquier población.",
+  "original": "https://doi.org/10.7326/0003-4819-55-1-33",
+  "identificador": "10.7326/0003-4819-55-1-33",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.7326/0003-4819-55-1-33",
+  "sha256": "ddb91acfe1815aaffab9f24cb091a4a47425ef1a676513cdb3e0cfedd1c75a2f",
+  "autores": [
+   {
+    "nombre": "WILLIAM B. KANNEL",
+    "orcid": null
+   },
+   {
+    "nombre": "THOMAS R. DAWBER",
+    "orcid": null
+   },
+   {
+    "nombre": "ABRAHAM KAGAN",
+    "orcid": null
+   },
+   {
+    "nombre": "NICHOLAS REVOTSKIE",
+    "orcid": null
+   },
+   {
+    "nombre": "JOSEPH STOKES",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 5,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "giro",
+  "titulo": "Dos capas giradas y un nuevo régimen electrónico",
+  "tituloOriginal": "Unconventional superconductivity in magic-angle graphene superlattices",
+  "ideaId": "grafeno",
+  "disciplinaId": "materiales",
+  "fecha": "2018-03-05",
+  "anio": 2018,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Experimento",
+  "lectura": "Cao y colaboradores observaron superconductividad en dispositivos de grafeno bicapa girado cerca de un ángulo particular. El ángulo relativo se convirtió en una variable de estudio.",
+  "cautela": "El comportamiento depende de condiciones específicas, incluida la temperatura. No es superconductividad ambiental universal.",
+  "original": "https://doi.org/10.1038/nature26160",
+  "identificador": "10.1038/nature26160",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/nature26160",
+  "sha256": "6564eaf261eb3c2f1ebbd651e6c221d9f63063828bfab90704c3e1b33e9e60a7",
+  "autores": [
+   {
+    "nombre": "Yuan Cao",
+    "orcid": null
+   },
+   {
+    "nombre": "Valla Fatemi",
+    "orcid": null
+   },
+   {
+    "nombre": "Shiang Fang",
+    "orcid": null
+   },
+   {
+    "nombre": "Kenji Watanabe",
+    "orcid": null
+   },
+   {
+    "nombre": "Takashi Taniguchi",
+    "orcid": null
+   },
+   {
+    "nombre": "Efthimios Kaxiras",
+    "orcid": null
+   },
+   {
+    "nombre": "Pablo Jarillo-Herrero",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 7,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "hall",
+  "titulo": "Una segunda vía al efecto Hall en grafeno",
+  "tituloOriginal": "Experimental observation of the quantum Hall effect and Berry's phase in graphene",
+  "ideaId": "grafeno",
+  "disciplinaId": "materiales",
+  "fecha": "2005-11",
+  "anio": 2005,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Experimento",
+  "lectura": "Zhang y colaboradores observaron un efecto Hall cuántico inusual y una fase de Berry en grafeno. Se puede comparar el resultado con el de otro equipo publicado en el mismo número.",
+  "cautela": "La coincidencia se refiere a propiedades y condiciones concretas; no convierte todo sistema de carbono en grafeno.",
+  "original": "https://doi.org/10.1038/nature04235",
+  "identificador": "10.1038/nature04235",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/nature04235",
+  "sha256": "30e21f26063e4e85f3ec15b8dc1f5fb728aecdc0c8651bf98cf765636468481e",
+  "autores": [
+   {
+    "nombre": "Yuanbo Zhang",
+    "orcid": null
+   },
+   {
+    "nombre": "Yan-Wen Tan",
+    "orcid": null
+   },
+   {
+    "nombre": "Horst L. Stormer",
+    "orcid": null
+   },
+   {
+    "nombre": "Philip Kim",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 4,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "lamina"
+  ],
+  "citadaPor": [
+   "revision-grafeno"
+  ],
+  "relacionadas": [
+   "lamina",
+   "revision-grafeno"
+  ]
+ },
+ {
+  "id": "hielo",
+  "titulo": "Un registro antártico de varios ciclos glaciares",
+  "tituloOriginal": "Climate and atmospheric history of the past 420,000 years from the Vostok ice core, Antarctica",
+  "ideaId": "clima",
+  "disciplinaId": "tierra",
+  "fecha": "1999-06",
+  "anio": 1999,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Reconstrucción",
+  "lectura": "El testigo de hielo de Vostok permitió reconstruir variaciones de clima y composición atmosférica a lo largo de unos 420 000 años. El archivo amplía la escala temporal de las observaciones.",
+  "cautela": "Los indicadores del hielo y las burbujas de aire tienen cronologías y significados distintos. La covariación no fija por sí sola todas las causas.",
+  "original": "https://doi.org/10.1038/20859",
+  "identificador": "10.1038/20859",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/20859",
+  "sha256": "35e8a3b2d5d069c6edac664742ab1a0d9bad0da68a5acdd8950f6b1ed8c1e608",
+  "autores": [
+   {
+    "nombre": "J. R. Petit",
+    "orcid": null
+   },
+   {
+    "nombre": "J. Jouzel",
+    "orcid": null
+   },
+   {
+    "nombre": "D. Raynaud",
+    "orcid": null
+   },
+   {
+    "nombre": "N. I. Barkov",
+    "orcid": null
+   },
+   {
+    "nombre": "J.-M. Barnola",
+    "orcid": null
+   },
+   {
+    "nombre": "I. Basile",
+    "orcid": null
+   },
+   {
+    "nombre": "M. Bender",
+    "orcid": null
+   },
+   {
+    "nombre": "J. Chappellaz",
+    "orcid": null
+   },
+   {
+    "nombre": "M. Davis",
+    "orcid": null
+   },
+   {
+    "nombre": "G. Delaygue",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 19,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "imagen-rm",
+  "titulo": "Convertir una señal de resonancia en una imagen",
+  "tituloOriginal": "Image Formation by Induced Local Interactions: Examples Employing Nuclear Magnetic Resonance",
+  "ideaId": "resonancia",
+  "disciplinaId": "medicina",
+  "fecha": "1973-03",
+  "anio": 1973,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Prueba de concepto",
+  "lectura": "Lauterbur mostró que la variación espacial del campo permite distinguir el origen de señales de resonancia magnética y reconstruir una imagen.",
+  "cautela": "Es una demostración del principio de imagen, no una validación clínica de cualquier aplicación posterior.",
+  "original": "https://doi.org/10.1038/242190a0",
+  "identificador": "10.1038/242190a0",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/242190a0",
+  "sha256": "4876a79c51401b985b85d4ddea8b1a4fd64c4b34a7f86dafaa929ea31a9468a3",
+  "autores": [
+   {
+    "nombre": "P. C. LAUTERBUR",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "interheart",
+  "titulo": "Comparar factores asociados al infarto en 52 países",
+  "tituloOriginal": "Effect of potentially modifiable risk factors associated with myocardial infarction in 52 countries (the INTERHEART study): case-control study",
+  "ideaId": "corazon",
+  "disciplinaId": "medicina",
+  "fecha": "2004-09",
+  "anio": 2004,
+  "medio": "The Lancet",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "observacional",
+  "nivelEtiqueta": "Casos y controles",
+  "lectura": "INTERHEART comparó personas con y sin infarto en numerosos países. El estudio examinó factores modificables y la consistencia de las asociaciones entre poblaciones.",
+  "cautela": "Es un estudio de casos y controles. No tiene la misma capacidad de identificar causalidad que un ensayo aleatorizado.",
+  "original": "https://doi.org/10.1016/s0140-6736(04)17018-9",
+  "identificador": "10.1016/s0140-6736(04)17018-9",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1016/s0140-6736%2804%2917018-9",
+  "sha256": "abeec77f988b724623349c78965c512281e04b8d7e2b774cb07a031a76caa6c2",
+  "autores": [
+   {
+    "nombre": "Salim Yusuf",
+    "orcid": null
+   },
+   {
+    "nombre": "Steven Hawken",
+    "orcid": null
+   },
+   {
+    "nombre": "Stephanie Ôunpuu",
+    "orcid": null
+   },
+   {
+    "nombre": "Tony Dans",
+    "orcid": null
+   },
+   {
+    "nombre": "Alvaro Avezum",
+    "orcid": null
+   },
+   {
+    "nombre": "Fernando Lanas",
+    "orcid": null
+   },
+   {
+    "nombre": "Matthew McQueen",
+    "orcid": null
+   },
+   {
+    "nombre": "Andrzej Budaj",
+    "orcid": null
+   },
+   {
+    "nombre": "Prem Pais",
+    "orcid": null
+   },
+   {
+    "nombre": "John Varigos",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 11,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "interpretacion",
+  "titulo": "Una interpretación cosmológica para la señal",
+  "tituloOriginal": "Cosmic Black-Body Radiation.",
+  "ideaId": "fondo",
+  "disciplinaId": "fisica",
+  "fecha": "1965-07",
+  "anio": 1965,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "hipotesis",
+  "nivelEtiqueta": "Interpretación",
+  "lectura": "Dicke, Peebles, Roll y Wilkinson relacionaron la posibilidad de radiación residual de un universo caliente con la señal de radio observada.",
+  "cautela": "Explicar un exceso de antena no equivale a medir la forma de todo el espectro.",
+  "original": "https://doi.org/10.1086/148306",
+  "identificador": "10.1086/148306",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/148306",
+  "sha256": "1dfc929cff789bdfe09d209e7b4a1ed612de45381e30aff2d2a7422e68ee7be0",
+  "autores": [
+   {
+    "nombre": "R. H. Dicke",
+    "orcid": null
+   },
+   {
+    "nombre": "P. J. E. Peebles",
+    "orcid": null
+   },
+   {
+    "nombre": "P. G. Roll",
+    "orcid": null
+   },
+   {
+    "nombre": "D. T. Wilkinson",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 4,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "keeling",
+  "titulo": "Medir el CO2 atmosférico con una referencia estable",
+  "tituloOriginal": "The Concentration and Isotopic Abundances of Carbon Dioxide in the Atmosphere",
+  "ideaId": "clima",
+  "disciplinaId": "tierra",
+  "fecha": "1960-01-01",
+  "anio": 1960,
+  "medio": "Tellus",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Medición",
+  "lectura": "Keeling presentó medidas de concentración y composición isotópica del dióxido de carbono. Las observaciones precisas permiten separar variabilidad local de señales de fondo.",
+  "cautela": "Una concentración no mide por sí sola la temperatura ni atribuye todo cambio climático a una sola causa.",
+  "original": "https://doi.org/10.1111/j.2153-3490.1960.tb01300.x",
+  "identificador": "10.1111/j.2153-3490.1960.tb01300.x",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1111/j.2153-3490.1960.tb01300.x",
+  "sha256": "b57d8b35ebb2772242b81de4557c62f786c8bd26531c873f027a5b62e7fa8c90",
+  "autores": [
+   {
+    "nombre": "Charles D. Keeling",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": "A systematic variation with season and latitude in the concentration and isotopic abundance of atmospheric carbon dioxide has been found in the northern hemisphere. In Antarctica, however, a small but persistent increase in concentration has been found. Possible causes for these variations are discussed.",
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "lamina",
+  "titulo": "Medir una película de carbono de una sola capa",
+  "tituloOriginal": "Electric Field Effect in Atomically Thin Carbon Films",
+  "ideaId": "grafeno",
+  "disciplinaId": "materiales",
+  "fecha": "2004-10-22",
+  "anio": 2004,
+  "medio": "Science",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Experimento",
+  "lectura": "Novoselov y colaboradores aislaron películas muy finas de carbono y midieron cómo variaba su conducción eléctrica. El grafeno pasó a ser una plataforma experimental accesible.",
+  "cautela": "Aislar y medir láminas pequeñas no resuelve la fabricación industrial uniforme.",
+  "original": "https://doi.org/10.1126/science.1102896",
+  "identificador": "10.1126/science.1102896",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1126/science.1102896",
+  "sha256": "77cbc0686711524c0586ce2429bc5fce0022ed1727d6f4b37d6a2cef93125fcd",
+  "autores": [
+   {
+    "nombre": "K. S. Novoselov",
+    "orcid": null
+   },
+   {
+    "nombre": "A. K. Geim",
+    "orcid": null
+   },
+   {
+    "nombre": "S. V. Morozov",
+    "orcid": null
+   },
+   {
+    "nombre": "D. Jiang",
+    "orcid": null
+   },
+   {
+    "nombre": "Y. Zhang",
+    "orcid": null
+   },
+   {
+    "nombre": "S. V. Dubonos",
+    "orcid": null
+   },
+   {
+    "nombre": "I. V. Grigorieva",
+    "orcid": null
+   },
+   {
+    "nombre": "A. A. Firsov",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 8,
+  "resumenOriginal": "We describe monocrystalline graphitic films, which are a few atoms thick but are nonetheless stable under ambient conditions, metallic, and of remarkably high quality. The films are found to be a two-dimensional semimetal with a tiny overlap between valence and conductance bands, and they exhibit a strong ambipolar electric field effect such that electrons and holes in concentrations up to 10 13 per square centimeter and with room-temperature mobilities of ∼10,000 square centimeters per volt-second can be induced by applying gate voltage.",
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "dirac",
+   "hall",
+   "revision-grafeno"
+  ],
+  "relacionadas": [
+   "dirac",
+   "hall",
+   "revision-grafeno"
+  ]
+ },
+ {
+  "id": "morvel",
+  "titulo": "Recalcular los movimientos relativos de las placas",
+  "tituloOriginal": "Geologically current plate motions",
+  "ideaId": "placas",
+  "disciplinaId": "tierra",
+  "fecha": "2010-04",
+  "anio": 2010,
+  "medio": "Geophysical Journal International",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Estimación",
+  "lectura": "MORVEL integró observaciones geológicas y geofísicas para estimar movimientos relativos de las placas en tiempos geológicamente recientes.",
+  "cautela": "Una velocidad promediada en un intervalo geológico no es una predicción de desplazamiento para un terremoto concreto.",
+  "original": "https://doi.org/10.1111/j.1365-246x.2009.04491.x",
+  "identificador": "10.1111/j.1365-246x.2009.04491.x",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1111/j.1365-246x.2009.04491.x",
+  "sha256": "00fc78835191ab77220dca31d5011a4daedf2ceca4ba5cce2c7673162fb695ea",
+  "autores": [
+   {
+    "nombre": "Charles DeMets",
+    "orcid": null
+   },
+   {
+    "nombre": "Richard G. Gordon",
+    "orcid": null
+   },
+   {
+    "nombre": "Donald F. Argus",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 3,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "notas",
+  "titulo": "Examinar y completar los detalles del argumento",
+  "tituloOriginal": "Notes on Perelman’s papers",
+  "ideaId": "geometria",
+  "disciplinaId": "matematicas",
+  "fecha": "2008-11-06",
+  "anio": 2008,
+  "medio": "Geometry &amp; Topology",
+  "tipo": "revision",
+  "arbitraje": "revista",
+  "nivel": "sintesis",
+  "nivelEtiqueta": "Exposición matemática",
+  "lectura": "Kleiner y Lott desarrollaron una exposición detallada de los argumentos de Perelman. Ofrece un camino para verificar los pasos del razonamiento.",
+  "cautela": "No es una replicación experimental: en matemáticas la verificación consiste en comprobar implicaciones lógicas y sus hipótesis.",
+  "original": "https://doi.org/10.2140/gt.2008.12.2587",
+  "identificador": "10.2140/gt.2008.12.2587",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.2140/gt.2008.12.2587",
+  "sha256": "ea4b61d568f5459b4a85efa05193806c9f3191880cfd104cdbaeab90066c6320",
+  "autores": [
+   {
+    "nombre": "Bruce Kleiner",
+    "orcid": null
+   },
+   {
+    "nombre": "John Lott",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "onda-v1",
+  "titulo": "GW150914: el manuscrito público",
+  "tituloOriginal": "Observation of Gravitational Waves from a Binary Black Hole Merger",
+  "ideaId": "ondas",
+  "disciplinaId": "fisica",
+  "fecha": "2016-02-11",
+  "anio": 2016,
+  "medio": "arXiv",
+  "tipo": "preprint",
+  "arbitraje": "repositorio",
+  "nivel": "registro",
+  "nivelEtiqueta": "Versión v1",
+  "lectura": "La colaboración depositó en arXiv su análisis de la señal GW150914. Este registro permite consultar la primera versión pública del manuscrito.",
+  "cautela": "Es la misma observación que el artículo de Physical Review Letters, no una replicación. El depósito no constituye arbitraje.",
+  "original": "https://arxiv.org/abs/1602.03837v1",
+  "identificador": "1602.03837v1",
+  "idTipo": "arxiv",
+  "metadatos": "https://arxiv.org/abs/1602.03837v1",
+  "sha256": "26825f5bf7eaef2c3943b0696d5511e6b68864cfb993675b3e6e764ca738185d",
+  "autores": [
+   {
+    "nombre": "The LIGO Scientific Collaboration",
+    "orcid": null
+   },
+   {
+    "nombre": "the Virgo Collaboration",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": "10.1103/PhysRevLett.116.061102",
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "ondas-bh",
+  "titulo": "La primera detección directa de ondas gravitacionales",
+  "tituloOriginal": "Observation of Gravitational Waves from a Binary Black Hole Merger",
+  "ideaId": "ondas",
+  "disciplinaId": "fisica",
+  "fecha": "2016-02-11",
+  "anio": 2016,
+  "medio": "Physical Review Letters",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Detección",
+  "lectura": "Los dos detectores de Advanced LIGO registraron una señal coherente con la fusión de dos agujeros negros. El trabajo contrasta la señal con el ruido y con formas de onda calculadas.",
+  "cautela": "La señal llegó el 14 de septiembre de 2015; el artículo se publicó en 2016. Las masas y la distancia se infieren con modelos, no son lecturas directas.",
+  "original": "https://doi.org/10.1103/physrevlett.116.061102",
+  "identificador": "10.1103/physrevlett.116.061102",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1103/physrevlett.116.061102",
+  "sha256": "29a1ba2e92a73e44dfa74fe62fb5b955802188dc6fb5a716e9052778ffd1db9c",
+  "autores": [
+   {
+    "nombre": "B. P. Abbott",
+    "orcid": null
+   },
+   {
+    "nombre": "R. Abbott",
+    "orcid": null
+   },
+   {
+    "nombre": "T. D. Abbott",
+    "orcid": null
+   },
+   {
+    "nombre": "M. R. Abernathy",
+    "orcid": null
+   },
+   {
+    "nombre": "F. Acernese",
+    "orcid": null
+   },
+   {
+    "nombre": "K. Ackley",
+    "orcid": null
+   },
+   {
+    "nombre": "C. Adams",
+    "orcid": null
+   },
+   {
+    "nombre": "T. Adams",
+    "orcid": null
+   },
+   {
+    "nombre": "P. Addesso",
+    "orcid": null
+   },
+   {
+    "nombre": "R. X. Adhikari",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1012,
+  "resumenOriginal": "On September 14, 2015 at 09:50:45 UTC the two detectors of the Laser Interferometer Gravitational-Wave Observatory simultaneously observed a transient gravitational-wave signal. The signal sweeps upwards in frequency from 35 to 250 Hz with a peak gravitational-wave strain of 1.0 × 10 − 21 . It matches the waveform predicted by general relativity for the inspiral and merger of a pair of black holes and the ringdown of the resulting single black hole. The signal was observed with a matched-filter signal-to-noise ratio of 24 and a false alarm rate estimated to be less than 1 event per 203 000 years, equivalent to a significance greater than 5.1 σ . The source lies at a luminosity distance of 41 0 − 180 + 160 Mpc corresponding to a redshift z = 0.0 9 − 0.04 + 0.03 . In the source frame, the initial black hole masses are 3 6 − 4 + 5 M ⊙ and 2 9 − 4 + 4 M ⊙ , and the final black hole mass is 6 2 − 4 + 4 M ⊙ , with 3. 0 − 0.5 + 0.5 M ⊙ c 2 radiated in gravitational waves. All uncertainties define 90% credible intervals. These observations demonstrate the existence of binary stellar-mass black hole systems. This is the first direct detection of gravitational waves and the first observation of a binary black hole merger. Published by the American Physical Society 2016",
+  "versionDe": null,
+  "referencias": [
+   "orbita",
+   "pulso"
+  ],
+  "citadaPor": [
+   "ondas-ns"
+  ],
+  "relacionadas": [
+   "ondas-ns",
+   "orbita",
+   "pulso"
+  ]
+ },
+ {
+  "id": "ondas-ns",
+  "titulo": "El rastro de dos estrellas de neutrones",
+  "tituloOriginal": "GW170817: Observation of Gravitational Waves from a Binary Neutron Star Inspiral",
+  "ideaId": "ondas",
+  "disciplinaId": "fisica",
+  "fecha": "2017-10-16",
+  "anio": 2017,
+  "medio": "Physical Review Letters",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Nueva observación",
+  "lectura": "GW170817 mostró una señal de inspiral compatible con una binaria de estrellas de neutrones. Extendió esta forma de observación a otra clase de fuentes compactas.",
+  "cautela": "Es otro suceso, no una segunda versión de GW150914. La señal gravitacional y las observaciones electromagnéticas son mediciones distintas.",
+  "original": "https://doi.org/10.1103/physrevlett.119.161101",
+  "identificador": "10.1103/physrevlett.119.161101",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1103/physrevlett.119.161101",
+  "sha256": "6147687a42c4952c35771bfa9716a1a6b5860a48a94afe041c7d7207cca6b200",
+  "autores": [
+   {
+    "nombre": "B. P. Abbott",
+    "orcid": null
+   },
+   {
+    "nombre": "R. Abbott",
+    "orcid": null
+   },
+   {
+    "nombre": "T. D. Abbott",
+    "orcid": null
+   },
+   {
+    "nombre": "F. Acernese",
+    "orcid": null
+   },
+   {
+    "nombre": "K. Ackley",
+    "orcid": null
+   },
+   {
+    "nombre": "C. Adams",
+    "orcid": null
+   },
+   {
+    "nombre": "T. Adams",
+    "orcid": null
+   },
+   {
+    "nombre": "P. Addesso",
+    "orcid": null
+   },
+   {
+    "nombre": "R. X. Adhikari",
+    "orcid": null
+   },
+   {
+    "nombre": "V. B. Adya",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1125,
+  "resumenOriginal": "On August 17, 2017 at 12∶41:04 UTC the Advanced LIGO and Advanced Virgo gravitational-wave detectors made their first observation of a binary neutron star inspiral. The signal, GW170817, was detected with a combined signal-to-noise ratio of 32.4 and a false-alarm-rate estimate of less than one per 8.0 × 10 4 years . We infer the component masses of the binary to be between 0.86 and 2.26 M ⊙ , in agreement with masses of known neutron stars. Restricting the component spins to the range inferred in binary neutron stars, we find the component masses to be in the range 1.17 – 1.60 M ⊙ , with the total mass of the system 2.7 4 − 0.01 + 0.04 M ⊙ . The source was localized within a sky region of 28 deg 2 (90% probability) and had a luminosity distance of 4 0 − 14 + 8 Mpc , the closest and most precisely localized gravitational-wave signal yet. The association with the γ -ray burst GRB 170817A, detected by Fermi-GBM 1.7 s after the coalescence, corroborates the hypothesis of a neutron star merger and provides the first direct evidence of a link between these mergers and short γ -ray bursts. Subsequent identification of transient counterparts across the electromagnetic spectrum in the same location further supports the interpretation of this event as a neutron star merger. This unprecedented joint gravitational and electromagnetic observation provides insight into astrophysics, dense matter, gravitation, and cosmology. Published by the American Physical Society 2017",
+  "versionDe": null,
+  "referencias": [
+   "ondas-bh",
+   "orbita",
+   "pulso"
+  ],
+  "citadaPor": [
+   "planck"
+  ],
+  "relacionadas": [
+   "ondas-bh",
+   "orbita",
+   "planck",
+   "pulso"
+  ]
+ },
+ {
+  "id": "orbita",
+  "titulo": "Una órbita que pierde energía",
+  "tituloOriginal": "A new test of general relativity - Gravitational radiation and the binary pulsar PSR 1913+16",
+  "ideaId": "ondas",
+  "disciplinaId": "fisica",
+  "fecha": "1982-02",
+  "anio": 1982,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Medición indirecta",
+  "lectura": "Taylor y Weisberg compararon el cambio del período orbital con la pérdida de energía predicha por la relatividad general. La concordancia aportó una prueba indirecta de radiación gravitacional.",
+  "cautela": "Se miden tiempos de pulsos y se infiere la radiación. Es distinto de medir una perturbación en un interferómetro.",
+  "original": "https://doi.org/10.1086/159690",
+  "identificador": "10.1086/159690",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/159690",
+  "sha256": "6f71ab76f1d71703b7ec10923a9c3eeceb547044cabb6a17fa103af573f6c3f3",
+  "autores": [
+   {
+    "nombre": "J. H. Taylor",
+    "orcid": null
+   },
+   {
+    "nombre": "J. M. Weisberg",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "ondas-bh",
+   "ondas-ns"
+  ],
+  "relacionadas": [
+   "ondas-bh",
+   "ondas-ns"
+  ]
+ },
+ {
+  "id": "oxigenacion",
+  "titulo": "El oxígeno de la sangre cambia el contraste",
+  "tituloOriginal": "Brain magnetic resonance imaging with contrast dependent on blood oxygenation.",
+  "ideaId": "resonancia",
+  "disciplinaId": "medicina",
+  "fecha": "1990-12",
+  "anio": 1990,
+  "medio": "Proceedings of the National Academy of Sciences",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Experimento",
+  "lectura": "Ogawa y colaboradores mostraron en animales que el contraste de resonancia depende de la oxigenación sanguínea. El trabajo proporcionó la base física de la señal BOLD.",
+  "cautela": "El contraste refleja condiciones de la sangre. No mide directamente impulsos de neuronas ni pensamientos.",
+  "original": "https://doi.org/10.1073/pnas.87.24.9868",
+  "identificador": "10.1073/pnas.87.24.9868",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1073/pnas.87.24.9868",
+  "sha256": "6b391c79c13eacaf2d69b6da254611194cb1d5abf7517fc6a6f5b7d33f18c4ba",
+  "autores": [
+   {
+    "nombre": "S Ogawa",
+    "orcid": null
+   },
+   {
+    "nombre": "T M Lee",
+    "orcid": null
+   },
+   {
+    "nombre": "A R Kay",
+    "orcid": null
+   },
+   {
+    "nombre": "D W Tank",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 4,
+  "resumenOriginal": "Paramagnetic deoxyhemoglobin in venous blood is a naturally occurring contrast agent for magnetic resonance imaging (MRI). By accentuating the effects of this agent through the use of gradient-echo techniques in high fields, we demonstrate in vivo images of brain microvasculature with image contrast reflecting the blood oxygen level. This blood oxygenation level-dependent (BOLD) contrast follows blood oxygen changes induced by anesthetics, by insulin-induced hypoglycemia, and by inhaled gas mixtures that alter metabolic demand or blood flow. The results suggest that BOLD contrast can be used to provide in vivo real-time maps of blood oxygenation in the brain under normal physiological conditions. BOLD contrast adds an additional feature to magnetic resonance imaging and complements other techniques that are attempting to provide positron emission tomography-like measurements related to regional neural activity.",
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "pacifico",
+  "titulo": "Mover placas sobre una esfera",
+  "tituloOriginal": "The North Pacific: an Example of Tectonics on a Sphere",
+  "ideaId": "placas",
+  "disciplinaId": "tierra",
+  "fecha": "1967-12",
+  "anio": 1967,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Modelo y contraste",
+  "lectura": "McKenzie y Parker describieron movimientos relativos en el Pacífico Norte mediante rotaciones sobre una esfera y los contrastaron con observaciones geofísicas.",
+  "cautela": "La placa rígida es una aproximación. La deformación distribuida no desaparece porque el modelo la omita.",
+  "original": "https://doi.org/10.1038/2161276a0",
+  "identificador": "10.1038/2161276a0",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/2161276a0",
+  "sha256": "219596b4d4a4088f8ef0948098aaf86d3e3a7ae99fba96588108350d2e26cf50",
+  "autores": [
+   {
+    "nombre": "D. P. McKENZIE",
+    "orcid": null
+   },
+   {
+    "nombre": "R. L. PARKER",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "bandas",
+   "fallas"
+  ],
+  "citadaPor": [],
+  "relacionadas": [
+   "bandas",
+   "fallas"
+  ]
+ },
+ {
+  "id": "pegaso",
+  "titulo": "Un planeta alrededor de 51 Pegasi",
+  "tituloOriginal": "A Jupiter-mass companion to a solar-type star",
+  "ideaId": "planetas",
+  "disciplinaId": "astronomia",
+  "fecha": "1995-11",
+  "anio": 1995,
+  "medio": "Nature",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Detección indirecta",
+  "lectura": "Mayor y Queloz midieron una oscilación de velocidad en una estrella de tipo solar. Su periodicidad apuntaba a una compañera de masa planetaria y período corto.",
+  "cautela": "No era el primer exoplaneta de cualquier tipo. La velocidad radial por sí sola restringe una masa mínima, no ofrece una imagen del planeta.",
+  "original": "https://doi.org/10.1038/378355a0",
+  "identificador": "10.1038/378355a0",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/378355a0",
+  "sha256": "e6b99296179d63e8a0299c43fad0a533fdf9c774970ac686878be7c27463459a",
+  "autores": [
+   {
+    "nombre": "Michel Mayor",
+    "orcid": null
+   },
+   {
+    "nombre": "Didier Queloz",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "transito",
+   "transito-henry"
+  ],
+  "relacionadas": [
+   "transito",
+   "transito-henry"
+  ]
+ },
+ {
+  "id": "placas-rigidas",
+  "titulo": "Una Tierra dividida en bloques móviles",
+  "tituloOriginal": "Rises, trenches, great faults, and crustal blocks",
+  "ideaId": "placas",
+  "disciplinaId": "tierra",
+  "fecha": "1968-03-15",
+  "anio": 1968,
+  "medio": "Journal of Geophysical Research",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Modelo y contraste",
+  "lectura": "Morgan articuló un modelo de bloques de corteza en movimiento relativo que conecta dorsales, fosas y grandes fallas. La rotación de cada par organiza observaciones dispersas.",
+  "cautela": "El modelo cinemático describe movimientos; no basta para determinar qué fuerzas los impulsan.",
+  "original": "https://doi.org/10.1029/jb073i006p01959",
+  "identificador": "10.1029/jb073i006p01959",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1029/jb073i006p01959",
+  "sha256": "3d08c68e5d8ef5980a008e7a6723075b0f1338f7e70c758b76c75510ecf75720",
+  "autores": [
+   {
+    "nombre": "W. Jason Morgan",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "fallas"
+  ],
+  "citadaPor": [],
+  "relacionadas": [
+   "fallas"
+  ]
+ },
+ {
+  "id": "planck",
+  "titulo": "Qué parámetros cosmológicos restringe el fondo",
+  "tituloOriginal": "<i>Planck</i> 2018 results",
+  "ideaId": "fondo",
+  "disciplinaId": "fisica",
+  "fecha": "2020-09",
+  "anio": 2020,
+  "medio": "Astronomy &amp; Astrophysics",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "inferencia",
+  "nivelEtiqueta": "Inferencia con modelo",
+  "lectura": "El análisis final de Planck combina información del fondo de microondas para restringir parámetros cosmológicos bajo modelos explícitos, entre ellos ΛCDM.",
+  "cautela": "Los parámetros no se leen directamente del detector. Cambiar el modelo o la combinación de datos puede cambiar las inferencias.",
+  "original": "https://doi.org/10.1051/0004-6361/201833910",
+  "identificador": "10.1051/0004-6361/201833910",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1051/0004-6361/201833910",
+  "sha256": "fe4bd759504a31e7e97b464f52cc5a6adf7e2ac35a727aab8382b6452b3b3b5b",
+  "autores": [
+   {
+    "nombre": "Planck Collaboration",
+    "orcid": null
+   },
+   {
+    "nombre": "N. Aghanim",
+    "orcid": null
+   },
+   {
+    "nombre": "Y. Akrami",
+    "orcid": null
+   },
+   {
+    "nombre": "M. Ashdown",
+    "orcid": null
+   },
+   {
+    "nombre": "J. Aumont",
+    "orcid": null
+   },
+   {
+    "nombre": "C. Baccigalupi",
+    "orcid": null
+   },
+   {
+    "nombre": "M. Ballardini",
+    "orcid": null
+   },
+   {
+    "nombre": "A. J. Banday",
+    "orcid": null
+   },
+   {
+    "nombre": "R. B. Barreiro",
+    "orcid": null
+   },
+   {
+    "nombre": "N. Bartolo",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 182,
+  "resumenOriginal": "We present cosmological parameter results from the final full-mission Planck measurements of the cosmic microwave background (CMB) anisotropies, combining information from the temperature and polarization maps and the lensing reconstruction. Compared to the 2015 results, improved measurements of large-scale polarization allow the reionization optical depth to be measured with higher precision, leading to significant gains in the precision of other correlated parameters. Improved modelling of the small-scale polarization leads to more robust constraints on many parameters, with residual modelling uncertainties estimated to affect them only at the 0.5 σ level. We find good consistency with the standard spatially-flat 6-parameter ΛCDM cosmology having a power-law spectrum of adiabatic scalar perturbations (denoted “base ΛCDM” in this paper), from polarization, temperature, and lensing, separately and in combination. A combined analysis gives dark matter density Ω c h 2 = 0.120 ± 0.001, baryon density Ω b h 2 = 0.0224 ± 0.0001, scalar spectral index n s = 0.965 ± 0.004, and optical depth τ = 0.054 ± 0.007 (in this abstract we quote 68% confidence regions on measured parameters and 95% on upper limits). The angular acoustic scale is measured to 0.03% precision, with 100 θ * = 1.0411 ± 0.0003. These results are only weakly dependent on the cosmological model and remain stable, with somewhat increased errors, in many commonly considered extensions. Assuming the base-ΛCDM cosmology, the inferred (model-dependent) late-Universe parameters are: Hubble constant H 0 = (67.4 ± 0.5) km s −1 Mpc −1 ; matter density parameter Ω m = 0.315 ± 0.007; and matter fluctuation amplitude σ 8 = 0.811 ± 0.006. We find no compelling evidence for extensions to the base-ΛCDM model. Combining with baryon acoustic oscillation (BAO) measurements (and considering single-parameter extensions) we constrain the effective extra relativistic degrees of freedom to be N eff = 2.99 ± 0.17, in agreement with the Standard Model prediction N eff = 3.046, and find that the neutrino mass is tightly constrained to ∑ m ν < 0.12 eV. The CMB spectra continue to prefer higher lensing amplitudes than predicted in base ΛCDM at over 2 σ , which pulls some parameters that affect the lensing amplitude away from the ΛCDM model; however, this is not supported by the lensing reconstruction or (in models that also change the background geometry) BAO data. The joint constraint with BAO measurements on spatial curvature is consistent with a flat universe, Ω K = 0.001 ± 0.002. Also combining with Type Ia supernovae (SNe), the dark-energy equation of state parameter is measured to be w 0 = −1.03 ± 0.03, consistent with a cosmological constant. We find no evidence for deviations from a purely power-law primordial spectrum, and combining with data from BAO, BICEP2, and Keck Array data, we place a limit on the tensor-to-scalar ratio r 0.002 < 0.06. Standard big-bang nucleosynthesis predictions for the helium and deuterium abundances for the base-ΛCDM cosmology are in excellent agreement with observations. The Planck base-ΛCDM results are in good agreement with BAO, SNe, and some galaxy lensing observations, but in slight tension with the Dark Energy Survey’s combined-probe results including galaxy clustering (which prefers lower fluctuation amplitudes or matter density parameters), and in significant, 3.6 σ , tension with local measurements of the Hubble constant (which prefer a higher value). Simple model extensions that can partially resolve these tensions are not favoured by the Planck data.",
+  "versionDe": null,
+  "referencias": [
+   "anisotropia",
+   "ondas-ns",
+   "planck"
+  ],
+  "citadaPor": [
+   "planck"
+  ],
+  "relacionadas": [
+   "anisotropia",
+   "ondas-ns",
+   "planck"
+  ]
+ },
+ {
+  "id": "planck-v1",
+  "titulo": "Parámetros cosmológicos: la primera versión de Planck 2018",
+  "tituloOriginal": "Planck 2018 results. VI. Cosmological parameters",
+  "ideaId": "fondo",
+  "disciplinaId": "fisica",
+  "fecha": "2018-07-17",
+  "anio": 2018,
+  "medio": "arXiv",
+  "tipo": "preprint",
+  "arbitraje": "repositorio",
+  "nivel": "registro",
+  "nivelEtiqueta": "Versión v1",
+  "lectura": "El equipo depositó la versión inicial de su análisis de parámetros cosmológicos a partir de los datos de Planck. Permite comparar el manuscrito con la publicación posterior.",
+  "cautela": "La fecha del depósito es 2018. No debe contarse como un conjunto de datos independiente del artículo de revista.",
+  "original": "https://arxiv.org/abs/1807.06209v1",
+  "identificador": "1807.06209v1",
+  "idTipo": "arxiv",
+  "metadatos": "https://arxiv.org/abs/1807.06209v1",
+  "sha256": "de3d2814b9c41ea56f25be269a5a2f4d92c95a8edca1a17794559c6f941afc05",
+  "autores": [
+   {
+    "nombre": "Planck Collaboration",
+    "orcid": null
+   },
+   {
+    "nombre": "Aghanim, N.",
+    "orcid": null
+   },
+   {
+    "nombre": "Akrami, Y.",
+    "orcid": null
+   },
+   {
+    "nombre": "Ashdown, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Aumont, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Baccigalupi, C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Ballardini, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Banday, A. J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Barreiro, R. B.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bartolo, N.",
+    "orcid": null
+   },
+   {
+    "nombre": "Basak, S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Battye, R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Benabed, K.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bernard, J. -P.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bersanelli, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bielewicz, P.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bock, J. J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bond, J. R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Borrill, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bouchet, F. R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Boulanger, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Bucher, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Burigana, C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Butler, R. C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Calabrese, E.",
+    "orcid": null
+   },
+   {
+    "nombre": "Cardoso, J. -F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Carron, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Challinor, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Chiang, H. C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Chluba, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Colombo, L. P. L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Combet, C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Contreras, D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Crill, B. P.",
+    "orcid": null
+   },
+   {
+    "nombre": "Cuttaia, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "de Bernardis, P.",
+    "orcid": null
+   },
+   {
+    "nombre": "de Zotti, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Delabrouille, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Delouis, J. -M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Di Valentino, E.",
+    "orcid": null
+   },
+   {
+    "nombre": "Diego, J. M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Doré, O.",
+    "orcid": null
+   },
+   {
+    "nombre": "Douspis, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Ducout, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Dupac, X.",
+    "orcid": null
+   },
+   {
+    "nombre": "Dusini, S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Efstathiou, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Elsner, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Enßlin, T. A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Eriksen, H. K.",
+    "orcid": null
+   },
+   {
+    "nombre": "Fantaye, Y.",
+    "orcid": null
+   },
+   {
+    "nombre": "Farhang, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Fergusson, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Fernandez-Cobos, R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Finelli, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Forastieri, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Frailis, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Franceschi, E.",
+    "orcid": null
+   },
+   {
+    "nombre": "Frolov, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Galeotta, S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Galli, S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Ganga, K.",
+    "orcid": null
+   },
+   {
+    "nombre": "Génova-Santos, R. T.",
+    "orcid": null
+   },
+   {
+    "nombre": "Gerbino, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Ghosh, T.",
+    "orcid": null
+   },
+   {
+    "nombre": "González-Nuevo, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Górski, K. M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Gratton, S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Gruppuso, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Gudmundsson, J. E.",
+    "orcid": null
+   },
+   {
+    "nombre": "Hamann, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Handley, W.",
+    "orcid": null
+   },
+   {
+    "nombre": "Herranz, D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Hivon, E.",
+    "orcid": null
+   },
+   {
+    "nombre": "Huang, Z.",
+    "orcid": null
+   },
+   {
+    "nombre": "Jaffe, A. H.",
+    "orcid": null
+   },
+   {
+    "nombre": "Jones, W. C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Karakci, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Keihänen, E.",
+    "orcid": null
+   },
+   {
+    "nombre": "Keskitalo, R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Kiiveri, K.",
+    "orcid": null
+   },
+   {
+    "nombre": "Kim, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Kisner, T. S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Knox, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Krachmalnicoff, N.",
+    "orcid": null
+   },
+   {
+    "nombre": "Kunz, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Kurki-Suonio, H.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lagache, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lamarre, J. -M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lasenby, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lattanzi, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lawrence, C. R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Jeune, M. Le",
+    "orcid": null
+   },
+   {
+    "nombre": "Lemos, P.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lesgourgues, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Levrier, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lewis, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Liguori, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lilje, P. B.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lilley, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lindholm, V.",
+    "orcid": null
+   },
+   {
+    "nombre": "López-Caniego, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Lubin, P. M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Ma, Y. -Z.",
+    "orcid": null
+   },
+   {
+    "nombre": "Macías-Pérez, J. F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Maggio, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Maino, D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Mandolesi, N.",
+    "orcid": null
+   },
+   {
+    "nombre": "Mangilli, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Marcos-Caballero, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Maris, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Martin, P. G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Martinelli, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Martínez-González, E.",
+    "orcid": null
+   },
+   {
+    "nombre": "Matarrese, S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Mauri, N.",
+    "orcid": null
+   },
+   {
+    "nombre": "McEwen, J. D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Meinhold, P. R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Melchiorri, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Mennella, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Migliaccio, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Millea, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Mitra, S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Miville-Deschênes, M. -A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Molinari, D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Montier, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Morgante, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Moss, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Natoli, P.",
+    "orcid": null
+   },
+   {
+    "nombre": "Nørgaard-Nielsen, H. U.",
+    "orcid": null
+   },
+   {
+    "nombre": "Pagano, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Paoletti, D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Partridge, B.",
+    "orcid": null
+   },
+   {
+    "nombre": "Patanchon, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Peiris, H. V.",
+    "orcid": null
+   },
+   {
+    "nombre": "Perrotta, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Pettorino, V.",
+    "orcid": null
+   },
+   {
+    "nombre": "Piacentini, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Polastri, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Polenta, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Puget, J. -L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Rachen, J. P.",
+    "orcid": null
+   },
+   {
+    "nombre": "Reinecke, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Remazeilles, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Renzi, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Rocha, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Rosset, C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Roudier, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Rubiño-Martín, J. A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Ruiz-Granados, B.",
+    "orcid": null
+   },
+   {
+    "nombre": "Salvati, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Sandri, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Savelainen, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Scott, D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Shellard, E. P. S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Sirignano, C.",
+    "orcid": null
+   },
+   {
+    "nombre": "Sirri, G.",
+    "orcid": null
+   },
+   {
+    "nombre": "Spencer, L. D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Sunyaev, R.",
+    "orcid": null
+   },
+   {
+    "nombre": "Suur-Uski, A. -S.",
+    "orcid": null
+   },
+   {
+    "nombre": "Tauber, J. A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Tavagnacco, D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Tenti, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Toffolatti, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Tomasi, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Trombetti, T.",
+    "orcid": null
+   },
+   {
+    "nombre": "Valenziano, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Valiviita, J.",
+    "orcid": null
+   },
+   {
+    "nombre": "Van Tent, B.",
+    "orcid": null
+   },
+   {
+    "nombre": "Vibert, L.",
+    "orcid": null
+   },
+   {
+    "nombre": "Vielva, P.",
+    "orcid": null
+   },
+   {
+    "nombre": "Villa, F.",
+    "orcid": null
+   },
+   {
+    "nombre": "Vittorio, N.",
+    "orcid": null
+   },
+   {
+    "nombre": "Wandelt, B. D.",
+    "orcid": null
+   },
+   {
+    "nombre": "Wehus, I. K.",
+    "orcid": null
+   },
+   {
+    "nombre": "White, M.",
+    "orcid": null
+   },
+   {
+    "nombre": "White, S. D. M.",
+    "orcid": null
+   },
+   {
+    "nombre": "Zacchei, A.",
+    "orcid": null
+   },
+   {
+    "nombre": "Zonca, A.",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 179,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "pulso",
+  "titulo": "Un púlsar que comparte órbita",
+  "tituloOriginal": "Discovery of a pulsar in a binary system",
+  "ideaId": "ondas",
+  "disciplinaId": "fisica",
+  "fecha": "1975-01",
+  "anio": 1975,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Observación",
+  "lectura": "Las variaciones periódicas en el tiempo de llegada de los pulsos revelaron que PSR 1913+16 tenía una compañera. El sistema ofrecía un reloj natural para estudiar la gravedad.",
+  "cautela": "El artículo identifica el sistema binario; no registra directamente una onda gravitacional.",
+  "original": "https://doi.org/10.1086/181708",
+  "identificador": "10.1086/181708",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/181708",
+  "sha256": "9ab2a69f773ef28cf6ac6fb47db3a40b323f4eb6b46a4fe0f2e761cecf31a0ab",
+  "autores": [
+   {
+    "nombre": "R. A. Hulse",
+    "orcid": null
+   },
+   {
+    "nombre": "J. H. Taylor",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [
+   "ondas-bh",
+   "ondas-ns"
+  ],
+  "relacionadas": [
+   "ondas-bh",
+   "ondas-ns"
+  ]
+ },
+ {
+  "id": "revision-bold",
+  "titulo": "Qué puede decir —y qué no— una imagen funcional",
+  "tituloOriginal": "What we can do and what we cannot do with fMRI",
+  "ideaId": "resonancia",
+  "disciplinaId": "medicina",
+  "fecha": "2008-06",
+  "anio": 2008,
+  "medio": "Nature",
+  "tipo": "revision",
+  "arbitraje": "revista",
+  "nivel": "sintesis",
+  "nivelEtiqueta": "Revisión",
+  "lectura": "Logothetis revisó la relación entre actividad neuronal, metabolismo y la señal hemodinámica de la resonancia funcional. Distingue el fenómeno medido de su interpretación.",
+  "cautela": "La revisión sintetiza resultados anteriores. Una activación aislada no identifica unívocamente un estado mental.",
+  "original": "https://doi.org/10.1038/nature06976",
+  "identificador": "10.1038/nature06976",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/nature06976",
+  "sha256": "4fc1f8db30a623e2bd9ae6872b4b655bdfb82010d3f884c489682dc265a77094",
+  "autores": [
+   {
+    "nombre": "Nikos K. Logothetis",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 1,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "revision-grafeno",
+  "titulo": "Qué se sabía del grafeno tras los primeros experimentos",
+  "tituloOriginal": "The rise of graphene",
+  "ideaId": "grafeno",
+  "disciplinaId": "materiales",
+  "fecha": "2007-03",
+  "anio": 2007,
+  "medio": "Nature Materials",
+  "tipo": "revision",
+  "arbitraje": "revista",
+  "nivel": "sintesis",
+  "nivelEtiqueta": "Revisión",
+  "lectura": "Geim y Novoselov sintetizaron las propiedades electrónicas del grafeno y los resultados disponibles en 2007. Sirve para ubicar los primeros experimentos en su contexto.",
+  "cautela": "Es una revisión, no una nueva medición ni una garantía de que las aplicaciones entonces propuestas llegaran a materializarse.",
+  "original": "https://doi.org/10.1038/nmat1849",
+  "identificador": "10.1038/nmat1849",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1038/nmat1849",
+  "sha256": "9092f14c992a98cb050ae221824ea9cbf957c9159e33bb4be61050d0265aaed4",
+  "autores": [
+   {
+    "nombre": "A. K. Geim",
+    "orcid": null
+   },
+   {
+    "nombre": "K. S. Novoselov",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "dirac",
+   "hall",
+   "lamina"
+  ],
+  "citadaPor": [],
+  "relacionadas": [
+   "dirac",
+   "hall",
+   "lamina"
+  ]
+ },
+ {
+  "id": "ruido",
+  "titulo": "Una antena mide un exceso persistente de temperatura",
+  "tituloOriginal": "A Measurement of Excess Antenna Temperature at 4080 Mc/s.",
+  "ideaId": "fondo",
+  "disciplinaId": "fisica",
+  "fecha": "1965-07",
+  "anio": 1965,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Observación",
+  "lectura": "Penzias y Wilson documentaron un exceso de temperatura de antena a una frecuencia de microondas tras examinar posibles contribuciones locales.",
+  "cautela": "El artículo describe la medición. La interpretación cosmológica apareció en un trabajo compañero, no en otra detección independiente.",
+  "original": "https://doi.org/10.1086/148307",
+  "identificador": "10.1086/148307",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/148307",
+  "sha256": "0b47fa8e1870b9080403951b664f611e4f1c46ea6ff92b443a8772647089940d",
+  "autores": [
+   {
+    "nombre": "A. A. Penzias",
+    "orcid": null
+   },
+   {
+    "nombre": "R. W. Wilson",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 2,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "sal",
+  "titulo": "Separar patrón alimentario y aporte de sodio",
+  "tituloOriginal": "Effects on Blood Pressure of Reduced Dietary Sodium and the Dietary Approaches to Stop Hypertension (DASH) Diet",
+  "ideaId": "corazon",
+  "disciplinaId": "medicina",
+  "fecha": "2001-01-04",
+  "anio": 2001,
+  "medio": "New England Journal of Medicine",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "experimento",
+  "nivelEtiqueta": "Ensayo controlado",
+  "lectura": "DASH-Sodium comparó niveles de sodio bajo dos patrones alimentarios y evaluó sus efectos sobre la presión arterial. La nueva pregunta precisa qué se varía y qué se mantiene.",
+  "cautela": "Es evidencia de grupo bajo condiciones controladas, no una recomendación individual ni una predicción para una persona concreta.",
+  "original": "https://doi.org/10.1056/nejm200101043440101",
+  "identificador": "10.1056/nejm200101043440101",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1056/nejm200101043440101",
+  "sha256": "455b35c6df260f85a473fa6e85d6359b9955ebfbbedb57a52fe99d3c324bc81c",
+  "autores": [
+   {
+    "nombre": "Frank M. Sacks",
+    "orcid": null
+   },
+   {
+    "nombre": "Laura P. Svetkey",
+    "orcid": null
+   },
+   {
+    "nombre": "William M. Vollmer",
+    "orcid": null
+   },
+   {
+    "nombre": "Lawrence J. Appel",
+    "orcid": null
+   },
+   {
+    "nombre": "George A. Bray",
+    "orcid": null
+   },
+   {
+    "nombre": "David Harsha",
+    "orcid": null
+   },
+   {
+    "nombre": "Eva Obarzanek",
+    "orcid": null
+   },
+   {
+    "nombre": "Paul R. Conlin",
+    "orcid": null
+   },
+   {
+    "nombre": "Edgar R. Miller",
+    "orcid": null
+   },
+   {
+    "nombre": "Denise G. Simons-Morton",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 17,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "dash"
+  ],
+  "citadaPor": [],
+  "relacionadas": [
+   "dash"
+  ]
+ },
+ {
+  "id": "sodio",
+  "titulo": "Sodio en el borde de un exoplaneta",
+  "tituloOriginal": "Detection of an Extrasolar Planet Atmosphere",
+  "ideaId": "planetas",
+  "disciplinaId": "astronomia",
+  "fecha": "2002-03-20",
+  "anio": 2002,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Espectroscopia",
+  "lectura": "La profundidad del tránsito de HD 209458 b cambió en torno a las líneas del sodio. Esa diferencia espectral aportó evidencia sobre la composición de su atmósfera.",
+  "cautela": "No se recoge una muestra de gas: la señal está integrada sobre el borde del planeta y necesita un modelo de transmisión.",
+  "original": "https://doi.org/10.1086/338770",
+  "identificador": "10.1086/338770",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/338770",
+  "sha256": "d39e20465b8865888775add8916f061816d8967e4516ec0a33415cd930f86039",
+  "autores": [
+   {
+    "nombre": "David Charbonneau",
+    "orcid": null
+   },
+   {
+    "nombre": "Timothy M. Brown",
+    "orcid": null
+   },
+   {
+    "nombre": "Robert W. Noyes",
+    "orcid": null
+   },
+   {
+    "nombre": "Ronald L. Gilliland",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 4,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "transito",
+   "transito-henry"
+  ],
+  "citadaPor": [],
+  "relacionadas": [
+   "transito",
+   "transito-henry"
+  ]
+ },
+ {
+  "id": "transito",
+  "titulo": "Un planeta pasa por delante de su estrella",
+  "tituloOriginal": "Detection of Planetary Transits Across a Sun-like Star",
+  "ideaId": "planetas",
+  "disciplinaId": "astronomia",
+  "fecha": "2000-01-20",
+  "anio": 2000,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Observación",
+  "lectura": "Charbonneau y colaboradores midieron la caída de brillo de HD 209458 cuando su planeta cruzó el disco estelar. La geometría del tránsito aportó información sobre el radio.",
+  "cautela": "Es otro sistema estelar, no un tránsito de 51 Pegasi b. El tamaño deducido depende también de las propiedades de la estrella.",
+  "original": "https://doi.org/10.1086/312457",
+  "identificador": "10.1086/312457",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/312457",
+  "sha256": "e63496a9016882e51655e3e9bbd2f2b5d1d47380f2827e2a24bd9feb05c48e09",
+  "autores": [
+   {
+    "nombre": "David Charbonneau",
+    "orcid": null
+   },
+   {
+    "nombre": "Timothy M. Brown",
+    "orcid": null
+   },
+   {
+    "nombre": "David W. Latham",
+    "orcid": null
+   },
+   {
+    "nombre": "Michel Mayor",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 4,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "pegaso"
+  ],
+  "citadaPor": [
+   "sodio",
+   "transito-henry"
+  ],
+  "relacionadas": [
+   "pegaso",
+   "sodio",
+   "transito-henry"
+  ]
+ },
+ {
+  "id": "transito-henry",
+  "titulo": "Otro equipo observa el tránsito de HD 209458 b",
+  "tituloOriginal": "A Transiting “51 Peg–like” Planet",
+  "ideaId": "planetas",
+  "disciplinaId": "astronomia",
+  "fecha": "2000-01-20",
+  "anio": 2000,
+  "medio": "The Astrophysical Journal",
+  "tipo": "articulo",
+  "arbitraje": "revista",
+  "nivel": "medicion",
+  "nivelEtiqueta": "Observación",
+  "lectura": "Henry y colaboradores comunicaron fotometría del tránsito de la compañera de HD 209458. Se pueden contrastar dos publicaciones sobre el mismo sistema.",
+  "cautela": "Dos artículos describen un planeta, no dos descubrimientos de planetas distintos.",
+  "original": "https://doi.org/10.1086/312458",
+  "identificador": "10.1086/312458",
+  "idTipo": "doi",
+  "metadatos": "https://api.crossref.org/works/10.1086/312458",
+  "sha256": "f9c1fb051f998a6e24648c25092e845e243c6de2dcb5646af69f1940781d3f22",
+  "autores": [
+   {
+    "nombre": "Gregory W. Henry",
+    "orcid": null
+   },
+   {
+    "nombre": "Geoffrey W. Marcy",
+    "orcid": null
+   },
+   {
+    "nombre": "R. Paul Butler",
+    "orcid": null
+   },
+   {
+    "nombre": "Steven S. Vogt",
+    "orcid": null
+   }
+  ],
+  "totalAutores": 4,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [
+   "pegaso",
+   "transito"
+  ],
+  "citadaPor": [
+   "sodio"
+  ],
+  "relacionadas": [
+   "pegaso",
+   "sodio",
+   "transito"
+  ]
+ },
+ {
+  "id": "ligo-nota",
+  "titulo": "Gravitational Waves Detected 100 Years After Einstein's Prediction",
+  "tituloOriginal": "Gravitational Waves Detected 100 Years After Einstein's Prediction",
+  "ideaId": "ondas",
+  "disciplinaId": "fisica",
+  "fecha": "2016-02-11",
+  "anio": 2016,
+  "medio": "LIGO Lab · Caltech",
+  "tipo": "divulgacion",
+  "arbitraje": "no-aplica",
+  "nivel": "registro",
+  "nivelEtiqueta": "Registro institucional",
+  "lectura": "El laboratorio anuncia que dos detectores registraron la señal y explica qué se midió. Es la puerta divulgativa del artículo arbitrado.",
+  "cautela": "Un comunicado no añade evidencia nueva ni revisión independiente: cuenta lo que el artículo sostiene.",
+  "original": "https://www.ligo.caltech.edu/news/ligo20160211",
+  "identificador": "https://www.ligo.caltech.edu/news/ligo20160211",
+  "idTipo": "url",
+  "metadatos": "https://www.ligo.caltech.edu/news/ligo20160211",
+  "sha256": null,
+  "autores": [],
+  "totalAutores": 0,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "nasa-nota",
+  "titulo": "NASA's Webb Detects Carbon Dioxide in Exoplanet Atmosphere",
+  "tituloOriginal": "NASA's Webb Detects Carbon Dioxide in Exoplanet Atmosphere",
+  "ideaId": "planetas",
+  "disciplinaId": "astronomia",
+  "fecha": "2022-08-25",
+  "anio": 2022,
+  "medio": "NASA Science",
+  "tipo": "divulgacion",
+  "arbitraje": "no-aplica",
+  "nivel": "registro",
+  "nivelEtiqueta": "Registro institucional",
+  "lectura": "La agencia describe el hallazgo de CO₂ en la atmósfera de un exoplaneta y su contexto instrumental.",
+  "cautela": "Nota de divulgación: las cifras y la interpretación científica están en el artículo, no en el comunicado.",
+  "original": "https://science.nasa.gov/universe/exoplanets/nasas-webb-detects-carbon-dioxide-in-exoplanet-atmosphere/",
+  "identificador": "https://science.nasa.gov/universe/exoplanets/nasas-webb-detects-carbon-dioxide-in-exoplanet-atmosphere/",
+  "idTipo": "url",
+  "metadatos": "https://science.nasa.gov/universe/exoplanets/nasas-webb-detects-carbon-dioxide-in-exoplanet-atmosphere/",
+  "sha256": null,
+  "autores": [],
+  "totalAutores": 0,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ },
+ {
+  "id": "clay-ficha",
+  "titulo": "Poincaré Conjecture",
+  "tituloOriginal": "Poincaré Conjecture",
+  "ideaId": "geometria",
+  "disciplinaId": "matematicas",
+  "fecha": "2000-05-24",
+  "anio": 2000,
+  "medio": "Clay Mathematics Institute",
+  "tipo": "divulgacion",
+  "arbitraje": "no-aplica",
+  "nivel": "registro",
+  "nivelEtiqueta": "Registro institucional",
+  "lectura": "Ficha del problema del Milenio: enunciado, historia y estado declarado por el instituto que lo propuso.",
+  "cautela": "Es una referencia institucional: no sustituye la verificación del argumento matemático.",
+  "original": "https://www.claymath.org/millennium/poincare-conjecture/",
+  "identificador": "https://www.claymath.org/millennium/poincare-conjecture/",
+  "idTipo": "url",
+  "metadatos": "https://www.claymath.org/millennium/poincare-conjecture/",
+  "sha256": null,
+  "autores": [],
+  "totalAutores": 0,
+  "resumenOriginal": null,
+  "versionDe": null,
+  "referencias": [],
+  "citadaPor": [],
+  "relacionadas": []
+ }
+]
