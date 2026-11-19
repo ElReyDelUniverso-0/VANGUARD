@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v420.0",
+    nombre: "VANGUARD LINGUA",
+    hitos: [
+      "CENTRO MUNDIAL DE LENGUAS (/lingua): 8.243 lenguas de Glottolog 5.4 con ficha propia — familia, ubicación, países, estado de amenaza, documentación, dialectos, variedades regionales y escrituras de Unicode CLDR 49.",
+      "ÁRBOL INTERACTIVO DE FAMILIAS: se elige una familia y se abren sus ramas hasta cada lengua y dialecto, con distribución, rasgos, protolengua e hipótesis de origen citadas.",
+      "MAPA MUNDIAL DE LENGUAS Y COLECCIONES POR PAÍS: 8.081 lenguas sobre el mapa, coloreadas por familia o por amenaza; cada país con sus lenguas y la población que las usa. Las 249 fichas de /mundos llevan su bloque «Lenguas».",
+      "LENGUAS EN PELIGRO: la escala AES de Glottolog por macroárea, familia y país.",
+      "ESCRITURA: 34 sistemas con tipo, dirección y genealogía, comparador entre escrituras y alfabetos con sus caracteres reales.",
+      "DICCIONARIO, COMPARADOR, EXPRESIONES Y PRONUNCIACIÓN con Wikcionario y grabaciones de Wikimedia Commons con su licencia: nada se sintetiza ni se inventa.",
+      "TRADUCTOR con MyMemory (Translated): proveedor y coincidencia a la vista, y una verificación que descarta las traducciones que no están en el idioma pedido.",
+      "LENGUA, DIALECTO, VARIEDAD Y ESCRITURA: una página que explica la diferencia, y una etiqueta de color en cada ficha. Entrada en el buscador central, el directorio, la enciclopedia, el sitemap y llms.txt.",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v419.1",
     nombre: "CÁMARA DE INTELIGENCIA",
     hitos: [

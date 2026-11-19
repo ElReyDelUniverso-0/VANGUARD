@@ -1,18 +1,18 @@
 {
-  "version": "v419.0",
+  "version": "v412.0",
   "fecha": "2026-11-19",
-  "paginas": 106,
-  "rutasApi": 117,
-  "total": 223,
-  "bienConectadas": 98,
+  "paginas": 127,
+  "rutasApi": 126,
+  "total": 253,
+  "bienConectadas": 114,
   "huerfanas": [],
-  "paginasConReferencias": 106,
-  "mediaReferencias": 14.64,
+  "paginasConReferencias": 127,
+  "mediaReferencias": 13.09,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 91,
+      "referencias": 94,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -23,7 +23,7 @@
     {
       "ruta": "/api",
       "tipo": "api",
-      "referencias": 151,
+      "referencias": 154,
       "desde": [
         "app/audios/grabador.tsx",
         "app/audios/page.tsx",
@@ -173,6 +173,54 @@
         "lib/api/catalogo.ts",
         "lib/catalogo-real.ts",
         "lib/game-store.ts"
+      ]
+    },
+    {
+      "ruta": "/api/centro/buscar",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/centro/centro-inteligencia.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/centro/documento",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/centro/centro-inteligencia.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/centro/documento/comparar",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/centro/centro-inteligencia.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/centro/documento/preguntar",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/centro/centro-inteligencia.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/centro/informe",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/centro/centro-inteligencia.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/centro/investigar",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/centro/centro-inteligencia.tsx"
       ]
     },
     {
@@ -592,6 +640,32 @@
       "referencias": 2,
       "desde": [
         "components/vanguard/panels/planeta-panel.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/lingua/arbol",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/lingua/arbol.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/lingua/buscar",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/lingua/traducir",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "components/lingua/traductor.tsx",
         "lib/api/catalogo.ts"
       ]
     },
@@ -1304,7 +1378,7 @@
     {
       "ruta": "/conocimiento",
       "tipo": "pagina",
-      "referencias": 19,
+      "referencias": 23,
       "desde": [
         "app/conocimiento/aprender/page.tsx",
         "app/conocimiento/enciclopedia/[slug]/page.tsx",
@@ -1347,23 +1421,23 @@
     {
       "ruta": "/conocimiento/enciclopedia",
       "tipo": "pagina",
-      "referencias": 9,
+      "referencias": 12,
       "desde": [
-        "components/conocimiento/explorador.tsx",
-        "components/enciclopedia/piezas.tsx",
-        "components/portada/modulos.ts",
-        "lib/arquitectura/departamentos.ts"
+        "app/inteligencia/page.tsx",
+        "app/lingua/escrituras/[codigo]/page.tsx",
+        "app/lingua/page.tsx",
+        "components/conocimiento/explorador.tsx"
       ]
     },
     {
       "ruta": "/conocimiento/enciclopedia/[slug]",
       "tipo": "pagina",
-      "referencias": 9,
+      "referencias": 12,
       "desde": [
-        "components/conocimiento/explorador.tsx",
-        "components/enciclopedia/piezas.tsx",
-        "components/portada/modulos.ts",
-        "lib/arquitectura/departamentos.ts"
+        "app/inteligencia/page.tsx",
+        "app/lingua/escrituras/[codigo]/page.tsx",
+        "app/lingua/page.tsx",
+        "components/conocimiento/explorador.tsx"
       ]
     },
     {
@@ -1385,7 +1459,7 @@
     {
       "ruta": "/conocimiento/tema/[slug]",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
         "app/conocimiento/enciclopedia/[slug]/page.tsx",
         "app/conocimiento/enciclopedia/buscar/page.tsx",
@@ -1510,7 +1584,7 @@
     {
       "ruta": "/datos-mundiales",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 13,
       "desde": [
         "app/comparador/page.tsx",
         "app/datos/page.tsx",
@@ -1532,7 +1606,7 @@
     {
       "ruta": "/datos-mundiales/pais/[iso]",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 8,
       "desde": [
         "app/datos-mundiales/comparar/page.tsx",
         "app/datos-mundiales/page.tsx",
@@ -1773,25 +1847,34 @@
       ]
     },
     {
+      "ruta": "/inteligencia",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "app/datos-mundiales/pais/[iso]/page.tsx",
+        "app/investigacion/page.tsx"
+      ]
+    },
+    {
       "ruta": "/investigacion",
       "tipo": "pagina",
-      "referencias": 10,
+      "referencias": 12,
       "desde": [
+        "app/inteligencia/page.tsx",
         "app/investigacion/[slug]/page.tsx",
         "app/labs/[modelo]/page.tsx",
-        "components/conocimiento/explorador.tsx",
-        "components/portada/areas.ts"
+        "components/conocimiento/explorador.tsx"
       ]
     },
     {
       "ruta": "/investigacion/[slug]",
       "tipo": "pagina",
-      "referencias": 10,
+      "referencias": 12,
       "desde": [
+        "app/inteligencia/page.tsx",
         "app/investigacion/page.tsx",
         "app/labs/[modelo]/page.tsx",
-        "components/conocimiento/explorador.tsx",
-        "components/portada/areas.ts"
+        "components/conocimiento/explorador.tsx"
       ]
     },
     {
@@ -1825,6 +1908,212 @@
         "app/page.tsx",
         "components/portada/cabecera.tsx",
         "components/portada/carcasa.tsx"
+      ]
+    },
+    {
+      "ruta": "/lingua",
+      "tipo": "pagina",
+      "referencias": 13,
+      "desde": [
+        "app/lingua/familias/[id]/page.tsx",
+        "components/lingua/marco-lingua.tsx",
+        "components/portada/modulos.ts",
+        "lib/arquitectura/departamentos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/alfabetos",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/comparador",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/conceptos",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/diccionario",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/escrituras",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/escrituras/[codigo]",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/escrituras/comparar",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/expresiones",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/expresiones/[id]",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/familias",
+      "tipo": "pagina",
+      "referencias": 6,
+      "desde": [
+        "lib/enciclopedia/articulos/continentes.ts",
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/familias/[id]",
+      "tipo": "pagina",
+      "referencias": 6,
+      "desde": [
+        "lib/enciclopedia/articulos/continentes.ts",
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/idioma/[id]",
+      "tipo": "pagina",
+      "referencias": 6,
+      "desde": [
+        "app/lingua/familias/[id]/page.tsx",
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/enciclopedia/articulos/mundo.ts",
+        "lib/lingua/servidor.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/idiomas",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/mapa",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/peligro",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "lib/enciclopedia/articulos/historia.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/pronunciacion",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/regiones",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "lib/enciclopedia/articulos/mundo.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/regiones/[iso]",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "lib/enciclopedia/articulos/mundo.ts",
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
+      ]
+    },
+    {
+      "ruta": "/lingua/traductor",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "lib/lingua/servidor.ts",
+        "lib/lingua/tipos.ts",
+        "lib/planeta/directorio.ts"
       ]
     },
     {
@@ -1883,12 +2172,12 @@
     {
       "ruta": "/modulos",
       "tipo": "pagina",
-      "referencias": 15,
+      "referencias": 16,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
+        "app/inteligencia/page.tsx",
         "app/modulo/[id]/page.tsx",
-        "app/navegacion/page.tsx",
-        "app/page.tsx"
+        "app/navegacion/page.tsx"
       ]
     },
     {
@@ -1905,7 +2194,7 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 45,
+      "referencias": 47,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -1916,7 +2205,7 @@
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 45,
+      "referencias": 47,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -1971,7 +2260,7 @@
     {
       "ruta": "/nucleo",
       "tipo": "pagina",
-      "referencias": 49,
+      "referencias": 50,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/audios/page.tsx",

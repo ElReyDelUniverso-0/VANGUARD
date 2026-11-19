@@ -362,6 +362,7 @@ export const DEPARTAMENTOS: Departamento[] = [
     existe: [
       { etiqueta: "Enciclopedia en el Núcleo", ruta: "/conocimiento", nota: "63 expedientes con rutas indexables, canonical, JSON-LD, sitemap y proveedor de búsqueda central." },
       { etiqueta: "Enciclopedia VANGUARD", ruta: "/conocimiento/enciclopedia", nota: "Artículos de fondo en diez categorías con JSON-LD Article y BreadcrumbList, sitemap, búsqueda temática propia y entrada en el buscador central." },
+      { etiqueta: "Lingua · centro mundial de lenguas", ruta: "/lingua", nota: "Glottolog 5.4, ISO 639-3 y CLDR 49 en servidor; Wikcionario y Commons en vivo; traductor MyMemory con verificación del idioma de salida; entrada fnt:lingua en el buscador central." },
       { etiqueta: "El Núcleo", ruta: "/nucleo", nota: "Búsqueda global por módulo, ruta y tema." },
       { etiqueta: "El directorio", ruta: "/directorio", nota: "218 destinos públicos con temas, favoritos y recientes." },
       { etiqueta: "Sitemap y llms.txt", nota: "Mapa para rastreadores y fichero de contexto para modelos, generados desde los registros." },

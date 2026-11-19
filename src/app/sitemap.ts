@@ -1,4 +1,5 @@
 import { rutasConocimiento } from "@/lib/conocimiento/indice";
+import { rutasLingua } from "@/lib/lingua/servidor"; // v420.0
 import { rutasEnciclopedia, ULTIMA_REVISION as ULTIMA_REVISION_ENCICLOPEDIA } from "@/lib/enciclopedia/indice"; // v417.0
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
@@ -702,7 +703,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // + sin duplicados
   const vistas = new Set<string>();
-  return [...fijas, ...["/conocimiento/aprender"].map(r=>({url:`${SITE_URL}${r}`,changeFrequency:"monthly" as const,priority:0.6})), ...teatros, ...noticias, ...rutasConocimiento().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority:0.6})), ...rutasEnciclopedia().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority:0.7, lastModified: ULTIMA_REVISION_ENCICLOPEDIA}))].filter((e) => {
+  return [...fijas, ...["/conocimiento/aprender"].map(r=>({url:`${SITE_URL}${r}`,changeFrequency:"monthly" as const,priority:0.6})), ...teatros, ...noticias, ...rutasConocimiento().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority:0.6})), ...rutasEnciclopedia().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority:0.7, lastModified: ULTIMA_REVISION_ENCICLOPEDIA})), ...rutasLingua().map(r => ({url:`${SITE_URL}${r}`, changeFrequency:"monthly" as const, priority: r.split("/").length <= 3 ? 0.7 : 0.5}))].filter((e) => {
     if (vistas.has(e.url)) return false;
     vistas.add(e.url);
     return true;

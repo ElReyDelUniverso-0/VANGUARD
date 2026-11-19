@@ -3,6 +3,7 @@ import { CONSTELACIONES, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
 import { MODELOS, estadisticasLabs } from "@/lib/labs/registro"; // v411.0: el laboratorio
 import CENSO from "@/lib/arquitectura/censo.json"; // v412.0: el censo real del árbol
 import { TEMAS_INVESTIGACION } from "@/lib/investigacion"; // v413.0: investigación sistémica
+import { FICHAS_FAMILIA } from "@/lib/lingua/familias"; // v420.0
 import { ARTICULOS as ARTICULOS_ENC, CATEGORIAS as CATEGORIAS_ENC, rutaArticulo } from "@/lib/enciclopedia/indice"; // v417.0
 
 // ============================================================
@@ -73,6 +74,19 @@ export function GET() {
       "`node tools/arquitectura/probar.mjs`.",
     `- [Catálogo de datos](${c("/datos")}): procedencia, licencia, fecha de captura y límites de cada modelo de datos del sitio.`,
     `- [Sala de la calidad](${c("/calidad")}): las pruebas de la casa y qué mide cada una.`,
+    "",
+    "## Lingua · centro mundial de lenguas",
+    "",
+    `- [Lingua](${c("/lingua")}): 8.243 lenguas de Glottolog 5.4 con su familia, ubicación, estado de amenaza (AES) y dialectos; distingue lengua, dialecto, variedad regional (BCP 47) y sistema de escritura (ISO 15924).`,
+    `- [Catálogo de idiomas](${c("/lingua/idiomas")}): filtros por macroárea, familia, país, tipo de lengua y amenaza.`,
+    `- [Árbol de familias](${c("/lingua/familias")}): árbol interactivo de las familias genealógicas, con ramas, distribución, rasgos e historia.`,
+    `- [Mapa mundial de lenguas](${c("/lingua/mapa")}) y [lenguas por país](${c("/lingua/regiones")}): Glottolog + población hablante de Unicode CLDR 49.`,
+    `- [Lenguas en peligro](${c("/lingua/peligro")}): escala AES de Glottolog por macroárea, familia y país.`,
+    `- [Sistemas de escritura](${c("/lingua/escrituras")}), [comparación](${c("/lingua/escrituras/comparar")}) y [alfabetos](${c("/lingua/alfabetos")}): tipo, dirección, genealogía y caracteres de CLDR.`,
+    `- [Diccionario](${c("/lingua/diccionario")}), [comparador de palabras](${c("/lingua/comparador")}), [expresiones](${c("/lingua/expresiones")}) y [pronunciación](${c("/lingua/pronunciacion")}): Wikcionario (CC BY-SA 4.0) y grabaciones de Wikimedia Commons con su licencia; nada se sintetiza.`,
+    `- [Traductor](${c("/lingua/traductor")}): MyMemory (Translated), con el proveedor y la coincidencia visibles y verificación del idioma de salida.`,
+    `- [Lengua, dialecto, variedad y escritura](${c("/lingua/conceptos")}): cómo se distinguen y qué estándar usa cada una.`,
+    ...FICHAS_FAMILIA.map((f) => `- [Familia ${f.es}](${c(`/lingua/familias/${f.id}`)})${f.protolengua ? `: ${f.protolengua}` : ""}`),
     "",
     "## Enciclopedia VANGUARD",
     "",

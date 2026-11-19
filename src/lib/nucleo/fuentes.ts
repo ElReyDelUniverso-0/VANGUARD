@@ -29,6 +29,12 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
     publica_tipo: "documento",
   },
   {
+    // v420.0 VANGUARD LINGUA
+    id: "fnt:lingua", nombre: "Lingua · lenguas del mundo",
+    descripcion: "Catálogo de lenguas, familias y dialectos de Glottolog 5.4 (CC BY 4.0) con códigos ISO 639-3 y datos de uso de Unicode CLDR 49. Datos abiertos y citados; no consulta datos privados.",
+    publica_tipo: "documento",
+  },
+  {
     id: "fnt:cables",
     nombre: "Archivo de cables",
     descripcion:

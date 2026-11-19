@@ -55,7 +55,15 @@ export const TEMAS: Tema[] = [
     nombre: "Conocimiento y enciclopedia",
     pregunta: "¿Qué hay que saber del mundo para entenderlo a fondo?",
     color: "#a78bfa",
-    rutas: ["/conocimiento/enciclopedia", "/conocimiento", "/conocimiento/aprender", "/historia", "/organizaciones", "/regiones", "/mundos", "/investigacion"],
+    rutas: ["/conocimiento/enciclopedia", "/conocimiento", "/conocimiento/aprender", "/lingua", "/historia", "/organizaciones", "/regiones", "/mundos", "/investigacion"],
+  },
+  // v420.0 VANGUARD LINGUA — lenguas, escrituras y comunicación
+  {
+    id: "lenguas",
+    nombre: "Lenguas y comunicación",
+    pregunta: "¿Qué lenguas se hablan, de dónde vienen y cómo se escriben?",
+    color: "#5eead4",
+    rutas: ["/lingua", "/lingua/idiomas", "/lingua/familias", "/lingua/mapa", "/lingua/regiones", "/lingua/peligro", "/lingua/escrituras", "/lingua/diccionario", "/lingua/traductor", "/mundos/[iso]"],
   },
   {
     id: "cifras",

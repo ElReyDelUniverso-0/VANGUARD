@@ -85,6 +85,8 @@ export interface Articulo {
   organizaciones?: string[];
   /** civilizaciones del explorador de /conocimiento */
   civilizaciones?: string[];
+  /** v420.0 · salidas a Lingua (rutas /lingua/… existentes) */
+  lingua?: { ruta: string; texto: string }[];
   palabrasClave: string[];
 }
 

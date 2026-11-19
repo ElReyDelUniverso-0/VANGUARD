@@ -1,4 +1,5 @@
 import { PuentesConocimientoPais } from "@/components/conocimiento/puentes-pais";
+import { LenguasDelPais } from "@/components/lingua/lenguas-pais";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -566,6 +567,9 @@ export default async function PaisPage({ params }: Props) {
             />
             <CablesDelPais nombre={f.nombre} iso2={f.iso2} />
           </div>
+
+          {/* v420.0 · VANGUARD LINGUA: qué lenguas se hablan aquí, con enlace a la colección del país */}
+          <LenguasDelPais iso2={f.iso2} nombre={f.nombre} />
 
           <PuentesConocimientoPais iso={f.iso2} nombre={f.nombre} />
           {/* ── v412.0 · DEL DATO AL MECANISMO ─────────────────────

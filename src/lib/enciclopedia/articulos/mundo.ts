@@ -169,6 +169,7 @@ export const MUNDO: Articulo[] = [
     ],
     actualizado: "2026-11-19",
     relacionados: ["pueblos-tainos", "america", "biodiversidad", "arrecifes-de-coral", "tectonica-de-placas", "sistema-naciones-unidas"],
+    lingua: [{ ruta: "/lingua/regiones/do", texto: "Lenguas de la República Dominicana" }, { ruta: "/lingua/idioma/hait1244", texto: "Criollo haitiano" }],
     conceptos: ["patrimonio", "riesgo-climatico", "costas", "diversidad-cultural"],
     organizaciones: ["sica"],
     paises: ["do", "ht", "us", "es", "pr", "cu"],

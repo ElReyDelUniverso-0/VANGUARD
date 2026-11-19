@@ -76,6 +76,8 @@ export const MODULOS: Modulo[] = [
       { href: "/conocimiento", label: "Conocimiento global", txt: "Nueve centros, treinta áreas, enciclopedia conectada e indicadores con fuentes y límites." },
       // v417.0 VANGUARD KNOWLEDGE — artículos de fondo con fuentes, imágenes con licencia y fecha de revisión
       { href: "/conocimiento/enciclopedia", label: "Enciclopedia", txt: "Artículos de fondo sobre continentes, países, civilizaciones, ciencia y naturaleza, con fuentes y fecha de revisión." },
+      // v420.0 VANGUARD LINGUA — centro mundial de lenguas
+      { href: "/lingua", label: "Lingua", txt: "8.243 lenguas, sus familias, escrituras y alfabetos; diccionario, pronunciación real y traductor con la fuente a la vista." },
       { href: "/atlas", label: "Atlas", img: "/ilustraciones/planeta.jpg", txt: "Las naciones, las personas y las rutas del poder." },
       // v412.0 INVESTIGACIÓN SISTÉMICA — dossiers interconectados con datos, mapas, comparador y simuladores
       { href: "/investigacion", label: "Investigación", img: "/ilustraciones/radar.jpg", txt: "Dossiers sistémicos conectados: comprender, investigar, visualizar, comparar y simular." },

@@ -208,7 +208,7 @@ export default async function Page({ params }: Props) {
             ) : null}
           </section>
 
-          {conceptos.length || civs.length || orgs.length || paises.length ? (
+          {conceptos.length || civs.length || orgs.length || paises.length || a.lingua?.length ? (
             <section className="vx-en-bloque" aria-labelledby="saltos">
               <h2 id="saltos">Salta a otros conceptos</h2>
               <p className="vx-en-nota">Expedientes breves, fichas de país y organismos que la casa documenta con datos propios.</p>
@@ -243,6 +243,14 @@ export default async function Page({ params }: Props) {
                 {paises.map((p) => (
                   <Link key={p.iso2} href={`/mundos/${p.iso2}`} className="vx-pl-chip">
                     {p.nombre}
+                  </Link>
+                ))}
+              </div>
+              {a.lingua?.length ? <p style={{ fontSize: 13, margin: "10px 0 4px", color: "var(--pl-tenue)" }}>En Lingua, el centro de lenguas</p> : null}
+              <div>
+                {(a.lingua ?? []).map((l) => (
+                  <Link key={l.ruta} href={l.ruta} className="vx-pl-chip">
+                    {l.texto}
                   </Link>
                 ))}
               </div>

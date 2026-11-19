@@ -7,6 +7,9 @@ import { IDIOMAS_VANGUARD, NOMBRES_IDIOMA } from "@/lib/idiomas";
 // (src/lib/glosario-tactico.ts) — la misma que pinta la vitrina /traductor.
 import { GLOSARIO_TACTICO } from "@/lib/glosario-tactico";
 import { muro, claveCliente } from "@/lib/fortaleza";
+// v420.0 VANGUARD LINGUA: si el núcleo IA no responde, la vía 2.5 es MyMemory
+// (Translated), un servicio público real; el resultado se etiqueta como tal.
+import { traducirMyMemory } from "@/lib/lingua/wiki";
 
 // v94.0 GOOGLES TOTAL — TRADUCTOR DE VANGUARD
 // El traductor de la suite: 8 idiomas del juego (es/en/pt/fr/de/it/zh/ru).
@@ -123,6 +126,20 @@ export async function POST(req: Request) {
     CACHE.set(key, { r, ts: Date.now() });
     return NextResponse.json(r);
   } catch {
+    // vía 2.5 (v420.0): MyMemory, servicio público de traducción — etiquetado.
+    try {
+      const mm = await traducirMyMemory(texto, de === "zh" ? "zh-CN" : de, a === "zh" ? "zh-CN" : a);
+      const r: RespTraductor = {
+        traduccion: mm.texto,
+        nota: `Traducción automática de MyMemory (Translated) · coincidencia ${Math.round(mm.coincidencia * 100)} %`,
+        ia: false,
+        ms: Date.now() - t0,
+      };
+      CACHE.set(key, { r, ts: Date.now() });
+      return NextResponse.json(r);
+    } catch {
+      /* sigue a la vía 3 */
+    }
     // vía 3: glosario
     const g = viaGlosario(texto, de, a);
     if (g) {

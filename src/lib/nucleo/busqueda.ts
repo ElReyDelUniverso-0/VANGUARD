@@ -1,4 +1,5 @@
 import { CONCEPTOS as CONCEPTOS_GLOBALES } from "@/lib/conocimiento/indice";
+import { buscarLingua } from "@/lib/lingua/servidor"; // v420.0
 import { ARTICULOS as ARTICULOS_ENCICLOPEDIA, categoriaDe as categoriaEnciclopedia } from "@/lib/enciclopedia/indice"; // v417.0
 // ============================================================
 // v218.0 EL NÚCLEO — BÚSQUEDA GLOBAL (server-only)
@@ -115,6 +116,20 @@ const PROVEEDORES: ProveedorBusqueda[] = [
         ruta:`/conocimiento/enciclopedia/${a.slug}`,origen:"fnt:conocimiento",
       } as ResultadoNucleo,puntos:puntua(`${a.titulo} ${a.titulo} ${a.bajada} ${a.palabrasClave.join(" ")}`,q,terms)}));
       return mejores([...articulos, ...conceptos].filter(c=>c.puntos>0),limite);
+    },
+  },
+  // v420.0 VANGUARD LINGUA — lenguas, familias y dialectos (Glottolog); el
+  // tipo de languoide va en el subtítulo para no confundir lengua y dialecto.
+  {
+    fuente: fuentePublica("fnt:lingua"),
+    async buscar(q, limite) {
+      return buscarLingua(q, Math.min(limite, 8)).map((r) => ({
+        entidad: { id: idEntidad("documento", `lingua-${r.id}`), tipo: "documento" as const, nombre: r.nombre },
+        titulo: r.nombre,
+        subtitulo: `LINGUA · ${r.tipo === "familia" ? "FAMILIA O RAMA" : r.tipo === "dialecto" ? "DIALECTO" : "LENGUA"} · ${r.detalle}`,
+        ruta: r.tipo === "familia" ? `/lingua/familias/${r.id}` : `/lingua/idioma/${r.id}`,
+        origen: "fnt:lingua",
+      }));
     },
   },
   // 1. MÓDULOS — la navegación primero: aterrizarte en la puerta correcta
@@ -434,6 +449,7 @@ export interface RespuestaBusquedaNucleo {
 const ORDEN_ORIGEN = [
   "fnt:modulos",
   "fnt:conocimiento",
+  "fnt:lingua",
   "fnt:teatros",
   "fnt:acontecimientos",
   "fnt:atlas",
