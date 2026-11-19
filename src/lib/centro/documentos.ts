@@ -19,6 +19,7 @@
 
 import zlib from "zlib";
 import { PAISES_ATLAS } from "@/lib/atlas-data";
+import { fichas } from "@/lib/mundos/ficha";
 import type { Documento, Entidades, Trozo } from "./tipos";
 import { acontecimientosDe, cifrasDe, fechasDe, normalizar, organizacionesDe, personasDe, trocear } from "./texto";
 
@@ -544,10 +545,26 @@ export function leerDocx(buf: Buffer): { texto: string; avisos: string[] } {
 
 // ── Entidades ───────────────────────────────────────────────────────────
 
+/**
+ * El diccionario de lugares sale de DOS catálogos reales de la casa, no de una
+ * lista inventada: el atlas (84 naciones con su capital) y las 249 fichas de
+ * /mundos (que traen el resto del planeta). Sin lo segundo, «Bruselas» no era
+ * un lugar porque Bélgica no estaba en el atlas.
+ */
 const GAZETTEER = new Map<string, string>();
 for (const p of PAISES_ATLAS) {
   GAZETTEER.set(normalizar(p.nombre), p.id);
   if (p.capital) GAZETTEER.set(normalizar(p.capital), p.id);
+}
+try {
+  for (const f of fichas()) {
+    if (!f?.iso2) continue;
+    if (f.nombre) GAZETTEER.set(normalizar(f.nombre), f.iso2);
+    const capital = (f as unknown as { atlas?: { capital?: string | null } }).atlas?.capital;
+    if (capital) GAZETTEER.set(normalizar(capital), f.iso2);
+  }
+} catch {
+  /* si el catálogo de mundos no carga, queda el atlas: nunca se rompe el lector */
 }
 
 /**

@@ -126,9 +126,15 @@ export function trocear(texto: string, tam = 1100, solape = 160): { texto: strin
 const MESES: Record<string, number> = {
   enero: 1, febrero: 2, marzo: 3, abril: 4, mayo: 5, junio: 6, julio: 7,
   agosto: 8, septiembre: 9, setiembre: 9, octubre: 10, noviembre: 11, diciembre: 12,
+  // un informe en inglés es igual de común que uno en español: sin esto, la
+  // mitad de los documentos que llegan a la casa no daban ni una fecha
+  january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7,
+  august: 8, september: 9, october: 10, november: 11, december: 12,
+  jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12,
 };
 
 const RE_FECHA_TEXTO = /\b(\d{1,2})\s+de\s+([a-záéíóúñ]+)(?:\s+de(?:l)?\s+(\d{4}))?/gi;
+const RE_FECHA_INGLES = /\b(\d{1,2})\s+([A-Za-z]{3,9})\.?\s+(\d{4})\b|\b([A-Za-z]{3,9})\.?\s+(\d{1,2}),\s*(\d{4})\b/g;
 const RE_FECHA_NUM = /\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b/g;
 const RE_ISO = /\b(\d{4})-(\d{2})-(\d{2})\b/g;
 
@@ -146,6 +152,13 @@ export function fechasDe(texto: string): { valor: string; iso: string | null; n:
     const iso = d <= 31 && mes <= 12 ? `${m[3]}-${String(mes).padStart(2, "0")}-${String(d).padStart(2, "0")}` : null;
     meter(m[0], iso);
   }
+  for (const m of texto.matchAll(RE_FECHA_INGLES)) {
+    const dia = Number(m[1] ?? m[5]);
+    const mes = MESES[normalizar(m[2] ?? m[4])];
+    const anio = Number(m[3] ?? m[6]);
+    if (!mes || !anio || dia > 31) continue;
+    meter(m[0], `${anio}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`);
+  }
   for (const m of texto.matchAll(RE_FECHA_TEXTO)) {
     const mes = MESES[normalizar(m[2])];
     if (!mes) continue;
@@ -160,6 +173,10 @@ const UNIDADES = [
   "por ciento", "%", "millones", "millón", "billones", "mil millones", "km²", "km2", "kilómetros",
   "toneladas", "barriles", "dólares", "euros", "habitantes", "personas", "años", "MW", "GW", "TWh",
   "GWh", "kg", "toneladas métricas", "puntos porcentuales", "puntos básicos", "naves", "soldados",
+  // unidades de un informe técnico (el caso más común en documentos subidos)
+  "nm", "mm", "cm", "km", "m", "ms", "s", "GB", "MB", "TB", "GHz", "MHz", "páginas", "paginas",
+  "págs", "capas", "parámetros", "parametros", "millones de dólares", "billion", "million",
+  "percent", "tonnes", "barrels", "dollars", "years", "people", "layers", "parameters",
 ];
 const RE_CIFRA = new RegExp(
   `\\b(\\d{1,3}(?:[.,]\\d{3})*(?:[.,]\\d+)?|\\d+(?:[.,]\\d+)?)\\s*((?:${UNIDADES.map((u) => u.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")}))\\b`,
@@ -200,6 +217,10 @@ const PERSONA_EXCLUIDAS = new Set([
   "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre",
   "octubre", "noviembre", "diciembre", "lunes", "martes", "miércoles", "jueves", "viernes",
   "sábado", "domingo", "estados", "naciones", "consejo", "banco", "corte", "unión",
+  // artículos y muletillas en inglés: «The Transformer» no es un señor
+  "the", "this", "these", "those", "table", "figure", "section", "chapter", "equation",
+  "january", "february", "march", "april", "june", "july", "august", "september",
+  "october", "november", "december",
 ]);
 
 /**
@@ -320,13 +341,16 @@ export function contradiccionesEntre(
           if (s < 0.5) continue;
           const tema = [...fa].filter((x) => firma(tb.texto).has(x)).slice(0, 4).join(" · ");
 
-          // ① cifra: misma unidad, distinto valor
+          // ① cifra: misma unidad, distinto valor (y más de una por par: un
+          // informe puede discrepar en varias cifras a la vez)
+          let yaHayCifra = false;
           for (const ca of cifrasA) {
             const cb = cifrasDe(tb.texto).find((c) => normalizar(c.unidad) === normalizar(ca.unidad));
             if (!cb) continue;
             const na = numeroDe(ca.valor);
             const nb = numeroDe(cb.valor);
             if (na === null || nb === null || na === nb) continue;
+            yaHayCifra = true;
             salida.push({
               tema,
               a: { fuenteId: A.id, texto: ta.texto.slice(0, 300) },
@@ -334,9 +358,10 @@ export function contradiccionesEntre(
               tipo: "cifra",
               explicacion: `${A.nombre} da ${ca.valor} ${ca.unidad}; ${B.nombre} da ${cb.valor} ${cb.unidad} para el mismo asunto (${tema}).`,
             });
-            break;
+            if (salida.length >= 12) return salida;
+            if (salida.filter((x) => x.tipo === "cifra" && x.a.fuenteId === A.id && x.b.fuenteId === B.id).length >= 3) break;
           }
-          const yaCifra = salida.length > 0 && salida[salida.length - 1].tipo === "cifra" && salida[salida.length - 1].b.fuenteId === B.id;
+          const yaCifra = yaHayCifra;
 
           // ② fecha: mismo hecho, distinto día
           const fa2 = fechasA.filter((f) => f.iso);

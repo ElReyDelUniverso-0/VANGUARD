@@ -422,19 +422,43 @@ Responde SOLO con JSON válido:
 {"respuesta":"2-5 frases, máximo 800 caracteres","citas":["T1","T3"],"vacio":false}
 "vacio": true si el documento no responde a la pregunta. Español, sin markdown, sin emojis.`;
 
+const SYSTEM_CLAVES = `El operador pregunta en español sobre un documento que puede estar en otro idioma.
+Devuelve SOLO palabras clave EN EL IDIOMA DEL DOCUMENTO que sirvan para localizar la respuesta dentro del texto.
+Responde con las palabras separadas por comas, sin frases, sin explicación. Entre 4 y 10 palabras.`;
+
 export async function preguntarDocumento(
   doc: Documento,
   pregunta: string,
   usarModelo = true
 ): Promise<RespuestaDocumento> {
   const avisos: string[] = [];
-  const q = terminos(pregunta);
   const idf = idfDe(doc.trozos.map((t) => t.texto));
-  const orden = doc.trozos
-    .map((t) => ({ t, s: puntuar(q, t.texto, idf) }))
-    .sort((a, b) => b.s - a.s)
-    .filter((x) => x.s > 0)
-    .slice(0, 5);
+  const buscarTrozos = (consulta: string[]) =>
+    doc.trozos
+      .map((t) => ({ t, s: puntuar(consulta, t.texto, idf) }))
+      .sort((a, b) => b.s - a.s)
+      .filter((x) => x.s > 0)
+      .slice(0, 5);
+
+  let orden = buscarTrozos(terminos(pregunta));
+  let expansion: string[] = [];
+
+  // Preguntar en español a un documento en inglés es el caso normal, no la
+  // excepción. Si la búsqueda léxica no encuentra nada y hay modelo, se le pide
+  // el vocabulario equivalente EN EL IDIOMA DEL DOCUMENTO y se vuelve a buscar.
+  // Si tampoco así aparece, se declara el vacío: no se inventa.
+  if (!orden.length && usarModelo) {
+    const muestra = doc.trozos.slice(0, 3).map((t) => t.texto.slice(0, 500)).join("\n");
+    const crudo = await iaParalela(SYSTEM_CLAVES, `PREGUNTA: ${pregunta}\n\nDOCUMENTO (principio):\n${muestra}`, 10_000);
+    expansion = terminos(crudo.replace(/[^\p{L}\s,]/gu, " "))
+      .flatMap((x) => x.split(","))
+      .filter((x) => x.length > 2)
+      .slice(0, 10);
+    if (expansion.length) {
+      orden = buscarTrozos(expansion);
+      if (orden.length) avisos.push(`La pregunta estaba en otro idioma que el documento: se buscó con el vocabulario equivalente (${expansion.slice(0, 5).join(", ")}).`);
+    }
+  }
 
   if (!orden.length) {
     return {
