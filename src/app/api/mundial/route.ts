@@ -16,6 +16,7 @@ import { ok, fallo, conManejo, cacheable, validar } from "@/lib/sistema/contrato
 import { INDICADORES, CATEGORIAS, indicador as buscarIndicador, catalogoPublico, VERSION_MUNDIAL } from "@/lib/mundial/catalogo";
 import { catalogoPaises, serieDePais, seriesDeVarios, rankingDeIndicador, serieDeAgregado, AGREGADOS } from "@/lib/mundial/banco";
 import { explicarPar, explicarSerie } from "@/lib/mundial/explicar";
+import type { Explicacion } from "@/lib/mundial/explicar";
 
 export const dynamic = "force-dynamic";
 
@@ -117,11 +118,14 @@ export const GET = conManejo("/api/mundial", async (req, t0) => {
     if (inds.length === 0) {
       return fallo("VALIDACION", "Ninguno de los indicadores pedidos está en el catálogo.", { pedidos: ids }, { t0 });
     }
-    const bloques = [];
+    // v416.0b · tipo explícito: `const x = []` se infiere `never[]` en el build
+    // de Vercel y tumbó la compilación (TS2345 en los dos push). Un array vacío
+    // sin anotar no es un array: es una promesa que el compilador no firmó.
+    const bloques: Array<Record<string, unknown>> = [];
     for (const ind of inds) {
       const series = await seriesDeVarios(isos, ind, 1990);
       const cifras = series.map((s) => ({ iso: s.iso, pais: s.pais, valor: s.ultimo?.valor ?? null, anio: s.ultimo?.anio ?? null }));
-      const explicaciones = [];
+      const explicaciones: Array<Explicacion & { par: string[] }> = [];
       for (let i = 0; i < cifras.length; i++) {
         for (let j = i + 1; j < cifras.length; j++) {
           explicaciones.push({ par: [cifras[i].pais, cifras[j].pais], ...explicarPar(cifras[i], cifras[j], ind) });
