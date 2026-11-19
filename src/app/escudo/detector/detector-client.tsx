@@ -216,19 +216,23 @@ const chipSeveridad = (sev: string) =>
 // Buscador del taller no vigila este archivo (el espejo no se vigila a sí
 // mismo — declarado en scripts/busca-apikeys.mjs).
 const EJEMPLO = `# Pega aquí lo que quieras mirar antes de enviarlo.
-# Ejemplo de un correo peligroso (llaves FALSAS de manual):
+# Ejemplo de un correo peligroso (llaves FALSAS, de-fangadas para que el
+# escudo y GitHub Push Protection acepten el archivo: no hay patrón de
+# secreto real, solo la forma de lo que se mira):
 
 Hola, estos son los accesos del proyecto:
 
-const OPENAI_API_KEY = "sk-proj-4vC8xQ2mN7pR9tW3yB6dF1gH5jK8lZ0aE2cV4bX";
-GOOGLE_MAPS_KEY="AIzaSyD1234567890abcdefghijklmnopqrstuvwx"
-aws_access_key_id = AKIAIOSFODNN7EXAMPLE
-github_token: ghp_aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789
-bot de telegram: 12345678:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-stripe: sk_live_4eC39HqLyjWDarjt
+const OPENAI_API_KEY = "sk-proj-ejemplo-falso";
+GOOGLE_MAPS_KEY="AIzaSy-ejemplo-falso"
+aws_access_key_id = AKIA_ejemplo_falso
+github_token: ghp_ejemplo-falso
+bot de telegram: 12345678:AAE-ejemplo-falso
+stripe: sk_live_ejemplo-falso
 # (la muestra de Slack se retiró del manual: GitHub Push Protection no deja
 # viajar ni a las FALSAS — lección vivida de la ronda del bolsillo: una xoxb
-# con cara de real no cruza la frontera de GitHub ni como ejemplo didáctico)
+# con cara de real no cruza la frontera de GitHub ni como ejemplo didáctico;
+# las otras llaves ficticias se de-fangaron igual: el radar aprende de la
+# forma, no del valor)
 base de datos: postgres://usuario:secreta@db.ejemplo.com:5432/vanguard
 sesión: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NSJ9.dBjftJeZ4CVPmB92K27uhbUJU1p1r_wW1gFWFOEjXk
 const WEBHOOK_SECRET = "vanguard-ejemplo-no-es-real-2026"
