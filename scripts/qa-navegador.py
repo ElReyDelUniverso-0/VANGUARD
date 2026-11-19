@@ -117,9 +117,22 @@ MEDIR = """() => {
     chicosPorClase[k] = (chicosPorClase[k] || 0) + 1; }
 
   // 6 · objetivos táctiles (WCAG 2.2 · 2.5.8 = 24×24; se excluye el enlace en línea dentro de un párrafo)
-  const enLinea = e => e.closest('p, li, td, h1, h2, h3') && getComputedStyle(e).display.includes('inline') && !e.matches('button,[role=button]');
+  // WCAG 2.2 · 2.5.8 excluye a propósito el enlace EN LÍNEA dentro de una frase
+  // (agrandarlo rompería la lectura) y los elementos que solo existen para
+  // lectores de pantalla (.sr-only: un enlace de 1 px de ancho no es un botón).
+  const clases = e => ' ' + String(e.className || '') + ' ';
+  const soloLector = e => ['sr-only', 'kg-sr', 'vg-sr', 'solo-lector'].some(k => clases(e).indexOf(' ' + k + ' ') > -1) ||
+    e.getBoundingClientRect().width < 4 && e.getBoundingClientRect().height < 4;
+  const enLinea = e => {
+    const d = getComputedStyle(e).display;
+    if (!d.startsWith('inline') || d.startsWith('inline-flex') || d.startsWith('inline-block')) return false;
+    const p = e.parentElement;
+    if (!p) return false;
+    const texto = (p.textContent || '').trim().length - (e.textContent || '').trim().length;
+    return texto > 8; // hay frase alrededor: es un enlace de prosa
+  };
   const tocables = [...document.querySelectorAll('a[href], button, input, select, textarea, [role=button], [tabindex]:not([tabindex="-1"])')]
-    .filter(e => visible(e) && !enLinea(e)).map(e => { const b = e.getBoundingClientRect();
+    .filter(e => visible(e) && !enLinea(e) && !soloLector(e)).map(e => { const b = e.getBoundingClientRect();
       return { n: nodo(e), w: Math.round(b.width), h: Math.round(b.height), txt: (e.textContent || '').trim().slice(0, 24) }; })
     .filter(t => t.w < 24 || t.h < 24);
 

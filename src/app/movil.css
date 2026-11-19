@@ -24,47 +24,42 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 767px) {
-  /* ── 1 · SUELO DE LECTURA: nada por debajo de 12 px ──────────────
-     No se toca un solo titular ni un párrafo: solo lo que estaba por
-     debajo del umbral. La casa usa 11,5/10,5/9/8,5 para sellos, fechas,
-     notas al pie y chips; en un teléfono eso no se lee, se adivina. */
-  time,
-  small,
-  em,
-  .vx-sello,
-  .vx-md-meta,
-  .vx-constelacion-desc,
-  .vx-frente-c,
-  .vxp-area-n,
-  .vxp-hall-tipo,
-  .vx-enl-chip,
-  .vx-esp-ir,
-  .vx-esp-vacio,
-  .vx-vivo-t,
-  .ed-chip,
-  .ed-tipo,
-  .ed-area-lema,
-  .ed-puertas-t,
-  .ed-tarjeta-pie,
-  .kg-card-tag,
-  .kg-kicker,
-  .vg-estado,
-  .vg-ver,
-  .vg-anim-op,
-  [class*="text-[6"],
-  [class*="text-[7"],
-  [class*="text-[8"],
-  [class*="text-[9"],
-  [class*="text-[10"],
-  [class*="text-[11"] {
+  /* ── 0 · EL TRUCO DE LA CASCADA, DICHO EN VOZ ALTA ───────────────
+     La primera versión de este suelo no bastó: la casa declara los
+     tamaños con selectores de clase (`td.vx-md-meta`, `.vx-meta time`,
+     `.vx-pais-puesto`…) que ganan por especificidad a un `time` o a un
+     `.vx-md-meta` suelto, aunque esta hoja se importe la última. Medido
+     después del primer intento: seguían 477 textos pequeños en
+     /datos-mundiales y 1.053 en /divisas.
+     `:not(#vx-suelo)` no depende de que exista ningún id: cualquier
+     elemento cumple «no soy #vx-suelo», así que solo aporta lo que hace
+     falta —especificidad de id— y permite pisar la cascada ajena SIN un
+     solo !important, que es lo que la casa evita a propósito. */
+  :not(#vx-suelo) :is(
+    time, small, em, kbd, figcaption, cite),
+  :not(#vx-suelo) :is(
+    .vx-sello, .vx-md-meta, .vx-constelacion-desc, .vx-frente-c,
+    .vxp-area-n, .vxp-hall-tipo, .vx-enl-chip, .vx-esp-ir, .vx-esp-vacio,
+    .vx-vivo-t, .vx-pais-puesto, .vx-pais-gasto, .vx-pl-rel, .vx-pl-anio,
+    .vx-svc-sigla, .vx-cat-ruta, .vx-vivo-t, .vx-pest-corto,
+    .ed-chip, .ed-tipo, .ed-area-lema, .ed-puertas-t, .ed-tarjeta-pie,
+    .kg-card-tag, .kg-kicker, .vg-estado, .vg-ver, .vg-anim-op,
+    .fj-pildora, .tv-hp-boton) {
     font-size: 12px;
   }
 
-  /* Las celdas numéricas de las tablas de datos respiran: 11,5 → 12,5.
-     Siguen siendo densas (es una tabla), pero se leen sin acercar. */
-  .vx-md-meta,
-  td.num,
-  th.num {
+  /* Las utilidades de Tailwind que fijan el tamaño a mano (`text-[9px]`…). */
+  :not(#vx-suelo) [class*="text-[6"],
+  :not(#vx-suelo) [class*="text-[7"],
+  :not(#vx-suelo) [class*="text-[8"],
+  :not(#vx-suelo) [class*="text-[9"],
+  :not(#vx-suelo) [class*="text-[10"],
+  :not(#vx-suelo) [class*="text-[11"] {
+    font-size: 12px;
+  }
+
+  /* Las celdas de las tablas de datos respiran un poco más: son cifras. */
+  :not(#vx-suelo) :is(td.num, th.num) {
     font-size: 12.5px;
   }
 
@@ -72,19 +67,23 @@
      `min-height` NO afecta a un enlace en línea dentro de un párrafo
      (las cajas en línea lo ignoran), así que la prosa queda intacta y
      solo crecen chips, botones y enlaces de navegación — que es donde
-     el dedo fallaba. */
+     el dedo fallaba. Aquí sí hace falta !important: hay controles con
+     la altura puesta en el marcado (`h-5`, 20 px) y un suelo de
+     accesibilidad tiene que ganar a la decoración, no al revés. */
   a,
   button,
   [role="button"],
   summary,
   select,
-  label[for] {
-    min-height: 24px;
+  label[for],
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 24px !important;
   }
   button,
   [role="button"],
   summary {
-    min-width: 24px;
+    min-width: 24px !important;
   }
 
   /* ── 3 · CAMPOS: 16 px, que es lo que evita el zoom de iOS ───────
