@@ -156,6 +156,11 @@ export const DEPARTAMENTOS: Departamento[] = [
     mision: "Un observatorio de economía mundial conectado a los perfiles de país.",
     estado: "parcial",
     existe: [
+      { etiqueta: "Centro de datos mundiales", ruta: "/datos-mundiales", nota: "v416.0: 52 indicadores en 9 categorías, con código, unidad, método, fuente, licencia y año. Tabla ordenable con filtro de región y de año (fijo o último dato por país)." },
+      { etiqueta: "Comparador mundial", ruta: "/datos-mundiales/comparar", nota: "Hasta cuatro países y seis indicadores: barras del último dato con su año, serie histórica y la diferencia explicada en una frase (ratio, brecha y aviso si los años no coinciden)." },
+      { etiqueta: "Panel de desarrollo", ruta: "/datos-mundiales/panel", nota: "Agregados oficiales del Banco Mundial (mundo y regiones) en series largas; la casa no suma países a mano." },
+      { etiqueta: "Ficha de datos nacionales", ruta: "/datos-mundiales/pais/do", nota: "Seis cifras de cabecera iguales para todos los países y, por categoría, cada indicador con su serie en miniatura." },
+      { etiqueta: "La puerta de máquina", ruta: "/api/mundial", nota: "Seis secciones (catálogo, países, serie, ranking, comparar, panel) con el contrato v407.0, muro de 40/min y caché de 30 min." },
       { etiqueta: "Indicadores y CSV", ruta: "/conocimiento?modo=indicadores", nota: "35.463 observaciones, 12 series recuperadas y seis fallidas declaradas; instantánea, no datos en tiempo real." },
       { etiqueta: "El catálogo de datos", ruta: "/datos", nota: "Doce modelos de datos con procedencia, licencia, fecha y límites." },
       { etiqueta: "Los rankings", ruta: "/rankings", nota: "Ocho listas mundiales completas con peso y acumulado." },
@@ -164,11 +169,12 @@ export const DEPARTAMENTOS: Departamento[] = [
       { etiqueta: "Simuladores económicos", ruta: "/labs", nota: "Cuatro modelos: economía nacional, presupuesto, comercio y producción." },
     ],
     falta: [
-      "Series históricas seleccionables por período (hoy cada indicador llega con un año de captura).",
-      "Empleo e inflación por país con su fuente.",
-      "Flujos comerciales con datos fiables: la casa no los tiene y no los dibuja.",
+      "Inflación por país con su fuente: el catálogo de la v416.0 no la incluye porque el Banco Mundial la publica con cobertura irregular y una serie que se rompe; se declarará con su cobertura real.",
+      "Desglose del PIB por sector y flujos comerciales bilaterales (quién vende a quién): exige otra fuente y no se mezclará con esta.",
+      "Migración y remesas como indicadores propios, con su año y su fuente.",
+      "Comparación de más de cuatro países en una sola vista: la API ya acepta hasta seis, la interfaz limita a cuatro por legibilidad.",
     ],
-    siguiente: "Serie temporal por indicador donde la fuente la publique, con la fecha de cada punto.",
+    siguiente: "Inflación y desglose sectorial con cobertura declarada, y exportación CSV de cualquier serie del centro.",
   },
   {
     n: 8,

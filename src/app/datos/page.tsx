@@ -45,6 +45,9 @@ export default function DatosPage() {
         <Link href="/nucleo" className="rounded-sm border border-zinc-700 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-zinc-300 hover:border-amber hover:text-amber">
           Buscar en el núcleo ▸
         </Link>
+        <Link href="/datos-mundiales" className="rounded-sm border border-amber/60 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-amber hover:bg-amber hover:text-black">
+          Centro de datos mundiales: 52 indicadores ▸
+        </Link>
       </div>
 
       <div className="mt-8 space-y-4">

@@ -37,6 +37,24 @@ export default function ComparadorPage() {
         </>
       }
     >
+      <p
+        style={{
+          margin: "0 0 16px",
+          borderLeft: "3px solid #f5c542",
+          background: "rgba(245,197,66,.07)",
+          padding: "12px 14px",
+          fontSize: 13.5,
+          lineHeight: 1.6,
+          color: "#ded8c8",
+        }}
+      >
+        Este comparador es el clásico: <b>ocho indicadores</b> contra una foto del Banco Mundial. El{" "}
+        <a href="/datos-mundiales/comparar" style={{ color: "#5eead4" }}>
+          comparador mundial
+        </a>{" "}
+        lleva la misma idea a <b>52 indicadores</b>, hasta cuatro países y seis indicadores a la vez, con serie histórica desde 1990 y la diferencia
+        explicada en una frase. Los dos leen el mismo Banco Mundial y declaran el año de cada cifra.
+      </p>
       <Comparador filas={filas} orgs={orgs} />
     </Marco>
   );

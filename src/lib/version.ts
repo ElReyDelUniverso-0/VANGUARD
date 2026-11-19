@@ -6527,8 +6527,41 @@
 //    un departamento citan una ruta que ya no existe, si el registro no tiene
 //    22 entradas o si un departamento «en pie» no tiene ninguna pieza.
 // ═══════════════════════════════════════════════════════════════════
-export const APP_VERSION = "v415.0";
-export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
+// ═══════════════════════════════════════════════════════════════════
+// v416.0 EL MUNDO EN CIFRAS — departamento 4 · VANGUARD WORLD DATA
+// Encargo del Dueño: «construir el centro de datos más completo posible dentro
+// de Vanguard; que los usuarios puedan investigar países con información
+// estadística, indicadores, gráficos y comparaciones», con una condición
+// escrita: «no inventes cifras ni mezcles datos de años diferentes sin
+// indicarlo».
+//
+// ① LO QUE HABÍA, MEDIDO: /comparador (v407.1) comparaba OCHO indicadores
+//    contra una foto del Banco Mundial; no había serie histórica, ni educación,
+//    ni salud, ni energía, ni comercio, ni ambiente, ni filtros por año o
+//    región, ni una puerta de máquina.
+// ② EL CATÁLOGO (src/lib/mundial/catalogo.ts): 52 indicadores en 9 categorías,
+//    cada uno con código del Banco Mundial, unidad, decimales, sentido, método
+//    (qué mide y qué no), fuente, licencia y enlace de definición. Sin cifras:
+//    es el índice.
+// ③ EL BANCO (src/lib/mundial/banco.ts): series en vivo de la API v2 del Banco
+//    Mundial, sin clave, con caché de 24 h; cada punto lleva su año y lo que la
+//    fuente no publica no se rellena. Rankings en dos modos declarados —año
+//    fijo o último dato de cada país— y agregados oficiales para el panel.
+// ④ LA EXPLICACIÓN (src/lib/mundial/explicar.ts): la frase que falta en todos
+//    los comparadores —cuántas veces es uno respecto del otro, cuánto es la
+//    brecha y aviso cuando los años no coinciden—, más el resumen de tendencia
+//    de una serie.
+// ⑤ LAS CUATRO PUERTAS: /datos-mundiales (explorador con tabla ordenable y
+//    filtros), /datos-mundiales/comparar (2-4 países × 6 indicadores con
+//    barras, series y explicación), /datos-mundiales/pais/[iso] (ficha de datos
+//    nacional) y /datos-mundiales/panel (agregados del mundo y sus regiones).
+//    La puerta de máquina es /api/mundial, con el contrato v407.0.
+// ⑥ LA PRUEBA: scripts/pruebas-mundial.mjs (catálogo íntegro, series reales,
+//    explicación, contrato de la API) y la regla de no mezclar años.
+// ═══════════════════════════════════════════════════════════════════
+export const APP_VERSION = "v416.0";
+export const APP_CODENAME = "EL MUNDO EN CIFRAS";
+// (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";
 // (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita

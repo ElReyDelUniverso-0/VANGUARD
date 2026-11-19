@@ -159,6 +159,44 @@ export const MODELOS_DATO: ModeloDato[] = [
     ],
   },
   {
+    id: "dato:serie-mundial",
+    nombre: "Serie mundial viva (centro de datos)",
+    descripcion:
+      "Las 52 series del centro de datos mundiales, pedidas en vivo a la API v2 del Banco Mundial (sin clave) y cacheadas 24 h. A diferencia de la instantánea del 6-nov, aquí cada país llega con su serie completa desde 1990 y con el año pegado a cada valor; lo que la fuente no publica no viaja: se escribe «sin dato».",
+    origen: "fuente-externa",
+    vive: "src/lib/mundial/banco.ts",
+    volumen: "52 indicadores · 217 países y territorios · 1960-2025 según cada serie",
+    campos: [
+      { nombre: "puntos", tipo: "numero", descripcion: "serie de pares año-valor, sin huecos rellenados" },
+      { nombre: "ultimo", tipo: "numero", descripcion: "último año con dato publicado (o null)" },
+      { nombre: "consultado", tipo: "texto", descripcion: "ISO-8601 del momento de la consulta" },
+      { nombre: "cobertura", tipo: "numero", descripcion: "años con dato en esa serie" },
+    ],
+    procedencia: [
+      {
+        quien: "Banco Mundial · World Development Indicators (API v2, sin clave)",
+        licencia: "CC BY 4.0 — atribución y enlace de definición por indicador",
+        captura: "consulta en vivo; la respuesta declara su propio `consultado`",
+        enlace: "https://data.worldbank.org/",
+        fuente: "fnt:indicadores",
+      },
+    ],
+    relaciones: [
+      { con: "dato:pais", por: "iso2", nota: "comparte la clave de país del censo geográfico (217 de 249 tienen dato en el Banco Mundial)" },
+      { con: "dato:indicador", por: "id", nota: "ocho de los once indicadores horneados coinciden con el catálogo nuevo; el centro de datos los sirve en vivo" },
+    ],
+    actualizacion: "consulta en vivo con caché de 24 h en la plataforma y 10 min en memoria por instancia",
+    cache: 86400,
+    rutas: ["/datos-mundiales", "/datos-mundiales/comparar", "/datos-mundiales/panel", "/datos-mundiales/pais"],
+    endpoint: "/api/mundial",
+    limites: [
+      "No estima, no interpola y no rellena huecos: si el Banco Mundial no publica un año, no hay punto.",
+      "Los rankings en modo «reciente» mezclan años; cada fila lleva el suyo y la tabla lo enseña.",
+      "Los agregados son del propio Banco Mundial: la casa no suma países a mano.",
+      "No incluye inflación, desglose sectorial del PIB ni comercio bilateral: se declaran como pendientes en el departamento 7.",
+    ],
+  },
+  {
     id: "dato:indicador",
     nombre: "Indicador socioeconómico",
     descripcion:

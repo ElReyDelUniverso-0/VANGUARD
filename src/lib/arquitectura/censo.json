@@ -1,18 +1,18 @@
 {
   "version": "v412.0",
-  "fecha": "2026-11-18",
-  "paginas": 97,
-  "rutasApi": 116,
-  "total": 213,
-  "bienConectadas": 92,
+  "fecha": "2026-11-19",
+  "paginas": 101,
+  "rutasApi": 117,
+  "total": 218,
+  "bienConectadas": 96,
   "huerfanas": [],
-  "paginasConReferencias": 97,
-  "mediaReferencias": 14.86,
+  "paginasConReferencias": 101,
+  "mediaReferencias": 14.64,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 90,
+      "referencias": 91,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -754,6 +754,16 @@
       ]
     },
     {
+      "ruta": "/api/mundial",
+      "tipo": "api",
+      "referencias": 3,
+      "desde": [
+        "lib/api/catalogo.ts",
+        "lib/arquitectura/departamentos.ts",
+        "lib/datos/catalogo.ts"
+      ]
+    },
+    {
       "ruta": "/api/mundo",
       "tipo": "api",
       "referencias": 2,
@@ -1250,7 +1260,7 @@
     {
       "ruta": "/comparador",
       "tipo": "pagina",
-      "referencias": 14,
+      "referencias": 15,
       "desde": [
         "app/demografia/page.tsx",
         "app/mundos/[iso]/page.tsx",
@@ -1449,11 +1459,55 @@
     {
       "ruta": "/datos",
       "tipo": "pagina",
-      "referencias": 9,
+      "referencias": 11,
       "desde": [
         "app/arquitectura/page.tsx",
+        "app/datos-mundiales/page.tsx",
         "app/sistema/page.tsx",
-        "components/conocimiento/explorador.tsx",
+        "components/conocimiento/explorador.tsx"
+      ]
+    },
+    {
+      "ruta": "/datos-mundiales",
+      "tipo": "pagina",
+      "referencias": 11,
+      "desde": [
+        "app/comparador/page.tsx",
+        "app/datos/page.tsx",
+        "app/datos-mundiales/comparar/page.tsx",
+        "app/datos-mundiales/pais/[iso]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/datos-mundiales/comparar",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "app/comparador/page.tsx",
+        "app/datos-mundiales/page.tsx",
+        "app/datos-mundiales/pais/[iso]/page.tsx",
+        "components/mundial/marco-datos.tsx"
+      ]
+    },
+    {
+      "ruta": "/datos-mundiales/pais/[iso]",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/datos-mundiales/comparar/page.tsx",
+        "app/datos-mundiales/page.tsx",
+        "components/mundial/marco-datos.tsx",
+        "components/mundial/tabla-ranking.tsx"
+      ]
+    },
+    {
+      "ruta": "/datos-mundiales/panel",
+      "tipo": "pagina",
+      "referencias": 6,
+      "desde": [
+        "app/datos-mundiales/page.tsx",
+        "app/datos-mundiales/pais/[iso]/page.tsx",
+        "components/mundial/marco-datos.tsx",
         "lib/arquitectura/departamentos.ts"
       ]
     },
@@ -1811,23 +1865,23 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 39,
+      "referencias": 40,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
-        "app/demografia/page.tsx",
-        "app/mapas/page.tsx"
+        "app/datos-mundiales/pais/[iso]/page.tsx",
+        "app/demografia/page.tsx"
       ]
     },
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 39,
+      "referencias": 40,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
-        "app/demografia/page.tsx",
-        "app/mapas/page.tsx"
+        "app/datos-mundiales/pais/[iso]/page.tsx",
+        "app/demografia/page.tsx"
       ]
     },
     {

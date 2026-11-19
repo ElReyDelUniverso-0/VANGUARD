@@ -647,7 +647,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // colecciones, más sus páginas derivadas de las fuentes (8 rankings, 24
     // subregiones, 16 organizaciones, 7 colecciones): una entrada nueva en
     // cualquiera de esas tablas entra sola al mapa.
-    ...["/comparador", "/rankings", "/demografia", "/regiones", "/organizaciones", "/directorio", "/colecciones"].map((r) => ({
+    // v416.0 CENTRO DE DATOS MUNDIALES — explorador, comparador y panel (las fichas de país entran por PAISES_GEO de abajo)
+    ...["/comparador", "/rankings", "/demografia", "/regiones", "/organizaciones", "/directorio", "/colecciones", "/datos-mundiales", "/datos-mundiales/comparar", "/datos-mundiales/panel"].map((r) => ({
       url: `${SITE_URL}${r}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,

@@ -1026,6 +1026,58 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
   // tabla: src/lib/planeta/datos.ts → ficha.ts → Banco Mundial con su año) y
   // dos piezas del sistema de módulos: el directorio y las colecciones.
   {
+    id: "mod:datos-mundiales",
+    nombre: "EL CENTRO DE DATOS MUNDIALES",
+    lema: "52 indicadores, con su año y su fuente",
+    descripcion:
+      "El explorador de estadísticas del planeta: 52 indicadores en nueve categorías (población, economía, educación, salud, energía, agricultura, comercio, medio ambiente y desarrollo), cada uno con su código del Banco Mundial, su unidad, su método, su licencia y el año de cada cifra. Tabla ordenable, filtro por región y por año, y «sin dato» donde la fuente no publica. v416.0, departamento 4.",
+    categoria: "MUNDO",
+    ruta: "/datos-mundiales",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:comparador", "fnt:indicadores"],
+    alias: "datos mundiales estadisticas indicadores world data banco mundial explorador ranking poblacion pib salud educacion energia comercio ambiente calidad del dato",
+  },
+  {
+    id: "mod:comparador-mundial",
+    nombre: "EL COMPARADOR MUNDIAL",
+    lema: "Dos países, seis indicadores, la diferencia explicada",
+    descripcion:
+      "Pone hasta cuatro países uno al lado del otro en hasta seis indicadores con serie histórica desde 1990: barras del último dato con su año, gráfico de líneas donde los huecos de la fuente se ven como cortes, y una frase que dice cuántas veces es uno respecto del otro y cuánto es la brecha. Si los años no coinciden, lo avisa antes de comparar.",
+    categoria: "MUNDO",
+    ruta: "/datos-mundiales/comparar",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:datos-mundiales"],
+    alias: "comparar paises versus frente a frente serie historica graficos diferencias brecha ratio",
+  },
+  {
+    id: "mod:panel-desarrollo",
+    nombre: "EL PANEL DE DESARROLLO",
+    lema: "Cómo va el mundo, región por región",
+    descripcion:
+      "Series largas con los agregados oficiales del Banco Mundial (mundo, renta alta/media/baja y seis regiones). La casa no suma países a mano: usa el agregado ponderado del organismo y lo dice. Tabla de último dato con su año y variación desde el primer año con dato.",
+    categoria: "MUNDO",
+    ruta: "/datos-mundiales/panel",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:datos-mundiales"],
+    alias: "panel desarrollo mundo regiones agregados tendencia series largas",
+  },
+  {
+    id: "mod:ficha-datos-pais",
+    nombre: "LA FICHA DE DATOS DE UN PAÍS",
+    lema: "La hoja de datos del país",
+    descripcion:
+      "Seis cifras de cabecera iguales para todos los países y, por categoría, cada indicador con su valor, su año, su unidad, su fuente, su método y la forma de la serie en miniatura. Es la mitad numérica de la ficha del país; la otra mitad es la memoria y los cables.",
+    categoria: "MUNDO",
+    ruta: "/datos-mundiales/pais/do",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:datos-mundiales", "mod:mundos"],
+    alias: "ficha pais estadisticas datos nacionales hoja de datos perfil pais",
+  },
+  {
     id: "mod:comparador",
     nombre: "EL COMPARADOR INTERNACIONAL",
     lema: "Hasta cuatro países, cifra a cifra",

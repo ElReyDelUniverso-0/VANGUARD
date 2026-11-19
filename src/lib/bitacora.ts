@@ -21,6 +21,22 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v416.0",
+    nombre: "EL MUNDO EN CIFRAS",
+    hitos: [
+      "CATÁLOGO DE 52 INDICADORES EN 9 CATEGORÍAS: población y demografía, economía y renta, educación, salud pública, energía, agricultura, comercio exterior, medio ambiente y urbanización/desarrollo; cada uno con código del Banco Mundial, unidad, decimales, sentido, método, fuente, licencia y enlace de definición",
+      "SERIES EN VIVO CON EL AÑO PEGADO A CADA VALOR: API v2 del Banco Mundial sin clave, caché de 24 h; lo que la fuente no publica se escribe «sin dato» y no se interpola ni se copia del año anterior",
+      "EL COMPARADOR MUNDIAL: de dos a cuatro países y hasta seis indicadores a la vez, con barras del último dato y su año, serie histórica desde 1990 donde los huecos se ven como cortes, y una frase que dice cuántas veces es uno respecto del otro y cuánto es la brecha —con aviso cuando los años no coinciden",
+      "EL RANKING CON METODOLOGÍA VISIBLE: dos modos declarados (año fijo para todos, o último dato de cada país con su año en la fila), filtro por región, búsqueda y orden por cualquier columna",
+      "LA FICHA DE DATOS NACIONAL: seis cifras de cabecera iguales en todos los países y, por categoría, cada indicador con su serie en miniatura, su fuente y su método",
+      "EL PANEL DE DESARROLLO MUNDIAL: agregados oficiales del Banco Mundial (mundo, renta alta/media/baja y seis regiones) en series largas; la casa no suma países a mano y lo dice",
+      "LA PUERTA DE MÁQUINA /api/mundial: seis secciones (catálogo, países, serie, ranking, comparar, panel) con el contrato v407.0, muro de 40 por minuto y caché de 30 minutos, documentada en el catálogo de endpoints",
+      "CONSOLIDACIÓN SIN ROMPER NADA: /comparador sigue vivo y avisa de que existe el comparador mundial de 52 indicadores; /datos declara el nuevo modelo de dato con su licencia y sus límites; los cuatro módulos entran en el Núcleo y en el sitemap",
+      "LA PRUEBA: scripts/pruebas-mundial.mjs comprueba el catálogo íntegro, las series reales, la explicación y el contrato de la API, y falla si un indicador pierde su fuente, su unidad o su método",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v415.0",
     nombre: "VANGUARD SEARCH OPPORTUNITIES",
     hitos: [
