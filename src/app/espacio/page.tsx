@@ -53,7 +53,7 @@ export default function EspacioPage() {
     <>
       <main className="mx-auto max-w-[1408px] px-4 pb-16 pt-6 sm:px-6">
         <PortadaSala
-          imagen="/ilustraciones/herramientas.jpg"
+          imagen="/ilustraciones/constructor.jpg"
           alt="Mesa de trabajo con planos, instrumentos y libretas abiertas"
           volanta="LA CASA · TU MESA"
           titulo="TU ESPACIO DE TRABAJO"

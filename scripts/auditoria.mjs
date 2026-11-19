@@ -168,7 +168,13 @@ const existeRecurso = (ruta) => {
 };
 for (const f of archivos) {
   const txt = leer(f);
-  for (const m of txt.matchAll(/["'`](\/(?:assets|images|img|fonts)\/[^"'`\s)]+)["'`]/g)) {
+  // v418.2 — EL AGENTE 4 TENÍA UN PUNTO CIEGO: solo miraba /assets, /images,
+  // /img y /fonts. Las 107 ilustraciones de la casa viven en /ilustraciones y
+  // nadie las comprobaba; dos referencias a archivos que no existen
+  // (herramientas.jpg en /espacio, mapas.jpg en /navegacion) llegaron a
+  // producción y se vieron como hueco roto encima del titular. Ahora también
+  // entran las carpetas de imágenes reales de la casa.
+  for (const m of txt.matchAll(/["'`](\/(?:assets|images|img|fonts|ilustraciones|enciclopedia|fotos|media|musica|audios)\/[^"'`\s)]+)["'`]/g)) {
     const ruta = m[1];
     if (ruta.includes("${")) continue; // plantilla: se resuelve en tiempo de ejecución
     if (recursosVistos.has(ruta)) continue;
@@ -277,6 +283,60 @@ if (iSmoke > -1 && process.argv[iSmoke + 1]) {
     }
   };
   await Promise.all(Array.from({ length: 6 }, trabajador));
+
+  // ── AGENTE 8 · CABECERAS, CONTRATO Y CLAVES (v418.2, departamento 10) ──
+  // Lo que la casa promete en documentación y solo se puede comprobar
+  // pidiéndolo de verdad: que las cabeceras de seguridad viajen, que las
+  // puertas de máquina respondan con el contrato {ok, ...} y que ninguna
+  // respuesta pública lleve dentro una clave privada. Una promesa sin
+  // comprobación es una opinión.
+  const CABECERAS_MINIMAS = [
+    "strict-transport-security",
+    "x-content-type-options",
+    "x-frame-options",
+    "referrer-policy",
+    "permissions-policy",
+  ];
+  const PUERTAS_DE_MAQUINA = [
+    { ruta: "/api/health", claves: ["ok"] },
+    { ruta: "/api/mundial?seccion=catalogo", claves: ["ok", "api", "version", "datos"] },
+    { ruta: "/api/auth/me", claves: ["ok"] },
+    { ruta: "/api/creadores/yo", claves: ["rol"] },
+    { ruta: "/api/duelo", claves: ["ok"] },
+  ];
+  // Lo que NUNCA debe salir por una respuesta pública (la regla del Dueño).
+  const SECRETOS = [/ghp_[A-Za-z0-9]{20,}/, /sk-[A-Za-z0-9]{20,}/, /-----BEGIN [A-Z ]*PRIVATE KEY-----/, /SUPABASE_SERVICE_ROLE/i, /AUTH_SECRET\s*[:=]\s*["'][^"']{8,}/];
+  humo.cabeceras = [];
+  humo.contrato = [];
+  humo.claves = [];
+  try {
+    const res = await fetch(base + "/", { redirect: "manual" });
+    const h = res.headers;
+    const faltan = CABECERAS_MINIMAS.filter((k) => !h.get(k));
+    humo.cabeceras.push({
+      ruta: "/",
+      presentes: CABECERAS_MINIMAS.filter((k) => h.get(k)).length,
+      faltan,
+      csp: h.get("content-security-policy") || h.get("content-security-policy-report-only") ? "declarada" : "AUSENTE",
+    });
+    const html = await res.text();
+    for (const re of SECRETOS) if (re.test(html)) humo.claves.push({ ruta: "/", patron: String(re) });
+  } catch (e) {
+    humo.cabeceras.push({ ruta: "/", error: String(e).slice(0, 80) });
+  }
+  for (const p of PUERTAS_DE_MAQUINA) {
+    try {
+      const res = await fetch(base + p.ruta, { redirect: "manual" });
+      const texto = await res.text();
+      let json = null;
+      try { json = JSON.parse(texto); } catch { json = null; }
+      const faltan = json ? p.claves.filter((k) => !(k in json)) : p.claves;
+      humo.contrato.push({ ruta: p.ruta, codigo: res.status, json: !!json, faltan });
+      for (const re of SECRETOS) if (re.test(texto)) humo.claves.push({ ruta: p.ruta, patron: String(re) });
+    } catch (e) {
+      humo.contrato.push({ ruta: p.ruta, error: String(e).slice(0, 80) });
+    }
+  }
 }
 
 // ── INFORME ──────────────────────────────────────────────────
@@ -331,6 +391,23 @@ console.log(`AGENTE 5 · BOTONES    ${A.botones.sinAccion} sin acción · ${A.bo
 if (humo) {
   console.log(`AGENTE 6 · EN VIVO    ${humo.ok}/${humo.total} rutas responden contra ${humo.base}${humo.fallos.length ? ` → ${humo.fallos.length} FALLAN` : " → todas sanas"}`);
   for (const f of humo.fallos) console.log(`  ${f.codigo} ${f.ruta}`);
+  if (humo.cabeceras?.length) {
+    const c = humo.cabeceras[0];
+    console.log(
+      `AGENTE 8 · CABECERAS   ${c.presentes}/5 mínimas en / → ${c.faltan?.length ? "FALTAN " + c.faltan.join(", ") : "todas"} · CSP: ${c.csp}`,
+    );
+  }
+  if (humo.contrato?.length) {
+    const malos = humo.contrato.filter((c) => !c.json || c.faltan?.length || c.error || c.codigo >= 400);
+    console.log(`AGENTE 9 · CONTRATO    ${humo.contrato.length - malos.length}/${humo.contrato.length} puertas de máquina cumplen {ok, …}`);
+    for (const m of malos) console.log(`  ✗ ${m.ruta} → ${m.error ?? `HTTP ${m.codigo} · json ${m.json ? "sí" : "no"} · faltan ${(m.faltan ?? []).join(",")}`}`);
+  }
+  if (humo.claves?.length) {
+    console.log(`AGENTE 10 · CLAVES     ${humo.claves.length} respuestas públicas con pinta de clave privada`);
+    for (const c of humo.claves.slice(0, 5)) console.log(`  ✗ ${c.ruta} → ${c.patron}`);
+  } else if (humo.contrato?.length) {
+    console.log("AGENTE 10 · CLAVES     ninguna clave privada en las respuestas públicas comprobadas");
+  }
   if (humo.densidad.length) {
     const orden = [...humo.densidad].sort((a, b) => b.ratio - a.ratio);
     const sumaLetras = orden.reduce((a, x) => a + x.letras, 0);

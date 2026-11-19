@@ -41,7 +41,9 @@ export function FuenteYFecha({
 
   if (compacto) {
     return (
-      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500">{sello}</p>
+      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500" suppressHydrationWarning>
+        {sello}
+      </p>
     );
   }
 
@@ -49,7 +51,16 @@ export function FuenteYFecha({
     <details className="group mt-3 rounded-sm border border-zinc-800 bg-zinc-900/40 px-3 py-2">
       <summary className="cursor-pointer list-none font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500 outline-none marker:content-none hover:text-zinc-300">
         <span className="text-amber/70">▸ CADENA DE LA VERDAD</span>{" "}
-        <span className="text-zinc-600">— {sello}</span>
+        {/* v418.2 · EL SELLO NO SE PELEA CONSIGO MISMO. El retraso («40 min de
+            retraso») se calcula contra el momento de leer, y en el servidor ese
+            momento no es el del navegador: React veía dos textos distintos y
+            lanzaba el error #418 de hidratación en TODA sala que monta este
+            pie —/espacio, /navegacion y las demás—, tirando el HTML del
+            servidor y repintando el árbol entero en un teléfono humilde.
+            Se declara el desajuste a propósito (es una marca de tiempo, no un
+            dato que deba cuadrar) y el sello que se lee es el del servidor,
+            que es justo el que queremos: cuándo leyó la casa el dato. */}
+        <span className="text-zinc-600" suppressHydrationWarning>— {sello}</span>
       </summary>
       <div className="mt-2 flex flex-col gap-1 font-mono text-[10px] uppercase tracking-[0.12em] text-zinc-500">
         <span>
@@ -62,7 +73,10 @@ export function FuenteYFecha({
           </span>
         </span>
         <span>
-          LEÍDO · <span className="text-zinc-300">{new Date(consultado ?? Date.now()).toISOString()}</span>
+          LEÍDO ·{" "}
+          <span className="text-zinc-300" suppressHydrationWarning>
+            {new Date(consultado ?? Date.now()).toISOString()}
+          </span>
         </span>
         {licencia ? (
           <span>

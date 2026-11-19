@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v418.2",
+    nombre: "EL ARO DE CONTROL",
+    hitos: [
+      "EL ARO QUE SE REPITE: una herramienta nueva (scripts/qa-navegador.py) recorre 40 puertas en móvil, tableta y escritorio con un navegador de verdad y mide consola, peticiones fallidas, desbordes, paneles fuera de pantalla, imágenes rotas, textos pequeños, tacto, CLS y tareas largas. Guarda acta y compara dos actas para decir qué empeoró tras una actualización.",
+      "DOS IMÁGENES QUE NO EXISTÍAN: /espacio y /navegacion pedían ilustraciones que no están en la casa y el hueco roto se pintaba encima del titular. Ahora usan piezas reales, y el auditor barre también /ilustraciones: era su punto ciego.",
+      "EL SELLO DEJÓ DE PELEARSE CONSIGO MISMO: el pie «cadena de la verdad» calculaba el retraso con la hora del servidor y la del navegador, y React lanzaba el error de hidratación #418 en toda sala que lo monta, tirando el HTML y repintando. Ahora la marca de tiempo se declara como tal.",
+      "EL SUELO DEL TELÉFONO: tamaño mínimo de lectura de 12 px (había 225 textos por debajo en la portada y 912 en el centro de datos), 24×24 de tacto según la WCAG 2.2 (había 176 por debajo del mínimo en /modulos), campos a 16 px para que iOS no amplíe la pantalla al escribir y ventanas que quepan con desplazamiento propio.",
+      "AJUSTES EXISTE: /ajustes, /configuracion y /settings llevaban a «esta sala no existe»; ahora aterrizan en /modo, que es donde viven el tema, el nivel de animaciones y el sonido.",
+      "TRES AGENTES MÁS EN LA AUDITORÍA: cabeceras de seguridad (5 de 5 presentes; la CSP queda declarada como pendiente con su plan), contrato de las cinco puertas de máquina principales (5 de 5 cumplen {ok,…}) y un busca-claves que confirma que ninguna respuesta pública lleva dentro una clave privada.",
+      "LO QUE YA ESTABA BIEN: CLS 0,000 en las diez puertas medidas y cero tareas largas. El trabajo de animaciones de las versiones anteriores se nota; este departamento lo vigila, no lo rehace.",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v418.0",
     nombre: "VANGUARD KNOWLEDGE",
     hitos: [

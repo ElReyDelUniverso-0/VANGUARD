@@ -23,6 +23,11 @@ import "./piel.css";
 // la que apaga una a una las animaciones infinitas en el nivel «reducidas».
 import "./animaciones.css";
 import "./animaciones-generadas.css";
+// v418.2 · EL SUELO DEL TELÉFONO (departamento 10): tamaño mínimo de lectura,
+// 24×24 de tacto, campos a 16 px y ventanas que quepan. Va la ÚLTIMA a
+// propósito: a igual especificidad gana el orden, y así no hace falta un solo
+// !important. Ver src/app/movil.css para las medidas que lo justifican.
+import "./movil.css";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";

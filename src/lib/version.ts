@@ -6677,8 +6677,46 @@
 //    en línea: el panel de juego gastaba 1,4 s de hilo por segundo con las
 //    animaciones ya apagadas. Las transiciones se acortan solo en lo que se
 //    pulsa (enlaces, botones, campos). Medido en Brave sobre el panel de juego.
-export const APP_VERSION = "v418.1";
-export const APP_CODENAME = "LA CASA LIGERA";
+// v418.2 EL ARO DE CONTROL — DEPARTAMENTO 10, INGENIERÍA Y CALIDAD.
+// Encargo: «Vanguard debe ser estable, rápido, accesible y consistente en
+// escritorio, tabletas y móviles», y comprobar que los departamentos no
+// destruyan lo que ya funciona. Lo primero fue medir la casa publicada con un
+// navegador de verdad (Chromium emulando un Galaxy A06, 360×740, DPR 2), no
+// con la memoria de cómo creíamos que estaba.
+// ① EL INSTRUMENTO (`scripts/qa-navegador.py`, nuevo): 40 puertas × 3 vistas
+//    —móvil, tableta, escritorio— y por cada una: consola, peticiones
+//    fallidas, desbordes, paneles fuera de pantalla, imágenes rotas, textos
+//    por debajo de 12 px, objetivos táctiles por debajo de 24×24, CLS, tareas
+//    largas, peso y nodos. Escribe acta en JSON y sabe comparar dos actas para
+//    decir qué EMPEORÓ después de una actualización (`--comparar`). Es el aro
+//    que hay que repetir después de cada entrega.
+// ② LO QUE ENCONTRÓ (y se arregló): dos ilustraciones inexistentes que se
+//    pintaban como hueco roto ENCIMA del titular (/espacio y /navegacion);
+//    un error de hidratación #418 en toda sala que monta el pie «cadena de la
+//    verdad» (el sello se calculaba contra la hora del servidor y la del
+//    navegador: React tiraba el HTML y repintaba el árbol en un teléfono
+//    humilde); 225 textos por debajo de 12 px en la portada y hasta 912 en
+//    /datos-mundiales; 176 objetivos táctiles por debajo del mínimo de la
+//    WCAG 2.2; un buscador de 20 px de alto con letra de 15 (zoom automático
+//    en iOS al enfocar); y /ajustes, que devolvía 404.
+// ③ EL SUELO (`src/app/movil.css`, nuevo): tamaño mínimo de lectura, 24×24 de
+//    tacto, campos a 16 px y ventanas que quepan y se puedan recorrer. Se
+//    importa la última para no necesitar ni un !important.
+// ④ EL PUNTO CIEGO DE LA AUDITORÍA: el agente de RECURSOS miraba /assets,
+//    /images, /img y /fonts — no /ilustraciones, donde viven 107 piezas. Por
+//    eso las dos imágenes muertas llegaron a producción. Ahora barre también
+//    /ilustraciones y las carpetas de imágenes de la casa.
+// ⑤ TRES AGENTES MÁS EN `auditoria.mjs`: cabeceras de seguridad (5/5, con la
+//    CSP declarada como pendiente y su plan), contrato de las puertas de
+//    máquina (5/5 cumplen {ok,…}) y busca-claves (ninguna respuesta pública
+//    lleva dentro una clave privada).
+// ⑥ LO QUE YA ESTABA BIEN Y SE DEJA EN PAZ: CLS 0,000 en las diez puertas
+//    medidas y cero tareas largas — el trabajo de animaciones de v416–v418
+//    hizo su parte; este departamento no lo toca, lo vigila.
+export const APP_VERSION = "v418.2";
+export const APP_CODENAME = "EL ARO DE CONTROL";
+// (anterior) export const APP_VERSION = "v418.1";
+// (anterior) export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";
 // (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";

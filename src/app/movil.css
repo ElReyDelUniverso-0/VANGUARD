@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v418.2 · EL SUELO DEL TELÉFONO — hoja de lectura y tacto para móvil
+   Departamento 10 · INGENIERÍA Y CALIDAD (el aro de control)
+
+   POR QUÉ EXISTE ESTE ARCHIVO Y NO UN PARCHE MÁS EN globals.css:
+   globals.css y portada.css ya traen el trabajo de móvil de v417.0
+   (cabecera, muelle, telones). Lo que faltaba no era «un» arreglo: era
+   un SUELO. Medido con Chromium emulando un Galaxy A06 (360×740, DPR 2)
+   sobre la casa publicada, antes de escribir una línea:
+
+     · 225 textos por debajo de 12 px en la portada y hasta 912 en
+       /datos-mundiales (celdas de tabla a 11,5 px, sellos a 10,5,
+       notas `em` a 8,5 y etiquetas `text-[9px]` de Tailwind).
+     · 176 objetivos táctiles por debajo de 24×24 px en /modulos
+       (WCAG 2.2 · 2.5.8 pide 24×24 como mínimo), la mayoría enlaces de
+       navegación de 17 px de alto.
+     · el buscador central servía un campo de 20 px de alto con letra de
+       15 px: en iOS eso además dispara el zoom automático al enfocar.
+
+   Nada de esto cambia el diseño: sube el tamaño mínimo de lo pequeño,
+   da margen táctil a lo que se pulsa y deja igual todo lo demás. Se
+   importa DESPUÉS de las otras hojas (layout.tsx) para que, a igual
+   especificidad, gane la última palabra sin necesidad de !important.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  /* ── 1 · SUELO DE LECTURA: nada por debajo de 12 px ──────────────
+     No se toca un solo titular ni un párrafo: solo lo que estaba por
+     debajo del umbral. La casa usa 11,5/10,5/9/8,5 para sellos, fechas,
+     notas al pie y chips; en un teléfono eso no se lee, se adivina. */
+  time,
+  small,
+  em,
+  .vx-sello,
+  .vx-md-meta,
+  .vx-constelacion-desc,
+  .vx-frente-c,
+  .vxp-area-n,
+  .vxp-hall-tipo,
+  .vx-enl-chip,
+  .vx-esp-ir,
+  .vx-esp-vacio,
+  .vx-vivo-t,
+  .ed-chip,
+  .ed-tipo,
+  .ed-area-lema,
+  .ed-puertas-t,
+  .ed-tarjeta-pie,
+  .kg-card-tag,
+  .kg-kicker,
+  .vg-estado,
+  .vg-ver,
+  .vg-anim-op,
+  [class*="text-[6"],
+  [class*="text-[7"],
+  [class*="text-[8"],
+  [class*="text-[9"],
+  [class*="text-[10"],
+  [class*="text-[11"] {
+    font-size: 12px;
+  }
+
+  /* Las celdas numéricas de las tablas de datos respiran: 11,5 → 12,5.
+     Siguen siendo densas (es una tabla), pero se leen sin acercar. */
+  .vx-md-meta,
+  td.num,
+  th.num {
+    font-size: 12.5px;
+  }
+
+  /* ── 2 · TACTO: 24×24 mínimo en lo que se pulsa ──────────────────
+     `min-height` NO afecta a un enlace en línea dentro de un párrafo
+     (las cajas en línea lo ignoran), así que la prosa queda intacta y
+     solo crecen chips, botones y enlaces de navegación — que es donde
+     el dedo fallaba. */
+  a,
+  button,
+  [role="button"],
+  summary,
+  select,
+  label[for] {
+    min-height: 24px;
+  }
+  button,
+  [role="button"],
+  summary {
+    min-width: 24px;
+  }
+
+  /* ── 3 · CAMPOS: 16 px, que es lo que evita el zoom de iOS ───────
+     Por debajo de 16 px, Safari en iPhone amplía la página al enfocar
+     un campo y ya no la devuelve: el usuario se queda mirando media
+     pantalla. Los selectores de checkbox/radio/rango no se tocan. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* ── 4 · VENTANAS: que quepan y que se puedan recorrer ───────────
+     Un diálogo más alto que la pantalla sin desplazamiento propio deja
+     botones fuera de alcance. Esto lo garantiza para todos a la vez. */
+  [role="dialog"],
+  [aria-modal="true"] {
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* ── 5 · EL BOTÓN FLOTANTE NO TAPA LA ÚLTIMA TARJETA ─────────────
+     El muelle contextual (.vx-nav-fab) se posaba sobre la esquina
+     inferior izquierda del contenido; en /espacio y /navegacion tapaba
+     la etiqueta de una cifra. Se le da aire con respecto a la barra y
+     se le quita opacidad plena para que no compita con la lectura. */
+  .vx-nav-fab {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    opacity: 0.92;
+  }
+}
+
+/* ── 6 · ÁNIMO REDUCIDO: este suelo tampoco anima nada ─────────────
+   (declaración explícita para que quede escrito, no porque haya algo
+   que apagar aquí: esta hoja no añade ni una animación.) */

@@ -148,6 +148,15 @@ const nextConfig: NextConfig = {
       { source: "/detonacion", destination: "/cuartel?sala=simulador", permanent: true },
       // /lectura solo existe como /lectura/<clave>: la raíz lleva a la Crónica.
       { source: "/lectura", destination: "/cronica", permanent: false },
+      // v418.2 · LA PUERTA QUE SE LLAMABA DE OTRA FORMA (departamento 10).
+      // Medido: /ajustes devolvía 404 con la casa entera en pie, y no es una
+      // ruta inventada — es el nombre que cualquiera escribe (y el que usan
+      // los navegadores para «ajustes»). Los ajustes de verdad viven en /modo
+      // (MODO Y CUENTA: tema, nivel de animaciones, sonido, mundo). Las tres
+      // variantes aterrizan ahí en vez de morir en «esta sala no existe».
+      { source: "/ajustes", destination: "/modo", permanent: false },
+      { source: "/configuracion", destination: "/modo", permanent: false },
+      { source: "/settings", destination: "/modo", permanent: false },
     ];
   },
   // v102.0 LA CIUDADELA — CABECERAS DE ACERO: el muro invisible que rodea
