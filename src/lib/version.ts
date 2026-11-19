@@ -6747,9 +6747,11 @@
 // ⑥ LO QUE YA ESTABA BIEN Y SE DEJA EN PAZ: CLS 0,000 en las diez puertas
 //    medidas y cero tareas largas — el trabajo de animaciones de v416–v418
 //    hizo su parte; este departamento no lo toca, lo vigila.
-export const APP_VERSION = "v419.0";
+export const APP_VERSION = "v419.1";
+// (anterior) export const APP_VERSION = "v419.0";
 // (anterior) export const APP_VERSION = "v418.2";
-export const APP_CODENAME = "VANGUARD EARTH SYSTEM";
+export const APP_CODENAME = "CÁMARA DE INTELIGENCIA";
+// (anterior) export const APP_CODENAME = "VANGUARD EARTH SYSTEM";
 // (anterior) export const APP_CODENAME = "EL ARO DE CONTROL";
 // (anterior) export const APP_VERSION = "v418.1";
 // (anterior) export const APP_CODENAME = "LA CASA LIGERA";
@@ -6815,7 +6817,7 @@ export const APP_CODENAME = "VANGUARD EARTH SYSTEM";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v418.2";
+export const APP_VERSION_ANTERIOR = "v419.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

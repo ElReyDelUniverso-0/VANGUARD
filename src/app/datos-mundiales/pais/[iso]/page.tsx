@@ -76,6 +76,13 @@ export default async function FichaPaisPage({ params, searchParams }: Props) {
         <>
           {pais.renta} · capital {pais.capital || "sin dato"} · código ISO {pais.iso2.toUpperCase()} / {pais.iso3}. Todos los valores provienen del
           Banco Mundial con el año pegado; lo que no publica se escribe <b>sin dato</b>.
+          <Link
+            href={`/inteligencia?q=${encodeURIComponent(`¿Qué dicen las fuentes sobre ${pais.nombre}: economía, población y postura exterior?`)}`}
+            className="vx-md-chip-investigar"
+            style={{ display: "inline-flex", marginTop: 8, minHeight: 32, alignItems: "center", gap: 6, fontFamily: "ui-monospace, monospace", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.12em" }}
+          >
+            Investigar este país en la Cámara →
+          </Link>
         </>
       }
       cifras={cabecera.map(({ ind, serie }) => ({

@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v419.1",
+    nombre: "CÁMARA DE INTELIGENCIA",
+    hitos: [
+      "LA SALA (/inteligencia): el centro de investigación de la casa — pregunta, elige fuentes, investiga, guarda y continúa otro día, sobre los dossiers, la enciclopedia, las fichas de país, los expedientes y el feed vivo del núcleo.",
+      "TRES CASILLAS OBLIGATORIAS: cada afirmación sale como HECHO (con cita validada), INTERPRETACIÓN o NO CONFIRMADO; si el modelo presenta como hecho algo sin fuente, el validador lo degrada y lo declara.",
+      "EL MOTOR SE DICE: el modelo responde con citas que se comprueban una a una; sin proveedor, la Cámara responde en modo extractivo con las mismas fuentes en vez de callar o inventar.",
+      "LECTOR DE PDF Y DOCX PROPIO, sin dependencias: objetos, flujos Flate, ToUnicode/Identity-H y /Differences; medido contra un PDF de texto de 15 páginas (leído entero) y contra un escaneo (rechazado con motivo).",
+      "ENTIDADES Y PREGUNTAS SOBRE EL DOCUMENTO: fechas, lugares del atlas real, posibles nombres, organizaciones, acontecimientos y cifras; respuestas con cita por página y trozo.",
+      "COMPARADOR Y CONTRADICCIONES: dos documentos cara a cara con solapamiento, temas comunes y exclusivos, y choques comprobables de cifra, fecha, atribución o polaridad.",
+      "INFORME, BIBLIOGRAFÍA Y BIBTEX: secciones con hechos citados, interpretación provisional, no confirmado, contradicciones, lagunas, cronología y referencias reales de los dossiers.",
+      "PROYECTOS E HISTORIAL en el navegador (la BD de Vercel es efímera), con export e import .json; y los límites escritos en la propia sala: sin OCR, sin sincronización, sin navegación web.",
+    ],
+    tipo: "ia",
+  },
+  {
     version: "v419.0",
     nombre: "VANGUARD EARTH SYSTEM",
     hitos: [

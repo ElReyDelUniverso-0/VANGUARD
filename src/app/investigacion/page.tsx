@@ -94,6 +94,24 @@ export default function InvestigacionPage() {
               </div>
             ))}
           </dl>
+
+          {/* v419.1 · LA PUERTA DE LA CÁMARA — el centro de investigación donde
+              estos dossiers se pueden interrogar, cruzar con documentos propios
+              y convertir en informe con citas. No es un enlace decorativo: es la
+              sala que trabaja SOBRE lo que se lee aquí. */}
+          <Link
+            href="/inteligencia"
+            className="mt-1 flex flex-wrap items-center gap-2 rounded-sm border border-amber-hud/50 bg-amber-hud/5 px-3 py-2.5 transition-colors hover:bg-amber-hud/10"
+          >
+            <Sparkles className="h-4 w-4 shrink-0 text-amber" />
+            <span className="text-sm text-foreground">
+              <strong className="font-mono text-[12px] uppercase tracking-[0.18em] text-amber">Cámara de inteligencia</strong>
+              <span className="block text-[13px] text-muted-foreground">
+                Pregunta a estos diez dossiers, sube tus PDF y DOCX, compara fuentes, detecta contradicciones y sal con informe y bibliografía.
+              </span>
+            </span>
+            <span className="ml-auto font-mono text-[12px] text-amber">abrir →</span>
+          </Link>
         </div>
       </header>
 
