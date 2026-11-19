@@ -343,14 +343,26 @@ export function contradiccionesEntre(
 
           // ① cifra: misma unidad, distinto valor (y más de una por par: un
           // informe puede discrepar en varias cifras a la vez)
-          let yaHayCifra = false;
+
+          const cifrasB = cifrasDe(tb.texto);
           for (const ca of cifrasA) {
-            const cb = cifrasDe(tb.texto).find((c) => normalizar(c.unidad) === normalizar(ca.unidad));
+            // No basta con «la primera de la misma unidad»: eso emparejaba «60
+            // millones de capas» con «3 millones de unidades». Se busca la cifra
+            // de B cuyo CONTEXTO comparte más palabras con el de A.
+            const ctxA = new Set(terminos(ca.contexto));
+            const candidatas = cifrasB
+              .filter((c) => normalizar(c.unidad) === normalizar(ca.unidad))
+              .map((c) => {
+                let comun = 0;
+                for (const t of terminos(c.contexto)) if (ctxA.has(t)) comun += 1;
+                return { c, comun };
+              })
+              .sort((x, y) => y.comun - x.comun);
+            const cb = candidatas.length && candidatas[0].comun > 0 ? candidatas[0].c : undefined;
             if (!cb) continue;
             const na = numeroDe(ca.valor);
             const nb = numeroDe(cb.valor);
             if (na === null || nb === null || na === nb) continue;
-            yaHayCifra = true;
             salida.push({
               tema,
               a: { fuenteId: A.id, texto: ta.texto.slice(0, 300) },
@@ -361,7 +373,6 @@ export function contradiccionesEntre(
             if (salida.length >= 12) return salida;
             if (salida.filter((x) => x.tipo === "cifra" && x.a.fuenteId === A.id && x.b.fuenteId === B.id).length >= 3) break;
           }
-          const yaCifra = yaHayCifra;
 
           // ② fecha: mismo hecho, distinto día
           const fa2 = fechasA.filter((f) => f.iso);
@@ -384,7 +395,7 @@ export function contradiccionesEntre(
           // ③ polaridad: uno afirma, el otro niega el mismo asunto
           const negA = NEGACIONES.test(ta.texto);
           const negB = NEGACIONES.test(tb.texto);
-          if (negA !== negB && !yaCifra) {
+          if (negA !== negB) {
             salida.push({
               tema,
               a: { fuenteId: A.id, texto: ta.texto.slice(0, 300) },
