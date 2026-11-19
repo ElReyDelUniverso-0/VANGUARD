@@ -53,7 +53,19 @@ ok(
 );
 ok((auditoria.enLinea?.total ?? 0) > 0, "el auditor no censa las animaciones en línea");
 
-// ⑦ medidor presente para poder repetir la prueba
+// ⑦ el <html> no es descendiente de sí mismo: sus pseudo-elementos se nombran
+ok(
+  /html\[data-vg-anim="desactivadas"\]::before/.test(css),
+  "«desactivadas» no apaga html::before (el horizonte en brasa seguía latiendo)"
+);
+// ⑧ acortar transiciones en `*` obliga a recalcular el estilo de miles de nodos
+ok(
+  !/\*\s*\{[^}]*transition-duration/.test(css) &&
+    !/\*\s*\{[^}]*transition-duration/.test(gen.replace(/\/\*[\s\S]*?\*\//g, "")),
+  "quedan transiciones acortadas con selector universal: recalientan el estilo en bucles de JS"
+);
+
+// ⑨ medidor presente para poder repetir la prueba
 ok(existsSync("tools/anim/medir.mjs"), "falta el medidor reproducible");
 
 console.log("SISTEMA DE ANIMACIONES · prueba estática");

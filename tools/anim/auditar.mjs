@@ -187,8 +187,18 @@ html[data-vg-anim="reducidas"] *::after {
 }
 
 /* Las transiciones se acortan, no se eliminan: los estados siguen leyéndose
-   y \`transitionend\` sigue disparándose. */
-html[data-vg-anim="reducidas"] * {
+   y \`transitionend\` sigue disparándose. Solo en lo que se pulsa: acortarlas
+   en \`*\` hacía recalcular el estilo de miles de nodos cada vez que un bucle
+   de JavaScript escribía un estilo en línea —el panel de juego gastaba 1,4 s
+   de hilo por segundo con las animaciones ya apagadas—. */
+html[data-vg-anim="reducidas"] a,
+html[data-vg-anim="reducidas"] button,
+html[data-vg-anim="reducidas"] [role="button"],
+html[data-vg-anim="reducidas"] input,
+html[data-vg-anim="reducidas"] select,
+html[data-vg-anim="reducidas"] textarea,
+html[data-vg-anim="reducidas"] summary,
+html[data-vg-anim="reducidas"] label {
   transition-duration: 120ms !important;
 }
 `;

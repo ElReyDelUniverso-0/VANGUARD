@@ -53,8 +53,26 @@ html[data-vg-oculto="1"] *::after {
    que espere ese evento se queda colgado). */
 html[data-vg-anim="desactivadas"] *,
 html[data-vg-anim="desactivadas"] *::before,
-html[data-vg-anim="desactivadas"] *::after {
+html[data-vg-anim="desactivadas"] *::after,
+/* el propio <html> no es descendiente de sí mismo: sin estas dos líneas su
+   horizonte en brasa (`html::before`) seguía latiendo en «desactivadas» */
+html[data-vg-anim="desactivadas"]::before,
+html[data-vg-anim="desactivadas"]::after {
   animation: none !important;
+}
+
+/* Las transiciones se acortan SOLO en lo que se pulsa. Acortarlas en `*`
+   obligaba a recalcular el estilo de miles de nodos cada vez que un bucle de
+   JavaScript escribía un estilo en línea: el panel de juego llegaba a gastar
+   1,4 s de hilo por segundo con las animaciones ya apagadas. */
+html[data-vg-anim="desactivadas"] a,
+html[data-vg-anim="desactivadas"] button,
+html[data-vg-anim="desactivadas"] [role="button"],
+html[data-vg-anim="desactivadas"] input,
+html[data-vg-anim="desactivadas"] select,
+html[data-vg-anim="desactivadas"] textarea,
+html[data-vg-anim="desactivadas"] summary,
+html[data-vg-anim="desactivadas"] label {
   transition-duration: 1ms !important;
   transition-delay: 0ms !important;
 }
@@ -65,7 +83,14 @@ html[data-vg-anim="desactivadas"] {
 
 html[data-vg-anim="desactivadas"] *,
 html[data-vg-anim="desactivadas"] *::before,
-html[data-vg-anim="desactivadas"] *::after {
+html[data-vg-anim="desactivadas"] *::after,
+html[data-vg-anim="desactivadas"]::before,
+html[data-vg-anim="desactivadas"]::after,
+html[data-vg-anim="reducidas"] *,
+html[data-vg-anim="reducidas"] *::before,
+html[data-vg-anim="reducidas"] *::after,
+html[data-vg-anim="reducidas"]::before,
+html[data-vg-anim="reducidas"]::after {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }

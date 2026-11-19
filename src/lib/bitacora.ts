@@ -46,6 +46,16 @@ export const BITACORA: EntradaBitacora[] = [
     tipo: "tecno",
   },
   {
+    version: "v418.1",
+    nombre: "LA CASA LIGERA · el horizonte y las transiciones de más",
+    hitos: [
+      "EL PROPIO HTML NO ES DESCENDIENTE DE SÍ MISMO: la regla de «desactivadas» usaba * y *::before, que no alcanzan a html::before — el horizonte en brasa de la portada seguía latiendo con todo apagado. Ahora se nombra aparte, y la prueba estática falla si vuelve a faltar",
+      "ACORTAR TODAS LAS TRANSICIONES CON * ERA UN IMPUESTO ESCONDIDO: cada vez que un bucle de JavaScript escribía un estilo en línea, el navegador recalculaba el estilo de miles de nodos. El panel de juego llegaba a 1,4 s de hilo por segundo con las animaciones ya apagadas. Ahora se acortan solo en lo que se pulsa: enlaces, botones, campos y resúmenes",
+      "MEDIDO EN BRAVE SOBRE EL PANEL DE JUEGO (412×915, CPU 6×): completas 58 animaciones en curso y 1,8 fps de mediana —el informe era cierto—; reducidas 0 animaciones en curso y el hilo liberado",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v416.3",
     nombre: "LA CASA LIGERA · las dos fugas que quedaban",
     hitos: [

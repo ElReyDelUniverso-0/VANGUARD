@@ -6664,10 +6664,21 @@
 //    en la prueba de navegador del panel de juego.
 // (versión anterior) export const APP_VERSION = "v416.3";
 // (versión anterior) export const APP_VERSION = "v417.0";
-export const APP_VERSION = "v418.0";
-export const APP_CODENAME = "VANGUARD KNOWLEDGE";
+// (anterior) export const APP_VERSION = "v418.0";
+// (anterior) export const APP_CODENAME = "VANGUARD KNOWLEDGE";
 // (codename anterior) export const APP_CODENAME = "COMPATIBILIDAD MÓVIL";
 // (codename anterior) export const APP_CODENAME = "LA CASA LIGERA";
+
+// ⑩ LA TERCERA Y ÚLTIMA FUGA (v416.4): dos selectores universales mal
+//    puestos. El propio `html` no es descendiente de sí mismo, así que su
+//    `html::before` —el horizonte en brasa— seguía latiendo en «desactivadas»;
+//    y acortar TODAS las transiciones con `*` obligaba a recalcular el estilo
+//    de miles de nodos cada vez que un bucle de JavaScript escribía un estilo
+//    en línea: el panel de juego gastaba 1,4 s de hilo por segundo con las
+//    animaciones ya apagadas. Las transiciones se acortan solo en lo que se
+//    pulsa (enlaces, botones, campos). Medido en Brave sobre el panel de juego.
+export const APP_VERSION = "v418.1";
+export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";
 // (codename anterior) export const APP_CODENAME = "LA CASA CONECTADA";
