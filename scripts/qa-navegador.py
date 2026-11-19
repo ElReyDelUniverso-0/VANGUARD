@@ -94,7 +94,11 @@ MEDIR = """() => {
   // un defecto: es el carrusel. Se exige que el elemento flote (fixed/sticky) o
   // que sea un diálogo declarado.
   const flota = e => { const s = getComputedStyle(e);
-    return ['fixed', 'sticky'].includes(s.position) || e.matches('[role=dialog], dialog[open], [aria-modal=true]') || !!e.closest('[role=dialog], [aria-modal=true]'); };
+    // Ojo: NO basta con estar DENTRO de un diálogo. La sala /navegacion monta
+    // su hoja de espacios dentro de un contenedor de diálogo pero en flujo
+    // normal (max-height:none, crece con la página): marcarla era un falso
+    // positivo que este aro se cobraba a sí mismo.
+    return ['fixed', 'sticky'].includes(s.position) || e.matches('[role=dialog], dialog[open], [aria-modal=true]'); };
   const paneles = [...document.querySelectorAll('[role=dialog], dialog[open], [aria-modal=true], [class*=cajon], [class*=drawer], [class*=menu], [class*=hud]')]
     .filter(e => visible(e) && flota(e)).map(e => { const b = e.getBoundingClientRect(); const s = getComputedStyle(e);
       return { n: nodo(e), w: Math.round(b.width), h: Math.round(b.height),

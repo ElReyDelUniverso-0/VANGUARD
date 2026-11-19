@@ -138,15 +138,31 @@ export default function DatosPage() {
               <div>
                 <p className={titulo}>DÓNDE SE VE</p>
                 <div className="mt-1 flex flex-wrap gap-1">
-                  {m.rutas.map((r) => (
-                    <Link
-                      key={r}
-                      href={r}
-                      className="rounded-sm border border-zinc-700 px-1.5 py-0.5 font-mono text-[10px] text-zinc-300 hover:border-amber hover:text-amber"
-                    >
-                      {r}
-                    </Link>
-                  ))}
+                  {/* v418.2 · UNA RUTA CON PARÁMETRO NO ES UN ENLACE.
+                      Antes se pintaban como <Link> y el navegador las
+                      precargaba: /datos pedía /mundos/[iso] y devolvía 404
+                      literal (el corchete viajaba en la URL). Ahora se
+                      declaran como lo que son —una ruta con parámetro— y solo
+                      se enlaza lo que existe de verdad. */}
+                  {m.rutas.map((r) =>
+                    r.includes("[") || r.includes("…") ? (
+                      <span
+                        key={r}
+                        title="Ruta con parámetro: se rellena con un país, un conflicto o un artículo concreto"
+                        className="rounded-sm border border-dashed border-zinc-700 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500"
+                      >
+                        {r}
+                      </span>
+                    ) : (
+                      <Link
+                        key={r}
+                        href={r}
+                        className="rounded-sm border border-zinc-700 px-1.5 py-0.5 font-mono text-[10px] text-zinc-300 hover:border-amber hover:text-amber"
+                      >
+                        {r}
+                      </Link>
+                    ),
+                  )}
                   {m.endpoint ? (
                     <a
                       href={m.endpoint}

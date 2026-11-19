@@ -187,7 +187,9 @@ export const MODELOS_DATO: ModeloDato[] = [
     ],
     actualizacion: "consulta en vivo con caché de 24 h en la plataforma y 10 min en memoria por instancia",
     cache: 86400,
-    rutas: ["/datos-mundiales", "/datos-mundiales/comparar", "/datos-mundiales/panel", "/datos-mundiales/pais"],
+    // v418.2 · la ficha necesita su ISO: se enseña con un país de ejemplo en vez
+    // de una ruta que devolvía 404 (medido en /datos: /datos-mundiales/pais).
+    rutas: ["/datos-mundiales", "/datos-mundiales/comparar", "/datos-mundiales/panel", "/datos-mundiales/pais/do"],
     endpoint: "/api/mundial",
     limites: [
       "No estima, no interpola y no rellena huecos: si el Banco Mundial no publica un año, no hay punto.",
