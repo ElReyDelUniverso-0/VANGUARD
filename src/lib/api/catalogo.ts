@@ -449,6 +449,7 @@ export const ENDPOINTS_DOCUMENTADOS: EndpointVanguard[] = [
  */
 export const RUTAS_INVENTARIADAS: string[] = [
   "/api",
+  "/api/academia/catalogo",
   "/api/agent-ping",
   "/api/agente",
   "/api/agente/opinar",
