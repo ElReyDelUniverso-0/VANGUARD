@@ -1,13 +1,13 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-19",
-  "paginas": 137,
-  "rutasApi": 130,
-  "total": 267,
-  "bienConectadas": 120,
+  "paginas": 148,
+  "rutasApi": 131,
+  "total": 279,
+  "bienConectadas": 127,
   "huerfanas": [],
-  "paginasConReferencias": 137,
-  "mediaReferencias": 12.74,
+  "paginasConReferencias": 148,
+  "mediaReferencias": 12.24,
   "rutas": [
     {
       "ruta": "/",
@@ -21,6 +21,104 @@
       ]
     },
     {
+      "ruta": "/academia",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "app/academia/cursos/[slug]/page.tsx",
+        "components/conocimiento/academia.tsx",
+        "components/vanguard/academia/CatalogoCursos.tsx",
+        "components/vanguard/academia/DashboardEstudiante.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/certificados",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "app/academia/page.tsx",
+        "components/vanguard/academia/NavegacionAcademia.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/cursos",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "app/academia/cursos/[slug]/page.tsx",
+        "app/academia/page.tsx",
+        "components/vanguard/academia/CatalogoCursos.tsx",
+        "components/vanguard/academia/DashboardEstudiante.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/cursos/[slug]",
+      "tipo": "pagina",
+      "referencias": 8,
+      "desde": [
+        "app/academia/page.tsx",
+        "components/vanguard/academia/CatalogoCursos.tsx",
+        "components/vanguard/academia/DashboardEstudiante.tsx",
+        "components/vanguard/academia/GlosarioInteractivo.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/cursos/[slug]/[capituloId]/[leccionId]",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "app/academia/cursos/[slug]/page.tsx",
+        "app/academia/page.tsx",
+        "components/vanguard/academia/CatalogoCursos.tsx",
+        "components/vanguard/academia/DashboardEstudiante.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/ejercicios",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "app/academia/page.tsx",
+        "components/vanguard/academia/NavegacionAcademia.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/glosario",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/academia/NavegacionAcademia.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/historial",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "components/vanguard/academia/NavegacionAcademia.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/rutas",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "app/academia/page.tsx",
+        "components/vanguard/academia/DashboardEstudiante.tsx",
+        "components/vanguard/academia/NavegacionAcademia.tsx"
+      ]
+    },
+    {
+      "ruta": "/academia/tarjetas",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "app/academia/page.tsx",
+        "components/vanguard/academia/NavegacionAcademia.tsx",
+        "lib/academia/datos-rutas-glosario.ts"
+      ]
+    },
+    {
       "ruta": "/api",
       "tipo": "api",
       "referencias": 158,
@@ -29,6 +127,14 @@
         "app/audios/page.tsx",
         "app/datos/page.tsx",
         "app/en-vivo/sala-en-vivo.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/academia/catalogo",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "lib/api/catalogo.ts"
       ]
     },
     {
@@ -1421,7 +1527,7 @@
     {
       "ruta": "/conocimiento",
       "tipo": "pagina",
-      "referencias": 24,
+      "referencias": 25,
       "desde": [
         "app/conocimiento/aprender/page.tsx",
         "app/conocimiento/enciclopedia/[slug]/page.tsx",
@@ -1443,12 +1549,12 @@
     {
       "ruta": "/conocimiento/area/[slug]",
       "tipo": "pagina",
-      "referencias": 4,
+      "referencias": 5,
       "desde": [
         "components/conocimiento/explorador.tsx",
+        "lib/academia/datos-cursos.ts",
         "lib/arquitectura/departamentos.ts",
-        "lib/conocimiento/indice.ts",
-        "lib/enciclopedia/categorias.ts"
+        "lib/conocimiento/indice.ts"
       ]
     },
     {
@@ -1655,6 +1761,17 @@
         "app/datos-mundiales/page.tsx",
         "components/mundial/marco-datos.tsx",
         "components/mundial/tabla-ranking.tsx"
+      ]
+    },
+    {
+      "ruta": "/datos-mundiales/pais/do",
+      "tipo": "pagina",
+      "referencias": 6,
+      "desde": [
+        "app/datos-mundiales/page.tsx",
+        "app/datos-mundiales/pais/[iso]/page.tsx",
+        "components/mundial/marco-datos.tsx",
+        "lib/arquitectura/departamentos.ts"
       ]
     },
     {
@@ -1881,7 +1998,7 @@
     {
       "ruta": "/historia",
       "tipo": "pagina",
-      "referencias": 27,
+      "referencias": 28,
       "desde": [
         "app/calidad/page.tsx",
         "app/conocimiento/enciclopedia/page.tsx",
@@ -1901,7 +2018,7 @@
     {
       "ruta": "/investigacion",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 13,
       "desde": [
         "app/inteligencia/page.tsx",
         "app/investigacion/[slug]/page.tsx",
@@ -1912,7 +2029,7 @@
     {
       "ruta": "/investigacion/[slug]",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 13,
       "desde": [
         "app/inteligencia/page.tsx",
         "app/investigacion/page.tsx",
@@ -1923,7 +2040,7 @@
     {
       "ruta": "/labs",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 13,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -1934,7 +2051,7 @@
     {
       "ruta": "/labs/[modelo]",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 13,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -2171,7 +2288,7 @@
     {
       "ruta": "/mapas",
       "tipo": "pagina",
-      "referencias": 29,
+      "referencias": 30,
       "desde": [
         "app/espacio/page.tsx",
         "app/mundos/page.tsx",
@@ -2491,7 +2608,7 @@
     {
       "ruta": "/poder",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/mapas/page.tsx",
         "components/portada/modulos.ts",
@@ -2643,7 +2760,7 @@
     {
       "ruta": "/traductor",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 13,
       "desde": [
         "app/mundo/page.tsx",
         "components/portada/modulos.ts",
