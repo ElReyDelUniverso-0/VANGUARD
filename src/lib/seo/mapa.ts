@@ -4,6 +4,7 @@ import { COLECCIONES_MEMORIA, PERIODOS } from "@/lib/memoria/colecciones";
 import { rutasConocimiento } from "@/lib/conocimiento/indice";
 import { rutasLingua } from "@/lib/lingua/servidor"; // v420.0
 import { rutasEnciclopedia, ULTIMA_REVISION as ULTIMA_REVISION_ENCICLOPEDIA } from "@/lib/enciclopedia/indice"; // v417.0
+import { rutasCiencia, CAPTURA as CAPTURA_CIENCIA } from "@/lib/ciencia/indice"; // v421.9
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
@@ -851,6 +852,12 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}${r}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    ...rutasCiencia().map((r) => ({
+      url: `${SITE_URL}${r}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+      lastModified: CAPTURA_CIENCIA,
     })),
     ...rutasEnciclopedia().map((r) => ({
       url: `${SITE_URL}${r}`,

@@ -1,13 +1,13 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-20",
-  "paginas": 156,
-  "rutasApi": 134,
-  "total": 290,
-  "bienConectadas": 140,
+  "paginas": 169,
+  "rutasApi": 135,
+  "total": 304,
+  "bienConectadas": 150,
   "huerfanas": [],
-  "paginasConReferencias": 156,
-  "mediaReferencias": 13.13,
+  "paginasConReferencias": 169,
+  "mediaReferencias": 12.53,
   "rutas": [
     {
       "ruta": "/",
@@ -127,12 +127,12 @@
     {
       "ruta": "/api",
       "tipo": "api",
-      "referencias": 158,
+      "referencias": 159,
       "desde": [
         "app/audios/grabador.tsx",
         "app/audios/page.tsx",
-        "app/datos/page.tsx",
-        "app/en-vivo/sala-en-vivo.tsx"
+        "app/ciencia/metodo/page.tsx",
+        "app/datos/page.tsx"
       ]
     },
     {
@@ -338,6 +338,15 @@
       "referencias": 2,
       "desde": [
         "components/vanguard/centro/centro-inteligencia.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/ciencia",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/ciencia/metodo/page.tsx",
         "lib/api/catalogo.ts"
       ]
     },
@@ -1431,12 +1440,12 @@
     {
       "ruta": "/calidad",
       "tipo": "pagina",
-      "referencias": 10,
+      "referencias": 11,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/torre/page.tsx",
-        "components/mundos/mundos.ts",
-        "components/portada/modulos.ts"
+        "components/ciencia/piezas.tsx",
+        "components/mundos/mundos.ts"
       ]
     },
     {
@@ -1459,6 +1468,138 @@
         "app/resiliencia/page.tsx",
         "components/portada/modulos.ts",
         "components/travesia/travesia.tsx"
+      ]
+    },
+    {
+      "ruta": "/ciencia",
+      "tipo": "pagina",
+      "referencias": 20,
+      "desde": [
+        "app/ciencia/biblioteca/page.tsx",
+        "app/ciencia/buscar/page.tsx",
+        "app/ciencia/cronologia/page.tsx",
+        "app/ciencia/disciplina/[id]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/ciencia/biblioteca",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "components/ciencia/piezas.tsx",
+        "components/portada/modulos.ts",
+        "lib/nucleo/registro.ts"
+      ]
+    },
+    {
+      "ruta": "/ciencia/buscar",
+      "tipo": "pagina",
+      "referencias": 6,
+      "desde": [
+        "app/ciencia/disciplina/[id]/page.tsx",
+        "app/ciencia/page.tsx",
+        "app/ciencia/publicacion/[id]/page.tsx",
+        "components/ciencia/piezas.tsx"
+      ]
+    },
+    {
+      "ruta": "/ciencia/cronologia",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "components/ciencia/piezas.tsx",
+        "components/portada/modulos.ts",
+        "lib/arquitectura/departamentos.ts"
+      ]
+    },
+    {
+      "ruta": "/ciencia/disciplina/[id]",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "app/ciencia/publicacion/[id]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/ciencia/experimentos",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/ciencia/idea/[id]/page.tsx",
+        "app/ciencia/page.tsx",
+        "components/ciencia/piezas.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/ciencia/explorador",
+      "tipo": "pagina",
+      "referencias": 7,
+      "desde": [
+        "app/ciencia/idea/[id]/page.tsx",
+        "app/ciencia/page.tsx",
+        "components/ciencia/piezas.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/ciencia/idea/[id]",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "app/ciencia/explorador/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/ciencia/instituciones",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/ciencia/page.tsx",
+        "components/ciencia/piezas.tsx",
+        "components/portada/modulos.ts",
+        "lib/arquitectura/departamentos.ts"
+      ]
+    },
+    {
+      "ruta": "/ciencia/metodo",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "app/ciencia/page.tsx",
+        "components/ciencia/piezas.tsx",
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/ciencia/premios",
+      "tipo": "pagina",
+      "referencias": 5,
+      "desde": [
+        "app/ciencia/cronologia/page.tsx",
+        "app/ciencia/idea/[id]/page.tsx",
+        "app/ciencia/page.tsx",
+        "components/ciencia/piezas.tsx"
+      ]
+    },
+    {
+      "ruta": "/ciencia/publicacion/[id]",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "app/ciencia/disciplina/[id]/page.tsx",
+        "lib/arquitectura/departamentos.ts",
+        "lib/nucleo/busqueda.ts"
+      ]
+    },
+    {
+      "ruta": "/ciencia/tecnologia",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "app/ciencia/page.tsx",
+        "components/ciencia/piezas.tsx",
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -1541,7 +1682,7 @@
     {
       "ruta": "/conocimiento",
       "tipo": "pagina",
-      "referencias": 28,
+      "referencias": 29,
       "desde": [
         "app/conocimiento/aprender/page.tsx",
         "app/conocimiento/enciclopedia/[slug]/page.tsx",
@@ -1574,33 +1715,32 @@
     {
       "ruta": "/conocimiento/centro/[slug]",
       "tipo": "pagina",
-      "referencias": 3,
+      "referencias": 2,
       "desde": [
         "components/conocimiento/explorador.tsx",
-        "lib/arquitectura/departamentos.ts",
         "lib/conocimiento/indice.ts"
       ]
     },
     {
       "ruta": "/conocimiento/enciclopedia",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 13,
       "desde": [
         "app/inteligencia/page.tsx",
         "app/lingua/escrituras/[codigo]/page.tsx",
         "app/lingua/page.tsx",
-        "components/conocimiento/explorador.tsx"
+        "components/ciencia/piezas.tsx"
       ]
     },
     {
       "ruta": "/conocimiento/enciclopedia/[slug]",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 13,
       "desde": [
         "app/inteligencia/page.tsx",
         "app/lingua/escrituras/[codigo]/page.tsx",
         "app/lingua/page.tsx",
-        "components/conocimiento/explorador.tsx"
+        "components/ciencia/piezas.tsx"
       ]
     },
     {
@@ -1736,7 +1876,7 @@
     {
       "ruta": "/datos",
       "tipo": "pagina",
-      "referencias": 16,
+      "referencias": 17,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/datos-mundiales/page.tsx",
@@ -2550,12 +2690,12 @@
     {
       "ruta": "/novedades",
       "tipo": "pagina",
-      "referencias": 19,
+      "referencias": 20,
       "desde": [
         "app/page.tsx",
+        "components/ciencia/piezas.tsx",
         "components/mundos/mundos.ts",
-        "components/portada/modulos.ts",
-        "components/portada/portada-nueva.tsx"
+        "components/portada/modulos.ts"
       ]
     },
     {

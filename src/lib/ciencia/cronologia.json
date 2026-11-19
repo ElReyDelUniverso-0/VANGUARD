@@ -1,0 +1,432 @@
+[
+ {
+  "fecha": "1896-04",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "arrhenius",
+  "titulo": "Una estimación temprana del efecto del CO2",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "1904-01-01",
+  "precision": 1,
+  "tipo": "hito",
+  "id": "hito-1904",
+  "titulo": "Henri Poincaré formula la pregunta sobre la esfera tridimensional.",
+  "fuente": "https://www.claymath.org/millennium/poincare-conjecture/"
+ },
+ {
+  "fecha": "1916-01-01",
+  "precision": 1,
+  "tipo": "hito",
+  "id": "hito-1916",
+  "titulo": "La relatividad general predice ondas gravitacionales; la detección llegará un siglo después.",
+  "fuente": "https://www.ligo.caltech.edu/news/ligo20160211"
+ },
+ {
+  "fecha": "1960-01-01",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "keeling",
+  "titulo": "Medir el CO2 atmosférico con una referencia estable",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "1961-07-01",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "framingham",
+  "titulo": "Seguir una cohorte para identificar factores de riesgo",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "1963-09",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "bandas",
+  "titulo": "Leer las franjas magnéticas del fondo marino",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "1965-07",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "fallas",
+  "titulo": "Por qué una dorsal aparece desplazada",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "1965-07",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "interpretacion",
+  "titulo": "Una interpretación cosmológica para la señal",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "1965-07",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "ruido",
+  "titulo": "Una antena mide un exceso persistente de temperatura",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "1967-12",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "pacifico",
+  "titulo": "Mover placas sobre una esfera",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "1968-03-15",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "placas-rigidas",
+  "titulo": "Una Tierra dividida en bloques móviles",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "1973-03",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "imagen-rm",
+  "titulo": "Convertir una señal de resonancia en una imagen",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "1975-01",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "pulso",
+  "titulo": "Un púlsar que comparte órbita",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "1981-08-28",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "calentamiento",
+  "titulo": "Del balance radiativo a los escenarios de clima",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "1982-02",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "orbita",
+  "titulo": "Una órbita que pierde energía",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "1990-05",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "espectro",
+  "titulo": "COBE examina el espectro del fondo de microondas",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "1990-12",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "oxigenacion",
+  "titulo": "El oxígeno de la sangre cambia el contraste",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "1992-06-15",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "cerebro",
+  "titulo": "De la oxigenación a la actividad cerebral humana",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "1992-09",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "anisotropia",
+  "titulo": "Pequeñas diferencias entre direcciones del cielo",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "1995-11",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "pegaso",
+  "titulo": "Un planeta alrededor de 51 Pegasi",
+  "disciplinaId": "astronomia"
+ },
+ {
+  "fecha": "1997-04-17",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "dash",
+  "titulo": "Someter un patrón alimentario a un ensayo controlado",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "1999-06",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "hielo",
+  "titulo": "Un registro antártico de varios ciclos glaciares",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "2000-01-20",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "transito",
+  "titulo": "Un planeta pasa por delante de su estrella",
+  "disciplinaId": "astronomia"
+ },
+ {
+  "fecha": "2000-01-20",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "transito-henry",
+  "titulo": "Otro equipo observa el tránsito de HD 209458 b",
+  "disciplinaId": "astronomia"
+ },
+ {
+  "fecha": "2000-05-24",
+  "precision": 3,
+  "tipo": "divulgacion",
+  "id": "clay-ficha",
+  "titulo": "Poincaré Conjecture",
+  "disciplinaId": "matematicas"
+ },
+ {
+  "fecha": "2001-01-04",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "sal",
+  "titulo": "Separar patrón alimentario y aporte de sodio",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "2002-03-20",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "sodio",
+  "titulo": "Sodio en el borde de un exoplaneta",
+  "disciplinaId": "astronomia"
+ },
+ {
+  "fecha": "2002-11-11",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "entropia",
+  "titulo": "Una nueva herramienta para el flujo de Ricci",
+  "disciplinaId": "matematicas"
+ },
+ {
+  "fecha": "2003-03-10",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "cirugia",
+  "titulo": "Continuar el flujo cuando aparecen singularidades",
+  "disciplinaId": "matematicas"
+ },
+ {
+  "fecha": "2003-07-17",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "extincion",
+  "titulo": "Cuándo se extingue el flujo en tiempo finito",
+  "disciplinaId": "matematicas"
+ },
+ {
+  "fecha": "2003-12-10",
+  "precision": 3,
+  "tipo": "premio",
+  "id": "nobel-2003",
+  "titulo": "Premio Nobel de Fisiología o Medicina",
+  "disciplinaId": "medicina",
+  "nota": "Ceremonia anual; la fecha del fallo no es la del descubrimiento."
+ },
+ {
+  "fecha": "2004-09",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "interheart",
+  "titulo": "Comparar factores asociados al infarto en 52 países",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "2004-10-22",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "lamina",
+  "titulo": "Medir una película de carbono de una sola capa",
+  "disciplinaId": "materiales"
+ },
+ {
+  "fecha": "2005-11",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "dirac",
+  "titulo": "Cuando la carga en grafeno se comporta de otro modo",
+  "disciplinaId": "materiales"
+ },
+ {
+  "fecha": "2005-11",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "hall",
+  "titulo": "Una segunda vía al efecto Hall en grafeno",
+  "disciplinaId": "materiales"
+ },
+ {
+  "fecha": "2006-12-10",
+  "precision": 3,
+  "tipo": "premio",
+  "id": "nobel-2006",
+  "titulo": "Premio Nobel de Física",
+  "disciplinaId": "fisica",
+  "nota": "Ceremonia anual; la fecha del fallo no es la del descubrimiento."
+ },
+ {
+  "fecha": "2007-03",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "revision-grafeno",
+  "titulo": "Qué se sabía del grafeno tras los primeros experimentos",
+  "disciplinaId": "materiales"
+ },
+ {
+  "fecha": "2008-06",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "revision-bold",
+  "titulo": "Qué puede decir —y qué no— una imagen funcional",
+  "disciplinaId": "medicina"
+ },
+ {
+  "fecha": "2008-11-06",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "notas",
+  "titulo": "Examinar y completar los detalles del argumento",
+  "disciplinaId": "matematicas"
+ },
+ {
+  "fecha": "2010-04",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "morvel",
+  "titulo": "Recalcular los movimientos relativos de las placas",
+  "disciplinaId": "tierra"
+ },
+ {
+  "fecha": "2010-12-10",
+  "precision": 3,
+  "tipo": "premio",
+  "id": "nobel-2010",
+  "titulo": "Premio Nobel de Física",
+  "disciplinaId": "materiales",
+  "nota": "Ceremonia anual; la fecha del fallo no es la del descubrimiento."
+ },
+ {
+  "fecha": "2016-02-11",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "onda-v1",
+  "titulo": "GW150914: el manuscrito público",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "2016-02-11",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "ondas-bh",
+  "titulo": "La primera detección directa de ondas gravitacionales",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "2016-02-11",
+  "precision": 3,
+  "tipo": "divulgacion",
+  "id": "ligo-nota",
+  "titulo": "Gravitational Waves Detected 100 Years After Einstein's Prediction",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "2017-10-16",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "ondas-ns",
+  "titulo": "El rastro de dos estrellas de neutrones",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "2017-12-10",
+  "precision": 3,
+  "tipo": "premio",
+  "id": "nobel-2017",
+  "titulo": "Premio Nobel de Física",
+  "disciplinaId": "fisica",
+  "nota": "Ceremonia anual; la fecha del fallo no es la del descubrimiento."
+ },
+ {
+  "fecha": "2018-03-05",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "giro",
+  "titulo": "Dos capas giradas y un nuevo régimen electrónico",
+  "disciplinaId": "materiales"
+ },
+ {
+  "fecha": "2018-07-17",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "planck-v1",
+  "titulo": "Parámetros cosmológicos: la primera versión de Planck 2018",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "2019-12-10",
+  "precision": 3,
+  "tipo": "premio",
+  "id": "nobel-2019",
+  "titulo": "Premio Nobel de Física",
+  "disciplinaId": "astronomia",
+  "nota": "Ceremonia anual; la fecha del fallo no es la del descubrimiento."
+ },
+ {
+  "fecha": "2020-09",
+  "precision": 2,
+  "tipo": "publicacion",
+  "id": "planck",
+  "titulo": "Qué parámetros cosmológicos restringe el fondo",
+  "disciplinaId": "fisica"
+ },
+ {
+  "fecha": "2021-12-10",
+  "precision": 3,
+  "tipo": "premio",
+  "id": "nobel-2021",
+  "titulo": "Premio Nobel de Física",
+  "disciplinaId": "tierra",
+  "nota": "Ceremonia anual; la fecha del fallo no es la del descubrimiento."
+ },
+ {
+  "fecha": "2022-08-25",
+  "precision": 3,
+  "tipo": "divulgacion",
+  "id": "nasa-nota",
+  "titulo": "NASA's Webb Detects Carbon Dioxide in Exoplanet Atmosphere",
+  "disciplinaId": "astronomia"
+ },
+ {
+  "fecha": "2022-09-02",
+  "precision": 3,
+  "tipo": "publicacion",
+  "id": "co2-planeta",
+  "titulo": "Una huella de CO2 en WASP-39 b",
+  "disciplinaId": "astronomia"
+ }
+]

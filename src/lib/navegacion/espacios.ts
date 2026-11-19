@@ -110,12 +110,14 @@ export const ESPACIOS: Espacio[] = [
     color: "#3ddcff",
     icono: "radar",
     detecta: {
-      rutas: ["/inteligencia", "/espia", "/centinela", "/oscura", "/verdad-cruda", "/poder", "/modulo/secretos"],
+      rutas: ["/inteligencia", "/espia", "/centinela", "/oscura", "/verdad-cruda", "/poder", "/modulo/secretos", "/ciencia"],
       salas: ["salaguerra", "comunidad", "redmundial", "googles", "mente", "imagenes", "grafo", "espejo", "maquina", "expedientes", "ojodios", "osint", "canales", "wikiguerra", "centinela", "espectro", "pulsos", "evaluacion", "perdidas", "monitorglobal", "camaras", "cielos", "sismo", "ciber", "pulso", "radar", "geopolitica", "observatorio", "abusos", "incidentes", "memorial", "sala18", "dronguerra", "recluta", "espionaje", "crisis", "oscura"],
-      modulos: ["secretos"],
+      modulos: ["secretos", "ciencia"],
       constelaciones: ["inteligencia", "observatorio", "oscsuro"],
     },
     herramientas: [
+      /* v421.9 */ { id: "science-frontier", nombre: "Science Frontier", href: "/ciencia", icono: "flask-conical", desc: "Publicaciones reales con tipo editorial y nivel de evidencia separados, y su enlace original" },
+      { id: "science-explorador", nombre: "Explorador de descubrimientos", href: "/ciencia/explorador", icono: "git-branch", desc: "Una pregunta científica y todos sus pasos, con lo que añadió cada uno" },
       { id: "espia", nombre: "Servicios secretos", href: "/espia", icono: "fingerprint", desc: "Agencias, agentes y expedientes con su documento a la vista" },
       { id: "centinela", nombre: "Centinela", href: "/centinela", icono: "radar", desc: "La vigilancia continua: lo que se mueve y lo que se calla" },
       { id: "oscura", nombre: "Verdad cruda", href: "/verdad-cruda", icono: "skull", desc: "Abusos documentados con su fuente pública citada" },

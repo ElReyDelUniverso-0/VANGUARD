@@ -55,7 +55,15 @@ export interface ModuloNucleo {
 }
 
 export const MODULOS_NUCLEO: ModuloNucleo[] = [
-  { id: "mod:academia-conocimiento", nombre:"VANGUARD ACADEMY", lema:"Aprender conectando", descripcion:"Piloto de cuatro rutas, doce actividades con respuestas explicadas, expedientes existentes y progreso local borrable. No certifica competencias.", categoria:"MUNDO", ruta:"/conocimiento/aprender", permiso:"publico", estado:"BETA", dependencias:["mod:conocimiento-global"], alias:"academia lecciones cuestionarios aprendizaje ciencia datos historia energia" },
+  // v421.9 — MISIÓN 06: el departamento científico. No repite la
+  // Enciclopedia: indexa publicaciones y explica su evolución.
+  { id:"mod:science-frontier", nombre:"SCIENCE FRONTIER", lema:"Ciencia rastreada hasta su origen", descripcion:"Buscador de publicaciones reales con DOI o arXiv, filtros por disciplina, tipo editorial y nivel de evidencia; explorador de descubrimientos que sigue una idea paso a paso; catálogos de instituciones, premios, experimentos y tecnología. Declara lo que no demuestra.", categoria:"MUNDO", ruta:"/ciencia", permiso:"publico", estado:"VIVO",
+    dependencias:["fnt:ciencia"], alias:"ciencia ciencia cientifico scientific publicaciones papers doi arxiv crossref pubmed investigacion descubrimiento evidencia preprint revision hipotesis premio nobel experimento cronologia biblioteca institucion" },
+  { id:"mod:science-explorador", nombre:"EXPLORADOR DE DESCUBRIMIENTOS", lema:"Una pregunta, todos sus pasos", descripcion:"Recorrido interactivo por nueve ideas científicas: cada paso es una publicación real con su fecha, su tipo editorial, su nivel de evidencia, lo que añadió y lo que no demuestra.", categoria:"MUNDO", ruta:"/ciencia/explorador", permiso:"publico", estado:"VIVO",
+    dependencias:["fnt:ciencia"], alias:"explorador descubrimientos evolucion idea linea del tiempo ondas gravitacionales exoplanetas grafeno clima poincare" },
+  { id:"mod:science-biblioteca", nombre:"BIBLIOTECA CIENTÍFICA", lema:"Estanterías para leer con orden", descripcion:"Cinco recorridos curados, el índice completo por fecha y una estantería personal guardada en el navegador. Todo enlaza a las mismas fichas: no duplica contenido.", categoria:"MUNDO", ruta:"/ciencia/biblioteca", permiso:"publico", estado:"VIVO",
+    dependencias:["fnt:ciencia"], alias:"biblioteca cientifica estanteria lecturas guardadas indice por fecha" },
+  { id:"mod:academia-conocimiento", nombre:"VANGUARD ACADEMY", lema:"Aprender conectando", descripcion:"Piloto de cuatro rutas, doce actividades con respuestas explicadas, expedientes existentes y progreso local borrable. No certifica competencias.", categoria:"MUNDO", ruta:"/conocimiento/aprender", permiso:"publico", estado:"BETA", dependencias:["mod:conocimiento-global"], alias:"academia lecciones cuestionarios aprendizaje ciencia datos historia energia" },
   {
     id: "mod:conocimiento-global",
     nombre: "CONOCIMIENTO GLOBAL",

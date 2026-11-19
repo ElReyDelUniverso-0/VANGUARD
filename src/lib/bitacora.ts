@@ -90,6 +90,21 @@ export const BITACORA: EntradaBitacora[] = [
     tipo: "ia",
   },
   {
+    version: "v421.9",
+    nombre: "VANGUARD SCIENCE FRONTIER",
+    tipo: "tecno",
+    hitos: [
+      "El departamento científico del Dueño: 42 publicaciones reales con DOI o arXiv y 3 registros institucionales, con tipo editorial y nivel de evidencia en campos SEPARADOS.",
+      "El explorador de descubrimientos: nueve preguntas, sus pasos reales y, en cada uno, qué añadió y qué no demuestra.",
+      "Buscador funcional con disciplina, tipo, nivel, idea, años y orden — el estado va en la URL y se puede compartir.",
+      "Fichas conectadas: autores, fecha, revista, identificador, huella SHA-256, citas verificadas en Crossref y enlace a la publicación original.",
+      "Catálogos: 10 instituciones con URL comprobada, 6 premios con motivación literal, 9 experimentos con su límite y 7 tecnologías con su madurez.",
+      "Cronología de 53 entradas y biblioteca con cinco estanterías curadas más una estantería personal en el navegador.",
+      "Nada se presenta como descubrimiento si es hipótesis: cuatro registros lo declaran en la ficha y en el buscador.",
+      "Enganchado al núcleo (3 módulos), la búsqueda global, la portada, el sitemap, llms.txt y /api/ciencia. 1.237 comprobaciones propias.",
+    ],
+  },
+  {
     version: "v419.0",
     nombre: "VANGUARD EARTH SYSTEM",
     hitos: [

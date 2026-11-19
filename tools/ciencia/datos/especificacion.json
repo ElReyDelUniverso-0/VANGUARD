@@ -1,0 +1,873 @@
+{
+  "version": "v421.9",
+  "captura": "2026-11-18",
+  "disciplinas": [
+    {
+      "id": "fisica",
+      "nombre": "Física",
+      "color": "#22d3ee",
+      "descripcion": "Materia, energía, gravedad y radiación: de las ondas del espacio-tiempo al fondo de microondas."
+    },
+    {
+      "id": "astronomia",
+      "nombre": "Astronomía y astrofísica",
+      "color": "#a78bfa",
+      "descripcion": "Estrellas, planetas y el medio que los rodea, observados con luz y con otras señales."
+    },
+    {
+      "id": "tierra",
+      "nombre": "Ciencias de la Tierra y clima",
+      "color": "#34d399",
+      "descripcion": "Un planeta que se mueve y un clima que responde a la composición de la atmósfera."
+    },
+    {
+      "id": "materiales",
+      "nombre": "Ciencia de materiales",
+      "color": "#fbbf24",
+      "descripcion": "Qué cambia cuando un material tiene una sola capa, y cómo medirlo."
+    },
+    {
+      "id": "medicina",
+      "nombre": "Medicina y neurociencia",
+      "color": "#fb7185",
+      "descripcion": "Cómo se observa el cuerpo vivo y cómo se distingue un factor asociado de una causa."
+    },
+    {
+      "id": "matematicas",
+      "nombre": "Matemáticas",
+      "color": "#93c5fd",
+      "descripcion": "Demostraciones, verificaciones y el flujo de Ricci: otra forma de establecer que algo es cierto."
+    }
+  ],
+  "titulosEs": {
+    "pulso": "Descubrimiento de un púlsar en un sistema binario",
+    "orbita": "Una nueva prueba de la relatividad general: radiación gravitacional y el púlsar binario PSR 1913+16",
+    "onda-v1": "Observación de ondas gravitacionales de la fusión de dos agujeros negros (versión v1 en arXiv)",
+    "ondas-bh": "Observación de ondas gravitacionales de la fusión de dos agujeros negros",
+    "ondas-ns": "GW170817: observación de ondas gravitacionales de la fusión de dos estrellas de neutrones",
+    "pegaso": "Un compañero de masa joviana alrededor de una estrella de tipo solar",
+    "transito": "Detección de tránsitos planetarios frente a una estrella de tipo solar",
+    "transito-henry": "Un planeta en tránsito «tipo 51 Pegasi»",
+    "sodio": "Detección de la atmósfera de un planeta extrasolar",
+    "co2-planeta": "Identificación de dióxido de carbono en la atmósfera de un exoplaneta",
+    "bandas": "Anomalías magnéticas sobre las dorsales oceánicas",
+    "fallas": "Una nueva clase de fallas y su relación con la deriva continental",
+    "pacifico": "El Pacífico Norte: un ejemplo de tectónica sobre una esfera",
+    "placas-rigidas": "Dorsales, fosas, grandes fallas y bloques de corteza",
+    "morvel": "Los movimientos actuales de las placas",
+    "lamina": "Efecto de campo eléctrico en películas de carbono de espesor atómico",
+    "dirac": "Gas bidimensional de fermiones de Dirac sin masa en grafeno",
+    "hall": "Observación experimental del efecto Hall cuántico y la fase de Berry en grafeno",
+    "revision-grafeno": "El ascenso del grafeno",
+    "giro": "Superconductividad no convencional en grafeno de doble capa con ángulo mágico",
+    "imagen-rm": "Formación de imágenes por interacciones locales inducidas: ejemplos con resonancia magnética nuclear",
+    "oxigenacion": "Imágenes por resonancia magnética del cerebro con contraste dependiente de la oxigenación sanguínea",
+    "cerebro": "Imágenes dinámicas por resonancia magnética de la actividad cerebral humana durante estimulación sensorial",
+    "revision-bold": "Qué podemos y qué no podemos hacer con la resonancia funcional",
+    "arrhenius": "Sobre la influencia del ácido carbónico del aire en la temperatura del suelo",
+    "keeling": "La concentración y las abundancias isotópicas del dióxido de carbono en la atmósfera",
+    "calentamiento": "Impacto climático del aumento del dióxido de carbono atmosférico",
+    "hielo": "Clima e historia atmosférica de los últimos 420 000 años a partir del testigo de hielo de Vostok (Antártida)",
+    "ruido": "Una medición del exceso de temperatura de antena a 4080 Mc/s",
+    "interpretacion": "Radiación de cuerpo negro cósmica",
+    "espectro": "Una medición preliminar del espectro del fondo cósmico de microondas con COBE",
+    "anisotropia": "Estructura en los mapas del primer año del radiómetro diferencial de microondas de COBE",
+    "planck-v1": "Resultados de Planck 2018. VI. Parámetros cosmológicos (versión v1 en arXiv)",
+    "planck": "Resultados de Planck 2018: artículo final en Astronomy & Astrophysics",
+    "entropia": "La fórmula de entropía para el flujo de Ricci y sus aplicaciones geométricas",
+    "cirugia": "Flujo de Ricci con cirugía en variedades tridimensionales",
+    "extincion": "Extinción en tiempo finito para las soluciones del flujo de Ricci en ciertas variedades tridimensionales",
+    "notas": "Notas sobre los artículos de Perelman",
+    "framingham": "Factores de riesgo en el desarrollo de la enfermedad coronaria: experiencia de seguimiento de seis años",
+    "dash": "Ensayo clínico de los efectos de los patrones alimentarios sobre la presión arterial",
+    "sal": "Efectos sobre la presión arterial de reducir el sodio de la dieta y del patrón alimentario DASH",
+    "interheart": "Efecto de factores de riesgo potencialmente modificables asociados al infarto en 52 países (INTERHEART)"
+  },
+  "ideas": [
+    {
+      "id": "ondas",
+      "disciplina": "fisica",
+      "pregunta": "¿Cómo se detecta una onda gravitacional?",
+      "sintesis": "La relatividad general describe la gravedad como geometría que puede propagarse como una onda. Durante cuarenta años la evidencia fue indirecta: una órbita que perdía energía. En 2015 dos interferómetros registraron la forma de la onda de una fusión de agujeros negros y, dos años después, la de dos estrellas de neutrones.",
+      "estado": "demostrado",
+      "estadoDetalle": "La existencia de ondas gravitacionales se acepta sobre dos bases independientes: la pérdida de energía orbital medida en un púlsar binario y la señal directa registrada por interferómetros desde 2015.",
+      "abiertas": [
+        "Cómo se forman los agujeros negros de las masas observadas y qué poblaciones existen.",
+        "Cómo se separa una señal débil de cada fuente de ruido instrumental en cada evento.",
+        "Qué otros fenómenos producen ondas gravitacionales por encima del ruido actual."
+      ],
+      "pasos": {
+        "pulso": "Un púlsar no está solo: sus pulsos llegan antes o después según la órbita de una compañera invisible.",
+        "orbita": "Esa órbita se acorta en la cantidad que predice la relatividad general: energía que se pierde, todavía sin medir la onda.",
+        "ondas-bh": "Cuarenta años después, dos interferómetros registran la forma de la onda de una fusión: primera detección directa.",
+        "ondas-ns": "Otra clase de fuente, dos estrellas de neutrones, produce una señal más larga que permite contrastar el método.",
+        "onda-v1": "Un lector puede abrir además el manuscrito público de la misma observación: arXiv no añade arbitraje."
+      }
+    },
+    {
+      "id": "fondo",
+      "disciplina": "fisica",
+      "pregunta": "¿De dónde viene el exceso de microondas que llega de todas las direcciones?",
+      "sintesis": "Una antena de radio midió un exceso de temperatura que no se podía atribuir a la instalación. Un trabajo compañero lo interpretó como radiación residual de un universo caliente. Tres décadas después, un satélite midió su espectro y sus pequeñas anisotropías, y los modelos cosmológicos aprendieron a leer parámetros en esas diferencias.",
+      "estado": "demostrado",
+      "estadoDetalle": "El fondo cósmico de microondas está medido: su espectro es compatible con un cuerpo negro y sus anisotropías han sido cartografiadas por varios instrumentos. La interpretación de los parámetros depende del modelo cosmológico elegido.",
+      "abiertas": [
+        "Qué explica las diferencias de temperatura a las escalas más pequeñas.",
+        "Cómo separar la señal cosmológica de la emisión de nuestra propia galaxia.",
+        "Qué puede inferirse del período anterior a la recombinación, si algo puede inferirse."
+      ],
+      "pasos": {
+        "ruido": "Primero es solo una molestia medida con cuidado: un exceso persistente de temperatura en una antena.",
+        "interpretacion": "Un segundo artículo propone que ese exceso puede ser radiación residual del universo caliente.",
+        "espectro": "COBE mide el espectro completo: la señal se parece a un cuerpo negro, ya no es una sola frecuencia.",
+        "anisotropia": "Los mismos datos muestran diferencias minúsculas entre direcciones: estructura sobre un fondo casi uniforme.",
+        "planck-v1": "La versión pública del análisis de Planck permite ver cómo se pasa de mapas a parámetros.",
+        "planck": "El artículo final publica los parámetros con sus incertidumbres y sus supuestos de modelo."
+      }
+    },
+    {
+      "id": "planetas",
+      "disciplina": "astronomia",
+      "pregunta": "¿Hay planetas alrededor de otras estrellas?",
+      "sintesis": "La primera evidencia vino del bamboleo de una estrella, no de una imagen. El tránsito de un planeta frente a su estrella añadió el tamaño, y la espectroscopía de transmisión, la química de la atmósfera. Cada técnica responde a una pregunta distinta sobre el mismo objeto.",
+      "estado": "demostrado",
+      "estadoDetalle": "Miles de planetas en torno a otras estrellas están confirmados por métodos independientes. La composición atmosférica se infiere de espectros con modelos, y solo para objetos favorables.",
+      "abiertas": [
+        "Cuántos planetas rocosos con atmósferas medibles existen cerca de sus estrellas.",
+        "Cómo distinguir una señal atmosférica de la actividad de la estrella.",
+        "Qué rango real de masas y radios separa un planeta de un objeto más denso."
+      ],
+      "pasos": {
+        "pegaso": "Una oscilación periódica en la luz de una estrella revela una compañera de masa planetaria y órbita corta.",
+        "transito": "Si el planeta cruza el disco estelar, la caída de brillo informa de su radio.",
+        "transito-henry": "Otro equipo publica su propia fotometría del mismo sistema: dos mediciones comparables de un mismo objeto.",
+        "sodio": "Durante el tránsito, el color de la luz cambia: se empieza a leer la atmósfera del planeta.",
+        "co2-planeta": "Con el telescopio Webb, la misma idea revela una banda de dióxido de carbono en un gigante gaseoso distinto."
+      }
+    },
+    {
+      "id": "placas",
+      "disciplina": "tierra",
+      "pregunta": "¿Se mueven los continentes y cómo se organiza ese movimiento?",
+      "sintesis": "Las franjas magnéticas del fondo oceánico y las fallas que desplazan dorsales dieron forma a una idea incómoda: la corteza está dividida en bloques que se mueven. El modelo se volvió cuantitativo cuando se describió como rotaciones sobre una esfera y se contrastó con datos geofísicos.",
+      "estado": "demostrado",
+      "estadoDetalle": "La tectónica de placas es el marco aceptado de la geología: explica sismicidad, vulcanismo y geometría de márgenes. Las velocidades publicadas son promedios sobre intervalos largos.",
+      "abiertas": [
+        "Cómo se deforma el interior de las placas, que el modelo rígido simplifica.",
+        "Qué controla la velocidad de cada placa y cómo cambió en el pasado.",
+        "Cómo pasar de velocidades geológicas a la probabilidad de un terremoto concreto."
+      ],
+      "pasos": {
+        "bandas": "Un patrón simétrico de anomalías magnéticas alrededor de una dorsal sugiere expansión del fondo oceánico.",
+        "fallas": "Las fallas transformantes explican por qué una dorsal aparece desplazada, sin inventar un mecanismo nuevo.",
+        "pacifico": "El movimiento relativo se describe como rotación sobre una esfera y se contrasta con observaciones.",
+        "placas-rigidas": "El conjunto se ordena en bloques móviles con dorsales, fosas y grandes fallas.",
+        "morvel": "Un modelo reciente integra datos geológicos y geofísicos para estimar velocidades relativas actuales."
+      }
+    },
+    {
+      "id": "clima",
+      "disciplina": "tierra",
+      "pregunta": "¿Cuánto cambia el clima cuando cambia el CO₂?",
+      "sintesis": "El efecto del CO₂ sobre el balance radiativo se calculó antes de poder medirlo con precisión. La serie de medidas atmosféricas y los archivos de hielo mostraron que CO₂ y temperatura han variado juntos en el pasado. Los modelos actuales proyectan escenarios; el mecanismo físico está establecido, la magnitud futura depende de decisiones y de la sensibilidad del sistema.",
+      "estado": "parcial",
+      "estadoDetalle": "El forzamiento radiativo del CO₂ y el aumento observado de su concentración están demostrados. La magnitud del calentamiento futuro y sus efectos regionales se estiman con modelos y escenarios, con incertidumbre declarada.",
+      "abiertas": [
+        "Cuánto amplifican o amortiguan las nubes el calentamiento.",
+        "Cómo cambian los extremos regionales, no solo la media global.",
+        "Qué parte del cambio reciente corresponde a cada forzamiento."
+      ],
+      "pasos": {
+        "arrhenius": "Un cálculo del siglo XIX estima cómo el CO₂ altera la temperatura de la superficie con un modelo simplificado.",
+        "keeling": "Una serie de mediciones precisas separa la variabilidad local de la tendencia de fondo del CO₂.",
+        "calentamiento": "El cálculo radiativo se convierte en escenarios: qué pasaría con más CO₂, con supuestos explícitos.",
+        "hielo": "Un archivo natural de 420 000 años muestra climas y composiciones atmosféricas anteriores a cualquier instrumento."
+      }
+    },
+    {
+      "id": "grafeno",
+      "disciplina": "materiales",
+      "pregunta": "¿Qué ocurre cuando el carbono tiene una sola capa?",
+      "sintesis": "Aislar una capa de carbono y medirla convirtió una curiosidad teórica en un material de laboratorio. Sus portadores se comportan como partículas sin masa efectiva y aparecen efectos cuánticos medibles. La investigación posterior amplió el sistema a bicapas giradas, con fenómenos que dependen de un ángulo.",
+      "estado": "parcial",
+      "estadoDetalle": "Las propiedades electrónicas del grafeno están medidas y reproducidas en muchos laboratorios. Las aplicaciones industriales y los dispositivos a escala siguen siendo objeto de investigación, no un resultado establecido.",
+      "abiertas": [
+        "Cómo producir láminas grandes y uniformes de forma reproducible.",
+        "Qué estabilidad tienen los fenómenos de bicapa girada fuera del laboratorio.",
+        "Cómo pasar de una muestra de laboratorio a un dispositivo útil."
+      ],
+      "pasos": {
+        "lamina": "Una película de carbono de espesor atómico se aísla y se mide: el material deja de ser una hipótesis.",
+        "dirac": "El transporte eléctrico se comporta como el de partículas sin masa efectiva: una descripción de cuasipartículas.",
+        "hall": "Un segundo equipo observa efectos cuánticos inusuales en condiciones concretas.",
+        "revision-grafeno": "Una revisión ordena lo aprendido y separa propiedades medidas de promesas tecnológicas.",
+        "giro": "Al girar dos capas, el ángulo se vuelve una variable: aparece superconductividad a temperaturas criogénicas."
+      }
+    },
+    {
+      "id": "resonancia",
+      "disciplina": "medicina",
+      "pregunta": "¿Se puede observar el cerebro vivo sin abrirlo?",
+      "sintesis": "La resonancia magnética permite reconstruir una imagen a partir de señales de núcleos atómicos. El contraste depende de la oxigenación de la sangre, lo que hizo posible registrar respuestas hemodinámicas durante una tarea. Es una medida indirecta: el debate sobre qué puede concluirse de ella sigue abierto.",
+      "estado": "parcial",
+      "estadoDetalle": "La imagen por resonancia y el contraste dependiente de la oxigenación están demostrados. Interpretar una región activada como una función cognitiva concreta es una inferencia discutida, no un hecho establecido.",
+      "abiertas": [
+        "Qué relación exacta hay entre actividad neuronal y respuesta vascular.",
+        "Cómo separar una diferencia individual de un efecto de grupo.",
+        "Qué conclusiones sobre cognición admite una señal hemodinámica."
+      ],
+      "pasos": {
+        "imagen-rm": "El principio de imagen se demuestra: un campo que varía en el espacio permite reconstruir una distribución.",
+        "oxigenacion": "El contraste cambia con la oxigenación de la sangre: aparece la base física de la señal funcional.",
+        "cerebro": "La señal se registra en personas durante estimulación: nace la resonancia funcional como método.",
+        "revision-bold": "Una revisión separa lo que la señal hemodinámica mide de lo que se le atribuye."
+      }
+    },
+    {
+      "id": "geometria",
+      "disciplina": "matematicas",
+      "pregunta": "¿Es la esfera tridimensional la única variedad cerrada simplemente conexa?",
+      "sintesis": "La conjetura de Poincaré se formuló en 1904. Casi un siglo después, un programa basado en el flujo de Ricci propuso deformar la métrica hasta una forma reconocible. Tres manuscritos y una exposición detallada permitieron a la comunidad matemática verificar el argumento; el Instituto Clay declaró el problema resuelto.",
+      "estado": "demostrado",
+      "estadoDetalle": "La conjetura de Poincaré se considera demostrada tras la verificación comunitaria de los argumentos de Perelman. En matemáticas la verificación es lógica: no hay réplica experimental, sino comprobación de cada paso y de sus hipótesis.",
+      "abiertas": [
+        "Cómo se extiende el método a otras variedades y dimensiones.",
+        "Qué otros problemas geométricos admite el mismo tipo de flujo.",
+        "Cómo se organizan verificaciones formales de argumentos muy largos."
+      ],
+      "pasos": {
+        "entropia": "Una fórmula de entropía aporta una herramienta nueva para controlar el flujo de Ricci.",
+        "cirugia": "Cuando el flujo forma singularidades, el segundo manuscrito propone continuar con cirugía matemática.",
+        "extincion": "El tercer manuscrito trata la extinción en tiempo finito en un caso relevante.",
+        "notas": "Una exposición detallada permite recorrer los pasos y comprobar hipótesis: la verificación no es arbitraje editorial."
+      }
+    },
+    {
+      "id": "corazon",
+      "disciplina": "medicina",
+      "pregunta": "¿Qué factores acompañan al infarto y cuáles se pueden modificar?",
+      "sintesis": "Una cohorte de largo seguimiento identificó características asociadas a la enfermedad coronaria. Para pasar de asociación a intervención hicieron falta ensayos con asignación aleatoria. El estudio INTERHEART trasladó la pregunta a 52 países y mostró cuánto depende el resultado del diseño del estudio.",
+      "estado": "parcial",
+      "estadoDetalle": "Hay factores de riesgo asociados de forma consistente y ensayos que muestran efectos de intervenciones concretas sobre la presión arterial. Cuánto se traduce eso en reducción de infartos y en cada población sigue siendo una estimación.",
+      "abiertas": [
+        "Qué parte de la asociación es causal y en qué poblaciones.",
+        "Cómo se combinan varios factores en una misma persona.",
+        "Qué efecto tienen intervenciones sostenidas durante décadas."
+      ],
+      "pasos": {
+        "framingham": "Una cohorte seguida durante años conecta características iniciales con enfermedad coronaria posterior.",
+        "dash": "Un ensayo con asignación aleatoria mide el efecto de un patrón alimentario sobre la presión arterial.",
+        "sal": "El ensayo se refina: se separa el patrón alimentario del aporte de sodio.",
+        "interheart": "La pregunta se traslada a 52 países con un diseño de casos y controles: consistencia y límites distintos."
+      }
+    }
+  ],
+  "instituciones": [
+    {
+      "id": "ligo",
+      "nombre": "LIGO Lab (Caltech y MIT)",
+      "tipo": "laboratorio",
+      "pais": "Estados Unidos",
+      "sitio": "https://www.ligo.caltech.edu/",
+      "http": 200,
+      "papel": "Opera los detectores interferométricos de ondas gravitacionales y publica sus comunicados y resultados en nombre de la colaboración.",
+      "vinculos": [
+        {
+          "publicacion": "ondas-bh",
+          "base": "comunicado del laboratorio consultado el 2026-11-18"
+        },
+        {
+          "publicacion": "ondas-ns",
+          "base": "firma de la colaboración LIGO/Virgo en el artículo"
+        }
+      ],
+      "nota": "El sitio institucional no es una publicación arbitrada: es la puerta del laboratorio."
+    },
+    {
+      "id": "manchester",
+      "nombre": "University of Manchester · National Graphene Institute",
+      "tipo": "instituto universitario",
+      "pais": "Reino Unido",
+      "sitio": "https://www.graphene.manchester.ac.uk/ngi/",
+      "http": 200,
+      "papel": "Centro de investigación sobre materiales bidimensionales; el National Graphene Institute se creó después de los primeros artículos del grafeno.",
+      "vinculos": [
+        {
+          "publicacion": "lamina",
+          "base": "afiliación «University of Manchester» declarada en los metadatos del artículo"
+        }
+      ],
+      "nota": "La afiliación del artículo es anterior al instituto: el vínculo es con la universidad, no con el edificio."
+    },
+    {
+      "id": "stsci",
+      "nombre": "Space Telescope Science Institute",
+      "tipo": "instituto científico",
+      "pais": "Estados Unidos",
+      "sitio": "https://www.stsci.edu/",
+      "http": 200,
+      "papel": "Planifica y opera la ciencia de telescopios espaciales y mantiene sus archivos públicos.",
+      "vinculos": [],
+      "nota": "Sus observaciones aparecen en el índice como datos citados en artículos, no como publicaciones propias verificadas aquí."
+    },
+    {
+      "id": "nasa",
+      "nombre": "NASA Science",
+      "tipo": "agencia espacial",
+      "pais": "Estados Unidos",
+      "sitio": "https://science.nasa.gov/universe/exoplanets/nasas-webb-detects-carbon-dioxide-in-exoplanet-atmosphere/",
+      "http": 200,
+      "papel": "Agencia que opera misiones como COBE y el telescopio Webb, y publica notas de divulgación sobre sus resultados.",
+      "vinculos": [
+        {
+          "publicacion": "co2-planeta",
+          "base": "nota institucional sobre el resultado consultada el 2026-11-18"
+        }
+      ],
+      "nota": "La nota es divulgación institucional; el dato científico está en el artículo arbitrado."
+    },
+    {
+      "id": "riken",
+      "nombre": "RIKEN Center for Brain Science",
+      "tipo": "centro de investigación",
+      "pais": "Japón",
+      "sitio": "https://cbs.riken.jp/en/",
+      "http": 200,
+      "papel": "Centro de neurociencia con programas de imagen cerebral y neurobiología de sistemas.",
+      "vinculos": [],
+      "nota": "Sin vínculo documental con las publicaciones de este índice: se cataloga la institución, no una autoría."
+    },
+    {
+      "id": "scripps",
+      "nombre": "Scripps CO₂ Program (Scripps Institution of Oceanography)",
+      "tipo": "programa de observación",
+      "pais": "Estados Unidos",
+      "sitio": "https://scrippsco2.ucsd.edu/",
+      "http": 200,
+      "papel": "Mantiene series de medición continua de CO₂ atmosférico y publica sus datos y su historia.",
+      "vinculos": [],
+      "nota": "El programa actual es posterior al artículo de 1960 del índice; no se atribuye autoría sin documento."
+    },
+    {
+      "id": "usgs",
+      "nombre": "USGS Earthquake Hazards Program",
+      "tipo": "agencia científica",
+      "pais": "Estados Unidos",
+      "sitio": "https://www.usgs.gov/programs/earthquake-hazards",
+      "http": 200,
+      "papel": "Vigila la sismicidad y publica datos de terremotos y de límites de placas.",
+      "vinculos": [],
+      "nota": "Fuente de observación sísmica; los artículos del índice son históricos y no se les atribuye esta afiliación."
+    },
+    {
+      "id": "eso",
+      "nombre": "European Southern Observatory",
+      "tipo": "observatorio",
+      "pais": "Alemania (organización internacional)",
+      "sitio": "https://www.eso.org/public/about-eso/",
+      "http": 200,
+      "papel": "Observatorios terrestres en Chile y programas de búsqueda de exoplanetas por velocidad radial.",
+      "vinculos": [],
+      "nota": "El artículo de 1995 no declara en los metadatos consultados la infraestructura usada."
+    },
+    {
+      "id": "nrao",
+      "nombre": "National Radio Astronomy Observatory",
+      "tipo": "observatorio",
+      "pais": "Estados Unidos",
+      "sitio": "https://public.nrao.edu/",
+      "http": 200,
+      "papel": "Instalaciones de radioastronomía y archivos de observación del cielo en radio.",
+      "vinculos": [],
+      "nota": "El exceso de antena de 1965 se midió en un laboratorio de comunicación, no en un radiotelescopio."
+    },
+    {
+      "id": "clay",
+      "nombre": "Clay Mathematics Institute",
+      "tipo": "instituto matemático",
+      "pais": "Estados Unidos",
+      "sitio": "https://www.claymath.org/millennium/poincare-conjecture/",
+      "http": 200,
+      "papel": "Mantiene la lista de los Problemas del Milenio y documenta el estado del problema de Poincaré.",
+      "vinculos": [],
+      "nota": "La página declara el problema resuelto; la verificación del argumento es de la comunidad matemática."
+    }
+  ],
+  "institucionesSinVerificar": [
+    {
+      "nombre": "Universidad de Ginebra",
+      "motivo": "La consulta devolvió una página de control de seguridad: no se puede confirmar el contenido."
+    },
+    {
+      "nombre": "NHLBI (NIH)",
+      "motivo": "El enlace consultado devolvió 404."
+    },
+    {
+      "nombre": "ESA · Planck",
+      "motivo": "El enlace consultado devolvió 404."
+    },
+    {
+      "nombre": "Science / APS (políticas editoriales)",
+      "motivo": "Las páginas de políticas respondieron 403 a la consulta automatizada."
+    }
+  ],
+  "premios": [
+    {
+      "id": "nobel-2017",
+      "premio": "Premio Nobel de Física",
+      "anio": 2017,
+      "laureados": [
+        "Rainer Weiss",
+        "Barry C. Barish",
+        "Kip S. Thorne"
+      ],
+      "motivacion": "for decisive contributions to the LIGO detector and the observation of gravitational waves",
+      "motivacionEs": "por contribuciones decisivas al detector LIGO y a la observación de ondas gravitacionales",
+      "idea": "ondas",
+      "publicaciones": [
+        "ondas-bh",
+        "ondas-ns",
+        "pulso",
+        "orbita"
+      ],
+      "url": "https://www.nobelprize.org/prizes/physics/2017/summary/",
+      "nota": "El premio reconoce el instrumento y la observación, no un artículo concreto."
+    },
+    {
+      "id": "nobel-2019",
+      "premio": "Premio Nobel de Física",
+      "anio": 2019,
+      "laureados": [
+        "James Peebles",
+        "Michel Mayor",
+        "Didier Queloz"
+      ],
+      "motivacion": "for contributions to our understanding of the evolution of the universe and Earth’s place in the cosmos — theoretical discoveries in physical cosmology (Peebles) y el descubrimiento de un exoplaneta orbitando una estrella de tipo solar (Mayor y Queloz)",
+      "motivacionEs": "por sus contribuciones a la comprensión de la evolución del universo y del lugar de la Tierra en el cosmos; a Peebles por descubrimientos teóricos en cosmología física y a Mayor y Queloz por el descubrimiento de un exoplaneta que orbita una estrella de tipo solar",
+      "idea": "planetas",
+      "publicaciones": [
+        "pegaso",
+        "transito",
+        "transito-henry"
+      ],
+      "url": "https://www.nobelprize.org/prizes/physics/2019/summary/",
+      "nota": "El premio se comparte entre dos programas de investigación distintos."
+    },
+    {
+      "id": "nobel-2010",
+      "premio": "Premio Nobel de Física",
+      "anio": 2010,
+      "laureados": [
+        "Andre Geim",
+        "Konstantin Novoselov"
+      ],
+      "motivacion": "for groundbreaking experiments regarding the two-dimensional material graphene",
+      "motivacionEs": "por experimentos pioneros sobre el material bidimensional grafeno",
+      "idea": "grafeno",
+      "publicaciones": [
+        "lamina",
+        "dirac",
+        "hall"
+      ],
+      "url": "https://www.nobelprize.org/prizes/physics/2010/summary/",
+      "nota": "Premia experimentos, no aplicaciones industriales."
+    },
+    {
+      "id": "nobel-2006",
+      "premio": "Premio Nobel de Física",
+      "anio": 2006,
+      "laureados": [
+        "John C. Mather",
+        "George F. Smoot"
+      ],
+      "motivacion": "for their discovery of the blackbody form and anisotropy of the cosmic microwave background radiation",
+      "motivacionEs": "por el descubrimiento de la forma de cuerpo negro y la anisotropía de la radiación cósmica de fondo de microondas",
+      "idea": "fondo",
+      "publicaciones": [
+        "espectro",
+        "anisotropia"
+      ],
+      "url": "https://www.nobelprize.org/prizes/physics/2006/summary/",
+      "nota": "Reconoce mediciones satelitales; la detección original de 1965 aparece en el índice como antecedente."
+    },
+    {
+      "id": "nobel-2003",
+      "premio": "Premio Nobel de Fisiología o Medicina",
+      "anio": 2003,
+      "laureados": [
+        "Paul C. Lauterbur",
+        "Sir Peter Mansfield"
+      ],
+      "motivacion": "for their discoveries concerning magnetic resonance imaging",
+      "motivacionEs": "por sus descubrimientos relativos a la imagen por resonancia magnética",
+      "idea": "resonancia",
+      "publicaciones": [
+        "imagen-rm",
+        "oxigenacion"
+      ],
+      "url": "https://www.nobelprize.org/prizes/medicine/2003/summary/",
+      "nota": "La resonancia funcional llegó después: su base física está en el índice, el premio no la incluye."
+    },
+    {
+      "id": "nobel-2021",
+      "premio": "Premio Nobel de Física",
+      "anio": 2021,
+      "laureados": [
+        "Syukuro Manabe",
+        "Klaus Hasselmann",
+        "Giorgio Parisi"
+      ],
+      "motivacion": "for groundbreaking contributions to our understanding of complex physical systems — physical modelling of Earth’s climate (Manabe y Hasselmann) y el estudio de desorden y fluctuaciones (Parisi)",
+      "motivacionEs": "por contribuciones pioneras a la comprensión de sistemas físicos complejos; a Manabe y Hasselmann por el modelado físico del clima terrestre y a Parisi por el estudio del desorden y las fluctuaciones",
+      "idea": "clima",
+      "publicaciones": [
+        "calentamiento",
+        "hielo",
+        "keeling"
+      ],
+      "url": "https://www.nobelprize.org/prizes/physics/2021/summary/",
+      "nota": "Premia el modelado físico del clima, no una predicción concreta."
+    }
+  ],
+  "experimentos": [
+    {
+      "id": "ligo-interferometros",
+      "nombre": "Interferómetros de Advanced LIGO",
+      "anio": "2015-2016",
+      "metodo": "Dos interferómetros de kilómetros separados por miles de kilómetros miden cambios relativos de longitud y se comparan para descartar señales locales.",
+      "pregunta": "¿Se puede registrar directamente la deformación del espacio-tiempo de una onda gravitacional?",
+      "resultado": "Una señal coherente en ambos detectores, compatible con la fusión de dos agujeros negros.",
+      "queNoDemuestra": "No mide la distancia ni las masas de forma directa: se infieren con modelos de forma de onda.",
+      "publicaciones": [
+        "ondas-bh",
+        "ondas-ns",
+        "onda-v1"
+      ],
+      "fuente": "https://www.ligo.caltech.edu/news/ligo20160211"
+    },
+    {
+      "id": "cobe",
+      "nombre": "COBE: FIRAS y DMR",
+      "anio": "1989-1992",
+      "metodo": "Espectrómetro y radiómetros diferenciales en órbita comparan el cielo en microondas con referencias internas.",
+      "pregunta": "¿Qué forma tiene el espectro del fondo y hay estructura entre direcciones?",
+      "resultado": "Un espectro compatible con cuerpo negro y anisotropías de baja amplitud.",
+      "queNoDemuestra": "No basta para fijar parámetros cosmológicos sin un modelo y sin controlar la emisión galáctica.",
+      "publicaciones": [
+        "espectro",
+        "anisotropia"
+      ],
+      "fuente": "https://science.nasa.gov/mission/cobe/"
+    },
+    {
+      "id": "velocidad-radial",
+      "nombre": "Velocidad radial de alta precisión",
+      "anio": "1995",
+      "metodo": "El espectro estelar se desplaza periódicamente por el movimiento de la estrella alrededor del centro de masas del sistema.",
+      "pregunta": "¿Se puede detectar la atracción de un planeta pequeño sobre su estrella?",
+      "resultado": "Una periodicidad de días en una estrella de tipo solar, compatible con una compañera de masa planetaria.",
+      "queNoDemuestra": "Da una masa mínima, no una imagen; una actividad estelar puede imitar parte de la señal.",
+      "publicaciones": [
+        "pegaso"
+      ],
+      "fuente": "https://doi.org/10.1038/378355a0"
+    },
+    {
+      "id": "transito-fotometria",
+      "nombre": "Fotometría de tránsito",
+      "anio": "1999-2000",
+      "metodo": "Se mide el brillo de la estrella con precisión suficiente para detectar una caída pequeña y periódica.",
+      "pregunta": "¿Se puede medir el tamaño de un planeta que pasa delante de su estrella?",
+      "resultado": "Caídas de brillo reproducidas por dos equipos en HD 209458.",
+      "queNoDemuestra": "El radio deducido depende del radio estelar; la señal puede confundirse con variabilidad.",
+      "publicaciones": [
+        "transito",
+        "transito-henry",
+        "sodio"
+      ],
+      "fuente": "https://doi.org/10.1086/312457"
+    },
+    {
+      "id": "vostok",
+      "nombre": "Testigo de hielo de Vostok",
+      "anio": "1999",
+      "metodo": "Se extrae una columna de hielo antártico y se analizan isótopos y gases atrapados en burbujas.",
+      "pregunta": "¿Cómo variaron clima y atmósfera antes de las mediciones instrumentales?",
+      "resultado": "Una reconstrucción de unos 420 000 años con varios ciclos glaciares.",
+      "queNoDemuestra": "Los indicadores son indirectos y sus cronologías tienen incertidumbre; la covariación no fija causalidad.",
+      "publicaciones": [
+        "hielo",
+        "keeling"
+      ],
+      "fuente": "https://doi.org/10.1038/20859"
+    },
+    {
+      "id": "grafeno-exfoliacion",
+      "nombre": "Exfoliación y transporte en grafeno",
+      "anio": "2004-2005",
+      "metodo": "Se separan capas de grafito y se fabrican dispositivos para medir conducción en función del campo eléctrico.",
+      "pregunta": "¿Se pueden medir las propiedades de una sola capa de carbono?",
+      "resultado": "Películas estables con conducción modulable y efectos cuánticos reproducidos.",
+      "queNoDemuestra": "Una muestra pequeña no demuestra producción uniforme ni un dispositivo comercial.",
+      "publicaciones": [
+        "lamina",
+        "dirac",
+        "hall",
+        "giro"
+      ],
+      "fuente": "https://www.nobelprize.org/prizes/physics/2010/summary/"
+    },
+    {
+      "id": "rm-bold",
+      "nombre": "Imagen por resonancia y contraste BOLD",
+      "anio": "1973-1992",
+      "metodo": "Gradientes de campo codifican la posición de las señales de resonancia; el contraste se relaciona con la oxigenación sanguínea.",
+      "pregunta": "¿Se puede ver el interior de un cerebro vivo y su respuesta a un estímulo?",
+      "resultado": "Imágenes reconstruidas y cambios de señal durante estimulación.",
+      "queNoDemuestra": "La señal es hemodinámica e indirecta: no mide directamente la actividad eléctrica de las neuronas.",
+      "publicaciones": [
+        "imagen-rm",
+        "oxigenacion",
+        "cerebro",
+        "revision-bold"
+      ],
+      "fuente": "https://www.nobelprize.org/prizes/medicine/2003/summary/"
+    },
+    {
+      "id": "dash-ensayo",
+      "nombre": "Ensayos DASH y DASH-Sodium",
+      "anio": "1997-2001",
+      "metodo": "Participantes asignados al azar a patrones alimentarios y a niveles de sodio, con medición de presión arterial.",
+      "pregunta": "¿Cambia la presión arterial cuando cambia la dieta, y qué parte corresponde al sodio?",
+      "resultado": "Diferencias de presión arterial entre grupos con distintos patrones y niveles de sodio.",
+      "queNoDemuestra": "Mide presión arterial en condiciones controladas, no infartos evitados a largo plazo ni efectos individuales.",
+      "publicaciones": [
+        "dash",
+        "sal",
+        "framingham",
+        "interheart"
+      ],
+      "fuente": "https://doi.org/10.1056/NEJM199704173361601"
+    },
+    {
+      "id": "ricci-verificacion",
+      "nombre": "Verificación del flujo de Ricci con cirugía",
+      "anio": "2002-2008",
+      "metodo": "Tres manuscritos proponen un argumento; una exposición independiente reconstruye y comprueba los pasos.",
+      "pregunta": "¿Se puede deformar cualquier variedad simplemente conexa hasta una esfera?",
+      "resultado": "Un argumento verificado por la comunidad, aceptado como demostración.",
+      "queNoDemuestra": "No es un experimento: la evidencia es lógica y depende de las hipótesis de cada teorema.",
+      "publicaciones": [
+        "entropia",
+        "cirugia",
+        "extincion",
+        "notas"
+      ],
+      "fuente": "https://www.claymath.org/millennium/poincare-conjecture/"
+    }
+  ],
+  "tecnologias": [
+    {
+      "id": "interferometria",
+      "nombre": "Interferometría láser de kilómetros",
+      "tipo": "instrumento",
+      "madurez": "en uso",
+      "descripcion": "Dos brazos largos con luz láser miden cambios de longitud menores que un protón; dos observatorios separados permiten descartar señales locales.",
+      "publicaciones": [
+        "ondas-bh",
+        "ondas-ns"
+      ],
+      "limite": "La sensibilidad depende del ruido sísmico, térmico y cuántico, y de la coincidencia entre detectores."
+    },
+    {
+      "id": "microondas-criogenia",
+      "nombre": "Óptica criogénica de microondas",
+      "tipo": "instrumento",
+      "madurez": "en uso",
+      "descripcion": "Receptores enfriados y calibración cuidadosa permiten medir diferencias de temperatura del cielo de millonésimas de kelvin.",
+      "publicaciones": [
+        "espectro",
+        "anisotropia",
+        "planck"
+      ],
+      "limite": "La señal debe separarse de la emisión de la galaxia y de la propia instrumentación."
+    },
+    {
+      "id": "fotometria-transito",
+      "nombre": "Fotometría de tránsito de alta precisión",
+      "tipo": "método",
+      "madurez": "en uso",
+      "descripcion": "Medir la caída de brillo de una estrella durante el cruce de un planeta; requiere estabilidad y correcciones sistemáticas.",
+      "publicaciones": [
+        "transito",
+        "transito-henry",
+        "co2-planeta"
+      ],
+      "limite": "Solo funciona con geometrías favorables y depende del conocimiento del radio estelar."
+    },
+    {
+      "id": "espectroscopia-transmision",
+      "nombre": "Espectroscopía de transmisión",
+      "tipo": "método",
+      "madurez": "en uso",
+      "descripcion": "Comparar el espectro durante y fuera del tránsito para detectar la huella de moléculas en la atmósfera del planeta.",
+      "publicaciones": [
+        "sodio",
+        "co2-planeta"
+      ],
+      "limite": "La señal es pequeña y el resultado depende del modelo de atmósfera y de la actividad estelar."
+    },
+    {
+      "id": "iman-superconductor",
+      "nombre": "Imanes superconductores para resonancia",
+      "tipo": "instrumento",
+      "madurez": "en uso",
+      "descripcion": "Campos intensos y gradientes controlados permiten codificar la posición y obtener imágenes de tejidos vivos.",
+      "publicaciones": [
+        "imagen-rm",
+        "cerebro"
+      ],
+      "limite": "Requiere instalaciones, protocolos de seguridad y tiempos de adquisición que limitan la resolución temporal."
+    },
+    {
+      "id": "materiales-2d",
+      "nombre": "Materiales bidimensionales y heteroestructuras",
+      "tipo": "material",
+      "madurez": "en desarrollo",
+      "descripcion": "Apilar capas atómicas con un ángulo controlado crea regímenes electrónicos nuevos que se estudian dispositivo a dispositivo.",
+      "publicaciones": [
+        "lamina",
+        "dirac",
+        "hall",
+        "revision-grafeno",
+        "giro"
+      ],
+      "limite": "Fabricación reproducible a escala y estabilidad de los fenómenos fuera del laboratorio: no resuelto."
+    },
+    {
+      "id": "verificacion-matematica",
+      "nombre": "Flujo de Ricci como método de demostración",
+      "tipo": "método",
+      "madurez": "en uso",
+      "descripcion": "Una ecuación de evolución deforma la geometría; controlar sus singularidades se convierte en una herramienta de clasificación.",
+      "publicaciones": [
+        "entropia",
+        "cirugia",
+        "extincion",
+        "notas"
+      ],
+      "limite": "Es un método matemático: la verificación es lógica y las conclusiones valen bajo las hipótesis de cada teorema."
+    }
+  ],
+  "estanterias": [
+    {
+      "id": "detectar-invisible",
+      "nombre": "Cómo se detecta lo invisible",
+      "descripcion": "Señales que no se ven: una órbita que pierde energía, un exceso de microondas y una deformación del espacio-tiempo.",
+      "publicaciones": [
+        "pulso",
+        "orbita",
+        "ruido",
+        "interpretacion",
+        "ondas-bh",
+        "ondas-ns"
+      ]
+    },
+    {
+      "id": "del-indicio-al-planeta",
+      "nombre": "Del indicio al planeta",
+      "descripcion": "Cómo una oscilación se convierte en un planeta, un tránsito en un tamaño y un espectro en una atmósfera.",
+      "publicaciones": [
+        "pegaso",
+        "transito",
+        "transito-henry",
+        "sodio",
+        "co2-planeta"
+      ]
+    },
+    {
+      "id": "que-significa-demostrar",
+      "nombre": "Qué significa demostrar",
+      "descripcion": "Revisión, verificación lógica, modelos y datos: las distintas formas de sostener una afirmación.",
+      "publicaciones": [
+        "revision-grafeno",
+        "revision-bold",
+        "entropia",
+        "notas",
+        "planck"
+      ]
+    },
+    {
+      "id": "medir-sistema-cambiante",
+      "nombre": "Medir un sistema que cambia",
+      "descripcion": "Del cálculo del siglo XIX a la serie atmosférica y al archivo de hielo: escalas de tiempo distintas en la misma pregunta.",
+      "publicaciones": [
+        "arrhenius",
+        "keeling",
+        "calentamiento",
+        "hielo"
+      ]
+    },
+    {
+      "id": "medicina-diseno",
+      "nombre": "Cuando la medicina cambia de diseño",
+      "descripcion": "Cohorte, ensayo aleatorizado y casos y controles: el diseño decide qué se puede concluir.",
+      "publicaciones": [
+        "framingham",
+        "dash",
+        "sal",
+        "interheart"
+      ]
+    }
+  ],
+  "hitosHistoricos": [
+    {
+      "anio": 1904,
+      "texto": "Henri Poincaré formula la pregunta sobre la esfera tridimensional.",
+      "fuente": "https://www.claymath.org/millennium/poincare-conjecture/"
+    },
+    {
+      "anio": 1916,
+      "texto": "La relatividad general predice ondas gravitacionales; la detección llegará un siglo después.",
+      "fuente": "https://www.ligo.caltech.edu/news/ligo20160211"
+    }
+  ],
+  "divulgacion": [
+    {
+      "id": "ligo-nota",
+      "titulo": "Gravitational Waves Detected 100 Years After Einstein's Prediction",
+      "medio": "LIGO Lab · Caltech",
+      "fecha": "2016-02-11",
+      "tipo": "divulgacion-institucional",
+      "url": "https://www.ligo.caltech.edu/news/ligo20160211",
+      "publicacion": "ondas-bh",
+      "nota": "Comunicado del laboratorio: explica el resultado, no lo arbitra.",
+      "lectura": "El laboratorio anuncia que dos detectores registraron la señal y explica qué se midió. Es la puerta divulgativa del artículo arbitrado.",
+      "cautela": "Un comunicado no añade evidencia nueva ni revisión independiente: cuenta lo que el artículo sostiene."
+    },
+    {
+      "id": "nasa-nota",
+      "titulo": "NASA's Webb Detects Carbon Dioxide in Exoplanet Atmosphere",
+      "medio": "NASA Science",
+      "fecha": "2022-08-25",
+      "tipo": "divulgacion-institucional",
+      "url": "https://science.nasa.gov/universe/exoplanets/nasas-webb-detects-carbon-dioxide-in-exoplanet-atmosphere/",
+      "publicacion": "co2-planeta",
+      "nota": "Nota de agencia: el dato científico está en el artículo arbitrado.",
+      "lectura": "La agencia describe el hallazgo de CO₂ en la atmósfera de un exoplaneta y su contexto instrumental.",
+      "cautela": "Nota de divulgación: las cifras y la interpretación científica están en el artículo, no en el comunicado."
+    },
+    {
+      "id": "clay-ficha",
+      "titulo": "Poincaré Conjecture",
+      "medio": "Clay Mathematics Institute",
+      "fecha": "2000-05-24",
+      "tipo": "referencia-institucional",
+      "url": "https://www.claymath.org/millennium/poincare-conjecture/",
+      "publicacion": null,
+      "nota": "Ficha del problema: declara el estado, no sustituye la verificación matemática.",
+      "lectura": "Ficha del problema del Milenio: enunciado, historia y estado declarado por el instituto que lo propuso.",
+      "cautela": "Es una referencia institucional: no sustituye la verificación del argumento matemático."
+    }
+  ]
+}

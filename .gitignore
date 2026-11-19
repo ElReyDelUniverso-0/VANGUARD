@@ -93,3 +93,4 @@ tmp/
 # v421.0 · artefactos del panel (se regeneran con scripts/seo-panel.mjs, no se versionan)
 censo-seo.json
 panel-seo.html
+__pycache__/
