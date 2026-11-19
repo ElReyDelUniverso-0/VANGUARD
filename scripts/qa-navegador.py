@@ -98,7 +98,11 @@ MEDIR = """() => {
     // su hoja de espacios dentro de un contenedor de diálogo pero en flujo
     // normal (max-height:none, crece con la página): marcarla era un falso
     // positivo que este aro se cobraba a sí mismo.
-    return ['fixed', 'sticky'].includes(s.position) || e.matches('[role=dialog], dialog[open], [aria-modal=true]'); };
+    // Solo lo que FLOTA sobre la página (fixed/sticky). Un diálogo en flujo
+    // normal crece con el documento y se recorre con el dedo: no es un panel
+    // fuera de pantalla (la hoja de /navegacion mide 2.424 px y se llega a
+    // ella bajando; comprobado con la posición real del elemento).
+    return ['fixed', 'sticky'].includes(s.position); };
   const paneles = [...document.querySelectorAll('[role=dialog], dialog[open], [aria-modal=true], [class*=cajon], [class*=drawer], [class*=menu], [class*=hud]')]
     .filter(e => visible(e) && flota(e)).map(e => { const b = e.getBoundingClientRect(); const s = getComputedStyle(e);
       return { n: nodo(e), w: Math.round(b.width), h: Math.round(b.height),

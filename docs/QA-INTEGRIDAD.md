@@ -44,7 +44,12 @@ tareas largas > 600 ms y CSP ausente.
 
 ## 2 · Lo que se midió antes de tocar una línea
 
-Acta completa: 39 puertas, vista móvil, sobre la casa publicada (v418.1).
+Acta completa: 39 puertas, vista móvil, sobre la casa publicada (v418.1). Para que el
+«antes» y el «después» no dependan de guardar una compilación vieja (los despliegues
+antiguos están protegidos por autenticación), el aro aprende a compararse consigo mismo:
+`--sin-suelo` borra del CSSOM las reglas de `movil.css` y vuelve a medir **la misma página,
+la misma compilación y el mismo aparato**. Las cifras de §6 salen de ese A/B, no de dos
+capturas en días distintos.
 
 | Medida | Antes |
 |---|---|
@@ -145,6 +150,65 @@ CUENTA: tema, nivel de animaciones, sonido y mundo), que es donde viven de verda
 
 ---
 
-## 6 · Después (misma casa, mismo instrumento)
+## 6 · Después — A/B sobre la misma compilación (v418.2b)
 
-_(se completa tras el despliegue de v418.2; ver tabla de abajo)_
+Ocho puertas, móvil 360×740, mismo build, midiendo con el suelo encendido y apagado:
+
+| Medida | Sin el suelo | Con el suelo | Diferencia |
+|---|---:|---:|---:|
+| Textos por debajo de 12 px | 3.546 | **581** | **−84 %** |
+| Objetivos táctiles < 24×24 | 926 | **53** | **−94 %** |
+| Desbordes horizontales del documento | 0 | **0** | el suelo no rompe ninguna maqueta |
+| Peso transferido (KB) | 7.646 | 7.638 | −8 KB (sin coste) |
+
+Por puerta:
+
+| Puerta | Textos < 12 px (antes → ahora) | Táctiles < 24 px (antes → ahora) |
+|---|---|---|
+| `/divisas` | 1.059 → **32** | 247 → **0** |
+| `/datos-mundiales` | 912 → **10** | 219 → **0** |
+| `/navegacion` | 436 → **88** | 178 → **10** |
+| `/servicios` | 362 → **33** | 36 → **0** |
+| `/modulos` | 280 → **226** | 175 → **20** |
+| `/` (portada) | 225 → **109** | 22 → **13** |
+| `/espacio` | 146 → **45** | 38 → **0** |
+| `/editorial` | 126 → **38** | 11 → **10** |
+
+Y el barrido completo de las 39 puertas antes/después del trabajo:
+
+| | Antes (v418.1) | Después (v418.2d) |
+|---|---:|---:|
+| Respuestas 404 / peticiones fallidas | 16 | **0** |
+| Imágenes rotas | 2 | **0** |
+| Errores de React (`pageerror`) | 2 (hidratación #418) | **0** |
+| Desbordes horizontales | 0 | 0 |
+| CLS | 0,000 | 0,000 |
+| Tareas largas | 0 | 0 |
+| Hallazgos BLOQUEA / ALTA | 1 / 35 | **0 / 0** |
+
+---
+
+## 7 · Cómo se repite (y qué significa cada semáforo)
+
+```bash
+# 1 · el código y el contrato publicado (10 agentes, sin dependencias)
+node scripts/auditoria.mjs --smoke https://vanguard-kq9r.vercel.app
+
+# 2 · el navegador: móvil, tableta y escritorio (necesita playwright)
+python3 -m pip install playwright && python3 -m playwright install chromium
+python3 scripts/qa-navegador.py --vista todas --json qa-hoy.json
+
+# 3 · ¿qué empeoró desde la última acta?
+python3 scripts/qa-navegador.py --comparar qa-ayer.json
+
+# 4 · teléfono económico de verdad (CPU 4× más lenta)
+python3 scripts/qa-navegador.py --lento --json qa-lento.json
+
+# 5 · A/B del suelo del teléfono sobre la misma compilación
+python3 scripts/qa-navegador.py --sin-suelo --json qa-sin-suelo.json
+```
+
+Sale con código 1 si hay un hallazgo **BLOQUEA** (respuesta ≥ 400 en una puerta,
+desborde horizontal, `pageerror`), de modo que se puede encadenar a la publicación.
+Las cifras de estas herramientas son las que se publican: si una medida no se puede
+repetir con el mismo comando, no se escribe.
