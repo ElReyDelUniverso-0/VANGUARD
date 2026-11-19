@@ -128,11 +128,16 @@ export default function CentroInteligencia({
   const [nombreProyecto, setNombreProyecto] = useState("");
   const [proyectoAbierto, setProyectoAbierto] = useState<string | null>(null);
   const [importando, setImportando] = useState("");
+  // ¿el navegador deja guardar? Se decide EN EL CLIENTE, después de montar:
+  // preguntarlo durante el primer render hacía que el servidor pintara una cosa
+  // («sin almacenamiento») y el navegador otra — error de hidratación #418.
+  const [almacenOk, setAlmacenOk] = useState<boolean | null>(null);
   const inputImport = useRef<HTMLInputElement>(null);
 
   const docActivo = useMemo(() => docs.find((d) => d.id === docActivoId) ?? null, [docs, docActivoId]);
 
   useEffect(() => {
+    setAlmacenOk(hayAlmacen());
     setDocs(leerDocumentos());
     setProyectos(leerProyectos());
     setHistorial(leerHistorial());
@@ -401,7 +406,7 @@ export default function CentroInteligencia({
               {inv.motor === "llm" ? "motor: modelo + citas validadas" : "motor: determinista (extractivo)"}
             </Etiqueta>
           ) : null}
-          {!hayAlmacen() ? <Etiqueta tono="noconf">sin almacenamiento local</Etiqueta> : null}
+          {almacenOk === false ? <Etiqueta tono="noconf">sin almacenamiento local</Etiqueta> : null}
         </div>
         <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-muted-foreground">
           Pregunta, elige de dónde citar, investiga y guárdalo. Cada respuesta separa lo que las fuentes{" "}
