@@ -65,6 +65,8 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:conocimiento"],
     alias: "enciclopedia ciencia biologia fisica quimica astronomia historia geografia economia conceptos biblioteca organizaciones estadisticas comparador",
   },
+  // v417.0 VANGUARD KNOWLEDGE — la enciclopedia de fondo
+  { id:"mod:enciclopedia", nombre:"ENCICLOPEDIA VANGUARD", lema:"El mundo, a fondo", descripcion:"Artículos largos en diez categorías —continentes, países, geografía física y humana, civilizaciones, culturas, ciencia, naturaleza, organismos internacionales y recursos— con datos anotados a su fuente, imágenes de Wikimedia Commons con licencia, bibliografía, fecha de revisión, rutas de descubrimiento y búsqueda temática.", categoria:"MUNDO", ruta:"/conocimiento/enciclopedia", permiso:"publico", estado:"BETA", dependencias:["mod:conocimiento-global","fnt:conocimiento"], alias:"enciclopedia articulos continentes africa america asia europa oceania antartida civilizaciones mesopotamia bizancio tainos lenguas religiones escritura biodiversidad amazonia arrecifes tectonica clima poblacion agua energia onu republica dominicana" },
   // ── REDACCIÓN ──────────────────────────────────────────────
   {
     id: "mod:envivo",

@@ -49,6 +49,14 @@ export const TEMAS: Tema[] = [
     color: "#5eead4",
     rutas: ["/mundos", "/mundos/[iso]", "/atlas", "/comparador", "/regiones", "/organizaciones", "/rankings", "/divisas", "/rostros", "/mapas"],
   },
+  // v417.0 VANGUARD KNOWLEDGE — el saber de fondo, independiente de la actualidad
+  {
+    id: "saber",
+    nombre: "Conocimiento y enciclopedia",
+    pregunta: "¿Qué hay que saber del mundo para entenderlo a fondo?",
+    color: "#a78bfa",
+    rutas: ["/conocimiento/enciclopedia", "/conocimiento", "/conocimiento/aprender", "/historia", "/organizaciones", "/regiones", "/mundos", "/investigacion"],
+  },
   {
     id: "cifras",
     nombre: "Población y economía",
@@ -68,7 +76,7 @@ export const TEMAS: Tema[] = [
     nombre: "Historia y archivo",
     pregunta: "¿De dónde viene lo que pasa hoy?",
     color: "#e8c56a",
-    rutas: ["/historia", "/archivo-mundial", "/editorial", "/oscura", "/galeria", "/lectura/[clave]", "/colecciones"],
+    rutas: ["/historia", "/archivo-mundial", "/editorial", "/oscura", "/galeria", "/lectura/[clave]", "/colecciones", "/conocimiento/enciclopedia"],
   },
   {
     id: "mapas",

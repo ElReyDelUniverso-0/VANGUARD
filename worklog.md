@@ -102,7 +102,7 @@ lo declara («sin conexión») y la API responde `conexion.lista:false` con las 
 Acción del Dueño: cuenta de servicio + API activada + usuario en Search Console +
 GSC_SERVICE_ACCOUNT_JSON, AUTH_SECRET y OWNER_PASSWORD en Vercel.
 
-## v416.0 · COMPATIBILIDAD MÓVIL · 2026-11-18
+## v417.0 · COMPATIBILIDAD MÓVIL · 2026-11-18 (rebasada sobre v416.1; publicada como v417.0)
 
 Incidencia: usuario con Samsung Galaxy A06 + Brave — «la mitad de la interfaz no aparece».
 Reproducción: Chromium (motor de Brave) emulando el A06 — 360×740, DPR 2, táctil, UA
@@ -125,3 +125,27 @@ un fijo dentro de la sala (protege a los ~30 paneles con lightbox); cabecera que
 y deja el punto rojo con etiqueta accesible bajo 380 px; HUD: bajo 480 px Cuenta/Búnker/Sonido en
 el menú ☰; muelle con carriles y la bandeja «MÁS» (`bandeja-movil.tsx`), que solo oculta por CSS,
 sin desmontar nada. Cero módulos eliminados. Con almacenamiento bloqueado todo cae a memoria.
+
+## v418.0 · VANGUARD KNOWLEDGE · 2026-11-19
+
+Agente 5, director de conocimiento. Antes había conocimiento estructurado (63 expedientes,
+16 civilizaciones, organismos, academia), pero no artículos de lectura larga ni un lugar donde
+investigar un país de punta a punta. Ahora existe la Enciclopedia en `/conocimiento/enciclopedia`.
+
+· Datos: `src/lib/enciclopedia/`, con `tipos.ts`, `categorias.ts` (10), `articulos/*.ts` (24
+  artículos, ≈ 20.000 palabras) e `indice.ts`. Las relaciones inversas, la búsqueda sin tildes y
+  las rutas se calculan; no hay listas a mano.
+· Imágenes: 26 archivos de Commons (PD/CC0/CC BY/CC BY-SA), 960 px, q74, menos de 300 KB cada uno,
+  en `public/enciclopedia/`. Autor, licencia y origen están en `imagenes.json` y en cada pie.
+· Páginas: portada (cifras, categorías, destacados, 5 rutas, A-Z, criterios), artículo
+  (`dynamicParams=false`, JSON-LD Article + BreadcrumbList, notas `#fuente-N`, cómo citar),
+  categoría (CollectionPage) y búsqueda (noindex, GET sin JS).
+· Integración: puentes-pais (en cada ficha de país), explorador de /conocimiento, buscador central
+  (un solo proveedor `fnt:conocimiento` que mezcla artículos y expedientes), sitemap, llms.txt,
+  directorio (tema `saber`), registro del Núcleo, espacio Geografía y departamento 18.
+· Pruebas: `scripts/pruebas-enciclopedia.mjs` da 29 ✓. Probar, arquitectura (15), plataforma (12) y
+  anim quedan limpios. El Núcleo tiene las mismas 78 caídas estáticas antes y después (versiones
+  fijadas antiguas). Render SSR de las 28 páginas medido en Playwright: 360 px sin desbordes
+  propios y 0 imágenes rotas.
+· Fuentes de referencia: Britannica, National Geographic (y Education), ONU (DESA, PNUMA, UNESCO,
+  UIT), Wikipedia solo como apoyo; cada cifra apunta a su fuente.

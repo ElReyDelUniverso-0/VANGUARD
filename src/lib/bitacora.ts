@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v418.0",
+    nombre: "VANGUARD KNOWLEDGE",
+    hitos: [
+      "NACE LA ENCICLOPEDIA: 24 artículos de fondo en diez categorías, de los seis continentes y la Antártida a la República Dominicana, Mesopotamia, los taínos, internet o los arrecifes de coral.",
+      "CADA ARTÍCULO CON SU ANDAMIO: introducción, explicación completa, contexto histórico, ficha de datos donde cada cifra remite a su fuente, cronología, bibliografía y fecha de revisión.",
+      "IMÁGENES CON PERMISO: 26 imágenes de Wikimedia Commons en dominio público o Creative Commons, con autor, licencia y enlace de origen en cada pie.",
+      "DE UN CONCEPTO A OTRO: temas relacionados en las dos direcciones, saltos a los expedientes, las civilizaciones, los organismos y las fichas de país — y cada país enlaza ya sus artículos.",
+      "PARA DESCUBRIR: cinco rutas guiadas, índice alfabético, páginas por categoría y una búsqueda temática que entiende «tainos» sin tilde; el buscador central también encuentra los artículos.",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v417.0",
     nombre: "COMPATIBILIDAD MÓVIL",
     hitos: [

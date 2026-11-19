@@ -1,4 +1,5 @@
 import { CONCEPTOS as CONCEPTOS_GLOBALES } from "@/lib/conocimiento/indice";
+import { ARTICULOS as ARTICULOS_ENCICLOPEDIA, categoriaDe as categoriaEnciclopedia } from "@/lib/enciclopedia/indice"; // v417.0
 // ============================================================
 // v218.0 EL NÚCLEO — BÚSQUEDA GLOBAL (server-only)
 // v221.0 LA LUPA — la búsqueda entiende la pregunta:
@@ -97,13 +98,23 @@ function fuentePublica(id: string): FuenteNucleo {
 const PROVEEDORES: ProveedorBusqueda[] = [
   {
     fuente: fuentePublica("fnt:conocimiento"),
+    // v417.0 · UN solo proveedor por fuente (porOrigen se indexa por fuente):
+    // expedientes breves + artículos de la Enciclopedia, mezclados por puntos.
+    // Del artículo se puntúan título (doble), bajada y palabras clave; el cuerpo
+    // largo lo busca /conocimiento/enciclopedia/buscar.
     async buscar(q, limite) {
       const terms = terminosDe(q);
-      return mejores(CONCEPTOS_GLOBALES.map(c => ({cosa:c,puntos:puntua(`${c.titulo} ${c.resumen} ${c.mecanismo} ${c.contexto}`,q,terms)})).filter(c=>c.puntos>0),limite).map(c=>({
+      const conceptos = CONCEPTOS_GLOBALES.map(c => ({cosa:{
         entidad:{id:idEntidad("documento",`conocimiento-${c.id}`),tipo:"documento" as const,nombre:c.titulo},
         titulo:c.titulo,subtitulo:`CONOCIMIENTO GLOBAL · ${c.area} · ${c.fuentes.length} fuentes`,
         ruta:`/conocimiento/tema/${c.id}`,origen:"fnt:conocimiento",
-      }));
+      } as ResultadoNucleo,puntos:puntua(`${c.titulo} ${c.resumen} ${c.mecanismo} ${c.contexto}`,q,terms)}));
+      const articulos = ARTICULOS_ENCICLOPEDIA.map(a => ({cosa:{
+        entidad:{id:idEntidad("documento",`enciclopedia-${a.slug}`),tipo:"documento" as const,nombre:a.titulo},
+        titulo:a.titulo,subtitulo:`ENCICLOPEDIA · ${categoriaEnciclopedia(a.categoria)?.nombre ?? a.categoria} · ${a.fuentes.length} fuentes · revisado ${a.actualizado}`,
+        ruta:`/conocimiento/enciclopedia/${a.slug}`,origen:"fnt:conocimiento",
+      } as ResultadoNucleo,puntos:puntua(`${a.titulo} ${a.titulo} ${a.bajada} ${a.palabrasClave.join(" ")}`,q,terms)}));
+      return mejores([...articulos, ...conceptos].filter(c=>c.puntos>0),limite);
     },
   },
   // 1. MÓDULOS — la navegación primero: aterrizarte en la puerta correcta

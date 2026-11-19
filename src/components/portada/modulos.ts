@@ -74,6 +74,8 @@ export const MODULOS: Modulo[] = [
     gancho: "Las fichas que explican quién es quién, cuánto pesa cada país y de dónde viene todo.",
     pestanas: [
       { href: "/conocimiento", label: "Conocimiento global", txt: "Nueve centros, treinta áreas, enciclopedia conectada e indicadores con fuentes y límites." },
+      // v417.0 VANGUARD KNOWLEDGE — artículos de fondo con fuentes, imágenes con licencia y fecha de revisión
+      { href: "/conocimiento/enciclopedia", label: "Enciclopedia", txt: "Artículos de fondo sobre continentes, países, civilizaciones, ciencia y naturaleza, con fuentes y fecha de revisión." },
       { href: "/atlas", label: "Atlas", img: "/ilustraciones/planeta.jpg", txt: "Las naciones, las personas y las rutas del poder." },
       // v412.0 INVESTIGACIÓN SISTÉMICA — dossiers interconectados con datos, mapas, comparador y simuladores
       { href: "/investigacion", label: "Investigación", img: "/ilustraciones/radar.jpg", txt: "Dossiers sistémicos conectados: comprender, investigar, visualizar, comparar y simular." },

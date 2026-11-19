@@ -1,13 +1,13 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-19",
-  "paginas": 101,
+  "paginas": 105,
   "rutasApi": 117,
-  "total": 218,
-  "bienConectadas": 96,
+  "total": 222,
+  "bienConectadas": 98,
   "huerfanas": [],
-  "paginasConReferencias": 101,
-  "mediaReferencias": 14.64,
+  "paginasConReferencias": 105,
+  "mediaReferencias": 14.68,
   "rutas": [
     {
       "ruta": "/",
@@ -1172,7 +1172,7 @@
     {
       "ruta": "/atlas",
       "tipo": "pagina",
-      "referencias": 22,
+      "referencias": 23,
       "desde": [
         "app/labs/page.tsx",
         "app/mapas/page.tsx",
@@ -1260,7 +1260,7 @@
     {
       "ruta": "/comparador",
       "tipo": "pagina",
-      "referencias": 15,
+      "referencias": 16,
       "desde": [
         "app/demografia/page.tsx",
         "app/mundos/[iso]/page.tsx",
@@ -1304,19 +1304,20 @@
     {
       "ruta": "/conocimiento",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 19,
       "desde": [
         "app/conocimiento/aprender/page.tsx",
-        "components/conocimiento/academia.tsx",
-        "components/conocimiento/explorador.tsx",
-        "components/conocimiento/puentes-pais.tsx"
+        "app/conocimiento/enciclopedia/[slug]/page.tsx",
+        "app/conocimiento/enciclopedia/buscar/page.tsx",
+        "app/conocimiento/enciclopedia/categoria/[id]/page.tsx"
       ]
     },
     {
       "ruta": "/conocimiento/aprender",
       "tipo": "pagina",
-      "referencias": 3,
+      "referencias": 5,
       "desde": [
+        "app/conocimiento/enciclopedia/page.tsx",
         "components/conocimiento/explorador.tsx",
         "lib/arquitectura/departamentos.ts",
         "lib/nucleo/registro.ts"
@@ -1325,11 +1326,12 @@
     {
       "ruta": "/conocimiento/area/[slug]",
       "tipo": "pagina",
-      "referencias": 3,
+      "referencias": 4,
       "desde": [
         "components/conocimiento/explorador.tsx",
         "lib/arquitectura/departamentos.ts",
-        "lib/conocimiento/indice.ts"
+        "lib/conocimiento/indice.ts",
+        "lib/enciclopedia/categorias.ts"
       ]
     },
     {
@@ -1343,14 +1345,52 @@
       ]
     },
     {
+      "ruta": "/conocimiento/enciclopedia",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "components/conocimiento/explorador.tsx",
+        "components/enciclopedia/piezas.tsx",
+        "components/portada/modulos.ts",
+        "lib/arquitectura/departamentos.ts"
+      ]
+    },
+    {
+      "ruta": "/conocimiento/enciclopedia/[slug]",
+      "tipo": "pagina",
+      "referencias": 9,
+      "desde": [
+        "components/conocimiento/explorador.tsx",
+        "components/enciclopedia/piezas.tsx",
+        "components/portada/modulos.ts",
+        "lib/arquitectura/departamentos.ts"
+      ]
+    },
+    {
+      "ruta": "/conocimiento/enciclopedia/buscar",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "components/enciclopedia/piezas.tsx"
+      ]
+    },
+    {
+      "ruta": "/conocimiento/enciclopedia/categoria/[id]",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "lib/enciclopedia/indice.ts"
+      ]
+    },
+    {
       "ruta": "/conocimiento/tema/[slug]",
       "tipo": "pagina",
-      "referencias": 6,
+      "referencias": 8,
       "desde": [
+        "app/conocimiento/enciclopedia/[slug]/page.tsx",
+        "app/conocimiento/enciclopedia/buscar/page.tsx",
         "components/conocimiento/academia.tsx",
-        "components/conocimiento/explorador.tsx",
-        "lib/arquitectura/departamentos.ts",
-        "lib/conocimiento/aprendizaje.ts"
+        "components/conocimiento/explorador.tsx"
       ]
     },
     {
@@ -1514,7 +1554,7 @@
     {
       "ruta": "/demografia",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 8,
       "desde": [
         "app/mundos/page.tsx",
         "components/portada/modulos.ts",
@@ -1724,18 +1764,18 @@
     {
       "ruta": "/historia",
       "tipo": "pagina",
-      "referencias": 25,
+      "referencias": 27,
       "desde": [
         "app/calidad/page.tsx",
+        "app/conocimiento/enciclopedia/page.tsx",
         "app/cruce/page.tsx",
-        "app/mundo/mundo-3d-vivo.tsx",
-        "app/mundo/page.tsx"
+        "app/mundo/mundo-3d-vivo.tsx"
       ]
     },
     {
       "ruta": "/investigacion",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 10,
       "desde": [
         "app/investigacion/[slug]/page.tsx",
         "app/labs/[modelo]/page.tsx",
@@ -1746,7 +1786,7 @@
     {
       "ruta": "/investigacion/[slug]",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 10,
       "desde": [
         "app/investigacion/page.tsx",
         "app/labs/[modelo]/page.tsx",
@@ -1757,7 +1797,7 @@
     {
       "ruta": "/labs",
       "tipo": "pagina",
-      "referencias": 10,
+      "referencias": 11,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -1768,7 +1808,7 @@
     {
       "ruta": "/labs/[modelo]",
       "tipo": "pagina",
-      "referencias": 10,
+      "referencias": 11,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -1799,7 +1839,7 @@
     {
       "ruta": "/mapas",
       "tipo": "pagina",
-      "referencias": 27,
+      "referencias": 28,
       "desde": [
         "app/espacio/page.tsx",
         "app/mundos/page.tsx",
@@ -1865,23 +1905,23 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 40,
+      "referencias": 43,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
-        "app/datos-mundiales/pais/[iso]/page.tsx",
-        "app/demografia/page.tsx"
+        "app/conocimiento/enciclopedia/[slug]/page.tsx",
+        "app/conocimiento/enciclopedia/page.tsx"
       ]
     },
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 40,
+      "referencias": 43,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
-        "app/datos-mundiales/pais/[iso]/page.tsx",
-        "app/demografia/page.tsx"
+        "app/conocimiento/enciclopedia/[slug]/page.tsx",
+        "app/conocimiento/enciclopedia/page.tsx"
       ]
     },
     {
@@ -1975,23 +2015,23 @@
     {
       "ruta": "/organizaciones",
       "tipo": "pagina",
-      "referencias": 13,
+      "referencias": 16,
       "desde": [
+        "app/conocimiento/enciclopedia/[slug]/page.tsx",
+        "app/conocimiento/enciclopedia/page.tsx",
         "app/mundos/[iso]/page.tsx",
-        "app/mundos/page.tsx",
-        "app/organizaciones/[clave]/page.tsx",
-        "app/regiones/[clave]/page.tsx"
+        "app/mundos/page.tsx"
       ]
     },
     {
       "ruta": "/organizaciones/[clave]",
       "tipo": "pagina",
-      "referencias": 13,
+      "referencias": 16,
       "desde": [
+        "app/conocimiento/enciclopedia/[slug]/page.tsx",
+        "app/conocimiento/enciclopedia/page.tsx",
         "app/mundos/[iso]/page.tsx",
-        "app/mundos/page.tsx",
-        "app/organizaciones/page.tsx",
-        "app/regiones/[clave]/page.tsx"
+        "app/mundos/page.tsx"
       ]
     },
     {
@@ -2052,7 +2092,7 @@
     {
       "ruta": "/rankings",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 12,
       "desde": [
         "app/demografia/page.tsx",
         "app/mundos/[iso]/page.tsx",
@@ -2063,7 +2103,7 @@
     {
       "ruta": "/rankings/[medida]",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 12,
       "desde": [
         "app/demografia/page.tsx",
         "app/mundos/[iso]/page.tsx",
@@ -2074,7 +2114,7 @@
     {
       "ruta": "/regiones",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 12,
       "desde": [
         "app/demografia/page.tsx",
         "app/mundos/page.tsx",
@@ -2085,7 +2125,7 @@
     {
       "ruta": "/regiones/[clave]",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 12,
       "desde": [
         "app/demografia/page.tsx",
         "app/mundos/page.tsx",
@@ -2162,7 +2202,7 @@
     {
       "ruta": "/traductor",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 12,
       "desde": [
         "app/mundo/page.tsx",
         "components/portada/modulos.ts",

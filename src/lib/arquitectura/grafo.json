@@ -2,8 +2,8 @@
   "version": "v414.0",
   "generado": "2026-11-19",
   "fuente": {
-    "censo": "src/lib/arquitectura/censo.json · 2026-11-19 · 101 páginas · 117 rutas de API",
-    "registro": "84 módulos · 135 dependencias declaradas"
+    "censo": "src/lib/arquitectura/censo.json · 2026-11-19 · 105 páginas · 117 rutas de API",
+    "registro": "85 módulos · 137 dependencias declaradas"
   },
   "areas": [
     {
@@ -28,9 +28,18 @@
       "id": "components/portada",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 58,
+      "enlacesSalientes": 60,
       "enlacesEntrantes": 0,
       "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/conocimiento",
+      "tipo": "ruta",
+      "rutas": 9,
+      "enlacesSalientes": 16,
+      "enlacesEntrantes": 29,
+      "paginas": 9,
       "api": 0
     },
     {
@@ -64,7 +73,7 @@
       "id": "app/datos-mundiales",
       "tipo": "ruta",
       "rutas": 4,
-      "enlacesSalientes": 11,
+      "enlacesSalientes": 9,
       "enlacesEntrantes": 16,
       "paginas": 4,
       "api": 0
@@ -133,15 +142,6 @@
       "api": 0
     },
     {
-      "id": "app/conocimiento",
-      "tipo": "ruta",
-      "rutas": 5,
-      "enlacesSalientes": 1,
-      "enlacesEntrantes": 17,
-      "paginas": 5,
-      "api": 0
-    },
-    {
       "id": "app/creadores",
       "tipo": "ruta",
       "rutas": 6,
@@ -169,15 +169,6 @@
       "api": 9
     },
     {
-      "id": "components/conocimiento",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 16,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
-    },
-    {
       "id": "app/sistema",
       "tipo": "ruta",
       "rutas": 1,
@@ -187,21 +178,30 @@
       "api": 0
     },
     {
+      "id": "lib/arquitectura",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 15,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "components/conocimiento",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 15,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "app/arquitectura",
       "tipo": "ruta",
       "rutas": 1,
       "enlacesSalientes": 10,
       "enlacesEntrantes": 4,
       "paginas": 1,
-      "api": 0
-    },
-    {
-      "id": "lib/arquitectura",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 14,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
       "api": 0
     },
     {
@@ -223,15 +223,6 @@
       "api": 3
     },
     {
-      "id": "app/regiones",
-      "tipo": "ruta",
-      "rutas": 2,
-      "enlacesSalientes": 4,
-      "enlacesEntrantes": 8,
-      "paginas": 2,
-      "api": 0
-    },
-    {
       "id": "app/en-vivo",
       "tipo": "ruta",
       "rutas": 1,
@@ -247,15 +238,6 @@
       "enlacesSalientes": 5,
       "enlacesEntrantes": 6,
       "paginas": 2,
-      "api": 0
-    },
-    {
-      "id": "app/mundo",
-      "tipo": "ruta",
-      "rutas": 1,
-      "enlacesSalientes": 7,
-      "enlacesEntrantes": 4,
-      "paginas": 1,
       "api": 0
     },
     {
@@ -286,21 +268,12 @@
       "api": 0
     },
     {
-      "id": "app/demografia",
+      "id": "app/mundo",
       "tipo": "ruta",
       "rutas": 1,
-      "enlacesSalientes": 7,
+      "enlacesSalientes": 6,
       "enlacesEntrantes": 4,
       "paginas": 1,
-      "api": 0
-    },
-    {
-      "id": "app/organizaciones",
-      "tipo": "ruta",
-      "rutas": 2,
-      "enlacesSalientes": 3,
-      "enlacesEntrantes": 8,
-      "paginas": 2,
       "api": 0
     },
     {
@@ -331,6 +304,15 @@
       "api": 0
     },
     {
+      "id": "app/regiones",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
+    },
+    {
       "id": "app/modo",
       "tipo": "ruta",
       "rutas": 1,
@@ -347,6 +329,24 @@
       "enlacesEntrantes": 9,
       "paginas": 0,
       "api": 4
+    },
+    {
+      "id": "app/demografia",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 5,
+      "enlacesEntrantes": 4,
+      "paginas": 1,
+      "api": 0
+    },
+    {
+      "id": "app/organizaciones",
+      "tipo": "ruta",
+      "rutas": 2,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 8,
+      "paginas": 2,
+      "api": 0
     },
     {
       "id": "app/datos",
@@ -1267,7 +1267,7 @@
       "api": 2
     },
     {
-      "id": "lib/conocimiento",
+      "id": "components/enciclopedia",
       "tipo": "soporte",
       "rutas": 0,
       "enlacesSalientes": 3,
@@ -1528,6 +1528,24 @@
       "api": 0
     },
     {
+      "id": "lib/conocimiento",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "lib/enciclopedia",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "app/llms.txt",
       "tipo": "ruta",
       "rutas": 1,
@@ -1664,11 +1682,6 @@
       "n": 8
     },
     {
-      "desde": "components/conocimiento",
-      "hacia": "app/conocimiento",
-      "n": 8
-    },
-    {
       "desde": "app/datos-mundiales",
       "hacia": "app/datos-mundiales",
       "n": 8
@@ -1686,6 +1699,16 @@
     {
       "desde": "app/sistema",
       "hacia": "api/sistema",
+      "n": 7
+    },
+    {
+      "desde": "app/conocimiento",
+      "hacia": "app/conocimiento",
+      "n": 7
+    },
+    {
+      "desde": "components/conocimiento",
+      "hacia": "app/conocimiento",
       "n": 7
     },
     {
@@ -1716,6 +1739,11 @@
     {
       "desde": "lib/api",
       "hacia": "api/nucleo",
+      "n": 5
+    },
+    {
+      "desde": "lib/arquitectura",
+      "hacia": "app/conocimiento",
       "n": 5
     },
     {
@@ -1759,13 +1787,18 @@
       "n": 4
     },
     {
-      "desde": "lib/arquitectura",
-      "hacia": "app/conocimiento",
+      "desde": "components/mundial",
+      "hacia": "app/datos-mundiales",
       "n": 4
     },
     {
-      "desde": "components/mundial",
-      "hacia": "app/datos-mundiales",
+      "desde": "app/conocimiento",
+      "hacia": "app/mundos",
+      "n": 4
+    },
+    {
+      "desde": "app/conocimiento",
+      "hacia": "app/organizaciones",
       "n": 4
     },
     {
@@ -1814,7 +1847,7 @@
       "n": 3
     },
     {
-      "desde": "lib/conocimiento",
+      "desde": "components/enciclopedia",
       "hacia": "app/conocimiento",
       "n": 3
     },
@@ -1912,21 +1945,6 @@
       "desde": "components/vanguard",
       "hacia": "api/mente",
       "n": 2
-    },
-    {
-      "desde": "components/vanguard",
-      "hacia": "api/meteo",
-      "n": 2
-    },
-    {
-      "desde": "lib/datos",
-      "hacia": "api/nucleo",
-      "n": 2
-    },
-    {
-      "desde": "components/vanguard",
-      "hacia": "api/nucleo",
-      "n": 2
     }
   ],
   "ciclosDeEnlace": [
@@ -1960,7 +1978,6 @@
       "app/noticia",
       "app/oportunidades",
       "app/organizaciones",
-      "app/regiones",
       "app/sistema",
       "app/torre",
       "app/ver-guerra",
@@ -1981,8 +1998,8 @@
     ]
   ],
   "registro": {
-    "modulos": 84,
-    "dependencias": 135,
+    "modulos": 85,
+    "dependencias": 137,
     "unicas": 32,
     "rotas": []
   },
@@ -1993,7 +2010,10 @@
       "/api/live/streams/[id]/chat",
       "/api/live/streams/[id]/donate"
     ],
-    "paginasDeUnEnlace": [],
+    "paginasDeUnEnlace": [
+      "/conocimiento/enciclopedia/buscar",
+      "/conocimiento/enciclopedia/categoria/[id]"
+    ],
     "apiMasUsadas": [
       {
         "ruta": "/api",

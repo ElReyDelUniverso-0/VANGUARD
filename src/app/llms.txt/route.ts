@@ -3,6 +3,7 @@ import { CONSTELACIONES, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
 import { MODELOS, estadisticasLabs } from "@/lib/labs/registro"; // v411.0: el laboratorio
 import CENSO from "@/lib/arquitectura/censo.json"; // v412.0: el censo real del árbol
 import { TEMAS_INVESTIGACION } from "@/lib/investigacion"; // v413.0: investigación sistémica
+import { ARTICULOS as ARTICULOS_ENC, CATEGORIAS as CATEGORIAS_ENC, rutaArticulo } from "@/lib/enciclopedia/indice"; // v417.0
 
 // ============================================================
 // v405.6 LA CARTA A LAS MÁQUINAS — /llms.txt — ia3 (Arena)
@@ -72,6 +73,13 @@ export function GET() {
       "`node tools/arquitectura/probar.mjs`.",
     `- [Catálogo de datos](${c("/datos")}): procedencia, licencia, fecha de captura y límites de cada modelo de datos del sitio.`,
     `- [Sala de la calidad](${c("/calidad")}): las pruebas de la casa y qué mide cada una.`,
+    "",
+    "## Enciclopedia VANGUARD",
+    "",
+    `- [Enciclopedia VANGUARD](${c("/conocimiento/enciclopedia")}): ${ARTICULOS_ENC.length} artículos de fondo en ${CATEGORIAS_ENC.length} categorías ` +
+      "(continentes, países, geografía física y humana, civilizaciones, culturas, ciencia, naturaleza, organismos internacionales y recursos). " +
+      "Cada artículo trae datos anotados a su fuente, bibliografía, imágenes de Wikimedia Commons con licencia y fecha de revisión.",
+    ...ARTICULOS_ENC.map((a) => `- [${a.titulo}](${c(rutaArticulo(a.slug))}): ${a.bajada}`),
     "",
     "## Investigación Sistémica (VANGUARD DOSSIERS)",
     "",

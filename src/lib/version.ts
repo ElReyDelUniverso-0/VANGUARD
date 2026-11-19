@@ -1,3 +1,32 @@
+// v418.0 VANGUARD KNOWLEDGE — AGENTE 5, director de conocimiento. Encargo del
+// Dueño: que la casa sea un centro de conocimiento del mundo que no dependa
+// solo de la actualidad y siga siendo útil dentro de años; «no artículos
+// superficiales creados automáticamente: profundidad, calidad y referencias».
+// ① LA ENCICLOPEDIA (/conocimiento/enciclopedia): 24 artículos de fondo
+//    (≈ 20.000 palabras) en diez categorías — continentes (los seis y la
+//    Antártida), países (monografía de la República Dominicana), geografía
+//    física y humana, civilizaciones, culturas, ciencia, naturaleza, organismos
+//    internacionales y recursos. Cada uno: introducción, explicación en
+//    secciones, contexto histórico, ficha de datos con nota a SU fuente,
+//    cronología, imágenes, bibliografía tipada, «cómo citar» y fecha de revisión.
+// ② IMÁGENES DE USO PERMITIDO: 26 archivos de Wikimedia Commons (dominio
+//    público, CC0, CC BY, CC BY-SA) alojados en public/enciclopedia con autor,
+//    licencia y enlace de origen en cada pie (src/lib/enciclopedia/imagenes.json).
+// ③ RELACIONES: temas relacionados directos e inversos («también remiten a
+//    este artículo»), saltos a los 63 expedientes de /conocimiento/tema, a las
+//    civilizaciones del explorador, a /organizaciones/[clave] y a /mundos/[iso].
+//    La ficha de cada país (puentes-pais) lista sus artículos, la monografía
+//    primero.
+// ④ DESCUBRIMIENTO: portada con índice A-Z y cinco rutas guiadas, páginas por
+//    categoría, búsqueda temática sin tildes que funciona sin JavaScript, y el
+//    buscador central (fnt:conocimiento) mezcla artículos y expedientes en UN
+//    proveedor — porOrigen se indexa por fuente y dos proveedores se pisarían.
+// ⑤ REGISTRO: sitemap, llms.txt, directorio (tema «saber»), censo del Núcleo,
+//    espacio Geografía, módulo Conocimiento y departamento 18.
+// ⑥ GUARDIA: scripts/pruebas-enciclopedia.mjs (29 pruebas) hace cumplir el
+//    contrato — ningún artículo sin fuentes primarias, sin imagen con licencia
+//    permitida (<300 KB), sin fecha, huérfano o con un enlace hacia la nada.
+// ════════════════════════════════════════════════════════════════
 // v417.0 COMPATIBILIDAD MÓVIL — incidencia de alta prioridad: un usuario en un
 // Samsung Galaxy A06 con Brave veía «la mitad de la interfaz» sin aparecer.
 // Reproducido con Chromium emulando el A06 (360×740, DPR 2, UA Android Chrome,
@@ -6634,8 +6663,10 @@
 //    utilidades se apagan por clase: 254 reglas, 253 selectores, ni una fuga
 //    en la prueba de navegador del panel de juego.
 // (versión anterior) export const APP_VERSION = "v416.3";
-export const APP_VERSION = "v417.0";
-export const APP_CODENAME = "COMPATIBILIDAD MÓVIL";
+// (versión anterior) export const APP_VERSION = "v417.0";
+export const APP_VERSION = "v418.0";
+export const APP_CODENAME = "VANGUARD KNOWLEDGE";
+// (codename anterior) export const APP_CODENAME = "COMPATIBILIDAD MÓVIL";
 // (codename anterior) export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";
@@ -6699,7 +6730,7 @@ export const APP_CODENAME = "COMPATIBILIDAD MÓVIL";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v416.3";
+export const APP_VERSION_ANTERIOR = "v417.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
