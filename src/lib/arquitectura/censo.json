@@ -1,13 +1,13 @@
 {
-  "version": "v412.0",
-  "fecha": "2026-11-19",
-  "paginas": 127,
-  "rutasApi": 126,
-  "total": 253,
-  "bienConectadas": 114,
+  "version": "v420.1",
+  "fecha": "2026-09-22",
+  "paginas": 135,
+  "rutasApi": 129,
+  "total": 264,
+  "bienConectadas": 119,
   "huerfanas": [],
-  "paginasConReferencias": 127,
-  "mediaReferencias": 13.09,
+  "paginasConReferencias": 135,
+  "mediaReferencias": 12.64,
   "rutas": [
     {
       "ruta": "/",
@@ -785,6 +785,33 @@
         "components/vanguard/panels/foryou-panel.tsx",
         "components/vanguard/panels/meme-studio-panel.tsx",
         "components/vanguard2/mundos-datos.ts",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/memoria/acontecimiento",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/api/memoria/acontecimiento/route.ts",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/memoria/buscar",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/api/memoria/buscar/route.ts",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/memoria/documento",
+      "tipo": "api",
+      "referencias": 2,
+      "desde": [
+        "app/api/memoria/documento/route.ts",
         "lib/api/catalogo.ts"
       ]
     },
@@ -2134,6 +2161,107 @@
         "app/mundos/page.tsx",
         "app/navegacion/navegacion-sala.tsx",
         "app/navegacion/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/memoria",
+      "tipo": "pagina",
+      "referencias": 26,
+      "desde": [
+        "app/api/memoria/acontecimiento/route.ts",
+        "app/api/memoria/buscar/route.ts",
+        "app/api/memoria/documento/route.ts",
+        "app/api/telegram/route.ts",
+        "app/api/telegram/webhook/route.ts",
+        "app/cuartel/page.tsx",
+        "app/memoria/acontecimiento/[slug]/page.tsx",
+        "app/memoria/buscar/page.tsx",
+        "app/memoria/coleccion/[slug]/page.tsx",
+        "app/memoria/comparar/page.tsx",
+        "app/memoria/documento/[fuente]/[id]/page.tsx",
+        "app/memoria/fuentes/page.tsx",
+        "app/memoria/page.tsx",
+        "app/memoria/periodo/[slug]/page.tsx",
+        "app/sitemap.ts",
+        "app/verdad-cruda/page.tsx",
+        "components/memoria/buscador-memoria.tsx",
+        "components/memoria/tarjeta-documento.tsx",
+        "components/memoria/visor-documento.tsx",
+        "components/vanguard/panels/telegram-panel.tsx",
+        "components/vanguard/teatro-global-3d.tsx",
+        "lib/api/catalogo.ts",
+        "lib/memoria/comun.ts",
+        "lib/memoria/fuentes.ts",
+        "lib/nucleo/registro.ts",
+        "lib/regla-oro.ts"
+      ]
+    },
+    {
+      "ruta": "/memoria/acontecimiento/[slug]",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/api/memoria/acontecimiento/route.ts",
+        "app/sitemap.ts",
+        "lib/api/catalogo.ts",
+        "lib/nucleo/registro.ts"
+      ]
+    },
+    {
+      "ruta": "/memoria/buscar",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/api/memoria/acontecimiento/route.ts",
+        "app/api/memoria/buscar/route.ts",
+        "components/memoria/buscador-memoria.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/memoria/coleccion/[slug]",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "app/sitemap.ts"
+      ]
+    },
+    {
+      "ruta": "/memoria/comparar",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "app/sitemap.ts"
+      ]
+    },
+    {
+      "ruta": "/memoria/documento/[fuente]/[id]",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/api/memoria/acontecimiento/route.ts",
+        "app/api/memoria/documento/route.ts",
+        "components/memoria/tarjeta-documento.tsx",
+        "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/memoria/fuentes",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "app/sitemap.ts",
+        "components/memoria/tarjeta-documento.tsx",
+        "lib/memoria/fuentes.ts",
+        "lib/nucleo/registro.ts"
+      ]
+    },
+    {
+      "ruta": "/memoria/periodo/[slug]",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "app/sitemap.ts"
       ]
     },
     {

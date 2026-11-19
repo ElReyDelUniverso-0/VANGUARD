@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v420.1",
+    nombre: "VANGUARD MEMORY ARCHIVE",
+    hitos: [
+      "EL ARCHIVO (/memoria): buscador documental conectado a tres instituciones públicas —Library of Congress, Internet Archive y Wikimedia Commons— con filtros por tipo, autor, fuente y años, reparto por fuente, cronología por décadas y paginación en la propia URL.",
+      "FICHA DE PROCEDENCIA: nueve campos por documento (título, fecha, autor, institución, colección, tipo, licencia, titular de derechos y enlace original) con el TEXTO LITERAL de derechos y un veredicto explicado; visor de caras cuando la licencia lo permite y hueco razonado cuando no.",
+      "LA REGLA DE LOS DERECHOS, sin interpretaciones a favor: la imagen solo se sirve si el estado es dominio público, licencia abierta o sin restricciones conocidas; «derechos sin evaluar» y «uso condicionado» se publican con enlace y sin copia. Nada de dominio público dudoso.",
+      "OCHO EXPEDIENTES HISTÓRICOS: independencia de los Estados Unidos, Revolución Francesa, Constitución de Cádiz, abolición de la esclavitud, sufragio femenino, desembarco de Normandía, Declaración Universal de Derechos Humanos y Muro de Berlín, con las piezas comprobadas en su institución, el papel de cada una y lo que el expediente NO tiene.",
+      "REFERENCIAS CRUZADAS: cada documento dice en qué expedientes se cita, qué documentos son vecinos y cuáles se relacionan; cada expediente lleva de vuelta a sus fichas y a sus fuentes.",
+      "CINCO SIGLOS Y SEIS COLECCIONES: períodos XVI–XX explorables por documentos, fotografías y mapas, y colecciones temáticas (mapas que abrieron el mundo, fotografía de guerra, la calle y la ciudad, prensa y panfletos, abolición y derechos civiles, retratos del poder) declaradas como consultas, no como artículos.",
+      "COMPARAR VERSIONES (/memoria/comparar): dos piezas lado a lado, nueve campos y las diferencias marcadas, con cuatro pares preparados —el borrador de Jefferson y la copia del 4 de julio, la proclamación preliminar y la definitiva, el muro que se construye y el que cae, y una misma pieza descrita por dos instituciones.",
+      "TRES PUERTAS DE MÁQUINA Y HONESTIDAD DE ALCANCE: /api/memoria/{buscar,documento,acontecimiento} con el contrato de la casa y catálogo de API; Europeana, UNESCO y archives.gov quedan declaradas como puertas ausentes con su motivo. El archivo no es una enciclopedia: no hay un solo artículo de fondo.",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v420.0",
     nombre: "VANGUARD LINGUA",
     hitos: [

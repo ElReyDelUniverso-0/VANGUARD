@@ -1159,6 +1159,46 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["mod:catalogo", "mod:navegacion", "mod:espacio"],
     alias: "directorio indice herramientas buscar modulos salas favoritos recientes historial recomendaciones todo",
   },
+  // ── v419.0 MEMORY ARCHIVE — el archivo documental ────────────────
+  {
+    id: "mod:memoria",
+    nombre: "ARCHIVO DE LA MEMORIA",
+    lema: "Los documentos originales, no el relato sobre ellos",
+    descripcion:
+      "Archivo documental conectado a tres instituciones públicas (Library of Congress, Internet Archive y Wikimedia Commons): buscador único con filtros por tipo, autor, fuente y años; cronología de lo encontrado; fichas de procedencia con el estado de derechos literal; visor de caras; comparación de documentos; colecciones temáticas y exploración por siglos. No aloja copias: cuando la fuente no autoriza la imagen, enlaza y lo dice.",
+    categoria: "MUNDO",
+    ruta: "/memoria",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:historia", "mod:galeria"],
+    alias: "archivo memoria documentos originales fuente primaria fotografia historica mapas antiguos facsimil procedencia licencia derechos biblioteca hemeroteca expediente",
+  },
+  {
+    id: "mod:memoria-acontecimientos",
+    nombre: "EXPEDIENTES DEL ARCHIVO",
+    lema: "Abre un acontecimiento y aparecen sus documentos",
+    descripcion:
+      "Ocho expedientes históricos —de la independencia de los Estados Unidos a la caída del Muro de Berlín— con las piezas fijadas y comprobadas en su institución, el papel de cada una, el hilo del acontecimiento, consultas declaradas que traen material vivo y lo que el expediente NO tiene. Referencia cruzada: cada documento dice en qué expedientes se cita.",
+    categoria: "MUNDO",
+    ruta: "/memoria/acontecimiento/independencia-de-los-estados-unidos",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:memoria"],
+    alias: "acontecimiento expediente documentos relacionados 1776 1789 1812 1863 1913 1944 1948 1989 referencia cruzada",
+  },
+  {
+    id: "mod:memoria-fuentes",
+    nombre: "PROCEDENCIA Y DERECHOS",
+    lema: "Qué hay detrás de cada puerta",
+    descripcion:
+      "La política documental de la casa: qué cubre y qué no cubre cada institución, cómo declara derechos, cómo se cita, las cinco clases de derechos con su decisión de publicar o no la imagen, y las puertas conocidas que no están (Europeana, UNESCO Memory of the World, National Archives) con el motivo.",
+    categoria: "SISTEMA",
+    ruta: "/memoria/fuentes",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:memoria"],
+    alias: "fuentes procedencia derechos licencia copyright dominio publico atribucion citar europeana unesco archives",
+  },
   {
     id: "mod:colecciones",
     nombre: "LAS COLECCIONES",

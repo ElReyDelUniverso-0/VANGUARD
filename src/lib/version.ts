@@ -1,3 +1,40 @@
+// v420.1 VANGUARD MEMORY ARCHIVE — AGENTE 4 · ARCHIVO DOCUMENTAL. Encargo
+// del Dueño: «construir la memoria documental de la humanidad». No otra
+// enciclopedia: un archivo de consulta donde el documento original manda.
+//
+// ① TRES PUERTAS REALES, NO ESPEJOS: Library of Congress, Internet Archive y
+//    Wikimedia Commons, cada una con su buscador, su ficha y su catálogo de
+//    derechos. Europeana, UNESCO Memory of the World y National Archives
+//    quedan DECLARADAS como ausentes (piden clave o no tienen API) en vez de
+//    fingirse: la casa no hace scraping ni espejos.
+// ② LA REGLA QUE ORDENA TODO — imagen visible ⇔ derechos declarados y
+//    compatibles (dominio público, licencia abierta, sin restricciones
+//    conocidas). «Derechos sin evaluar» o «uso condicionado» no se interpretan
+//    a favor: la ficha se publica con su texto literal de derechos, su titular,
+//    su institución y su enlace, y la imagen no se sirve.
+// ③ BUSCADOR ÚNICO (/memoria/buscar): consulta viva contra las tres puertas a
+//    la vez, filtros por tipo, autor, fuente y años, reparto por fuente y por
+//    tipo, cronología por décadas y PAGINACIÓN en URL. Una puerta caída llega
+//    como aviso con su error, nunca como cero resultados.
+// ④ FICHA DE PROCEDENCIA (/memoria/documento/…): nueve campos declarados,
+//    veredicto de derechos explicado, visor de caras cuando la licencia lo
+//    permite, hueco razonado cuando no, y referencias cruzadas: en qué
+//    expedientes se cita, qué documentos son vecinos y cuáles se relacionan.
+// ⑤ EL DIFERENCIADOR — OCHO EXPEDIENTES: abrir un acontecimiento histórico y
+//    encontrar sus documentos originales, el papel de cada pieza, el hilo, dos
+//    consultas declaradas que traen material vivo y lo que el expediente NO
+//    tiene. Cada pieza se comprobó en su institución antes de fijarla.
+// ⑥ PERÍODOS Y COLECCIONES: cinco siglos (XVI–XX) explorables por documentos,
+//    fotografías y mapas, y seis colecciones temáticas (mapas que abrieron el
+//    mundo, fotografía de guerra, la calle y la ciudad, prensa y panfletos,
+//    abolición y derechos civiles, retratos del poder). Una colección es una
+//    consulta declarada, no un artículo.
+// ⑦ COMPARAR VERSIONES (/memoria/comparar): dos piezas, nueve campos, las
+//    diferencias marcadas — el borrador de Jefferson contra la copia firmada.
+// ⑧ TRES PUERTAS DE MÁQUINA con el contrato de la casa y catálogo de API;
+//    censo del árbol actualizado, módulos mod:memoria en el Núcleo y mapa del
+//    sitio con las puertas indexables (las fichas y el buscador, noindex).
+//    Se rebasa sobre v420.0 sin tocar LINGUA ni la Cámara: solo suma.
 // v419.0 VANGUARD EARTH SYSTEM — AGENTE 2 · GEOGRAFÍA, CARTOGRAFÍA Y
 // EXPLORACIÓN 3D. Encargo del Dueño: convertir la experiencia geográfica en
 // uno de los sistemas más importantes de la Casa; «no quiero simplemente
@@ -6767,11 +6804,13 @@
 //    /api/traductor lo usa como vía de respaldo etiquetada.
 // ⑦ CONEXIÓN: buscador central (fnt:lingua), registro, directorio (tema
 //    lenguas), espacios, departamentos, sitemap, llms.txt y enciclopedia.
-export const APP_VERSION = "v420.0";
+export const APP_VERSION = "v420.1";
+// (anterior) export const APP_VERSION = "v420.0";
 // (anterior) export const APP_VERSION = "v419.1";
 // (anterior) export const APP_VERSION = "v419.0";
 // (anterior) export const APP_VERSION = "v418.2";
-export const APP_CODENAME = "VANGUARD LINGUA";
+export const APP_CODENAME = "VANGUARD MEMORY ARCHIVE";
+// (anterior) export const APP_CODENAME = "VANGUARD LINGUA";
 // (anterior) export const APP_CODENAME = "CÁMARA DE INTELIGENCIA";
 // (anterior) export const APP_CODENAME = "VANGUARD EARTH SYSTEM";
 // (anterior) export const APP_CODENAME = "EL ARO DE CONTROL";

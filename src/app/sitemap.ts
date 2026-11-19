@@ -1,3 +1,5 @@
+import { ACONTECIMIENTOS } from "@/lib/memoria/acontecimientos";
+import { COLECCIONES_MEMORIA, PERIODOS } from "@/lib/memoria/colecciones";
 import { rutasConocimiento } from "@/lib/conocimiento/indice";
 import { rutasLingua } from "@/lib/lingua/servidor"; // v420.0
 import { rutasEnciclopedia, ULTIMA_REVISION as ULTIMA_REVISION_ENCICLOPEDIA } from "@/lib/enciclopedia/indice"; // v417.0
@@ -660,6 +662,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...subregiones().map((x) => ({ url: `${SITE_URL}/regiones/${x.slug}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
     ...ORGANIZACIONES.map((o) => ({ url: `${SITE_URL}/organizaciones/${o.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...COLECCIONES.map((c) => ({ url: `${SITE_URL}/colecciones/${c.clave}`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.55 })),
+    // v419.0 ARCHIVO DE LA MEMORIA — la portada y las puertas de consulta.
+    // Las fichas de documento NO entran: su contenido depende de la fuente y
+    // cambia con ella; se enlazan con noindex y el buscador vive en /memoria.
+    ...[
+      "/memoria",
+      "/memoria/fuentes",
+      "/memoria/comparar",
+      ...ACONTECIMIENTOS.map((a) => `/memoria/acontecimiento/${a.slug}`),
+      ...COLECCIONES_MEMORIA.map((c) => `/memoria/coleccion/${c.slug}`),
+      ...PERIODOS.map((p) => `/memoria/periodo/${p.slug}`),
+    ].map((r) => ({
+      url: `${SITE_URL}${r}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: r === "/memoria" ? 0.85 : 0.7,
+    })),
     // v411.0 EL LABORATORIO — dieciséis puertas estáticas: el catálogo y una
     // ficha por modelo. No hay URL por combinación de mandos: el estado vive en
     // el navegador, así que no existen combinaciones que indexar ni duplicar.
