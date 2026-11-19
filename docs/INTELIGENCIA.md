@@ -184,3 +184,72 @@ src/components/vanguard/centro/  la interfaz (cuatro pestañas + piezas)
 ```
 
 Sin dependencias nuevas. Sin servicios externos nuevos. Con el proveedor que la casa ya tenía.
+
+---
+
+## 11 · Medido en producción (`https://vanguard-kq9r.vercel.app`, 12 nov 2026)
+
+Todo lo de abajo se ejecutó contra el sitio publicado, no contra un entorno local.
+
+### Corpus y búsqueda
+
+```
+GET /api/centro/buscar → {"fuentes":181,"pasajes":1234,
+                          "porVia":{"dossier":10,"enciclopedia":24,"pais":84,"concepto":63}}
+POST buscar «¿por qué la litografía ultravioleta extrema es un cuello de botella?»
+  → 11 candidatas + 6 vivas; la primera, el dossier de semiconductores (121,04 puntos),
+    con muestra del pasaje que se citará
+```
+
+### Investigación con modelo
+
+```
+POST /api/centro/investigar (dossier:semiconductores-litografia)
+  motor: llm · 10,5 s · confianza 80/100
+  3 HECHO (cada uno con su cita validada) + 1 INTERPRETACION
+  0 citas rechazadas · bibliografía: SIA 2025, ASML 2025, CSIS 2024
+```
+
+### Documentos
+
+```
+POST /api/centro/documento  (attention.pdf, 15 págs, 2,1 MB)
+  calidad: alta · 38.263 caracteres · 44 trozos · 1,8 s
+POST documento/preguntar  «¿Qué es la atención multi-cabeza?» (pregunta en español, documento en inglés)
+  aviso: se buscó con el vocabulario equivalente (attention, mechanism, transformer, multi, head)
+  → fragmentos pertinentes citados por página (la expansión funciona; el proveedor
+    cayó en esa llamada y se respondió en modo extractivo, declarándolo)
+POST documento/comparar  (dos informes de contraste sobre el mismo asunto)
+  solapamiento 77 % · 3 contradicciones:
+    cifra 2 vs 3 millones · cifra 60 vs 90 millones · fecha 12 vs 14 de marzo de 2026
+```
+
+### Informe
+
+```
+POST /api/centro/informe → 9 secciones, 2.945 caracteres de Markdown y 424 de BibTeX
+  RESUMEN · CONTEXTO · HECHOS CON FUENTE · INTERPRETACIÓN · NO CONFIRMADO ·
+  LECTURA PROVISIONAL · CONTRADICCIONES · LAGUNAS · BIBLIOGRAFÍA
+```
+
+### Recorrido completo en un navegador real (390×844, móvil)
+
+Guion automatizado sobre la sala publicada:
+
+| Paso | Resultado |
+|---|---|
+| Abrir `/inteligencia` | 200, título correcto, 0 errores de consola |
+| Preguntar «¿Qué dicen las fuentes sobre el estrecho de Malaca?» | **20 fuentes**, 3 premarcadas |
+| Investigar | las cinco casillas presentes (hechos, interpretación, no confirmado, pasajes, bibliografía) |
+| Generar informe | generado con bibliografía |
+| Crear proyecto y recargar | el proyecto **sigue ahí** (`vg:centro:v1:proyectos`) |
+
+### Aro de calidad del departamento 10 sobre la sala nueva
+
+```
+/inteligencia  ·  móvil 360×740  ·  0 desbordes  ·  CLS 0  ·  0 tareas largas  ·  0 pageerror
+```
+
+En la primera pasada el aro cazó un **React #418** en la sala: `hayAlmacen()` se
+preguntaba durante el primer render (el servidor no tiene localStorage y el
+navegador sí). Corregido: se decide después de montar.
