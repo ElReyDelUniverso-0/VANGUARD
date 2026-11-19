@@ -2,7 +2,7 @@
   "version": "v414.0",
   "generado": "2026-11-19",
   "fuente": {
-    "censo": "src/lib/arquitectura/censo.json · 2026-11-19 · 137 páginas · 130 rutas de API",
+    "censo": "src/lib/arquitectura/censo.json · 2026-11-19 · 148 páginas · 131 rutas de API",
     "registro": "90 módulos · 144 dependencias declaradas"
   },
   "areas": [
@@ -10,7 +10,7 @@
       "id": "components/vanguard",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 145,
+      "enlacesSalientes": 161,
       "enlacesEntrantes": 0,
       "paginas": 0,
       "api": 0
@@ -19,7 +19,7 @@
       "id": "lib/api",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 113,
+      "enlacesSalientes": 114,
       "enlacesEntrantes": 0,
       "paginas": 0,
       "api": 0
@@ -70,6 +70,15 @@
       "api": 0
     },
     {
+      "id": "app/academia",
+      "tipo": "ruta",
+      "rutas": 10,
+      "enlacesSalientes": 10,
+      "enlacesEntrantes": 28,
+      "paginas": 10,
+      "api": 0
+    },
+    {
       "id": "lib/lingua",
       "tipo": "soporte",
       "rutas": 0,
@@ -79,21 +88,21 @@
       "api": 0
     },
     {
+      "id": "app/datos-mundiales",
+      "tipo": "ruta",
+      "rutas": 5,
+      "enlacesSalientes": 16,
+      "enlacesEntrantes": 20,
+      "paginas": 5,
+      "api": 0
+    },
+    {
       "id": "components/creadores",
       "tipo": "soporte",
       "rutas": 0,
       "enlacesSalientes": 30,
       "enlacesEntrantes": 0,
       "paginas": 0,
-      "api": 0
-    },
-    {
-      "id": "app/datos-mundiales",
-      "tipo": "ruta",
-      "rutas": 4,
-      "enlacesSalientes": 14,
-      "enlacesEntrantes": 16,
-      "paginas": 4,
       "api": 0
     },
     {
@@ -196,10 +205,10 @@
       "api": 0
     },
     {
-      "id": "lib/enciclopedia",
+      "id": "components/conocimiento",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 17,
+      "enlacesSalientes": 16,
       "enlacesEntrantes": 0,
       "paginas": 0,
       "api": 0
@@ -214,6 +223,15 @@
       "api": 9
     },
     {
+      "id": "lib/enciclopedia",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 16,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "app/sistema",
       "tipo": "ruta",
       "rutas": 1,
@@ -223,7 +241,7 @@
       "api": 0
     },
     {
-      "id": "components/conocimiento",
+      "id": "lib/arquitectura",
       "tipo": "soporte",
       "rutas": 0,
       "enlacesSalientes": 15,
@@ -238,15 +256,6 @@
       "enlacesSalientes": 10,
       "enlacesEntrantes": 4,
       "paginas": 1,
-      "api": 0
-    },
-    {
-      "id": "lib/arquitectura",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 14,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
       "api": 0
     },
     {
@@ -745,6 +754,15 @@
       "api": 0
     },
     {
+      "id": "components/mundial",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 5,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "app/divisas",
       "tipo": "ruta",
       "rutas": 1,
@@ -1003,15 +1021,6 @@
       "enlacesSalientes": 0,
       "enlacesEntrantes": 4,
       "paginas": 1,
-      "api": 0
-    },
-    {
-      "id": "components/mundial",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 4,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
       "api": 0
     },
     {
@@ -1384,6 +1393,15 @@
       "api": 1
     },
     {
+      "id": "lib/academia",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
       "id": "api/agent-ping",
       "tipo": "ruta",
       "rutas": 1,
@@ -1654,6 +1672,15 @@
       "api": 0
     },
     {
+      "id": "api/academia",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 0,
+      "enlacesEntrantes": 1,
+      "paginas": 0,
+      "api": 1
+    },
+    {
       "id": "lib/arquitecto.ts",
       "tipo": "soporte",
       "rutas": 0,
@@ -1783,6 +1810,11 @@
       "n": 20
     },
     {
+      "desde": "components/vanguard",
+      "hacia": "app/academia",
+      "n": 16
+    },
+    {
       "desde": "components/creadores",
       "hacia": "app/creadores",
       "n": 15
@@ -1801,6 +1833,16 @@
       "desde": "components/vanguard",
       "hacia": "api/ugc",
       "n": 11
+    },
+    {
+      "desde": "app/academia",
+      "hacia": "app/academia",
+      "n": 10
+    },
+    {
+      "desde": "app/datos-mundiales",
+      "hacia": "app/datos-mundiales",
+      "n": 10
     },
     {
       "desde": "app/editorial",
@@ -1825,11 +1867,6 @@
     {
       "desde": "components/vanguard",
       "hacia": "api/datos",
-      "n": 8
-    },
-    {
-      "desde": "app/datos-mundiales",
-      "hacia": "app/datos-mundiales",
       "n": 8
     },
     {
@@ -1898,6 +1935,11 @@
       "n": 5
     },
     {
+      "desde": "components/mundial",
+      "hacia": "app/datos-mundiales",
+      "n": 5
+    },
+    {
       "desde": "components/vanguard",
       "hacia": "api/denuncias",
       "n": 4
@@ -1940,11 +1982,6 @@
     {
       "desde": "app/lingua",
       "hacia": "app/conocimiento",
-      "n": 4
-    },
-    {
-      "desde": "components/mundial",
-      "hacia": "app/datos-mundiales",
       "n": 4
     },
     {
@@ -2061,16 +2098,6 @@
       "desde": "lib/game-store.ts",
       "hacia": "api/auth",
       "n": 2
-    },
-    {
-      "desde": "lib/api",
-      "hacia": "api/conocimiento",
-      "n": 2
-    },
-    {
-      "desde": "components/vanguard",
-      "hacia": "api/cronica",
-      "n": 2
     }
   ],
   "ciclosDeEnlace": [
@@ -2140,6 +2167,8 @@
       "/api/live/streams/[id]/donate"
     ],
     "paginasDeUnEnlace": [
+      "/academia/glosario",
+      "/academia/historial",
       "/conocimiento/enciclopedia/buscar",
       "/conocimiento/enciclopedia/categoria/[id]",
       "/memoria/coleccion/[slug]",
