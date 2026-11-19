@@ -171,7 +171,29 @@ MEDIR = """() => {
 }"""
 
 
-async def auditar_vista(navegador, vista, puertas, base, lento):
+QUITAR_SUELO = """() => {
+  // A/B honesto: se borran del CSSOM las reglas del suelo del teléfono y se
+  // vuelve a medir la misma página, misma compilación, mismo aparato. Así la
+  // comparación antes/después no depende de guardar una compilación vieja.
+  let quitadas = 0;
+  for (const hoja of document.styleSheets) {
+    let reglas; try { reglas = hoja.cssRules; } catch { continue; }
+    for (let i = reglas.length - 1; i >= 0; i--) {
+      const r = reglas[i];
+      const texto = (r.cssText || "");
+      if (texto.includes("vx-suelo")) { hoja.deleteRule(i); quitadas++; }
+      else if (r.cssRules) {
+        for (let j = r.cssRules.length - 1; j >= 0; j--) {
+          if ((r.cssRules[j].cssText || "").includes("vx-suelo")) { r.deleteRule(j); quitadas++; }
+        }
+      }
+    }
+  }
+  return quitadas;
+}"""
+
+
+async def auditar_vista(navegador, vista, puertas, base, lento, sin_suelo=False):
     cfg = VISTAS[vista]
     ctx = await navegador.new_context(
         user_agent=UA_MOVIL if cfg["is_mobile"] else UA_ESCRITORIO,
@@ -223,6 +245,9 @@ async def auditar_vista(navegador, vista, puertas, base, lento):
             await pagina.wait_for_timeout(500)
             await pagina.evaluate("() => scrollTo(0, 0)")
             await pagina.wait_for_timeout(400)
+            if sin_suelo:
+                await pagina.evaluate(QUITAR_SUELO)
+                await pagina.wait_for_timeout(250)
             datos = await pagina.evaluate(MEDIR)
         except Exception as e:
             datos = {"error": str(e)[:200]}
@@ -313,6 +338,8 @@ async def main():
     ap.add_argument("--json", default="")
     ap.add_argument("--comparar", default="")
     ap.add_argument("--lento", action="store_true")
+    ap.add_argument("--sin-suelo", action="store_true",
+                    help="apaga en el navegador las reglas de src/app/movil.css para comparar antes/después sobre la MISMA compilación")
     args = ap.parse_args()
 
     base = args.base.rstrip("/")
@@ -320,13 +347,14 @@ async def main():
     vistas = list(VISTAS) if args.vista == "todas" else [args.vista]
 
     print(f"QA de navegador · {base} · {len(puertas)} puertas · vistas: {', '.join(vistas)}"
-          + (" · CPU 4× más lenta" if args.lento else ""))
+          + (" · CPU 4× más lenta" if args.lento else "")
+          + (" · CON EL SUELO APAGADO (A/B)" if args.sin_suelo else ""))
     acta = []
     async with async_playwright() as p:
         navegador = await p.chromium.launch()
         for v in vistas:
             print(f"\n── {v} ──")
-            acta += await auditar_vista(navegador, v, puertas, base, args.lento)
+            acta += await auditar_vista(navegador, v, puertas, base, args.lento, args.sin_suelo)
         await navegador.close()
 
     fallos = veredicto(acta)
@@ -349,7 +377,7 @@ async def main():
             print("  ←", n)
 
     if args.json:
-        json.dump({"base": base, "cuando": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        json.dump({"base": base, "sinSuelo": args.sin_suelo, "cuando": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                    "vistas": vistas, "puertas": puertas, "lento": args.lento,
                    "resumen": cuenta, "hallazgos": [{"sev": s, "txt": t} for s, t in fallos], "acta": acta},
                   open(args.json, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

@@ -58,6 +58,16 @@
     font-size: 12px;
   }
 
+  /* Los CONTENEDORES de ficha: dentro de una tarjeta pequeña, todo lo que
+     sea etiqueta o cifra secundaria sube al suelo, aunque el marcado use un
+     `b` o un `span` sin clase (que es lo que quedaba: 526 en /divisas, 105 en
+     /servicios, 88 en /navegacion). Se nombra el contenedor, no la etiqueta:
+     así el titular grande de la misma página sigue siendo grande. */
+  :not(#vx-suelo) :is(.vx-pais-cab, .vx-pais, .vx-svc, .vx-cat, .vx-pl,
+    .vx-nav-esp, .vx-esp-panel, .vx-esp-cab) :is(b, span, em, small, p, label) {
+    font-size: 12px;
+  }
+
   /* Las celdas de las tablas de datos respiran un poco más: son cifras. */
   :not(#vx-suelo) :is(td.num, th.num) {
     font-size: 12.5px;
