@@ -122,3 +122,47 @@ node scripts/pruebas-arquitectura.mjs                              # 15 ✓ (cen
    (cuántos países y qué años) calculada en el propio motor.
 3. Página de comparación por regiones (agregados) ya está; falta el mismo
    comparador para **grupos de renta** con la misma frase de diferencia.
+
+---
+
+## 9 · Despliegue real (12 nov 2026)
+
+Publicado en el Vanguard público, no en una copia. `main` avanzó por
+fast-forward al commit del departamento y el PR quedó cerrado sin abrir (el
+`POST /pulls` devolvía 422 con 23 PRs ya abiertos; el trabajo se entregó por la
+vía que la casa usa de verdad: commit directo sobre `main`).
+
+**El primer despliegue se cayó y hay que decirlo.** El build de Vercel murió en
+`tsc --noEmit` con dos `TS2345` en `src/app/api/mundial/route.ts`: dos
+`const x = []` dentro de `?seccion=comparar` que el compilador del build
+infería `never[]` y rechazaba al hacer `push`. La comprobación local no lo vio
+porque usaba un `tsconfig` propio y no el del build: **una prueba con otra
+configuración no es la prueba**. Corregido en `v416.0b` con los tipos escritos
+(`Array<Record<string, unknown>>` y `Array<Explicacion & { par: string[] }>`),
+sin tocar ni una cifra, ni una ruta, ni un contrato.
+
+Estado comprobado en `https://vanguard-kq9r.vercel.app` (v416.1, que hereda
+esta entrega):
+
+| comprobación | resultado |
+|---|---|
+| `/api/health` | `ok:true`, versión **v416.1** |
+| `/datos-mundiales` | **200** · 250 KB |
+| `/datos-mundiales/comparar?paises=do,ht&indicadores=poblacion,pib_pc` | **200** · 231 KB · imprime «veces más» |
+| `/datos-mundiales/pais/do` | **200** · 198 KB · «República Dominicana» |
+| `/datos-mundiales/panel` | **200** · 209 KB |
+| `/api/mundial?seccion=catalogo` | `ok:true` · **52 indicadores · 9 categorías** |
+| `/comparador` (antiguo) | 200 · banda que remite al centro |
+| `/datos` | 200 · chip `dato:serie-mundial` |
+| `node scripts/pruebas-mundial.mjs https://vanguard-kq9r.vercel.app` | **41 ✓ · 0 ✗** |
+
+Las 41 incluyen las comprobaciones en vivo contra la producción: 36 años de
+población de DO, ranking fijo de 2023 con **252 países todos del mismo año**,
+ranking «reciente» con **211 países y 31 años distintos** (y cada fila lleva el
+suyo), comparación DO/HT con frase redactada y panel con sus dos agregados.
+
+**Pendiente menor declarado:** un indicador inventado devuelve `HTTP 500` en vez
+de `400`. Es el camino de error heredado de `conManejo` (el objeto lanzado lleva
+`codigo:"VALIDACION"` y el contrato no lo traduce a 400). No se toca la prueba
+para que mienta: queda anotado como arreglo del contrato, que es de la casa y no
+de este departamento.
