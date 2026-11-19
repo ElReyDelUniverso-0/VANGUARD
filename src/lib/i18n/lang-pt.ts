@@ -602,6 +602,14 @@ const PT: Dict = {
   "obras.juegoExterno": "Este jogo roda num link externo — a vitrine só mostra obras internas",
   "obras.pie": "A VITRINE — cada obra é jogada, comentada, remexida e celebrada. Criar aqui é expor, não gritar no vazio.",
   "escen.pie": "O motor é determinista: todos veem a mesma guerra. Partilhe o seu desde o Laboratório e deixe que outros o melhorem.",
+  "earth.explorar": "EXPLORAR",
+  "earth.lugares": "LUGARES",
+  "earth.recorridos": "ROTEIROS",
+  "earth.comparar": "COMPARAR",
+  "earth.historia": "HISTÓRIA",
+  "earth.buscar": "Buscar um país…",
+  "earth.modoBajo": "APARELHO LEVE · VISTA PLANA POR PADRÃO",
+  "earth.modoCompleto": "APARELHO COMPLETO",
 };
 
 export default PT;

@@ -116,14 +116,10 @@ const REGIONES = (() => {
   return [...cuenta.entries()].sort((a, b) => b[1] - a[1]);
 })();
 
-const COLOR_REGION: Record<string, string> = {
-  Americas: "#5eead4",
-  Europe: "#7fe3ff",
-  Africa: "#f5a623",
-  Asia: "#b48cff",
-  Oceania: "#3ddc97",
-  Antarctic: "#8b98ad",
-};
+// v416.0: la paleta de regiones vive en earth/region-color.ts (cliente-seguro)
+// y se re-exporta aquí para no romper a ningún consumidor.
+export { COLOR_REGION } from "@/lib/earth/region-color";
+import { COLOR_REGION } from "@/lib/earth/region-color";
 
 /** La esfera de influencia declarada por el Banco Mundial (capas políticas). */
 const BLOQUES = (() => {
@@ -242,41 +238,10 @@ export function capaPorId(id: string): CapaMapa {
 }
 
 // ── los puntos de las capas de memoria y de fuego: coordenadas reales ──
-export interface PuntoMapa {
-  id: string;
-  nombre: string;
-  lat: number;
-  lng: number;
-  color: string;
-  tamano: number;
-  etiqueta: string;
-  /** a dónde lleva su ficha (si tiene puerta) */
-  href?: string;
-  /** época o estado, para el filtro de la capa */
-  epoca?: string;
-  desde?: number;
-  hasta?: number;
-}
-
-const ERA_COLOR: Record<string, string> = {
-  ANTIGUA: "#e8c56a",
-  EDAD_MEDIA: "#f5a623",
-  MODERNA: "#3ddc97",
-  CONTEMPORANEA: "#ff7a52",
-};
-
-export const PUNTOS_HISTORICOS: PuntoMapa[] = HISTORICAL_WARS.map((g) => ({
-  id: g.id,
-  nombre: g.name,
-  lat: g.lat,
-  lng: g.lng,
-  color: ERA_COLOR[g.era] ?? "#e8c56a",
-  tamano: 0.35,
-  etiqueta: `${g.name} · ${g.yearStart < 0 ? `${-g.yearStart} a. C.` : g.yearStart} – ${g.yearEnd < 0 ? `${-g.yearEnd} a. C.` : g.yearEnd} · ${g.region}`,
-  epoca: g.era,
-  desde: g.yearStart,
-  hasta: g.yearEnd,
-}));
+// v416.0: el tipo y los puntos de guerra viven en earth/guerra-puntos.ts
+// (cliente-seguro) y se re-exportan aquí para no romper a ningún consumidor.
+export { PUNTOS_HISTORICOS } from "@/lib/earth/guerra-puntos";
+import { PUNTOS_HISTORICOS, type PuntoMapa } from "@/lib/earth/guerra-puntos";
 
 /** Los teatros vivos, unidos a su acontecimiento del núcleo por `teatroTag`. */
 export const PUNTOS_ACONTECIMIENTOS: PuntoMapa[] = SEMILLA_ACONTECIMIENTOS.filter((a) => a.teatroTag).map((a) => {

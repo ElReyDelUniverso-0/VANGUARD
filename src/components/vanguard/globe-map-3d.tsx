@@ -165,6 +165,13 @@ export interface GlobeMap3DProps {
   onCountryClick?: (isoNum: string, countryName: string) => void;
   /** v405.9 — zoom por altitud SIN mover el centro (botones + / − del centro de mapas) */
   zoom?: { altitude: number; nonce: number } | null;
+  /**
+   * v416.0 VANGUARD EARTH SYSTEM — realza las FRONTERAS por encima del
+   * planeta. Aditivo: sin la prop, el globo pinta exactamente como antes.
+   */
+  bordes?: boolean;
+  /** v416.0 — retícula de paralelos/meridianos (el atlas dibujado en el globo) */
+  graticulas?: boolean;
   className?: string;
   ariaLabel?: string;
 }
@@ -194,6 +201,8 @@ export function GlobeMap3D({
   countryAltitude = 0.036,
   onCountryClick,
   zoom = null,
+  bordes = false,
+  graticulas = false,
   className,
   ariaLabel = "Globo 3D interactivo",
 }: GlobeMap3DProps) {
@@ -369,6 +378,17 @@ export function GlobeMap3D({
     }
   }, [viewMode]);
 
+  // ===== v416.0 retícula: los paralelos y meridianos sobre el planeta =====
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    try {
+      globe.showGraticules(graticulas);
+    } catch {
+      /* noop */
+    }
+  }, [graticulas]);
+
   // ===== v215.0 EL MUNDO — rotación viva: autoRotate/rotateSpeed reaccionan
   // en caliente (el globo se detiene cuando seleccionas un teatro y respira
   // de nuevo al soltarlo). Los paneles que pasan constantes no cambian nada.
@@ -438,7 +458,10 @@ export function GlobeMap3D({
       .polygonStrokeColor((d) => {
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
-        if (countryColors && f.id != null && countryColors[String(f.id)]) return "rgba(255,255,255,0.30)";
+        const coloreado = countryColors && f.id != null ? countryColors[String(f.id)] : undefined;
+        if (coloreado) return bordes ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.30)";
+        // v416.0: la capa de FRONTERAS dibuja la línea por encima del terreno
+        if (bordes) return "rgba(190,220,255,0.55)";
         const color = tid && territoryColors ? territoryColors[tid] ?? null : null;
         return color ? hexA(color, 0.95) : "rgba(120, 150, 220, 0.22)";
       })
@@ -474,7 +497,7 @@ export function GlobeMap3D({
         if (countryClickRef.current) countryClickRef.current(String(f.id ?? ""), f.properties.name);
         clickRef.current?.(f.__tid ?? null, f.properties.name);
       });
-  }, [territoryColors, territoryNames, highlightTerritory, dimColor, countryColors, countryValores, countryAltitude]);
+  }, [territoryColors, territoryNames, highlightTerritory, dimColor, countryColors, countryValores, countryAltitude, bordes]);
 
   // ===== marcadores + anillos =====
   useEffect(() => {

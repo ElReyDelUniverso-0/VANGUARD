@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v419.0",
+    nombre: "VANGUARD EARTH SYSTEM",
+    hitos: [
+      "EL EXPLORADOR MUNDIAL (/tierra): un solo planeta con cinco vistas conectadas — explorar, lugares, recorridos, comparar e historia — en globo 3D y atlas 2D sobre los mismos polígonos de Natural Earth, con la transición 2D↔3D sin reiniciar la selección.",
+      "CAPAS FÍSICAS NUEVAS: ríos, montañas, océanos, mares, desiertos, islas y lagos (70 hitos con coordenadas de referencia) sumados a las capas de la casa; fronteras realzadas y retícula opcionales.",
+      "LA CASA CONECTADA POR COORDENADAS: las 249 fichas de país y las 84 naciones del atlas llevan «ver en el planeta», que vueca hasta su lugar y enciende el país.",
+      "MEDIR EL MUNDO: dos toques y la distancia en kilómetros; el último toque deja sus coordenadas escritas; marcadores guardados por el visitante en su propio aparato.",
+      "RECORRIDOS GUIADOS: las crónicas de la casa convertidas en vuelo automático parada a parada, con texto, mandos y lista de paradas.",
+      "COMPARADOR TERRITORIAL Y MAPA HISTÓRICO: dos naciones cara a cara con la misma ficha y las guerras del archivo filtradas por época.",
+      "BAJA POTENCIA: el presupuesto 3D decide — vista plana por defecto, marcadores recortados y giro apagado en aparatos ligeros.",
+      "EL MOTOR MEJORADO SIN ROMPER: globe-map-3d acepta bordes y retícula de forma aditiva; ningún panel existente cambia ni un píxel.",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v418.2",
     nombre: "EL ARO DE CONTROL",
     hitos: [

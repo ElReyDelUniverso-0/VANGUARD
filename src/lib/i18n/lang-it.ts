@@ -602,6 +602,14 @@ const IT: Dict = {
   "obras.juegoExterno": "Questo gioco gira su un link esterno — la vetrina mostra solo opere interne",
   "obras.pie": "LA VETRINA — ogni opera è giocata, commentata, remixata e celebrata. Creare qui è esporre, non urlare nel vuoto.",
   "escen.pie": "Il motore è deterministico: tutti vedono la stessa guerra. Condividi il tuo dal Laboratorio e lascia che altri lo migliorino.",
+  "earth.explorar": "ESPLORA",
+  "earth.lugares": "LUOGHI",
+  "earth.recorridos": "PERCORSI",
+  "earth.comparar": "CONFRONTA",
+  "earth.historia": "STORIA",
+  "earth.buscar": "Cerca un paese…",
+  "earth.modoBajo": "DISPOSITIVO LEGGERO · VISTA PIATTA PREDEFINITA",
+  "earth.modoCompleto": "DISPOSITIVO COMPLETO",
 };
 
 export default IT;

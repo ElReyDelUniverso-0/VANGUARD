@@ -602,6 +602,14 @@ const ZH: Dict = {
   "obras.juegoExterno": "此游戏在外部链接运行——展示柜只显示内部作品",
   "obras.pie": "展示柜——每件作品都被游玩、评论、混搭与庆祝。在这里创作是展览，不是对着虚空呐喊。",
   "escen.pie": "引擎是确定性的：所有人看到同一场战争。从实验室分享你的场景，让别人来改进它。",
+  "earth.explorar": "探索",
+  "earth.lugares": "地点",
+  "earth.recorridos": "巡游",
+  "earth.comparar": "对比",
+  "earth.historia": "历史",
+  "earth.buscar": "搜索国家…",
+  "earth.modoBajo": "轻量设备 · 默认平面视图",
+  "earth.modoCompleto": "完整设备",
 };
 
 export default ZH;

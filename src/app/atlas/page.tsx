@@ -10,6 +10,8 @@ import {
 } from "@/lib/atlas-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v416.0 VANGUARD EARTH SYSTEM — cada nación del atlas vuela hasta su lugar
+import { POR_ISO2 } from "@/lib/geo-paises";
 // v403.0 — EL PESO DEL MUNDO: las naciones del atlas, medidas en una escala.
 // La sala tenía 32.340 letras y un solo visual; el pilar 2 pide ver, no leer.
 import { GraficoBarras } from "@/components/vanguard/grafico-barras";
@@ -223,7 +225,9 @@ export default function AtlasPage() {
                   {`${reg} ×${PAISES_ATLAS.filter((p) => p.region === reg).length}`}
                 </p>
                 <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                  {PAISES_ATLAS.filter((p) => p.region === reg).map((p) => (
+                  {PAISES_ATLAS.filter((p) => p.region === reg).map((p) => {
+                    const g = POR_ISO2.get(p.id) ?? null;
+                    return (
                     <article
                       key={p.id}
                       id={`pais-${p.id}`}
@@ -250,8 +254,19 @@ export default function AtlasPage() {
                         <span className="text-zinc-500">líder:</span> {p.lider}
                       </p>
                       <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">{p.dato}</p>
+                      {g && (
+                        <p className="mt-2">
+                          <Link
+                            href={`/tierra?volar=${g.lat.toFixed(4)},${g.lng.toFixed(4)}&pais=${g.num}`}
+                            className="text-cyan-400 underline"
+                          >
+                            ver en el planeta (VANGUARD EARTH) →
+                          </Link>
+                        </p>
+                      )}
                     </article>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}

@@ -1,13 +1,13 @@
 {
-  "version": "v412.0",
+  "version": "v419.0",
   "fecha": "2026-11-19",
-  "paginas": 105,
+  "paginas": 106,
   "rutasApi": 117,
-  "total": 222,
+  "total": 223,
   "bienConectadas": 98,
   "huerfanas": [],
-  "paginasConReferencias": 105,
-  "mediaReferencias": 14.68,
+  "paginasConReferencias": 106,
+  "mediaReferencias": 14.64,
   "rutas": [
     {
       "ruta": "/",
@@ -1172,7 +1172,7 @@
     {
       "ruta": "/atlas",
       "tipo": "pagina",
-      "referencias": 23,
+      "referencias": 25,
       "desde": [
         "app/labs/page.tsx",
         "app/mapas/page.tsx",
@@ -1488,7 +1488,7 @@
     {
       "ruta": "/cuartel",
       "tipo": "pagina",
-      "referencias": 36,
+      "referencias": 37,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
         "app/cuartel/layout.tsx",
@@ -1839,7 +1839,7 @@
     {
       "ruta": "/mapas",
       "tipo": "pagina",
-      "referencias": 28,
+      "referencias": 29,
       "desde": [
         "app/espacio/page.tsx",
         "app/mundos/page.tsx",
@@ -1894,7 +1894,7 @@
     {
       "ruta": "/mundo",
       "tipo": "pagina",
-      "referencias": 42,
+      "referencias": 43,
       "desde": [
         "app/audios/emisora-cliente.tsx",
         "app/audios/page.tsx",
@@ -1905,7 +1905,7 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 43,
+      "referencias": 45,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -1916,7 +1916,7 @@
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 43,
+      "referencias": 45,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -2186,6 +2186,15 @@
         "app/mundos/page.tsx",
         "app/navegacion/navegacion-sala.tsx",
         "components/conocimiento/explorador.tsx"
+      ]
+    },
+    {
+      "ruta": "/tierra",
+      "tipo": "pagina",
+      "referencias": 2,
+      "desde": [
+        "app/atlas/page.tsx",
+        "app/mundos/[iso]/page.tsx"
       ]
     },
     {

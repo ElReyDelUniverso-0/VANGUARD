@@ -508,6 +508,14 @@ export default async function PaisPage({ params }: Props) {
               <Link href={`/comparador?p=${f.iso2}`} style={{ color: "#5eead4", textDecoration: "none", fontSize: 12.5 }}>
                 Compararlo con otros países →
               </Link>
+              {/* v416.0 VANGUARD EARTH SYSTEM — la ficha vuelva hasta su lugar:
+                  el planeta recibe la coordenada y enciende el país. */}
+              <Link
+                href={`/tierra?volar=${f.lat.toFixed(4)},${f.lng.toFixed(4)}&pais=${f.num}`}
+                style={{ color: "#4DC9FF", textDecoration: "none", fontSize: 12.5 }}
+              >
+                Verlo en el planeta (VANGUARD EARTH) →
+              </Link>
               {rutaRegion ? (
                 <Link href={rutaRegion} style={{ color: "#5eead4", textDecoration: "none", fontSize: 12.5 }}>
                   {SUBREGIONES_ES[f.subregion] ?? f.subregion}, sumada →

@@ -602,6 +602,14 @@ const EN: Dict = {
   "obras.juegoExterno": "This game runs on an external link — the showcase only shows internal works",
   "obras.pie": "THE SHOWCASE — every work is played, commented, remixed and celebrated. Creating here is exhibiting, not shouting into the void.",
   "escen.pie": "The engine is deterministic: everyone sees the same war. Share yours from the Laboratory and let others improve it.",
+  "earth.explorar": "EXPLORE",
+  "earth.lugares": "PLACES",
+  "earth.recorridos": "TOURS",
+  "earth.comparar": "COMPARE",
+  "earth.historia": "HISTORY",
+  "earth.buscar": "Search a country…",
+  "earth.modoBajo": "LIGHT DEVICE · FLAT VIEW BY DEFAULT",
+  "earth.modoCompleto": "FULL DEVICE",
 };
 
 export default EN;

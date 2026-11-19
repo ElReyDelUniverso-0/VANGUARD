@@ -602,6 +602,14 @@ const DE: Dict = {
   "obras.juegoExterno": "Dieses Spiel läuft auf einem externen Link — die Vitrine zeigt nur interne Werke",
   "obras.pie": "DIE VITRINE — jedes Werk wird gespielt, kommentiert, geremixt und gefeiert. Hier zu schaffen heißt ausstellen, nicht ins Leere rufen.",
   "escen.pie": "Die Engine ist deterministisch: Alle sehen denselben Krieg. Teile deinen aus dem Labor und lass andere ihn verbessern.",
+  "earth.explorar": "ENTDECKEN",
+  "earth.lugares": "ORTE",
+  "earth.recorridos": "ROUTEN",
+  "earth.comparar": "VERGLEICHEN",
+  "earth.historia": "GESCHICHTE",
+  "earth.buscar": "Land suchen…",
+  "earth.modoBajo": "SCHWACHES GERÄT · FLACHE ANSICHT STANDARDMÄSSIG",
+  "earth.modoCompleto": "VOLLES GERÄT",
 };
 
 export default DE;

@@ -1,3 +1,37 @@
+// v419.0 VANGUARD EARTH SYSTEM — AGENTE 2 · GEOGRAFÍA, CARTOGRAFÍA Y
+// EXPLORACIÓN 3D. Encargo del Dueño: convertir la experiencia geográfica en
+// uno de los sistemas más importantes de la Casa; «no quiero simplemente
+// agregar otro mapa… quiero un ecosistema de exploración geográfica conectado
+// con el resto de la plataforma».
+//
+// ① LA SALA NUEVA (/tierra): el EXPLORADOR MUNDIAL — un solo planeta con
+//    cinco vistas conectadas (explorar · lugares · recorridos · comparar ·
+//    historia). El globo 3D de la casa (globe.gl) y un atlas 2D sobre los
+//    MISMOS polígonos de Natural Earth: la transición 2D↔3D no reinicia la
+//    selección ni la capa.
+// ② LAS CAPAS FÍSICAS, la deuda antigua: ríos, montañas, océanos, mares,
+//    desiertos, islas y lagos (earth/hitos.ts, 70 hitos con coordenadas de
+//    referencia) más las fronteras realzadas y la retícula. La capa de
+//    regiones pinta 249 países con el color de su región (la tabla de la casa).
+// ③ LO QUE FALTABA EN NAVEGACIÓN: del continente al país y del país a su
+//    lugar. Las 249 fichas de /mundos y las 84 naciones de /atlas llevan un
+//    vínculo «ver en el planeta» que vueca hasta su coordenada y enciende el
+//    país (la Ida y vuelta que pide el contrato de integración).
+// ④ MEDIR EL MUNDO: dos toques y la casa dice los kilómetros (haversine); el
+//    último toque deja sus coordenadas escritas. Marcadores guardados por el
+//    visitante (viven en su aparato). Recorridos guiados: las crónicas de
+//    tierra-data convertidas en vuelo automático parada a parada.
+// ⑤ COMPARADOR TERRITORIAL: dos naciones cara a cara con la misma ficha
+//    (población, superficie, densidad, moneda, gasto, distancia entre centros)
+//    y el mapa histórico del archivo por época.
+// ⑥ BAJA POTENCIA: el presupuesto 3D de la casa decide — en un aparato ligero
+//    la vista plana entra sola, los marcadores se recortan y el giro se apaga.
+// ⑦ EL MOTOR, MEJORADO SIN ROMPER: globe-map-3d acepta `bordes` y `graticulas`
+//    (aditivos; sin ellos, todos los paneles que ya lo usan pintan igual).
+// ⑧ CONECTADO CON LO QUE YA VIVÍA: /mapas (ocho capas de datos), /mundo
+//    (guerras vivas), /mundos (249 fichas), /atlas (archivo) y el panel
+//    VANGUARD EARTH del cuartel (satélite espía) quedan enlazados entre sí.
+//
 // v418.0 VANGUARD KNOWLEDGE — AGENTE 5, director de conocimiento. Encargo del
 // Dueño: que la casa sea un centro de conocimiento del mundo que no dependa
 // solo de la actualidad y siga siendo útil dentro de años; «no artículos
@@ -6713,8 +6747,10 @@
 // ⑥ LO QUE YA ESTABA BIEN Y SE DEJA EN PAZ: CLS 0,000 en las diez puertas
 //    medidas y cero tareas largas — el trabajo de animaciones de v416–v418
 //    hizo su parte; este departamento no lo toca, lo vigila.
-export const APP_VERSION = "v418.2";
-export const APP_CODENAME = "EL ARO DE CONTROL";
+export const APP_VERSION = "v419.0";
+// (anterior) export const APP_VERSION = "v418.2";
+export const APP_CODENAME = "VANGUARD EARTH SYSTEM";
+// (anterior) export const APP_CODENAME = "EL ARO DE CONTROL";
 // (anterior) export const APP_VERSION = "v418.1";
 // (anterior) export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
@@ -6779,7 +6815,7 @@ export const APP_CODENAME = "EL ARO DE CONTROL";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v417.0";
+export const APP_VERSION_ANTERIOR = "v418.2";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
