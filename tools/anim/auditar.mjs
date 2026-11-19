@@ -47,7 +47,7 @@ function limpiarSelector(sel) {
   return sel
     .split(",")
     .map((s) => s.trim())
-    .filter((s) => s && !s.startsWith("@") && s !== ":root" && !s.startsWith("html"))
+    .filter((s) => s && !s.startsWith("@") && s !== ":root")
     // los fotogramas de un @keyframes no son selectores de elemento
     .filter((s) => !/^(from|to|\d+%)(\s*,\s*(from|to|\d+%))*$/.test(s))
     .join(", ");
@@ -115,7 +115,27 @@ for (const f of tsx) {
 const sinMarcar = enLinea.filter((e) => e.marcados < e.cuantas);
 
 // ── hoja de apagado para «reducidas» ────────────────────────────────
-const selectores = [...new Set(infinitas.map((i) => i.selector))].sort();
+// Un selector que ya empieza por `html` no admite un prefijo de descendiente
+// (`html[data-vg-anim] html[…]` es imposible): el atributo entra DENTRO del
+// propio `html`. Así dejan de escaparse las animaciones de la cuna, el holo y
+// el horizonte en brasa, que vivían en `html[data-vg-3d="on"] .algo` y en
+// `html::after` y no se apagaban en ningún nivel.
+const NIVEL = 'html[data-vg-anim="reducidas"]';
+const efectivo = (sel) =>
+  /^html(?![a-zA-Z0-9_-])/.test(sel) ? sel.replace(/^html/, NIVEL) : `${NIVEL} ${sel}`;
+
+// ── las utilidades de Tailwind que animan sin parar ─────────────────
+// `animate-pulse` y compañía se generan en el build, no están en ningún CSS
+// del proyecto: el auditor no puede leerlas, pero sí ve quién las usa.
+const utilidades = new Set();
+const UTILES = ["animate-pulse", "animate-spin", "animate-ping", "animate-bounce"];
+for (const f of tsx) {
+  const texto = readFileSync(f, "utf8");
+  for (const u of UTILES) if (texto.includes(u)) utilidades.add(u);
+}
+const utilidadesOrdenadas = [...utilidades].sort();
+
+const selectores = [...new Set(infinitas.map((i) => efectivo(i.selector)))].sort();
 
 const cabecera = `/* ═══════════════════════════════════════════════════════════════════
  * GENERADO — no editar a mano.
@@ -135,13 +155,17 @@ ${selectores
   .map((sel) => {
     // un selector que ya apunta a un pseudo-elemento no admite otro detrás
     if (sel.includes("::")) {
-      return `html[data-vg-anim="reducidas"] ${sel} { animation: none !important; }`;
+      return `${sel} { animation: none !important; }`;
     }
-    return `html[data-vg-anim="reducidas"] ${sel},
-html[data-vg-anim="reducidas"] ${sel}::before,
-html[data-vg-anim="reducidas"] ${sel}::after { animation: none !important; }`;
+    return `${sel},
+${sel}::before,
+${sel}::after { animation: none !important; }`;
   })
   .join("\n")}
+
+/* Utilidades de Tailwind que animan sin parar: se generan en el build y no
+   están en ningún archivo del proyecto, así que se apagan por clase. */
+${utilidadesOrdenadas.map((u) => `${NIVEL} .${u} { animation: none !important; }`).join("\n")}
 
 /* Las animaciones que viven en un estilo en línea no las alcanza ningún
    selector; el componente marca su elemento con data-vg-anim-inline y aquí se
@@ -180,6 +204,8 @@ const informe = {
   archivos: { css: css.length, tsx: tsx.length },
   infinitas: infinitas.length,
   selectoresUnicos: selectores.length,
+  utilidadesTailwind: utilidadesOrdenadas,
+  selectoresHtml: selectores.filter((x) => x.startsWith(`${NIVEL}[`)).length,
   entradas: entradas.length,
   porArchivo: Object.entries(porArchivo)
     .sort((a, b) => b[1] - a[1])

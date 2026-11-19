@@ -21,6 +21,16 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v416.3",
+    nombre: "LA CASA LIGERA · las dos fugas que quedaban",
+    hitos: [
+      "LOS SELECTORES QUE EMPIEZAN POR HTML ERAN INVISIBLES PARA EL AUDITOR: la cuna 3D (vg139Cuna), el holo, el vaivén del flotador y el horizonte en brasa vivían en html[data-vg-3d=\"on\"] .algo y en html::after, y el censo los descartaba por empezar por html. Ahora el atributo del nivel entra dentro del propio html y esas cuatro animaciones se apagan en reducidas",
+      "LAS UTILIDADES DE TAILWIND NO ESTÁN EN NINGÚN CSS DEL PROYECTO: animate-pulse, animate-spin, animate-ping y animate-bounce se generan en el build, así que ningún archivo las delataba. El auditor ahora mira quién las usa en los componentes y la hoja generada las apaga por clase: el pulso verde del panel de juego era una de ellas",
+      "MEDIDO EN EL PANEL DE JUEGO, EN BRAVE Y CON EL NIVEL PUESTO A MANO: en completas corrían 57 animaciones, 59,9 fps; en reducidas quedan 0 en curso. El radar, el pulso y el vaivén siguen exactamente igual en completas",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v416.2",
     nombre: "LA CASA LIGERA · la fuga del estilo en línea",
     hitos: [

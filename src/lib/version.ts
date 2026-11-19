@@ -6602,7 +6602,14 @@
 //    141 y se repitió la medida y toda la prueba del selector sobre el sitio
 //    publicado: mismas cifras que en Chromium (0,991 s/s → 0,106 s/s; 27 → 0
 //    animaciones en curso). El motor se elige con `VG_NAVEGADOR`.
-export const APP_VERSION = "v416.2";
+// ⑨ LA SEGUNDA FUGA (v416.3): el auditor descartaba todo selector que
+//    empezara por `html` —la cuna 3D, el holo, el vaivén del flotador y el
+//    horizonte en brasa— y no veía las utilidades de Tailwind que animan
+//    (`animate-pulse`, `animate-spin`), que se generan en el build. Ahora el
+//    atributo entra dentro del propio `html` en esos selectores y las cuatro
+//    utilidades se apagan por clase: 254 reglas, 253 selectores, ni una fuga
+//    en la prueba de navegador del panel de juego.
+export const APP_VERSION = "v416.3";
 export const APP_CODENAME = "LA CASA LIGERA";
 // (codename anterior) export const APP_CODENAME = "VANGUARD SEARCH OPPORTUNITIES";
 // (codename anterior) export const APP_CODENAME = "LA CASA SE CONOCE";

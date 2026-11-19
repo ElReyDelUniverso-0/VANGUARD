@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════
  * GENERADO — no editar a mano.
  * Lo escribe tools/anim/auditar.mjs a partir de las animaciones que se
- * repiten sin parar en el árbol real (246 reglas).
+ * repiten sin parar en el árbol real (254 reglas).
  *
  * Se aplica SOLO con el nivel «reducidas»; «completas» no lo ve y
  * «desactivadas» no necesita esta lista (apaga todo).
@@ -708,6 +708,30 @@ html[data-vg-anim="reducidas"] .vx-tele-pista::after { animation: none !importan
 html[data-vg-anim="reducidas"] .vxp-punto,
 html[data-vg-anim="reducidas"] .vxp-punto::before,
 html[data-vg-anim="reducidas"] .vxp-punto::after { animation: none !important; }
+html[data-vg-anim="reducidas"]::before { animation: none !important; }
+html[data-vg-anim="reducidas"][data-tension="critica"] .nexus-letra,
+html[data-vg-anim="reducidas"][data-tension="critica"] .nexus-letra::before,
+html[data-vg-anim="reducidas"][data-tension="critica"] .nexus-letra::after { animation: none !important; }
+html[data-vg-anim="reducidas"][data-tension="critica"] body::after { animation: none !important; }
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .cuna-v139,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .cuna-v139::before,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .cuna-v139::after { animation: none !important; }
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .flotador-v138,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .flotador-v138::before,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .flotador-v138::after { animation: none !important; }
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .vg-flota-v139,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .vg-flota-v139::before,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .vg-flota-v139::after { animation: none !important; }
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .vg-holo-v139,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .vg-holo-v139::before,
+html[data-vg-anim="reducidas"][data-vg-3d="on"] .vg-holo-v139::after { animation: none !important; }
+
+/* Utilidades de Tailwind que animan sin parar: se generan en el build y no
+   están en ningún archivo del proyecto, así que se apagan por clase. */
+html[data-vg-anim="reducidas"] .animate-bounce { animation: none !important; }
+html[data-vg-anim="reducidas"] .animate-ping { animation: none !important; }
+html[data-vg-anim="reducidas"] .animate-pulse { animation: none !important; }
+html[data-vg-anim="reducidas"] .animate-spin { animation: none !important; }
 
 /* Las animaciones que viven en un estilo en línea no las alcanza ningún
    selector; el componente marca su elemento con data-vg-anim-inline y aquí se

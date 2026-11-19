@@ -21,7 +21,7 @@ for (const n of ["completas", "reducidas", "desactivadas"]) {
 
 // ② la hoja generada cubre TODAS las animaciones infinitas del censo
 const sinComentarios = gen.replace(/\/\*[\s\S]*?\*\//g, "");
-const selectoresCss = (sinComentarios.match(/^html\[data-vg-anim="reducidas"\] \S/gm) ?? []).length;
+const selectoresCss = (sinComentarios.match(/^html\[data-vg-anim="reducidas"\]/gm) ?? []).length;
 const censados = auditoria.selectores ?? [];
 const sinCubrir = censados.filter((sel) => !sinComentarios.includes(sel));
 ok(censados.length > 0, "el censo no trae la lista de selectores");
