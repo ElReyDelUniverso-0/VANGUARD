@@ -188,6 +188,15 @@ Y el barrido completo de las 39 puertas antes/después del trabajo:
 
 ---
 
+### 6.1 · Comprobado también sobre la entrega siguiente (v419.0)
+
+Cuando otro departamento publicó su versión, el aro se volvió a pasar sobre las ocho
+puertas: **0 BLOQUEA, 0 ALTA**, cero 404, cero imágenes rotas, cero desbordes y cero
+errores de consola; el suelo sigue sirviéndose en la hoja de estilos (una sola hoja con
+las reglas de `movil.css`), las redirecciones de `/ajustes` → `/modo` siguen vivas y
+`/datos` ya no pide rutas con parámetro. Lo que este informe arregla no se queda en la
+versión en la que se arregló: se comprueba en la siguiente.
+
 ## 7 · Cómo se repite (y qué significa cada semáforo)
 
 ```bash
