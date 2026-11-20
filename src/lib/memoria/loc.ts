@@ -126,10 +126,20 @@ export async function buscarLoc(opciones: {
 }): Promise<ResultadoBusqueda<Documento>> {
   const { q, tipo = null, desde = null, hasta = null, pagina = 1, limite = 24 } = opciones;
   const coleccion = COLECCION[tipo ?? "otro"] ?? "photos";
-  const params = new URLSearchParams({ q: q || "*", fo: "json", c: String(limite), sp: String(pagina) });
+  // `at=results` NO es un adorno: sin él, /photos devuelve el registro entero
+  // con todas sus facetas. Medido el 2026-09-22 desde este servidor: la misma
+  // consulta tardaba más de 30 s y no cabía en ningún tope razonable; con
+  // `at=results`, entre 0,4 y 4,5 s y 73 KB en vez de cientos.
+  const params = new URLSearchParams({
+    q: q || "*",
+    fo: "json",
+    c: String(limite),
+    sp: String(pagina),
+    at: "results",
+  });
   if (desde || hasta) params.set("dates", `${desde ?? 1000}/${hasta ?? 2026}`);
   const url = `https://www.loc.gov/${coleccion}/?${params.toString()}`;
-  const { datos, error } = await pedirJson<RespuestaBusquedaLoc>(url, { tiempoMs: 16000 });
+  const { datos, error } = await pedirJson<RespuestaBusquedaLoc>(url, { tiempoMs: 12000 });
 
   if (!datos) {
     return { fuente: "loc", total: null, documentos: [], error: error ?? "sin respuesta" };
