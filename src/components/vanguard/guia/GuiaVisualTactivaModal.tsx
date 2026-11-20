@@ -15,6 +15,7 @@ import {
   ExternalLink,
   Shield,
   Layers,
+  HelpCircle,
 } from "lucide-react";
 
 interface PasoGuia {

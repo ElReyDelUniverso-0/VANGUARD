@@ -162,13 +162,19 @@ function GraficoRadarHexagonal({
   const cx = 150;
   const cy = 150;
   const R = 95;
-  const ejes = [
-    { k: "militar" as const, label: "MILITAR", xL: 150, yL: 28, anchor: "middle" },
-    { k: "economia" as const, label: "ECONOMÍA", xL: 258, yL: 95, anchor: "start" },
-    { k: "demografia" as const, label: "DEMOGRAFÍA", xL: 258, yL: 215, anchor: "start" },
-    { k: "energia" as const, label: "ENERGÍA", xL: 150, yL: 282, anchor: "middle" },
-    { k: "tecnologia" as const, label: "I+D / CIBER", xL: 42, yL: 215, anchor: "end" },
-    { k: "diplomacia" as const, label: "DIPLOMACIA", xL: 42, yL: 95, anchor: "end" },
+  const ejes: Array<{
+    k: keyof PaisDossier["radar"];
+    label: string;
+    xL: number;
+    yL: number;
+    anchor: "start" | "end" | "middle";
+  }> = [
+    { k: "militar", label: "MILITAR", xL: 150, yL: 28, anchor: "middle" },
+    { k: "economia", label: "ECONOMÍA", xL: 258, yL: 95, anchor: "start" },
+    { k: "demografia", label: "DEMOGRAFÍA", xL: 258, yL: 215, anchor: "start" },
+    { k: "energia", label: "ENERGÍA", xL: 150, yL: 282, anchor: "middle" },
+    { k: "tecnologia", label: "I+D / CIBER", xL: 42, yL: 215, anchor: "end" },
+    { k: "diplomacia", label: "DIPLOMACIA", xL: 42, yL: 95, anchor: "end" },
   ];
 
   const puntosA = ejes
