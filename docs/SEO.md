@@ -159,3 +159,29 @@ con el scope `https://www.googleapis.com/auth/webmasters.readonly` y la cuenta d
 - No se duplicó contenido para inflar el mapa (de hecho `otros` quedó vacío).
 - La lógica del mapa es **la misma de antes** (3.766 URLs idénticas + las que faltaban).
 - Todo dominio se lee de `src/lib/site.ts`.
+
+### D13 — Cuatro URLs del mapa devolvían 404 (corregido, v421.2/v421.3)
+
+Medido el 2026-11-20 con `scripts/diagnostico-sitemaps.mjs --barrido`: de las 3.987
+URLs anunciadas, **3.983 respondían 200 y cuatro daban 404** — exactamente las
+cuatro cuyo id llevaba acento:
+
+```
+central-eólica-offshore-{hornsea,walney,wir}
+sanitaria-hospital-del-niño
+```
+
+El catálogo las generaba con «ó»/«ñ», la ficha compara el id exacto y declara
+`dynamicParams = false` (Next responde 404 antes de ejecutar la página), así que
+ni la forma cruda ni la percent-encoded resolvían.
+
+Corregido en `31adaa2` (ids ASCII, `obraPorId` tolerante con `plano()`, `<loc>`
+con `encodeURI`) y `6d755ff` (301 de borde en `next.config` para las dos formas
+viejas — la redirección dentro de la página no podía ejecutarse nunca).
+Verificado en producción: **3.987/3.987 en 200**, las ocho variantes viejas en
+308 hacia su canónica.
+
+Nota sobre el «No se ha podido obtener» de Search Console: los sitemaps hijos
+**no existieron en producción hasta las 01:08:05 UTC del 2026-11-20** (el
+deployment anterior, v421.0, falló el build). Un fetch de Google anterior a esa
+hora recibió 404 y GSC conserva ese estado hasta el reintento (24–72 h).
