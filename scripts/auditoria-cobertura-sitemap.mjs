@@ -94,7 +94,11 @@ if (cerradas.length) {
 console.log("\nCÓMO VAN LAS DINÁMICAS (URLs en el mapa por familia):");
 const familias = new Map();
 for (const r of dinamicas) {
-  const prefijo = "/" + r.split("/").filter(Boolean).slice(0, 2).join("/");
+  // el prefijo son los segmentos FIJOS antes del primer parámetro
+  // (antes se colaba el [tag] y toda familia parecía tener 0 URLs)
+  const partes = r.split("/").filter(Boolean);
+  const corte = partes.findIndex((x) => x.startsWith("["));
+  const prefijo = "/" + partes.slice(0, corte < 0 ? 2 : corte).join("/");
   familias.set(prefijo, (familias.get(prefijo) || 0) + 1);
 }
 for (const [prefijo, n] of [...familias].sort((a, b) => b[1] - a[1]).slice(0, 14)) {
