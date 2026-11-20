@@ -10,7 +10,7 @@
 // No necesita base de datos, ni red, ni credenciales.
 // ═══════════════════════════════════════════════════════════════════════════
 import { LUGARES, TOTAL_LUGARES, buscarEnCasa, resolverDestino, areaDeRuta, mapaParaElModelo } from "@/lib/mente/mapa-casa";
-import { hablarConMente, pideCrear } from "@/lib/mente/agente";
+import { hablarConMente, pideCrear, pideIr } from "@/lib/mente/agente";
 
 let fallos = 0;
 const ok = (cond: boolean, nombre: string, extra = "") => {
@@ -44,12 +44,21 @@ ok(pideCrear("hazme un plan de tres pasos") === "plan", "«plan de tres pasos» 
 ok(pideCrear("escríbeme una tabla comparativa") === "tabla", "«tabla comparativa» → tabla");
 ok(pideCrear("¿qué es el cuartel?") === null, "una pregunta no pide crear");
 
+console.log("\n── DIRIGIR (orden directa) ──");
+ok(pideIr("llévame al mapa") === true, "«llévame al mapa» es una orden de ir");
+ok(pideIr("abre el cuartel") === true, "«abre el cuartel» es una orden de ir");
+ok(pideIr("¿dónde veo las divisas?") === false, "una pregunta NO arrastra al operador");
+ok(pideIr("quiero ver el teatro") === true, "«quiero ver…» es una orden de ir");
+
 console.log("\n── MODO CASA (sin modelo: presupuesto mínimo, sin red) ──");
 const mapa = await hablarConMente({ mensaje: "llévame al mapa, quiero ver los países", presupuestoMs: 1000 });
 ok(mapa.ia === false && mapa.motor === "casa", `motor honesto: ${mapa.motor}`);
 ok(mapa.enlaces.some((e) => e.ruta.startsWith("/mapas")), `enlaces: ${mapa.enlaces.map((e) => e.ruta).join(", ")}`);
 ok(mapa.respuesta.length > 20, `responde algo útil (${mapa.respuesta.length} caracteres)`);
 ok(mapa.pasos.length > 0, `deja rastro de pasos: ${mapa.pasos.map((p) => p.etiqueta).join(" · ")}`);
+ok(mapa.dirigir === true, "«llévame al mapa» pide que la interfaz te lleve");
+const pregunta = await hablarConMente({ mensaje: "¿dónde veo las divisas?", presupuestoMs: 1000 });
+ok(pregunta.dirigir === false && pregunta.enlaces.length > 0, "una pregunta ofrece puertas pero no arrastra");
 
 const creado = await hablarConMente({ mensaje: "hazme un plan para seguir el conflicto de Ucrania", presupuestoMs: 1000 });
 ok(creado.artefactos.length === 1, `crea ${creado.artefactos.length} artefacto(s) en modo casa`);
@@ -62,5 +71,5 @@ const m = mapaParaElModelo();
 ok(m.includes("ÁREAS") && m.length < 6000, `prompt del mapa: ${m.length} caracteres (cabe en el contexto)`);
 ok((m.match(/·/g) || []).length >= 10, "enumera las áreas con sus puertas");
 
-console.log(fallos ? `\nRESULTADO: ${fallos} fallo(s)` : "\nRESULTADO: 23 comprobaciones, 0 fallos");
+console.log(fallos ? `\nRESULTADO: ${fallos} fallo(s)` : "\nRESULTADO: 29 comprobaciones, 0 fallos");
 process.exit(fallos ? 1 : 0);

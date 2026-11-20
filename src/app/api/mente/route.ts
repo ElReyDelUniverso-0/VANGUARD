@@ -256,6 +256,7 @@ export async function POST(req: Request) {
             ia: motor.ia,
             bucket: pulsoActual(),
             respuesta: clean(motor.respuesta, 1_600),
+            dirigir: motor.dirigir,
             enlaces: motor.enlaces,
             artefactos: motor.artefactos,
             motor: motor.motor,

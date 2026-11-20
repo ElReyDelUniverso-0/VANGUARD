@@ -7,6 +7,9 @@
 // Todo con respaldo determinista local: la sala NUNCA queda en silencio.
 
 import { useEffect, useMemo, useRef, useState } from "react";
+// v431.0 · LA SALA TIENE PUERTAS — la respuesta de LA MENTE ya trae enlaces
+// reales y artefactos; esta sala los pintaba y los tiraba. Ahora se usan.
+import Link from "next/link";
 import { toast } from "sonner";
 import { Brain, Send, Loader2, Eye, Timer, MessageSquare, ScanSearch, Sparkles, Zap, RefreshCw, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,7 +32,20 @@ const LS_MENTE = "vg-mente-v99";
 const LS_CHAT = "vg-mente-chat-v99";
 const MENTE_ACC = "#BEF264";
 
-type ChatMsg = { role: "user" | "mente"; text: string; ia?: boolean; web?: boolean; hallazgos?: { titulo: string; fuente: string; fecha: string }[]; claves?: string[]; confianza?: number };
+type ChatMsg = {
+  role: "user" | "mente";
+  text: string;
+  ia?: boolean;
+  web?: boolean;
+  hallazgos?: { titulo: string; fuente: string; fecha: string }[];
+  claves?: string[];
+  confianza?: number;
+  // v431.0: lo que LA MENTE sabe hacer con las manos
+  enlaces?: { nombre: string; ruta: string; porque?: string }[];
+  artefactos?: { id: string; titulo: string; tipo: string; contenido: string }[];
+  // v431.0: su memoria del operador (viaja desde el panel global)
+  memoria?: string[];
+};
 
 function leerMente(): { recompensados: string[]; dia: string; n: number; chatDia: string; chatHecho: boolean } {
   try {
@@ -240,6 +256,8 @@ export function MentePanel() {
         hallazgos: Array.isArray(data.hallazgos) ? data.hallazgos : undefined,
         claves: Array.isArray(data.claves) ? data.claves : undefined,
         confianza: typeof data.confianza === "number" ? data.confianza : undefined,
+        enlaces: Array.isArray(data.enlaces) ? data.enlaces : undefined,
+        artefactos: Array.isArray(data.artefactos) ? data.artefactos : undefined,
       }];
       setChat(conIa);
       localStorage.setItem(LS_CHAT, JSON.stringify(conIa.slice(-24)));
@@ -598,6 +616,64 @@ export function MentePanel() {
                     <div className="mt-2 flex flex-col gap-0.5">
                       {c.claves.map((k, j) => (
                         <p key={j} className="text-[11px] text-foreground/75 flex gap-1"><span style={{ color: MENTE_ACC }}>▸</span>{k}</p>
+                      ))}
+                    </div>
+                  )}
+                  {c.role === "mente" && c.enlaces && c.enlaces.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-1">
+                      <p className="font-mono text-[8px] uppercase tracking-widest text-muted-foreground">puertas de la casa</p>
+                      {c.enlaces.map((e) => (
+                        <Link
+                          key={e.ruta}
+                          href={e.ruta}
+                          className="rounded-md border px-2 py-1.5 flex flex-col gap-0.5 hover:bg-white/5 transition-colors"
+                          style={{ borderColor: `${MENTE_ACC}33` }}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="text-[11.5px] text-foreground/90">{e.nombre}</span>
+                            <span className="ml-auto font-mono text-[8.5px] text-muted-foreground">{e.ruta}</span>
+                          </span>
+                          {e.porque ? <span className="text-[9.5px] text-muted-foreground">{e.porque}</span> : null}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {c.role === "mente" && c.artefactos && c.artefactos.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-1.5">
+                      {c.artefactos.map((a) => (
+                        <details key={a.id} className="rounded-md border px-2 py-1.5" style={{ borderColor: `${MENTE_ACC}44` }}>
+                          <summary className="cursor-pointer text-[11.5px] text-foreground/90 flex items-center gap-2">
+                            <span>{a.titulo}</span>
+                            <span className="font-mono text-[8px] uppercase tracking-widest" style={{ color: MENTE_ACC }}>{a.tipo}</span>
+                          </summary>
+                          <pre className="mt-1.5 max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[10.5px] leading-relaxed text-foreground/75">{a.contenido}</pre>
+                          <div className="mt-1 flex gap-1.5">
+                            <button
+                              type="button"
+                              className="rounded border border-white/15 px-1.5 py-0.5 text-[10px] hover:border-white/40"
+                              onClick={() => {
+                                void navigator.clipboard?.writeText(a.contenido);
+                                toast.success("Copiado");
+                              }}
+                            >
+                              copiar
+                            </button>
+                            <button
+                              type="button"
+                              className="rounded border border-white/15 px-1.5 py-0.5 text-[10px] hover:border-white/40"
+                              onClick={() => {
+                                const url = URL.createObjectURL(new Blob([a.contenido], { type: "text/markdown;charset=utf-8" }));
+                                const el = document.createElement("a");
+                                el.href = url;
+                                el.download = `${a.titulo.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "mente"}.md`;
+                                el.click();
+                                URL.revokeObjectURL(url);
+                              }}
+                            >
+                              .md
+                            </button>
+                          </div>
+                        </details>
                       ))}
                     </div>
                   )}

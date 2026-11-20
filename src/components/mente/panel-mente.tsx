@@ -22,7 +22,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { Artefacto, Enlace, Mensaje, Paso } from "@/lib/mente/agente";
 import "./panel-mente.css";
 
@@ -61,6 +61,7 @@ function guardar(clave: string, valor: unknown) {
 
 export function PanelMente() {
   const ruta = usePathname() ?? "/";
+  const navegar = useRouter();
   const [montada, setMontada] = useState(false);
   const [abierta, setAbierta] = useState(false);
   const [lineas, setLineas] = useState<Linea[]>([]);
@@ -71,8 +72,10 @@ export function PanelMente() {
   const [cargando, setCargando] = useState(false);
   const [motor, setMotor] = useState<"desconocido" | "nube" | "casa">("desconocido");
   const [error, setError] = useState("");
-  const [cajon, setCajon] = useState<"ninguno" | "artefactos">("ninguno");
+  const [cajon, setCajon] = useState<"ninguno" | "artefactos" | "memoria">("ninguno");
   const [copiado, setCopiado] = useState("");
+  /** v431.0: cuando la orden es «llévame», la mente te lleva sola — con salida. */
+  const [viaje, setViaje] = useState<{ ruta: string; nombre: string } | null>(null);
   const caja = useRef<HTMLTextAreaElement | null>(null);
   const hilo = useRef<HTMLDivElement | null>(null);
   const abortar = useRef<AbortController | null>(null);
@@ -99,6 +102,15 @@ export function PanelMente() {
       if (e.key === "Escape") {
         setAbierta(false);
         setCajon("ninguno");
+      }
+      // v431.0 · las puertas también se abren con el teclado: Alt+1..9 salta a
+      // la enésima puerta de la última respuesta. Nada que soltar el ratón.
+      if (e.altKey && /^[1-9]$/.test(e.key)) {
+        const puerta = document.querySelector<HTMLAnchorElement>(`.vg-mente-enlace[data-n="${e.key}"]`);
+        if (puerta) {
+          e.preventDefault();
+          puerta.click();
+        }
       }
     };
     const orden = (e: Event) => {
@@ -194,6 +206,11 @@ export function PanelMente() {
                 ia: Boolean(carga.ia),
               };
               setMotor(carga.motor === "nube" ? "nube" : "casa");
+              // «llévame a…» no se queda en una lista: la mente abre la puerta.
+              const puerta = final?.enlaces?.[0];
+              if (carga.dirigir === true && puerta && puerta.ruta !== ruta) {
+                setViaje({ ruta: puerta.ruta, nombre: puerta.nombre });
+              }
               const recuerdos = (carga.recuerdos as string[]) ?? [];
               if (recuerdos.length) {
                 setMemoria((prev) => {
@@ -235,6 +252,16 @@ export function PanelMente() {
   const detener = useCallback(() => {
     abortar.current?.abort();
   }, []);
+
+  useEffect(() => {
+    if (!viaje) return;
+    const t = window.setTimeout(() => {
+      setAbierta(false);
+      setViaje(null);
+      navegar.push(viaje.ruta);
+    }, 1400);
+    return () => window.clearTimeout(t);
+  }, [viaje, navegar]);
 
   const copiarTextoLargo = useCallback(async (etiqueta: string, contenido: string) => {
     try {
@@ -324,6 +351,14 @@ export function PanelMente() {
             >
               artefactos {artefactos.length ? `(${artefactos.length})` : ""}
             </button>
+            <button
+              type="button"
+              onClick={() => setCajon(cajon === "memoria" ? "ninguno" : "memoria")}
+              title="Lo que la mente recuerda de ti (solo en este aparato)"
+              aria-pressed={cajon === "memoria"}
+            >
+              memoria {memoria.length ? `(${memoria.length})` : ""}
+            </button>
             <button type="button" className="vg-mente-cerrar" onClick={() => setAbierta(false)} aria-label="Cerrar">
               ×
             </button>
@@ -337,7 +372,42 @@ export function PanelMente() {
           </p>
         ) : null}
 
-        {cajon === "artefactos" ? (
+        {cajon === "memoria" ? (
+          <div className="vg-mente-cajon">
+            <p className="vg-mente-vacio">
+              Lo que le pidas recordar vive aquí, en tu aparato, y se lo lleva puesta a cada conversación. Nada sale de aquí.
+            </p>
+            {memoria.length === 0 ? (
+              <p className="vg-mente-vacio">Todavía no recuerda nada tuyo. Dile «recuerda que…» y lo apuntará.</p>
+            ) : (
+              memoria.map((m, i) => (
+                <div key={`${i}-${m}`} className="vg-mente-memoria">
+                  <span>{m}</span>
+                  <button
+                    type="button"
+                    aria-label={`Olvidar: ${m}`}
+                    onClick={() => {
+                      setMemoria((prev) => {
+                        const nueva = prev.filter((_, j) => j !== i);
+                        guardar(K_MEMO, nueva);
+                        return nueva;
+                      });
+                    }}
+                  >
+                    olvidar
+                  </button>
+                </div>
+              ))
+            )}
+            {memoria.length ? (
+              <div className="vg-mente-mini">
+                <button type="button" onClick={() => { setMemoria([]); guardar(K_MEMO, []); }}>
+                  olvidarlo todo
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ) : cajon === "artefactos" ? (
           <div className="vg-mente-cajon">
             {artefactos.length === 0 ? (
               <p className="vg-mente-vacio">Aquí aparecerá lo que la mente cree: planes, documentos, tablas, código.</p>
@@ -386,8 +456,15 @@ export function PanelMente() {
 
                 {l.rol === "mente" && l.enlaces.length ? (
                   <div className="vg-mente-enlaces">
-                    {l.enlaces.map((e) => (
-                      <Link key={e.ruta} href={e.ruta} className="vg-mente-enlace" onClick={() => setAbierta(false)}>
+                    {l.enlaces.map((e, n) => (
+                      <Link
+                        key={e.ruta}
+                        href={e.ruta}
+                        data-n={String(n + 1)}
+                        className="vg-mente-enlace"
+                        onClick={() => setAbierta(false)}
+                        title={`Alt+${n + 1}`}
+                      >
                         <b>{e.nombre}</b>
                         <span className="vg-mente-enlace-ruta">{e.ruta}</span>
                         <em>{e.porque}</em>
@@ -464,6 +541,16 @@ export function PanelMente() {
         ) : null}
 
         <footer className="vg-mente-pie">
+          {viaje ? (
+            <div className="vg-mente-viaje" role="status">
+              <span>
+                Te llevo a <b>{viaje.nombre}</b>
+              </span>
+              <button type="button" onClick={() => setViaje(null)}>
+                quedarme aquí
+              </button>
+            </div>
+          ) : null}
           <div className="vg-mente-caja">
             <textarea
               ref={caja}

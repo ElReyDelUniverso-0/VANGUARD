@@ -71,6 +71,13 @@ export type RespuestaMente = {
   artefactos: Artefacto[];
   /** datos del operador que la mente pide recordar (se guardan en su aparato) */
   recuerdos: string[];
+  /**
+   * v431.0 · «DIRIGIR» — el operador dio una orden directa de ir («llévame…»,
+   * «abre…», «muéstrame…») y hay una puerta clara. La interfaz puede llevarlo
+   * allí sin que tenga que pulsar nada. Una pregunta («¿dónde veo…?») NO
+   * dirige: se contesta y se ofrecen las puertas.
+   */
+  dirigir: boolean;
   /** true si la respuesta la escribió un modelo; false si es el modo casa */
   ia: boolean;
   motor: "nube" | "casa";
@@ -280,6 +287,16 @@ const PLANTILLAS: Record<TipoArtefacto, (tema: string) => string> = {
   informe: (t) => `# Informe: ${t}\n\n## Resumen\n\n## Hechos\n\n## Interpretación\n\n## Qué vigilar\n- \n`,
 };
 
+/**
+ * v431.0 · ¿ES UNA ORDEN DE IR? — se decide sin modelo, en el servidor, para que
+ * «llévame al mapa» lleve de verdad y no se quede en una lista de enlaces.
+ * Solo cuentan los imperativos y los deseos explícitos; las preguntas no.
+ */
+export function pideIr(texto: string): boolean {
+  const t = llano(texto).trim();
+  return /^(oye[ ,]+|mente[ ,]+|la mente[ ,]+)?(llevame|llevanos|vamos|abre|abreme|abrir|muestrame|muestra|ensename|sacame|saca|ir a|ir al|quiero ir|quiero ver|ponme)/.test(t);
+}
+
 /** ¿Pide crear algo? Se detecta sin modelo, para no dejarle la mano vacía. */
 export function pideCrear(texto: string): TipoArtefacto | null {
   // sin acentos: «escríbeme» tiene que encontrar «escribeme»
@@ -349,7 +366,7 @@ export async function hablarConMente(p: PeticionMente): Promise<RespuestaMente> 
 
   const mensaje = limpio(p.mensaje, 1_500);
   if (!mensaje) {
-    return { respuesta: "Escríbeme algo y me pongo.", enlaces: [], artefactos: [], recuerdos: [], ia: false, motor: "casa", pasos, ms: 0 };
+    return { respuesta: "Escríbeme algo y me pongo.", dirigir: false, enlaces: [], artefactos: [], recuerdos: [], ia: false, motor: "casa", pasos, ms: 0 };
   }
 
   paso("leyendo la casa");
@@ -446,6 +463,8 @@ export async function hablarConMente(p: PeticionMente): Promise<RespuestaMente> 
   paso("listo");
   return {
     respuesta,
+    // Solo dirige si la orden fue explícita y hay una puerta que abrir.
+    dirigir: pideIr(p.mensaje) && producto.enlaces.length > 0,
     enlaces: producto.enlaces,
     artefactos: producto.artefactos,
     recuerdos: producto.recuerdos,
