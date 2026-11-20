@@ -743,7 +743,15 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // ② y ③: fuera las salas noindex; lastmod real o ninguno
-  const internas = new Set(SALAS_INTERNAS.map((r) => `${SITE_URL}${r}`));
+  // v421.6 — LA OCTAVA NO ERA INTERNA. Medido en vivo el 2026-11-20: de las
+  // ocho SALAS_INTERNAS, siete responden con X-Robots-Tag «noindex» y
+  // /navegacion NO. Estaba listada en el mapa (arriba) y esta línea la borraba:
+  // una página 200, indexable, con canonical propio y 22 enlaces internos que
+  // Google no tenía por dónde descubrir. Se excluye solo lo que de verdad se
+  // declara noindex; la lista compartida de módulos no se toca.
+  const internas = new Set(
+    SALAS_INTERNAS.filter((r) => r !== "/navegacion").map((r) => `${SITE_URL}${r}`),
+  );
   const delArchivo = new Set(SALAS_DEL_ARCHIVO.map((r) => `${SITE_URL}${r}`));
   const fijas = estaticas
     .filter((e) => !internas.has(e.url))
