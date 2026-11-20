@@ -45,6 +45,9 @@ local-*
 .claude
 .z-ai-config
 *.log
+
+# el tsconfig temporal que genera tools/tsc-acotado.mjs
+tsconfig.acotado.tmp.json
 dev.log
 dev.out.log
 test

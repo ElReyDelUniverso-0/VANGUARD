@@ -187,6 +187,7 @@ export const DEPARTAMENTOS: Departamento[] = [
       { etiqueta: "Centro de población", ruta: "/demografia", nota: "Estructura por edades, esperanza de vida y concentración de población." },
       { etiqueta: "Regiones", ruta: "/regiones", nota: "Veinticuatro subregiones con sus totales." },
       { etiqueta: "Urbanización simulada", ruta: "/labs/urbanizacion", nota: "El mecanismo de la ciudad que crece más rápido de lo que puede." },
+      { etiqueta: "Centro de resiliencia civil", ruta: "/resiliencia", nota: "Prevención, preparación y recuperación explicadas a comunidades: continuidad familiar, protección civil, accesibilidad en emergencias y comunicación vecinal. Educativo y orientativo: no emite alertas ni declara emergencias." },
     ],
     falta: [
       "Idiomas, patrimonio, tradiciones, arquitectura y gastronomía: nada de eso tiene ficha.",
@@ -207,6 +208,10 @@ export const DEPARTAMENTOS: Departamento[] = [
       { etiqueta: "Clima simulado", ruta: "/labs/clima", nota: "Caja de carbono con límites declarados." },
       { etiqueta: "Agua simulada", ruta: "/labs/agua", nota: "La cuenca que se vacía." },
       { etiqueta: "El globo por capas", ruta: "/mapas", nota: "Capas de población, economía y clima sobre el planeta." },
+      { etiqueta: "Fichas de peligros naturales", ruta: "/resiliencia/peligros", nota: "Doce amenazas explicadas por mecanismo, señales de aviso y comportamiento seguro, con su estación habitual." },
+      { etiqueta: "Guías por tipo de emergencia", ruta: "/resiliencia/guias", nota: "Doce guías de preparación y actuación con pasos, cifras y mitos desmontados. Sin instrucciones operacionales de violencia." },
+      { etiqueta: "Cortes de agua y luz", ruta: "/resiliencia/servicios", nota: "Qué hacer cuando el servicio se cae días: agua, energía, refrigeración y medicinas, con su margen de tiempo real." },
+      { etiqueta: "Recursos oficiales por país", ruta: "/resiliencia/recursos/do", nota: "Veinticinco países con sus organismos y números de emergencia escritos en texto; los 224 restantes dicen que la casa no tiene datos verificados." },
     ],
     falta: [
       "Series históricas ambientales (temperatura, emisiones, hielo) con fuente y período.",
@@ -299,7 +304,10 @@ export const DEPARTAMENTOS: Departamento[] = [
     nombre: "Academia",
     mision: "Transformar la información en aprendizaje organizado.",
     estado: "parcial",
-    existe: [{ etiqueta: "Vanguard Academy", ruta: "/conocimiento/aprender", nota: "Cuatro rutas y doce actividades sobre expedientes existentes, corrección explicada, progreso local persistente y borrable. No emite certificados ni sincroniza cuentas." }],
+    existe: [
+      { etiqueta: "Vanguard Academy", ruta: "/conocimiento/aprender", nota: "Cuatro rutas y doce actividades sobre expedientes existentes, corrección explicada, progreso local persistente y borrable. No emite certificados ni sincroniza cuentas." },
+      { etiqueta: "Biblioteca de educación de riesgo", ruta: "/resiliencia/biblioteca", nota: "Doce lecciones con cuatro rutas de lectura y un glosario de treinta y cuatro términos: el vocabulario de la protección civil explicado sin tecnicismos." },
+    ],
     falta: ["Revisión pedagógica y ampliación de rutas y actividades.", "Sincronización optativa con cuenta, accesibilidad auditada y colecciones docentes."],
     siguiente: "Ampliar las actividades y probarlas con estudiantes y docentes antes de acreditar aprendizaje.",
   },
@@ -402,6 +410,7 @@ export const DEPARTAMENTOS: Departamento[] = [
       { etiqueta: "La Forja", ruta: "/creadores", nota: "Publicar mapas, escenarios e investigaciones." },
       { etiqueta: "Guardar en el espacio", nota: "Favoritos y colecciones en el navegador, sin enviar nada al servidor." },
       { etiqueta: "Los audios", ruta: "/audios", nota: "Piezas de la comunidad." },
+      { etiqueta: "Evaluación comunitaria", ruta: "/resiliencia/evaluacion", nota: "Veinticuatro preguntas, seis categorías y un resultado orientativo que se queda en el navegador: la casa no guarda ni envía las respuestas." },
     ],
     falta: [
       "Comentarios con moderación y aportaciones verificables.",

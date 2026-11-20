@@ -10,6 +10,9 @@ import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
 import { MODULOS, SALAS_INTERNAS } from "@/components/portada/modulos";
 import { MODELOS } from "@/lib/labs/registro"; // v411.0: los quince laboratorios
 import { TEMAS_INVESTIGACION } from "@/lib/investigacion"; // v412.0: los diez dossiers de investigación sistémica
+// v421.8 MISIÓN 09 · CENTRO DE RESILIENCIA CIVIL — el índice y los países con ficha
+import { seccionesOrdenadas } from "@/lib/resiliencia/secciones";
+import { PAISES_CON_RECURSOS } from "@/lib/resiliencia/organismos";
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -745,6 +748,31 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}${r}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    })),
+    // v421.8 EL CENTRO DE RESILIENCIA CIVIL — quince puertas: el centro, las
+    // catorce secciones derivadas del propio registro (una sección nueva entra
+    // sola al mapa) y la herramienta de evaluación. Las fichas de país entran
+    // solo si tienen datos verificados: los otros 224 territorios responden
+    // 404 y, por la ley del mapa, no se anuncian.
+    {
+      url: `${SITE_URL}/resiliencia`,
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
+    },
+    {
+      url: `${SITE_URL}/resiliencia/evaluacion`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    ...seccionesOrdenadas().map((s) => ({
+      url: `${SITE_URL}/resiliencia/${s.id}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...PAISES_CON_RECURSOS.map((iso) => ({
+      url: `${SITE_URL}/resiliencia/recursos/${iso}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
   ];
 

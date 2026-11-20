@@ -237,5 +237,23 @@ export function nexosDePais(iso: string): Nexo[] {
       familia: "pais",
       porque: "Volver al punto de partida: geografía, economía, vecinos y bloques en una sola página.",
     },
+    {
+      ruta: `/resiliencia/recursos/${iso}`,
+      etiqueta: "Protección civil y recursos",
+      familia: "herramienta",
+      porque: "Los organismos de este país con lo que publican, sus números de emergencia escritos en texto y la advertencia de dónde la casa no tiene datos verificados.",
+    },
+    {
+      ruta: "/resiliencia/peligros",
+      etiqueta: "Sus peligros naturales",
+      familia: "herramienta",
+      porque: "Qué amenaza se repite en este territorio, cómo se forma y qué señales se pueden reconocer antes de que llegue.",
+    },
+    {
+      ruta: "/resiliencia/evaluacion",
+      etiqueta: "Evaluación comunitaria",
+      familia: "herramienta",
+      porque: "Veinticuatro preguntas sobre seis categorías para ver dónde está floja la preparación de un barrio. Orientativa: no certifica nada.",
+    },
   ];
 }

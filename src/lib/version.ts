@@ -6811,14 +6811,52 @@
 //   operativos de las instalaciones; ISO-2 validado contra geo-paises.
 // (el número salta a v420.3: v420.0 es VANGUARD LINGUA, v420.1 es VANGUARD
 //  MEMORY ARCHIVE y v420.2 es VANGUARD WORLD NETWORKS, ya entregadas)
-export const APP_VERSION = "v420.3";
+// v421.8 VANGUARD CIVIL RESILIENCE — MISIÓN 09 · CENTRO DE PREVENCIÓN,
+// PREPARACIÓN Y RESILIENCIA DE COMUNIDADES. Encargo del Dueño: un sistema
+// EDUCATIVO para que un barrio, un pueblo o una familia sepa qué hacer antes,
+// durante y después de una emergencia — «no otro observatorio meteorológico».
+// (el número salta a v421.8: v420.1 y los v421.x ya estaban repartidos en el
+//  remoto cuando esta misión llegó al final; la casa no repite número)
+// ① EL CENTRO (/resiliencia): quince puertas —el índice y catorce secciones
+//    declaradas en UN registro (src/lib/resiliencia/secciones.ts)— que se
+//    enrutan solas: una sección nueva es una página nueva sin tocar el árbol.
+// ② DOCE GUÍAS POR TIPO DE EMERGENCIA y DOCE FICHAS DE PELIGROS NATURALES:
+//    cómo se forma cada amenaza, qué señales enseña, qué la reduce y qué mito
+//    hay que quitar de en medio. Cero instrucciones de daño.
+// ③ CONTINUIDAD FAMILIAR y PROTECCIÓN CIVIL: el plan de la casa (contactos,
+//    puntos de encuentro, documentos, medicinas) y cómo funciona de verdad la
+//    cadena oficial de avisos, sin inventar alertas ni declarar emergencias.
+// ④ ACCESIBILIDAD, AGUA Y LUZ, COMUNICACIÓN VECINAL: ocho perfiles que la
+//    preparación no puede dejar fuera; tres cortes de servicio con sus plazos
+//    reales; el árbol de llamadas, los canales y cómo se frena un bulo.
+// ⑤ RECUPERACIÓN Y APRENDIZAJE: las fases después del día uno, «reconstruir
+//    mejor», doce lecciones, ocho listas marcables, treinta y cuatro términos
+//    de glosario y el directorio de organismos por país.
+// ⑥ LA HERRAMIENTA «COMMUNITY RESILIENCE» (/resiliencia/evaluacion):
+//    veinticuatro preguntas sobre seis categorías, con el evaluador en un
+//    módulo puro que prueban 980 afirmaciones. SALIDA ORIENTATIVA: no
+//    certifica, no clasifica a nadie y no envía nada a ningún servidor.
+// ⑦ CON LOS PAÍSES Y SU GEOGRAFÍA: veinticinco fichas en
+//    /resiliencia/recursos/<iso> —los mismos 249 territorios del censo— con
+//    enlace de ida y vuelta desde /mundos/<iso>, /atlas, /mapas y /regiones.
+// ⑧ LA PUERTA DE MÁQUINA (/api/resiliencia): once secciones bajo el contrato
+//    de la casa, documentadas en el catálogo y con su muro. Sin campo
+//    «ahora mismo»: el centro enseña, no observa.
+// ⑨ CONECTADO CON LO QUE YA VIVÍA: los módulos Conocimiento y Planeta en
+//    cifras, el espacio de navegación «comunidad» (once en total), el censo
+//    del Núcleo, los departamentos, el mapa de nexos, el mapa partido de SEO
+//    y el catálogo de API. Nada de lo anterior se borra ni se simplifica.
+//
+export const APP_VERSION = "v421.8";
+// (anterior) export const APP_VERSION = "v420.3";
 // (anterior) export const APP_VERSION = "v420.2";
 // (anterior) export const APP_VERSION = "v420.1";
 // (anterior) export const APP_VERSION = "v420.0";
 // (anterior) export const APP_VERSION = "v419.1";
 // (anterior) export const APP_VERSION = "v419.0";
 // (anterior) export const APP_VERSION = "v418.2";
-export const APP_CODENAME = "VANGUARD INFRASTRUCTURE ATLAS";
+export const APP_CODENAME = "VANGUARD CIVIL RESILIENCE";
+// (anterior) export const APP_CODENAME = "VANGUARD INFRASTRUCTURE ATLAS";
 // (anterior) export const APP_CODENAME = "VANGUARD WORLD NETWORKS";
 // (anterior) export const APP_CODENAME = "VANGUARD MEMORY ARCHIVE";
 // (anterior) export const APP_CODENAME = "VANGUARD LINGUA";

@@ -12,7 +12,7 @@
 // las rutas reales del repo (ver scripts de prueba).
 // ═══════════════════════════════════════════════════════════════════
 
-/** Los diez espacios de trabajo de la casa. Un espacio no es un menú: es el
+/** Los once espacios de trabajo de la casa (v421.8 sumó «comunidad»). Un espacio no es un menú: es el
  *  sitio donde viven las herramientas que sirven para lo que estás haciendo. */
 export type ClaveEspacio =
   | "geo"        // geografía y territorio
@@ -24,6 +24,7 @@ export type ClaveEspacio =
   | "crear"      // talleres y herramientas
   | "jugar"      // juego y progreso
   | "social"     // comunidad y perfil
+  | "comunidad"  // v421.8 · preparación y resiliencia de las comunidades
   | "sistema"    // la casa por dentro
   | "miespacio"; // tu mesa: proyectos, sesiones e historial (v405.11)
 

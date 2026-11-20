@@ -93,6 +93,7 @@ export const SECCIONES: Seccion[] = [
     titulo: "Educación, enciclopedia e investigación",
     prefijos: [
       "/academia",
+      "/resiliencia",
       "/conocimiento",
       "/enciclopedia",
       "/lingua",

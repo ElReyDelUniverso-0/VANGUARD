@@ -88,6 +88,11 @@ export const MODULOS: Modulo[] = [
       { href: "/historia", label: "Historia", img: "/ilustraciones/historia.jpg", txt: "Las guerras que enseñaron a leer las de hoy." },
       { href: "/archivo-mundial", label: "Archivo", img: "/ilustraciones/curiosidades.jpg", txt: "Curiosidades verídicas, eras y los contadores de las guerras." },
       { href: "/traductor", label: "Traductor", img: "/ilustraciones/osint.jpg", txt: "Las noticias del mundo en tu idioma." },
+      // v421.8 MISIÓN 09 · CENTRO DE RESILIENCIA CIVIL — prevención y preparación
+      // para comunidades: educativo, con las recomendaciones de los organismos
+      // reconocidos parafraseadas y sin emitir alertas nunca.
+      { href: "/resiliencia", label: "Resiliencia civil", img: "/ilustraciones/radar.jpg", txt: "Quince secciones para preparar a una comunidad: guías por emergencia, fichas de peligros, continuidad familiar, accesibilidad y recuperación." },
+      { href: "/resiliencia/evaluacion", label: "Evaluación comunitaria", txt: "Veinticuatro preguntas, seis categorías y un resultado orientativo que se queda en tu navegador." },
     ],
   },
   // v407.1 EL PLANETA EN CIFRAS — el módulo de los países: la ficha de cada
@@ -109,6 +114,7 @@ export const MODULOS: Modulo[] = [
       { href: "/demografia", label: "Población", img: "/ilustraciones/edad.jpg", txt: "Cuántos somos, dónde nos concentramos y cuántos años vivimos." },
       { href: "/regiones", label: "Regiones", img: "/ilustraciones/planeta.jpg", txt: "Las 24 subregiones del mundo con su población y su economía sumadas." },
       { href: "/organizaciones", label: "Organizaciones", img: "/ilustraciones/alianzas.jpg", txt: "OTAN, UE, BRICS, OPEP, SICA y once bloques más: quién está y cuánto pesan." },
+      { href: "/resiliencia/recursos/do", label: "Protección civil por país", img: "/ilustraciones/gobierno.jpg", txt: "Los organismos de cada país, lo que publican y sus números de emergencia escritos en texto." },
     ],
   },
   {

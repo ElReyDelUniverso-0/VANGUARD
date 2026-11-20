@@ -9,6 +9,7 @@
     "postinstall": "prisma generate",
     "start": "NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee server.log",
     "lint": "eslint .",
+    "tipos:centro": "node tools/tsc-acotado.mjs resiliencia",
     "escudo": "node scripts/busca-apikeys.mjs",
     "escudo-env": "node scripts/escudo-env.mjs",
     "db:push": "prisma db push --accept-data-loss",

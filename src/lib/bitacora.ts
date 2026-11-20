@@ -20,6 +20,22 @@ export interface EntradaBitacora {
   tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten" | "luxe";
 }
 export const BITACORA: EntradaBitacora[] = [
+  {
+    version: "v421.8",
+    nombre: "VANGUARD CIVIL RESILIENCE",
+    hitos: [
+      "EL CENTRO DE RESILIENCIA CIVIL (/resiliencia): quince puertas educativas para preparar a una comunidad antes, durante y después de una emergencia. No es un observatorio meteorológico ni un boletín de pánico: no emite alertas, no declara emergencias y no publica instrucciones de daño.",
+      "UN SOLO REGISTRO PARA LAS SECCIONES: las catorce secciones viven en src/lib/resiliencia/secciones.ts y una única ruta dinámica las enruta — una sección nueva es una página nueva, imposible de olvidar. El evaluador de enlaces comprueba cada salida contra el disco.",
+      "DOCE GUÍAS POR TIPO DE EMERGENCIA y DOCE FICHAS DE PELIGROS NATURALES: cómo se forma cada amenaza, qué señales enseña, cómo se mide, qué la reduce y qué mito hay que desmontar, con la fuente citada en texto (Ready.gov/FEMA, IFRC, UNDRR, OMS, OCHA) y cero enlaces externos en el contenido.",
+      "CONTINUIDAD FAMILIAR, PROTECCIÓN CIVIL Y BARRIO: el plan de la casa (contactos, punto de encuentro, documentos, medicinas), cómo funciona la cadena oficial de avisos, ocho perfiles de accesibilidad que la preparación no puede dejar fuera, los cortes de agua y luz con sus plazos reales y el árbol de llamadas vecinales con su protocolo contra bulos.",
+      "LA HERRAMIENTA «COMMUNITY RESILIENCE»: veinticuatro preguntas sobre seis categorías —información y comunicación, acceso a servicios, educación preventiva, inclusión de personas vulnerables, continuidad de servicios esenciales y recuperación comunitaria—. El cálculo es un módulo puro probado y el resultado es ORIENTATIVO: sin sello, sin certificación y sin enviar nada a ningún servidor.",
+      "RECUPERACIÓN Y APRENDIZAJE: las siete fases después del día uno, «reconstruir mejor», doce lecciones con cuatro rutas de lectura, ocho listas marcables, treinta y cuatro términos de glosario y el directorio de once organismos internacionales.",
+      "RECURSOS POR PAÍS CONECTADOS A LA GEOGRAFÍA: veinticinco fichas en /resiliencia/recursos/<iso> sobre los 249 territorios del censo, con ida y vuelta desde /mundos/<iso>, /regiones, /atlas y /mapas. Donde la casa no tiene datos verificados, lo dice; no rellena con invenciones.",
+      "LA PUERTA DE MÁQUINA Y LOS OCHO IDIOMAS: /api/resiliencia sirve once secciones bajo el contrato de la casa, con su muro, su caché y su ficha en el catálogo de API; el chrome de la herramienta está traducido a los ocho idiomas con un tipo que obliga al compilador a exigirlos.",
+      "CONECTADO SIN BORRAR NADA: el centro cuelga de los módulos Conocimiento y Planeta, abre el espacio de navegación «comunidad», entra en el censo del Núcleo, en los departamentos de la casa, en el mapa partido de SEO y en sus propias 980 afirmaciones de prueba.",
+    ],
+    tipo: "mundo",
+  },
   {version:"v420.2",nombre:"VANGUARD WORLD NETWORKS",tipo:"mundo",hitos:[
     "WORLD NETWORKS: /organizaciones/redes amplía el centro existente sin reemplazar sus dieciséis bloques y preserva Cámara de Inteligencia, Lingua y Memory Archive.",
     "MAPA CON EVIDENCIA: 28 instituciones y 7 instrumentos públicos, 937 conexiones tipadas; zoom, desplazamiento, selección, fichas y lista equivalente accesible.",
