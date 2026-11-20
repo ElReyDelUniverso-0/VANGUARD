@@ -16,7 +16,7 @@ es la **puerta** de una sala que ya existe.
 
 | fuente | qué aporta |
 |---|---|
-| `src/components/portada/modulos.ts` | los 9 módulos y sus pestañas: las salas reales |
+| `src/components/portada/modulos.ts` | los módulos y sus pestañas: las salas reales |
 | `src/lib/navegacion/espacios.ts` | los 11 espacios de trabajo, sus herramientas y su color |
 
 `src/lib/mi-universo/catalogo.ts` los cruza, quita rutas repetidas y expone el
