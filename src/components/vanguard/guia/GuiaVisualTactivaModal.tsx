@@ -353,18 +353,47 @@ export function GuiaVisualTactivaModal({
 /** Botón que vive en la cabecera para abrir la guía táctica */
 export function BotonGuiaVisual() {
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [mostrarToast, setMostrarToast] = useState(false);
 
   useEffect(() => {
     const alPedirGuia = () => setModalAbierto(true);
     window.addEventListener("abrir-guia-vanguard", alPedirGuia);
+
+    // Detección de primera visita para sugerir la guía visual de forma sutil
+    const vista = typeof window !== "undefined" ? localStorage.getItem("vg_guia_vista") : "1";
+    if (!vista) {
+      const timer = setTimeout(() => {
+        setMostrarToast(true);
+      }, 1500);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener("abrir-guia-vanguard", alPedirGuia);
+      };
+    }
+
     return () => window.removeEventListener("abrir-guia-vanguard", alPedirGuia);
   }, []);
+
+  const abrirYMarcar = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("vg_guia_vista", "1");
+    }
+    setMostrarToast(false);
+    setModalAbierto(true);
+  };
+
+  const descartarToast = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("vg_guia_vista", "1");
+    }
+    setMostrarToast(false);
+  };
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setModalAbierto(true)}
+        onClick={abrirYMarcar}
         aria-label="Abrir Guía Visual de Vanguard"
         className="group relative flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-950/50 px-2.5 py-1 text-xs font-mono text-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.2)] transition hover:border-sky-400 hover:bg-sky-900/50 hover:text-white"
       >
@@ -372,6 +401,44 @@ export function BotonGuiaVisual() {
         <span className="hidden sm:inline font-bold uppercase tracking-wider">GUÍA TÁCTICA</span>
         <span className="sm:hidden font-bold uppercase">GUÍA</span>
       </button>
+
+      {/* Pill flotante para primeros visitantes */}
+      {mostrarToast && (
+        <aside
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-sky-400/60 bg-[#04101e]/95 p-3.5 shadow-[0_0_30px_rgba(56,189,248,0.35)] backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-300 max-w-sm"
+        >
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/40">
+            <HelpCircle size={18} />
+          </div>
+          <div className="flex-1 text-left">
+            <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-sky-400">
+              ¿Primera vez aquí?
+            </p>
+            <p className="text-xs text-zinc-300 leading-snug">
+              Aprende a navegar Vanguard paso a paso en 60 segundos.
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={abrirYMarcar}
+              className="rounded-lg bg-sky-500 px-2.5 py-1.5 font-mono text-xs font-bold text-black hover:bg-sky-400 transition"
+            >
+              Iniciar
+            </button>
+            <button
+              type="button"
+              onClick={descartarToast}
+              aria-label="Cerrar sugerencia de guía"
+              className="rounded-lg p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+            >
+              ✕
+            </button>
+          </div>
+        </aside>
+      )}
 
       <GuiaVisualTactivaModal abierto={modalAbierto} alCerrar={() => setModalAbierto(false)} />
     </>

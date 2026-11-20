@@ -147,14 +147,192 @@ const TECNOLOGIAS_DISRUPCION: TecnologiaDisrupcion[] = [
   },
 ];
 
+/** Gráfico Radar Hexagonal Táctico de 6 Ejes en SVG Puro */
+function GraficoRadarHexagonal({
+  radarA,
+  nombreA,
+  radarB,
+  nombreB,
+}: {
+  radarA: PaisDossier["radar"];
+  nombreA: string;
+  radarB?: PaisDossier["radar"];
+  nombreB?: string;
+}) {
+  const cx = 150;
+  const cy = 150;
+  const R = 95;
+  const ejes = [
+    { k: "militar" as const, label: "MILITAR", xL: 150, yL: 28, anchor: "middle" },
+    { k: "economia" as const, label: "ECONOMÍA", xL: 258, yL: 95, anchor: "start" },
+    { k: "demografia" as const, label: "DEMOGRAFÍA", xL: 258, yL: 215, anchor: "start" },
+    { k: "energia" as const, label: "ENERGÍA", xL: 150, yL: 282, anchor: "middle" },
+    { k: "tecnologia" as const, label: "I+D / CIBER", xL: 42, yL: 215, anchor: "end" },
+    { k: "diplomacia" as const, label: "DIPLOMACIA", xL: 42, yL: 95, anchor: "end" },
+  ];
+
+  const puntosA = ejes
+    .map((eje, i) => {
+      const ang = (-90 + i * 60) * (Math.PI / 180);
+      const val = radarA[eje.k] || 0;
+      const r = (val / 100) * R;
+      const x = cx + r * Math.cos(ang);
+      const y = cy + r * Math.sin(ang);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  const puntosB = radarB
+    ? ejes
+        .map((eje, i) => {
+          const ang = (-90 + i * 60) * (Math.PI / 180);
+          const val = radarB[eje.k] || 0;
+          const r = (val / 100) * R;
+          const x = cx + r * Math.cos(ang);
+          const y = cy + r * Math.sin(ang);
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        })
+        .join(" ")
+    : null;
+
+  return (
+    <div className="flex flex-col items-center justify-center p-2">
+      <svg className="w-full max-w-[320px] aspect-square" viewBox="0 0 300 300">
+        <defs>
+          <radialGradient id="radar-bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#031b2e" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.8" />
+          </radialGradient>
+        </defs>
+        <circle cx={cx} cy={cy} r={R} fill="url(#radar-bg)" />
+
+        {/* Anillos concéntricos de referencia */}
+        {[0.25, 0.5, 0.75, 1].map((pct, idx) => {
+          const rHex = R * pct;
+          const ptsHex = [0, 1, 2, 3, 4, 5]
+            .map((i) => {
+              const ang = (-90 + i * 60) * (Math.PI / 180);
+              return `${(cx + rHex * Math.cos(ang)).toFixed(1)},${(cy + rHex * Math.sin(ang)).toFixed(1)}`;
+            })
+            .join(" ");
+          return (
+            <polygon
+              key={idx}
+              points={ptsHex}
+              fill="none"
+              stroke="#1e293b"
+              strokeWidth={idx === 3 ? "1.5" : "0.75"}
+              strokeDasharray={idx === 1 || idx === 3 ? "none" : "3 3"}
+            />
+          );
+        })}
+
+        {/* Rayos radiales a los vértices */}
+        {ejes.map((eje, i) => {
+          const ang = (-90 + i * 60) * (Math.PI / 180);
+          const xEnd = cx + R * Math.cos(ang);
+          const yEnd = cy + R * Math.sin(ang);
+          return (
+            <line
+              key={eje.k}
+              x1={cx}
+              y1={cy}
+              x2={xEnd}
+              y2={yEnd}
+              stroke="#334155"
+              strokeWidth="0.8"
+            />
+          );
+        })}
+
+        {/* Polígono Potencia Beta (Rojo) */}
+        {puntosB && (
+          <polygon
+            points={puntosB}
+            fill="rgba(239, 68, 68, 0.28)"
+            stroke="#ef4444"
+            strokeWidth="2"
+            strokeLinejoin="round"
+          />
+        )}
+
+        {/* Polígono Potencia Alfa (Azul/Sky) */}
+        <polygon
+          points={puntosA}
+          fill="rgba(56, 189, 248, 0.32)"
+          stroke="#38bdf8"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+
+        {/* Vértices destacados Alfa */}
+        {ejes.map((eje, i) => {
+          const ang = (-90 + i * 60) * (Math.PI / 180);
+          const val = radarA[eje.k] || 0;
+          const r = (val / 100) * R;
+          const x = cx + r * Math.cos(ang);
+          const y = cy + r * Math.sin(ang);
+          return <circle key={`dot-a-${i}`} cx={x} cy={y} r="3" fill="#38bdf8" />;
+        })}
+
+        {/* Vértices destacados Beta */}
+        {radarB &&
+          ejes.map((eje, i) => {
+            const ang = (-90 + i * 60) * (Math.PI / 180);
+            const val = radarB[eje.k] || 0;
+            const r = (val / 100) * R;
+            const x = cx + r * Math.cos(ang);
+            const y = cy + r * Math.sin(ang);
+            return <circle key={`dot-b-${i}`} cx={x} cy={y} r="3" fill="#ef4444" />;
+          })}
+
+        {/* Mira central */}
+        <circle cx={cx} cy={cy} r="2.5" fill="#38bdf8" />
+        <circle cx={cx} cy={cy} r="6" fill="none" stroke="#38bdf8" strokeWidth="0.8" opacity="0.6" />
+
+        {/* Etiquetas de los Ejes */}
+        {ejes.map((eje) => (
+          <text
+            key={`txt-${eje.k}`}
+            x={eje.xL}
+            y={eje.yL}
+            textAnchor={eje.anchor}
+            fill="#94a3b8"
+            fontFamily="monospace"
+            fontSize="9"
+            fontWeight="bold"
+            letterSpacing="0.05em"
+          >
+            {eje.label}
+          </text>
+        ))}
+      </svg>
+
+      {/* Leyenda del Radar */}
+      <div className="mt-2 flex items-center justify-center gap-6 font-mono text-xs">
+        <span className="flex items-center gap-1.5 text-sky-400 font-bold">
+          <span className="h-2.5 w-2.5 rounded-full bg-sky-400" />
+          {nombreA}
+        </span>
+        {nombreB && (
+          <span className="flex items-center gap-1.5 text-red-400 font-bold">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+            {nombreB}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function CentroInformacionPerfecta() {
   const [pestana, setPestana] = useState<"paises" | "arsenal" | "puntos" | "ciencia" | "comparador">("paises");
   const [busqueda, setBusqueda] = useState("");
-  const [paisSeleccionadoId, setPaisSeleccionadoId] = useState<string>("us");
+  const [paisSeleccionadoId, setPaisSeleccionadoId] = useState<string>("usa");
 
   // Comparador
-  const [compPaisA, setCompPaisA] = useState<string>("us");
-  const [compPaisB, setCompPaisB] = useState<string>("cn");
+  const [compPaisA, setCompPaisA] = useState<string>("usa");
+  const [compPaisB, setCompPaisB] = useState<string>("chn");
 
   const paisActivo = useMemo(() => {
     return PAISES_MUNDO.find((p) => p.id === paisSeleccionadoId) || PAISES_MUNDO[0];
@@ -361,33 +539,36 @@ export function CentroInformacionPerfecta() {
               </div>
             </div>
 
-            {/* Radar de 6 Ejes (Visualizador de Barras de Poder) */}
+            {/* Radar de 6 Ejes (Polígono Hexagonal HUD + Barras de Poder) */}
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
               <span className="font-mono text-xs font-bold uppercase tracking-wider text-sky-300 block mb-3">
                 Radar de Capacidades Estratégicas (0 a 100)
               </span>
-              <div className="grid gap-2.5 sm:grid-cols-2">
-                {[
-                  { label: "Poder Militar", val: paisActivo.radar.militar, color: "bg-red-500" },
-                  { label: "Economía & Finanzas", val: paisActivo.radar.economia, color: "bg-amber-500" },
-                  { label: "Demografía & Masa", val: paisActivo.radar.demografia, color: "bg-blue-500" },
-                  { label: "Independencia Energética", val: paisActivo.radar.energia, color: "bg-emerald-500" },
-                  { label: "Tecnología & I+D", val: paisActivo.radar.tecnologia, color: "bg-purple-500" },
-                  { label: "Influencia Diplomática", val: paisActivo.radar.diplomacia, color: "bg-cyan-500" },
-                ].map((eje) => (
-                  <div key={eje.label} className="space-y-1">
-                    <div className="flex justify-between font-mono text-xs">
-                      <span className="text-zinc-400">{eje.label}</span>
-                      <span className="font-bold text-zinc-200">{eje.val} / 100</span>
+              <div className="grid gap-6 md:grid-cols-2 items-center">
+                <GraficoRadarHexagonal radarA={paisActivo.radar} nombreA={paisActivo.nombre} />
+                <div className="space-y-2.5">
+                  {[
+                    { label: "Poder Militar", val: paisActivo.radar.militar, color: "bg-red-500" },
+                    { label: "Economía & Finanzas", val: paisActivo.radar.economia, color: "bg-amber-500" },
+                    { label: "Demografía & Masa", val: paisActivo.radar.demografia, color: "bg-blue-500" },
+                    { label: "Independencia Energética", val: paisActivo.radar.energia, color: "bg-emerald-500" },
+                    { label: "Tecnología & I+D", val: paisActivo.radar.tecnologia, color: "bg-purple-500" },
+                    { label: "Influencia Diplomática", val: paisActivo.radar.diplomacia, color: "bg-cyan-500" },
+                  ].map((eje) => (
+                    <div key={eje.label} className="space-y-1">
+                      <div className="flex justify-between font-mono text-xs">
+                        <span className="text-zinc-400">{eje.label}</span>
+                        <span className="font-bold text-zinc-200">{eje.val} / 100</span>
+                      </div>
+                      <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${eje.color}`}
+                          style={{ width: `${eje.val}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${eje.color}`}
-                        style={{ width: `${eje.val}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -663,6 +844,19 @@ export function CentroInformacionPerfecta() {
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Gráfico Radar Dual Alfa (Sky) vs Beta (Rojo) */}
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 flex flex-col items-center">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
+              Telemetría Hexagonal Comparada (6 Ejes Superpuestos)
+            </span>
+            <GraficoRadarHexagonal
+              radarA={paisA.radar}
+              nombreA={paisA.nombre}
+              radarB={paisB.radar}
+              nombreB={paisB.nombre}
+            />
           </div>
 
           {/* Tabla Comparativa con Barras Visuales */}
