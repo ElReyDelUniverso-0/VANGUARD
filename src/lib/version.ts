@@ -6967,7 +6967,9 @@
 // puertas con verbo, ocho salidas de emergencia y los frentes reales del día.
 // (anterior) export const APP_VERSION = "v431.3";
 // (anterior) export const APP_CODENAME = "LA ENTRADA SE EXPLICA";
-export const APP_VERSION = "v431.2";
+// (anterior) export const APP_VERSION = "v431.2";
+// (anterior) export const APP_CODENAME = "OPERACIÓN";
+export const APP_VERSION = "v431.4";
 export const APP_CODENAME = "OPERACIÓN";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
