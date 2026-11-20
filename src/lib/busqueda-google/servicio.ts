@@ -77,12 +77,29 @@ async function traer(url: string): Promise<{ estado: number; texto: string } | n
   }
 }
 
+/**
+ * Las URLs que publica el sitemap de la casa, recorriendo el ÍNDICE.
+ * v421.4 — desde v421.0 /sitemap.xml es un <sitemapindex> de 7 archivos. Este
+ * código hacía grep de <loc> sobre el índice y devolvía las 7 rutas de los
+ * propios sitemaps: el motor de oportunidades creía que la casa publica siete
+ * páginas y marcaba como «oportunidad» todo lo demás. Medido el 2026-11-20.
+ * Si algún día vuelve a ser un sitemap único, la primera rama lo sirve igual.
+ */
+async function urlsDelSitemap(casa: string): Promise<string[] | null> {
+  const r = await traer(`${casa}/sitemap.xml`);
+  if (!r || r.estado !== 200) return null;
+  const locs = (t: string) => [...t.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  const raiz = locs(r.texto);
+  if (!/<sitemapindex[\s>]/.test(r.texto)) return raiz;
+  const hijos = await Promise.all(raiz.map((u) => traer(u)));
+  return hijos.flatMap((h) => (h && h.estado === 200 ? locs(h.texto) : []));
+}
+
 /** Rutas que publica el sitemap de la casa (null si no se pudo leer). */
 export async function rutasDelSitemap(): Promise<Set<string> | null> {
   const { valor } = await memo("gsc:sitemap", 60 * 60_000, async () => {
-    const r = await traer(`${SITE_URL}/sitemap.xml`);
-    if (!r || r.estado !== 200) return null;
-    return [...r.texto.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => rutaDeUrl(m[1]));
+    const urls = await urlsDelSitemap(SITE_URL);
+    return urls ? urls.map((u) => rutaDeUrl(u)) : null;
   });
   return valor ? new Set(valor) : null;
 }
@@ -90,7 +107,10 @@ export async function rutasDelSitemap(): Promise<Set<string> | null> {
 export async function comprobacionesPublicas(): Promise<Comprobacion[]> {
   const { valor } = await memo("gsc:publicas", 30 * 60_000, async () => {
     const [portada, robots, sitemap] = await Promise.all([traer(`${CASA_OFICIAL}/`), traer(`${CASA_OFICIAL}/robots.txt`), traer(`${CASA_OFICIAL}/sitemap.xml`)]);
-    const urls = sitemap?.estado === 200 ? (sitemap.texto.match(/<loc>/g) ?? []).length : 0;
+    // v421.4 — el número tiene que ser el de PÁGINAS: si /sitemap.xml es un
+    // índice, se cuentan las URLs de sus hijos (antes decía «7 URLs»).
+    const publicadas = sitemap?.estado === 200 ? await urlsDelSitemap(CASA_OFICIAL) : null;
+    const urls = publicadas?.length ?? 0;
     const bloquea = robots?.estado === 200 && /User-Agent:\s*(\*|Googlebot)\s*\n(?:[^\n]*\n)*?Disallow:\s*\/\s*$/im.test(robots.texto);
     const lista: Comprobacion[] = [
       {
