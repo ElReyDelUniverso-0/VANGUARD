@@ -59,9 +59,12 @@ export function BancoEjercicios() {
               Entrenamiento Activo · Estilo Brilliant
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          {/* v421.1 — era <h2>: la página entera no tenía ni un <h1> (medido en
+              vivo el 2026-11-19). Este es el título real de /academia/ejercicios
+              y su único consumidor, así que sube a <h1> sin duplicar nada. */}
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Banco de Ejercicios y Retos Prácticos
-          </h2>
+          </h1>
           <p className="text-xs sm:text-sm text-slate-300">
             Problemas cuantitativos, dilemas estratégicos y escenarios reales con pistas pedagógicas escalonadas y enlaces directos a simuladores interactivos de Vanguard.
           </p>

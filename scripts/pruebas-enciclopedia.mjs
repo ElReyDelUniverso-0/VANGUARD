@@ -297,7 +297,7 @@ await prueba("las rutas de la enciclopedia están en el sitemap, el directorio y
   afirmar(D.destinos().some((d) => d.ruta === "/conocimiento/enciclopedia"), "no es un destino del directorio");
   afirmar(N.MODULOS_NUCLEO.some((m) => m.ruta === "/conocimiento/enciclopedia"), "no está en MODULOS_NUCLEO");
   const { readFileSync } = await import("node:fs");
-  afirmar(readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8").includes("rutasEnciclopedia()"), "el sitemap no la incluye");
+  afirmar(readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8").includes("rutasEnciclopedia()"), "el sitemap no la incluye");
   afirmar(readFileSync(join(RAIZ, "src/components/conocimiento/puentes-pais.tsx"), "utf8").includes("articulosDePais"), "la ficha de país no la enlaza");
   afirmar(readFileSync(join(RAIZ, "src/components/conocimiento/explorador.tsx"), "utf8").includes("/conocimiento/enciclopedia"), "el explorador no la enlaza");
 });

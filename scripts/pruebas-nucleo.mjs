@@ -476,7 +476,7 @@ async function parteA() {
     afirmar(rel.includes("/comparador?p=") && rel.includes("organizacionesDePais") && rel.includes("rutaRegionDe"), "enlacesDePais no lleva al comparador, la región y los bloques");
     const ficha = leer("src/app/mundos/[iso]/page.tsx");
     afirmar(ficha.includes("en el planeta") && ficha.includes("puestoDe") && ficha.includes("/organizaciones/"), "la ficha del país no muestra sus puestos ni sus bloques");
-    const sm = leer("src/app/sitemap.ts");
+    const sm = leer("src/lib/seo/mapa.ts");
     afirmar(sm.includes("subregiones()") && sm.includes("ORGANIZACIONES") && sm.includes("COLECCIONES") && sm.includes("INDICADORES"), "el sitemap no anuncia los centros del planeta");
     const datos = leer("src/lib/planeta/datos.ts");
     afirmar(datos.includes('from "@/lib/mundos/ficha"'), "la tabla del planeta debe leer la ficha canónica, no otra fuente");
@@ -2263,7 +2263,7 @@ async function parteB() {
   // 1·1·4·5·4·3 y 6·4·3·3·2 en el orden de la fuente.
   await verificar("LA SALA DE LOS SERVICIOS estática: las dos fuentes, los censos derivados y las líneas compuestas (v281)", () => {
     const sala = readFileSync(join(RAIZ, "src/app/servicios/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     // las DOS fuentes viajan (nada a mano)
     afirmar(sala.includes('from "@/lib/agencias-data"'), "la sala no importa la fuente de la Comunidad (v127)");
     afirmar(sala.includes('from "@/lib/agencias-mundo-data"'), "la sala no importa la fuente de la Red (v128)");
@@ -2362,7 +2362,7 @@ async function parteB() {
   await verificar("EL TABLERO DE LOS CONFLICTOS estática: la fuente intacta, el censo derivado y las puertas honestas (v284)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/conflictos/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente intacta: 33 regiones (el borde del slice custodiado)
     afirmar(fuente.includes("export const CONFLICTS"), "la fuente de conflictos no existe");
@@ -2439,7 +2439,7 @@ async function parteB() {
   await verificar("LA ARMERÍA DEL ARCHIVO estática: la fuente intacta, la línea derivada y las puertas de la casa (v283)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/arsenal-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/armeria/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente intacta: las 12 armas uno a uno (el borde del slice custodiado)
     afirmar(fuente.includes("export const ARSENAL"), "la fuente de armas no existe");
@@ -2621,7 +2621,7 @@ async function parteB() {
   await verificar("LAS DIVISAS DEL PLANETA estática: la fuente REAL intacta y todo derivado (v296)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/world-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/divisas/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente intacta: los dos bloques con sus censos reales (el
     // comentario dice 251 países; el dato de divisas mide 247 — manda el dato)
@@ -2718,7 +2718,7 @@ async function parteB() {
   await verificar("EL PODER MUNDIAL estática: la captura REAL intacta y todo derivado (v297)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/poder-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/poder/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la captura intacta: la fuente citada, los tres indicadores y la fecha declarada
     afirmar(fuente.includes("api.worldbank.org"), "la fuente no cita el Banco Mundial");
@@ -2806,7 +2806,7 @@ async function parteB() {
   await verificar("LA FOTOTECA DEL PLANETA estática: el dataset REAL verificado contra el disco y todo derivado (v298)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/imagenes-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/galeria/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // el dataset intacto: 50 entradas censadas por patrón, las 5 categorías
     const nE = (fuente.match(/\{ id: "/g) ?? []).length;
@@ -2980,7 +2980,7 @@ async function parteB() {
   await verificar("LA BIBLIOTECA OSCURA estática: la fuente intacta (43 entradas con fuente real), la sala derivada y las puertas (v301)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/oscura-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/oscura/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente intacta: las 4 colecciones con su censo real
     const nT = (fuente.match(/id: "t-/g) ?? []).length;
@@ -4295,7 +4295,7 @@ async function parteB() {
   await verificar("LA VERDAD CRUDA estática: la fuente documentada intacta y todo derivado (v295)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/dark-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/verdad-cruda/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente intacta: los cinco bloques con sus censos reales
     afirmar(fuente.includes("export const WAR_ABUSES"), "la fuente de abusos no existe");
@@ -4410,7 +4410,7 @@ async function parteB() {
   await verificar("EL ATLAS DEL PLANETA estática: la fuente REAL intacta y todo derivado (v294)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/atlas-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/atlas/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente intacta: los tres bloques con sus censos reales (el dato
     // manda: la cabeza de la fuente dice 70 personas, el dato dice 69)
@@ -4508,7 +4508,7 @@ async function parteB() {
   await verificar("EL ARCHIVO MUNDIAL estática: la fuente REAL intacta y todo derivado (v293)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/archive-data.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/archivo-mundial/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente intacta: los cuatro bloques con sus censos reales
     afirmar(fuente.includes("export const CURIOSITIES"), "la fuente de curiosidades no existe");
@@ -4780,7 +4780,7 @@ async function parteB() {
   // COLECCION_ROSTROS (ya derivada en la fuente con Set+filter+reduce).
   await verificar("LOS ROSTROS DEL PODER estática: la fuente, el censo derivado, las leyendas de la fuente, las líneas compuestas y las cifras servidas (v286)", () => {
     const sala = readFileSync(join(RAIZ, "src/app/rostros/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
     // la fuente viaja (nada a mano)
     afirmar(sala.includes('from "@/lib/personas-data"'), "la sala no importa la fuente de los rostros");
@@ -5168,7 +5168,7 @@ async function parteB() {
   await verificar("EL ARCHIVO DE LA HISTORIA estática: la fuente de 10 guerras intacta y la sala la sirve derivada (v274)", () => {
     const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
     const pag = readFileSync(join(RAIZ, "src/app/historia/page.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     // la fuente intacta: las 10 guerras con sus años reales
     afirmar(fuente.includes("export const HISTORICAL_WARS"), "la fuente de guerras históricas no existe");
     const iniH = fuente.indexOf("export const HISTORICAL_WARS");
@@ -5451,7 +5451,7 @@ async function parteB() {
   // El tamaño de página vive en la FUENTE (teatros.ts): sala y mapa derivan
   // con el mismo número.
   await verificar("EL MAPA DEL ARCHIVO estática: el sitemap anuncia el archivo entero y las páginas profundas derivadas de la count real (v269)", () => {
-    const sm = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const sm = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const cat = readFileSync(join(RAIZ, "src/lib/teatros.ts"), "utf8");
     const sala = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
     // la fuente única del tamaño de página: el catálogo declara, sala y mapa consumen
@@ -5570,7 +5570,7 @@ async function parteB() {
   // cero findMany — y la puerta se anuncia en el sitemap.
   await verificar("EL PÓRTICO DE LAS SALAS estática: catálogo canónico, una groupBy con dos medidas y líneas compuestas en JS (v265)", () => {
     const portico = readFileSync(join(RAIZ, "src/app/conflicto/page.tsx"), "utf8");
-    const sm = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const sm = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     // las cards salen del catálogo canónico (la misma fuente única)
     afirmar(portico.includes("Object.entries(TEATROS).map"), "las salas del pórtico no salen del catálogo canónico");
     // UNA consulta con dos medidas: el censo, no las filas
@@ -7944,7 +7944,7 @@ async function parteB() {
     const panel = readFileSync(join(RAIZ, "src/components/vanguard/panels/teatro-total-panel.tsx"), "utf8");
     const tabNav = readFileSync(join(RAIZ, "src/components/vanguard/tab-nav.tsx"), "utf8");
     const home = readFileSync(join(RAIZ, "src/components/vanguard/home-panel.tsx"), "utf8");
-    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
     const vistas2d = readFileSync(join(RAIZ, "src/components/vanguard/teatro3d/vistas-2d.tsx"), "utf8");
     // VANGUARD #1 siempre al índice 0 en rankings, uniformes, escuadrones, armas, lugares, secciones y world tiles
     afirmar(data.indexOf("VANGUARD") >= 0 && data.indexOf("VANGUARD") < data.indexOf("OTAN"), "VANGUARD no abre en posición #1 en RANKING_DOCTRINAS");

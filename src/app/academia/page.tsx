@@ -16,6 +16,18 @@ import {
 import { DashboardEstudiante } from "@/components/vanguard/academia/DashboardEstudiante";
 import { CURSOS_ACADEMIA, CATEGORIAS_ACADEMIA } from "@/lib/academia/datos-cursos";
 import { RUTAS_PREDEFINIDAS } from "@/lib/academia/datos-rutas-glosario";
+import type { Metadata } from "next";
+
+// v421.1 LA CANÓNICA PROPIA — /academia respondía 200 con la canónica de la
+// portada (heredada del layout raíz). Una página que se declara duplicada de
+// otra no se indexa nunca. Aquí declara la suya, y el título mantiene la
+// intención de búsqueda real: «cursos», «academia», «aprender geopolítica».
+export const metadata: Metadata = {
+  title: "Vanguard Academy: cursos, rutas y certificados | VANGUARD",
+  description:
+    "Academia interactiva de VANGUARD: cursos modulares de geopolítica, economía e historia, rutas de estudio a medida, ejercicios numéricos, tarjetas y certificados.",
+  alternates: { canonical: "/academia" },
+};
 
 export default function PaginaPrincipalAcademia() {
   return (

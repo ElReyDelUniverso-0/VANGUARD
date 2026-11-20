@@ -20,7 +20,7 @@ const afirmar = (cond, msg) => {
 };
 
 const sala = readFileSync(join(RAIZ, "src/app/rostros/page.tsx"), "utf8");
-const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
 const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
 const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
 const bitacora = readFileSync(join(RAIZ, "src/lib/bitacora.ts"), "utf8");

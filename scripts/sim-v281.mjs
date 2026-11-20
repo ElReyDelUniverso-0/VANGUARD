@@ -16,7 +16,7 @@ const afirmar = (cond, msg) => {
 };
 
 const sala = readFileSync(join(RAIZ, "src/app/servicios/page.tsx"), "utf8");
-const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+const mapa = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
 const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
 
 // las DOS fuentes

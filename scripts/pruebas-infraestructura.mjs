@@ -222,7 +222,7 @@ verificar("las rutas del Atlas existen en src/app/", () => {
 
 // ── 11 · sitemap ──────────────────────────────────────────
 verificar("sitemap incluye las puertas del Atlas", () => {
-  const sm = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+  const sm = readFileSync(join(RAIZ, "src/lib/seo/mapa.ts"), "utf8");
   for (const u of ["/infraestructura", "/infraestructura/explorador", "/infraestructura/gran-obra"]) {
     afirmar(sm.includes(u), `sitemap sin ${u}`);
   }

@@ -30,6 +30,9 @@ import { ORGANIZACIONES } from "@/lib/planeta/organizaciones";
 import { COLECCIONES } from "@/lib/planeta/directorio";
 // v420.3 EL ATLAS DE INFRAESTRUCTURA — el catálogo, el explorador, las grandes obras y cada ficha de obra
 import { CATALOGO_INFRA } from "@/lib/infraestructura/catalogo";
+// v421.0 LAS FICHAS DE DATOS DE CADA PAÍS — el catálogo del Banco Mundial ya
+// dice qué países tienen hoja de datos; el mapa no inventa ni uno.
+import { catalogoPaises } from "@/lib/mundial/banco";
 
 // v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
 // «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
@@ -49,7 +52,7 @@ import { CATALOGO_INFRA } from "@/lib/infraestructura/catalogo";
 const MIN_CABLES_TEATRO = 1; // = regla de la página (items.length === 0 → 404)
 const SALAS_DEL_ARCHIVO = ["", "/guerra-hoy", "/en-vivo", "/conflicto", "/conflictos", "/modulo/conflictos"];
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
   // v202.0: puertas por noticia — cada cable vivo es una URL indexable
   // v269.0 EL MAPA DEL ARCHIVO: la cota de v207 (500) se quedó corta — el
   // archivo medido de la casa es 1877 y 1377 puertas quedaban fuera del
@@ -728,6 +731,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
+    // v421.0 LAS PUERTAS QUE FALTABAN — auditoría en vivo del 2026-11-19:
+    // cinco páginas responden 200, NO llevan noindex y NO estaban en el mapa.
+    // Google solo podía llegar a ellas por un enlace interno; ninguna se
+    // anunciaba. Se añaden aquí, no en un segundo sitio.
+    ...["/datos", "/tierra", "/sistema", "/inteligencia", "/navegacion"].map((r) => ({
+      url: `${SITE_URL}${r}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
   ];
 
   // ② y ③: fuera las salas noindex; lastmod real o ninguno
@@ -736,6 +748,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const fijas = estaticas
     .filter((e) => !internas.has(e.url))
     .map((e) => ({ ...e, lastModified: delArchivo.has(e.url) ? ultimaNoticia : undefined }));
+
+  // v421.0 LAS 200+ FICHAS DE DATOS NACIONALES — /datos-mundiales/pais/[iso]
+  // respondía 200 con 52 indicadores con fuente y no estaba en el mapa: solo
+  // se llegaba por enlace interno. Se enumeran del MISMO catálogo que usa la
+  // página (si un país no está en la fuente, su ficha es 404 y aquí no entra).
+  let paisesDatos: MetadataRoute.Sitemap = [];
+  try {
+    const paises = await catalogoPaises();
+    paisesDatos = paises
+      .filter((p) => /^[a-z]{2}$/.test(p.iso2))
+      .map((p) => ({
+        url: `${SITE_URL}/datos-mundiales/pais/${p.iso2}`,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }));
+  } catch {
+    /* si el banco de datos no responde, el resto del mapa queda intacto */
+  }
 
   // + sin duplicados
   const vistas = new Set<string>();
@@ -759,6 +789,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...teatros,
     ...noticias,
+    ...paisesDatos,
     ...rutasConocimiento().map((r) => ({
       url: `${SITE_URL}${r}`,
       changeFrequency: "monthly" as const,

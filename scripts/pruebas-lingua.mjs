@@ -85,7 +85,7 @@ await prueba("integración: buscador, registro, directorio, espacios, sitemap, l
   afirmar(leer("src/lib/planeta/directorio.ts").includes('id: "lenguas"'), "directorio");
   afirmar(leer("src/lib/navegacion/espacios.ts").includes('href: "/lingua"'), "espacios");
   afirmar(leer("src/components/portada/modulos.ts").includes('href: "/lingua"'), "portada");
-  afirmar(leer("src/app/sitemap.ts").includes("rutasLingua"), "sitemap");
+  afirmar(leer("src/lib/seo/mapa.ts").includes("rutasLingua"), "sitemap");
   afirmar(leer("src/app/llms.txt/route.ts").includes("## Lingua"), "llms.txt");
   afirmar(leer("src/app/mundos/[iso]/page.tsx").includes("<LenguasDelPais"), "ficha de país");
   afirmar(leer("src/lib/enciclopedia/articulos/historia.ts").includes('ruta: "/lingua'), "enciclopedia");

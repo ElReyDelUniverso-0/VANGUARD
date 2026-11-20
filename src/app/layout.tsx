@@ -117,10 +117,18 @@ export const metadata: Metadata = {
   creator: "Vanguard Command",
   publisher: "Vanguard Command",
   category: "news",
+  // v421.1 LA CANÓNICA QUE NO SE HEREDA — defecto medido el 2026-11-19.
+  //
+  // Aquí vivía `canonical: "/"`. Next HEREDA la metadata del layout en toda
+  // página hija que no declare la suya, así que cada página sin canónica
+  // propia le decía a Google, en su propio HTML: «mi versión de verdad es la
+  // portada». Medido en vivo: /academia y /academia/ejercicios respondían 200
+  // con canónica a `https://…/` — dos páginas reales pidiendo ser excluidas.
+  // (La portada NO pierde nada: src/app/page.tsx declara su canónica propia.)
+  //
+  // Se conserva solo el descubrimiento del feed (v210.0 EL REFUGIO): lectores
+  // RSS y agregadores detectan /feed.xml solos al abrir la Casa.
   alternates: {
-    canonical: "/",
-    // v210.0 EL REFUGIO: autodescubrimiento del feed — lectores RSS y
-    // agregadores de noticias detectan /feed.xml solos al abrir la Casa.
     types: {
       "application/rss+xml": "/feed.xml",
     },
