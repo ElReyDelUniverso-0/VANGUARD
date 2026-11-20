@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANGUARD · la nueva entrada (maqueta)</title>
+<style>
+:root{--vxe-fondo:#04060c;--vxe-tinta:#e9eef7;--vxe-tenue:#93a1b8;--vxe-filete:rgba(147,161,184,.18);--vxe-oro:#e8c56a;--vxe-cian:#22d3ee;--font-mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:#04060c;color:var(--vxe-tinta);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.vxe-ent{border-bottom:0}
+@keyframes vxe-subir{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes vxe-latido{0%{box-shadow:0 0 0 0 rgba(255,90,95,.6)}70%{box-shadow:0 0 0 7px rgba(255,90,95,0)}100%{box-shadow:0 0 0 0 rgba(255,90,95,0)}}
+@keyframes vxe-flota{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+.nota-maqueta{max-width:1080px;margin:0 auto;padding:12px 18px;font:11px/1.5 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#6f7d92;border-bottom:1px solid rgba(147,161,184,.14)}
+.barra-sup{display:flex;align-items:center;gap:14px;padding:12px clamp(18px,5vw,64px);border-bottom:1px solid rgba(147,161,184,.14);font-size:12px;color:#93a1b8}
+.barra-sup b{color:#e9eef7;letter-spacing:.22em;font-size:12px}
+/* ─────────────────────────── 1 · LA ENTRADA ───────────────────────
+   v431.3 · LA ENTRADA QUE SE EXPLICA
+   Orden de lectura forzado: nombre → qué es → a qué se viene → el mundo de
+   verdad → salida de emergencia. El globo y la aurora son decorado (CSS puro),
+   no portadores de información: si no cargan, no se pierde nada.
+   ─────────────────────────────────────────────────────────────────── */
+
+.vxe-ent {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: clamp(18px, 2.4vw, 30px);
+  min-height: min(90vh, 900px);
+  padding: clamp(34px, 5.6vw, 74px) clamp(18px, 5vw, 64px) clamp(58px, 6vw, 84px);
+  background:
+    radial-gradient(120% 86% at 84% 6%, rgba(34, 211, 238, 0.14), transparent 58%),
+    radial-gradient(86% 66% at 4% 104%, rgba(232, 197, 106, 0.13), transparent 62%),
+    linear-gradient(178deg, #05070e 0%, #04060c 58%, #030509 100%);
+  border-bottom: 1px solid var(--vxe-filete);
+}
+
+/* ── el fondo: aurora deriva, globo de alambre, grano fino ── */
+.vxe-ent-fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.vxe-ent-aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+  opacity: 0.5;
+}
+.vxe-ent-a1 {
+  width: 62vw; height: 40vw;
+  top: -16vw; right: -10vw;
+  background: radial-gradient(closest-side, rgba(34, 211, 238, 0.42), transparent 70%);
+  animation: vxe-deriva 26s ease-in-out infinite alternate;
+}
+.vxe-ent-a2 {
+  width: 54vw; height: 34vw;
+  bottom: -20vw; left: -14vw;
+  background: radial-gradient(closest-side, rgba(232, 197, 106, 0.34), transparent 70%);
+  animation: vxe-deriva 34s ease-in-out infinite alternate-reverse;
+}
+
+/* el globo: un círculo, tres meridianos y tres paralelos. Nada más. */
+.vxe-ent-globo {
+  position: absolute;
+  top: 50%;
+  right: clamp(-140px, -6vw, 0px);
+  width: min(48vw, 560px);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  background:
+    radial-gradient(circle at 34% 28%, rgba(34, 211, 238, 0.16), transparent 58%),
+    radial-gradient(circle at 70% 76%, rgba(232, 197, 106, 0.1), transparent 60%);
+  box-shadow: inset 0 0 90px rgba(34, 211, 238, 0.1), 0 0 90px rgba(0, 0, 0, 0.5);
+  opacity: 0.6;
+  animation: vxe-gira 140s linear infinite;
+}
+
+.vxe-ent-meridiano,
+.vxe-ent-paralelo {
+  position: absolute;
+  border: 1px solid rgba(147, 201, 224, 0.16);
+  border-radius: 50%;
+  inset: 0;
+}
+.vxe-ent-m1 { transform: scaleX(0.34); }
+.vxe-ent-m2 { transform: scaleX(0.68); }
+.vxe-ent-m3 { transform: scaleX(0.92); }
+.vxe-ent-p1 { transform: scaleY(0.34); }
+.vxe-ent-p2 { transform: scaleY(0.68); }
+.vxe-ent-p3 { transform: scaleY(0.92); }
+
+.vxe-ent-foco {
+  position: absolute;
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+  width: 7px; height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: #ff5a5f;
+  box-shadow: 0 0 0 0 rgba(255, 90, 95, 0.65);
+  animation: vxe-latido 3.2s ease-out infinite;
+}
+
+.vxe-ent-grano {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.022) 0 1px, transparent 1px 2px);
+  mix-blend-mode: overlay;
+}
+
+/* ── la caja: nombre, definición, puertas, cinta ── */
+.vxe-ent-caja {
+  position: relative;
+  z-index: 2;
+  width: min(760px, 100%);
+  animation: vxe-subir 720ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.vxe-ent-sello {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 clamp(14px, 2vw, 22px);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vxe-tenue);
+}
+.vxe-ent-sep { opacity: 0.4; }
+
+.vxe-ent-punto {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #ff5a5f;
+  box-shadow: 0 0 0 0 rgba(255, 90, 95, 0.7);
+  animation: vxe-latido 2.4s ease-out infinite;
+}
+
+.vxe-ent-cables { color: var(--vxe-oro); }
+
+.vxe-ent-titulo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vw, 18px);
+}
+
+/* el nombre, lo primero: que sepa dónde ha entrado */
+.vxe-ent-nombre {
+  position: relative;
+  display: block;
+  font-size: clamp(46px, 9.2vw, 122px);
+  line-height: 0.86;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  background: linear-gradient(96deg, #ffffff 6%, #d8ecff 44%, var(--vxe-oro) 98%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: vxe-subir 640ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* la línea de oro que subraya el nombre y se dibuja al entrar */
+.vxe-ent-nombre::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -12px;
+  height: 2px; width: 100%;
+  background: linear-gradient(90deg, var(--vxe-oro), rgba(232, 197, 106, 0));
+  transform-origin: left;
+  animation: vxe-tiende 900ms 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.vxe-ent-def {
+  display: block;
+  max-width: 26ch;
+  font-size: clamp(19px, 2.9vw, 34px);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: #eef3fa;
+  text-wrap: balance;
+}
+.vxe-ent-def em { font-style: normal; color: var(--vxe-oro); }
+
+.vxe-ent-lema {
+  margin: clamp(16px, 2.2vw, 24px) 0 0;
+  max-width: 62ch;
+  font-size: clamp(14.5px, 1.45vw, 16.5px);
+  line-height: 1.62;
+  color: #b8c6d8;
+}
+
+/* ── las cuatro puertas: verbo + qué hay dentro + ruta real ── */
+.vxe-ent-acciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: clamp(20px, 2.8vw, 30px) 0 0;
+}
+
+.vxe-puerta {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 10px;
+  align-items: baseline;
+  padding: 13px 34px 13px 14px;
+  text-align: left;
+  text-decoration: none;
+  color: var(--vxe-tinta);
+  border: 1px solid rgba(147, 161, 184, 0.22);
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+.vxe-puerta:hover,
+.vxe-puerta:focus-visible {
+  border-color: var(--vxe-oro);
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.12), rgba(232, 197, 106, 0.03));
+  transform: translateY(-2px);
+}
+.vxe-puerta:focus-visible { outline: 2px solid var(--vxe-oro); outline-offset: 2px; }
+
+.vxe-puerta-n {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--vxe-oro);
+}
+.vxe-puerta-t { font-size: 14.5px; font-weight: 650; letter-spacing: -0.01em; }
+.vxe-puerta-d {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--vxe-tenue);
+}
+.vxe-puerta-flecha {
+  position: absolute;
+  right: 12px; top: 13px;
+  font-size: 14px;
+  color: var(--vxe-tenue);
+  transition: color 160ms ease, transform 160ms ease;
+}
+.vxe-puerta:hover .vxe-puerta-flecha { color: var(--vxe-oro); transform: translateX(2px); }
+
+.vxe-puerta--mente { border-color: rgba(232, 197, 106, 0.42); }
+.vxe-puerta--mente .vxe-puerta-flecha { color: var(--vxe-oro); }
+
+/* ── la cinta: ocho puertas para el que se pierde ── */
+.vxe-ent-cinta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin-top: clamp(16px, 2vw, 22px);
+}
+.vxe-ent-cinta-rotulo {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6f7d92;
+  margin-right: 4px;
+}
+.vxe-ent-cinta a {
+  font-size: 12px;
+  color: #b8c6d8;
+  text-decoration: none;
+  padding: 3px 9px;
+  border: 1px solid rgba(147, 161, 184, 0.2);
+  border-radius: 999px;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+.vxe-ent-cinta a:hover { color: #fff; border-color: var(--vxe-oro); }
+
+/* ── los frentes de verdad, ahora mismo ── */
+.vxe-ent-frentes {
+  position: relative;
+  z-index: 2;
+  width: min(760px, 100%);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding-top: clamp(12px, 1.6vw, 16px);
+  border-top: 1px solid rgba(147, 161, 184, 0.14);
+  animation: vxe-subir 720ms 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.vxe-ent-frentes-rotulo {
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6f7d92;
+}
+.vxe-ent-frentes ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.vxe-ent-frentes a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-size: 12.5px;
+  color: #dbe4ee;
+}
+.vxe-ent-frente-nombre { border-bottom: 1px solid rgba(255, 90, 95, 0.45); }
+.vxe-ent-frente-n {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  color: #0a0d14;
+  background: var(--vxe-oro);
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+.vxe-ent-frentes-mas {
+  margin-left: auto;
+  font-size: 11.5px;
+  text-decoration: none;
+  color: var(--vxe-tenue);
+}
+.vxe-ent-frentes-mas:hover { color: var(--vxe-oro); }
+.vxe-ent-frentes-vacio { margin: 0; font-size: 12px; color: #6f7d92; }
+
+/* ── la flecha de bajar ── */
+.vxe-ent-bajar {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  z-index: 2;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #6f7d92;
+}
+.vxe-ent-bajar span { animation: vxe-flota 2.6s ease-in-out infinite; }
+.vxe-ent-bajar em { font-style: normal; }
+.vxe-ent-bajar:hover { color: var(--vxe-oro); }
+
+@keyframes vxe-gira {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+@keyframes vxe-deriva {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-4vw, 3vw, 0) scale(1.12); }
+}
+@keyframes vxe-tiende {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+/* ── dónde cabe el globo y dónde estorba ── */
+@media (max-width: 1279px) {
+  .vxe-ent-globo { width: min(70vw, 460px); right: -16vw; opacity: 0.34; }
+}
+@media (max-width: 820px) {
+  .vxe-ent-globo { opacity: 0.22; right: -28vw; }
+}
+
+</style>
+</head>
+<body>
+<p class="nota-maqueta">maqueta de la nueva entrada · los datos son de ejemplo · el CSS es el de la casa, copiado tal cual</p>
+<div class="barra-sup"><b>VANGUARD</b><span>portada</span><span style="margin-left:auto">en vivo</span></div>
+
+<section class="vxe-ent" aria-labelledby="t">
+  <div class="vxe-ent-fondo" aria-hidden>
+    <span class="vxe-ent-aurora vxe-ent-a1"></span>
+    <span class="vxe-ent-aurora vxe-ent-a2"></span>
+    <div class="vxe-ent-globo">
+      <span class="vxe-ent-meridiano vxe-ent-m1"></span>
+      <span class="vxe-ent-meridiano vxe-ent-m2"></span>
+      <span class="vxe-ent-meridiano vxe-ent-m3"></span>
+      <span class="vxe-ent-paralelo vxe-ent-p1"></span>
+      <span class="vxe-ent-paralelo vxe-ent-p2"></span>
+      <span class="vxe-ent-paralelo vxe-ent-p3"></span>
+      <span class="vxe-ent-foco" style="--x:58%;--y:34%"></span><span class="vxe-ent-foco" style="--x:55%;--y:47%"></span><span class="vxe-ent-foco" style="--x:60%;--y:44%"></span><span class="vxe-ent-foco" style="--x:63%;--y:52%"></span>
+    </div>
+    <span class="vxe-ent-grano"></span>
+  </div>
+
+  <div class="vxe-ent-caja">
+    <p class="vxe-ent-sello">
+      <span class="vxe-ent-punto" aria-hidden></span>
+      en vivo <span class="vxe-ent-sep" aria-hidden>·</span>
+      <span class="vxe-ent-hora">18:42 UTC</span>
+      <span class="vxe-ent-sep" aria-hidden>·</span>
+      <span class="vxe-ent-cables">24 cables abiertos</span>
+    </p>
+
+    <h1 id="t" class="vxe-ent-titulo">
+      <span class="vxe-ent-nombre">VANGUARD</span>
+      <span class="vxe-ent-def">El mundo <em>en directo</em>: qué pasa, dónde pasa y por qué.</span>
+    </h1>
+
+    <p class="vxe-ent-lema">Un periódico vivo del planeta —con la fuente a la vista— y, dentro, el mapa del mundo, un atlas de 196 países, simuladores, historia, ciencia, academia y un juego de guerra. En español. Gratis. Sin registrarte para leer.</p>
+
+    <div class="vxe-ent-acciones">
+      <a class="vxe-puerta" href="#"><span class="vxe-puerta-n">01</span><span class="vxe-puerta-t">Ver qué pasa</span><span class="vxe-puerta-d">La última hora del mundo, con su fuente a la vista.</span><span class="vxe-puerta-flecha" aria-hidden>→</span></a>
+      <a class="vxe-puerta" href="#"><span class="vxe-puerta-n">02</span><span class="vxe-puerta-t">Mirar el planeta</span><span class="vxe-puerta-d">El globo vivo: guerras, fronteras y mapas.</span><span class="vxe-puerta-flecha" aria-hidden>→</span></a>
+      <a class="vxe-puerta" href="#"><span class="vxe-puerta-n">03</span><span class="vxe-puerta-t">Jugar la misión</span><span class="vxe-puerta-d">El Cuartel: salas, misiones y mando.</span><span class="vxe-puerta-flecha" aria-hidden>→</span></a>
+      <button class="vxe-puerta vxe-puerta--mente" type="button"><span class="vxe-puerta-n">04</span><span class="vxe-puerta-t">Que te lleven</span><span class="vxe-puerta-d">LA MENTE te lleva a cualquier sala. Pídelo y te lleva.</span><span class="vxe-puerta-flecha" aria-hidden>◈</span></button>
+    </div>
+
+    <nav class="vxe-ent-cinta" aria-label="Otras puertas">
+      <span class="vxe-ent-cinta-rotulo">o entra por donde quieras</span>
+      <a href="#">Mapas</a><a href="#">Conocimiento</a><a href="#">Historia</a><a href="#">Academia</a><a href="#">Investigación</a><a href="#">Teatro 3D</a><a href="#">Radio</a><a href="#">Divisas</a>
+    </nav>
+  </div>
+
+  <aside class="vxe-ent-frentes">
+    <p class="vxe-ent-frentes-rotulo">frentes abiertos</p>
+    <ul><li><a href="#"><span class="vxe-ent-frente-nombre">Ucrania</span><span class="vxe-ent-frente-n">6</span></a></li><li><a href="#"><span class="vxe-ent-frente-nombre">Gaza</span><span class="vxe-ent-frente-n">5</span></a></li><li><a href="#"><span class="vxe-ent-frente-nombre">Irán</span><span class="vxe-ent-frente-n">4</span></a></li><li><a href="#"><span class="vxe-ent-frente-nombre">Taiwán</span><span class="vxe-ent-frente-n">3</span></a></li></ul>
+    <a class="vxe-ent-frentes-mas" href="#">todos los frentes →</a>
+  </aside>
+
+  <a class="vxe-ent-bajar" href="#"><span aria-hidden>↓</span><em>qué hay dentro</em></a>
+</section>
+</body>
+</html>

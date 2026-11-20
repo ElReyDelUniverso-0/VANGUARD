@@ -120,14 +120,32 @@ export default async function Portada() {
     })
     .filter((x) => x.lista.length >= 3);
 
+  // v431.3 · los frentes que se ven en la entrada son los de VERDAD: se cuentan
+  // los cables de la portada por conflicto. Si mañana no hay noticias de Gaza,
+  // Gaza desaparece de la entrada sola; no hay lista escrita a mano.
+  const cuenta: Record<string, number> = {};
+  for (const n of notas) {
+    if (n.conflicto) cuenta[n.conflicto] = (cuenta[n.conflicto] ?? 0) + 1;
+  }
+  const frentes = Object.entries(cuenta)
+    .map(([key, n]) => ({ key, nombre: conflictoPorKey(key)?.nombre ?? key, n }))
+    .sort((a, b) => b.n - a.n)
+    .slice(0, 6);
+  // la hora del sello es la del render (la página se regenera cada 5 min)
+  const hora = new Date().toISOString().slice(11, 16);
+
   return (
     <div className={`vx ${inter.variable}`}>
       <Cabecera ruta="/" />
+
+      {/* v431.3 · PRIMERO LA CASA SE EXPLICA — el Dueño, textual: «cuando entro
+          que sepa dónde uno entra a VANGUARD, porque VANGUARD nunca se explica
+          el mismo». El teletipo (una tira que se mueve) iba delante y no decía
+          nada a quien llegaba de un enlace: ahora abre LA ENTRADA y el teletipo
+          pasa justo detrás, como la última hora de lo que acabas de entender. */}
+      <Entrada cables={notas.length} frentes={frentes} hora={hora} />
       <Teletipo notas={notas} />
       <AvisoNuevas primera={notas[0]?.id ?? null} />
-
-      {/* v422.1 · LA ENTRADA — qué es esto, en cinco segundos, antes de las noticias */}
-      <Entrada cables={notas.length} />
 
       {/* NOVEDADES 2026: Vanguard Academy y Laboratorio de Motores */}
       <FocoAcademiaMotores />

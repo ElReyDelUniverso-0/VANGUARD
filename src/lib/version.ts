@@ -6960,8 +6960,13 @@
 // (anterior) export const APP_CODENAME = "RADIO VANGUARD";
 // (anterior) export const APP_VERSION = "v431.0";
 // (anterior) export const APP_CODENAME = "LA MENTE CON MANOS";
-export const APP_VERSION = "v431.2";
-export const APP_CODENAME = "RADIO VANGUARD";
+// v431.3 · LA ENTRADA SE EXPLICA — orden del Dueño, textual: «su inicio es feo
+// totalmente, no hay emoción, no hay nada; cuando entro que sepa dónde uno
+// entra a VANGUARD, porque VANGUARD nunca se explica el mismo… uno se pierde
+// mucho». La portada abre ahora con el nombre, qué es esto en una frase, cuatro
+// puertas con verbo, ocho salidas de emergencia y los frentes reales del día.
+export const APP_VERSION = "v431.3";
+export const APP_CODENAME = "LA ENTRADA SE EXPLICA";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";
