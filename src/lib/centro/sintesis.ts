@@ -22,6 +22,7 @@
 import { iaParalela, primerJSON } from "@/lib/ia-gateway";
 import type {
   Afirmacion,
+  AuditoriaCitas,
   Bibliografia,
   Comparacion,
   Informe,
@@ -109,14 +110,25 @@ export function validarAfirmaciones(
   crudas: CrudaAfirmacion[],
   mapa: Map<string, Pasaje>,
   fuentesReales: Set<string>
-): { afirmaciones: Afirmacion[]; invalidas: number; degradadas: number } {
+): {
+  afirmaciones: Afirmacion[];
+  invalidas: number;
+  degradadas: number;
+  presentadas: number;
+  descartadasTexto: number;
+  descartadasTope: number;
+} {
   const salida: Afirmacion[] = [];
   let invalidas = 0;
   let degradadas = 0;
+  let descartadasTexto = 0;
 
   for (const c of crudas.slice(0, 10)) {
     const texto = limitar(c.texto, 320);
-    if (texto.length < 12) continue;
+    if (texto.length < 12) {
+      descartadasTexto += 1;
+      continue;
+    }
     const claseCruda = String(c.clase ?? "").toUpperCase().trim() as ClaseAfirmacion;
     let clase: ClaseAfirmacion = CLASES.includes(claseCruda) ? claseCruda : "INTERPRETACION";
 
@@ -146,7 +158,45 @@ export function validarAfirmaciones(
       ...(nota ? { nota } : {}),
     });
   }
-  return { afirmaciones: salida, invalidas, degradadas };
+  return {
+    afirmaciones: salida,
+    invalidas,
+    degradadas,
+    presentadas: crudas.length,
+    descartadasTexto,
+    // las que el propio tope de diez deja fuera: se dicen, no se esconden
+    descartadasTope: Math.max(0, crudas.length - 10),
+  };
+}
+
+/** De los números de la validación a una frase que no adorne nada. */
+export function auditarCitas(
+  v: {
+    afirmaciones: Afirmacion[];
+    invalidas: number;
+    degradadas: number;
+    presentadas: number;
+    descartadasTexto: number;
+    descartadasTope: number;
+  },
+  citasDisponibles: number
+): AuditoriaCitas {
+  const publicables = v.afirmaciones.length;
+  const partes: string[] = [`${v.presentadas} afirmaciones presentadas → ${publicables} publicables`];
+  if (v.descartadasTexto) partes.push(`${v.descartadasTexto} vacías o demasiado cortas`);
+  if (v.descartadasTope) partes.push(`${v.descartadasTope} fuera por el tope de 10`);
+  if (v.degradadas) partes.push(`${v.degradadas} degradada(s) a NO CONFIRMADO por no citar una fuente del material`);
+  if (v.invalidas) partes.push(`${v.invalidas} cita(s) rechazada(s) por no existir en el material`);
+  partes.push(`${citasDisponibles} citas disponibles en el material`);
+  return {
+    presentadas: v.presentadas,
+    publicables,
+    descartadasTexto: v.descartadasTexto,
+    descartadasTope: v.descartadasTope,
+    degradadas: v.degradadas,
+    citasRechazadas: v.invalidas,
+    nota: partes.join(" · "),
+  };
 }
 
 // ── Respuesta determinista (sin modelo) ─────────────────────────────────
@@ -221,6 +271,7 @@ export async function investigar(enc: EncargoInvestigacion): Promise<Investigaci
   let base = determinista(pregunta, fuentes, validos);
   let invalidas = 0;
   let degradadas = 0;
+  let auditoriaCitas: AuditoriaCitas | undefined;
 
   if (!enc.sinModelo && validos.length) {
     const user = `PREGUNTA: ${pregunta}\n\nMATERIAL (sólo puedes usar esto):\n${texto}`;
@@ -231,6 +282,7 @@ export async function investigar(enc: EncargoInvestigacion): Promise<Investigaci
       const v = validarAfirmaciones(afs, mapa, mapaFuentes);
       invalidas = v.invalidas;
       degradadas = v.degradadas;
+      auditoriaCitas = auditarCitas(v, mapa.size);
       motor = "llm";
       base = {
         sintesis: limitar(json.sintesis, 1400),
@@ -275,6 +327,7 @@ export async function investigar(enc: EncargoInvestigacion): Promise<Investigaci
     generado: new Date().toISOString(),
     ms: Date.now() - inicio,
     avisos,
+    ...(auditoriaCitas ? { auditoriaCitas } : {}),
   };
 }
 

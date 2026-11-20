@@ -71,6 +71,24 @@ export interface Afirmacion {
 
 export type Motor = "llm" | "determinista";
 
+/** La cuenta de la validación de citas: qué se presentó y qué se cayó. */
+export interface AuditoriaCitas {
+  /** afirmaciones que presentó el modelo (antes de validar) */
+  presentadas: number;
+  /** las que se publican con su clase y sus citas */
+  publicables: number;
+  /** se cayeron por llegar vacías o demasiado cortas para ser una afirmación */
+  descartadasTexto: number;
+  /** se cayeron por el tope de afirmaciones por investigación */
+  descartadasTope: number;
+  /** presentadas como HECHO sin cita válida: se degradan a NO CONFIRMADO */
+  degradadas: number;
+  /** citas concretas rechazadas porque no existen en el material */
+  citasRechazadas: number;
+  /** una frase para la interfaz; nunca adorno */
+  nota: string;
+}
+
 export interface Investigacion {
   pregunta: string;
   /** síntesis directa en prosa (puede venir de modelo o de extractos) */
@@ -95,6 +113,8 @@ export interface Investigacion {
   ms: number;
   /** avisos honestos del servidor (proveedor caído, PDF parcial, etc.) */
   avisos: string[];
+  /** la cuenta de la validación de citas, si hubo modelo que validar */
+  auditoriaCitas?: AuditoriaCitas;
 }
 
 export interface Contradiccion {

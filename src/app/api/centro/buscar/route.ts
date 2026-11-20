@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { claveCliente, muro, sanitizarLinea } from "@/lib/fortaleza";
-import { buscarFuentes, censoCorpus, fuentesVivas } from "@/lib/centro/corpus";
+import { buscarConPoda, censoCorpus, fraseDePoda, fuentesVivas } from "@/lib/centro/corpus";
 import type { ViaFuente } from "@/lib/centro/tipos";
 
 // v419.1 · LA CÁMARA DE INTELIGENCIA — paso 1: encontrar de dónde citar.
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
   const vias = Array.isArray(cuerpo.vias) ? (cuerpo.vias as string[]).filter((x): x is ViaFuente => VIAS.includes(x as ViaFuente)) : [];
 
-  const candidatas = buscarFuentes(pregunta, { vias: vias.length ? vias : undefined, limite: 14 });
+  const { candidatas, poda } = buscarConPoda(pregunta, { vias: vias.length ? vias : undefined, limite: 14 });
   const vivas = cuerpo.vivo === false ? [] : await fuentesVivas(pregunta, 6);
 
   const avisos: string[] = [];
@@ -48,13 +48,18 @@ export async function POST(req: NextRequest) {
     avisos.push(
       "Ninguna fuente de la casa habla de esto con esas palabras. Prueba otros términos, restringe menos vías o sube un documento tuyo."
     );
+  } else if (!candidatas.length) {
+    avisos.push("El corpus fijo de la casa no tiene nada con esas palabras; lo que hay abajo viene del feed vivo del núcleo, no de un dossier.");
   }
+  // La poda se dice SIEMPRE que haya algo que contar: qué se usó y qué no.
+  if (candidatas.length) avisos.push(fraseDePoda(poda));
 
   return NextResponse.json({
     ok: true,
     pregunta,
     candidatas,
     vivas,
+    poda,
     censo: censoCorpus(),
     avisos,
   });

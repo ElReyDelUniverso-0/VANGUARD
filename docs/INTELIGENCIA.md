@@ -343,3 +343,61 @@ porque la fuente única de versión la mueve otro departamento en el mismo `main
 este trabajo entra como commits `85486db` (organizador + navegación + auditoría)
 y el de esta medición. La sala se sirve con esos cambios (comprobado en el HTML
 publicado), no con un número nuevo.
+
+---
+
+## 13. Lo que se cayó, dicho (v421.1)
+
+Dos silencios quedaban en la Cámara: la búsqueda devolvía catorce fuentes y no
+decía cuántas hablaban del asunto sin caber; y la validación de citas contaba
+citas pero no afirmaciones. Los dos se cierran contando en voz alta.
+
+### 13.1 La poda de candidatas
+
+Antes: `buscarFuentes` puntuaba el corpus y hacía un `slice(0, 14)` mudo. Ahora
+`buscarConPoda` devuelve **la lista y la cuenta**, con los cinco motivos
+separados: cuántas fuentes tiene el corpus, cuántas se examinaron con las vías
+elegidas, cuántas quedaron fuera de vías, cuántas hablan del asunto, cuántas se
+devuelven, cuántas se caen por el tope y cuántas no llegan al umbral (`0.15`).
+El aviso se redacta con `fraseDePoda()` y la interfaz lo pinta encima de la
+lista de selección, para que el operador sepa qué NO está viendo.
+
+Medido con el corpus real (181 fuentes, 1 234 pasajes):
+
+| Pregunta | Devueltas | Hablan del asunto | Fuera por puntuación | No mencionan el asunto |
+|---|---|---|---|---|
+| litografía ultravioleta extrema | 14 | 25 | 11 | 156 |
+| gasto militar de la OTAN en el Báltico | 14 | 19 | 5 | 162 |
+| estrecho de Malaca, cuellos de botella | 14 | 20 | 6 | 161 |
+| «zebras con sombrero de paja» | 0 | 0 | 0 | 181 |
+
+La última fila importa: cuando no hay nada, se dice que se examinaron 181 y que
+ninguna llega al umbral. No se rellena con lo menos malo.
+
+### 13.2 La validación de citas
+
+`validarAfirmaciones` devolvía tres números (publicables, citas inválidas,
+degradadas). Ahora devuelve también **cuántas se presentaron, cuántas se
+cayeron por llegar vacías o demasiado cortas y cuántas se quedaron fuera por el
+tope de diez**; la investigación expone `auditoriaCitas` con esos contadores y
+una nota de una línea que la interfaz muestra en su propio bloque
+(«Validación de citas»).
+
+Prueba con trece afirmaciones sintéticas (dos vacías o cortas, tres por encima
+del tope, una presentada como hecho citando una fuente inexistente, dos citas
+inventadas):
+
+```
+13 afirmaciones presentadas → 8 publicables · 2 vacías o demasiado cortas ·
+3 fuera por el tope de 10 · 1 degradada(s) a NO CONFIRMADO por no citar una
+fuente del material · 2 cita(s) rechazada(s) por no existir en el material ·
+2 citas disponibles en el material
+```
+
+Ninguna afirmación se borra por no tener cita: si decía HECHO y no puede
+sostenerlo, **se degrada y se declara** (regla que ya existía); lo que se añade
+es que ahora también se cuenta lo que ni siquiera llegó a publicarse.
+
+**Límite declarado:** los contadores son de la validación, no de la verdad. Una
+afirmación con cita válida puede seguir siendo falsa si la fuente lo es; lo que
+la Cámara garantiza es que la cita existe en el material y que se puede abrir.

@@ -202,16 +202,45 @@ export interface FuenteCandidata extends Fuente {
 }
 
 /**
- * Devuelve las fuentes de la casa que hablan de la pregunta, ordenadas.
- * `vias` permite al operador restringir («sólo dossiers», «sólo países»).
+ * La PODA, contada. La casa tenía un `slice` silencioso: si treinta fuentes
+ * hablaban del asunto y se devolvían catorce, el operador nunca sabía que
+ * existían las otras dieciséis. Aquí se cuenta todo lo que se cae y por qué.
  */
-export function buscarFuentes(
+export interface PodaCandidatas {
+  /** fuentes del corpus total (todas las vías) */
+  total: number;
+  /** las examinadas con las vías pedidas */
+  examinadas: number;
+  /** descartadas antes de puntuar: su vía estaba excluida */
+  fueraDeVias: number;
+  /** las que sí hablan del asunto (superan el umbral) */
+  relevantes: number;
+  /** las que se devuelven al operador */
+  devueltas: number;
+  /** hablan del asunto pero no caben en el tope: fuera por puntuación */
+  porTope: number;
+  /** no llegan al umbral: el asunto no aparece en ellas */
+  bajoUmbral: number;
+  umbral: number;
+}
+
+export interface BusquedaPodada {
+  candidatas: FuenteCandidata[];
+  poda: PodaCandidatas;
+}
+
+const UMBRAL = 0.15;
+const TOPE = 14;
+
+/** Todas las fuentes que hablan del asunto, sin recortar. */
+function candidatasDe(
   pregunta: string,
-  opts: { vias?: ViaFuente[]; limite?: number } = {}
-): FuenteCandidata[] {
+  opts: { vias?: ViaFuente[] }
+): { todas: FuenteCandidata[]; examinadas: number; total: number } {
   const q = terminos(pregunta);
-  if (!q.length) return [];
-  const corpus = corpusFijo().filter((e) => !opts.vias?.length || opts.vias.includes(e.fuente.via));
+  const completo = corpusFijo();
+  if (!q.length) return { todas: [], examinadas: 0, total: completo.length };
+  const corpus = completo.filter((e) => !opts.vias?.length || opts.vias.includes(e.fuente.via));
   const idf = idfDe(corpus.map((e) => e.texto));
   const salida: FuenteCandidata[] = [];
 
@@ -219,7 +248,7 @@ export function buscarFuentes(
     const enTitulo = puntuar(q, e.fuente.titulo + " " + e.tituloTerminos.join(" "), idf) * 2.2;
     const enCuerpo = puntuar(q, e.texto, idf);
     const puntos = enTitulo + enCuerpo;
-    if (puntos <= 0.15) continue;
+    if (puntos <= UMBRAL) continue;
     const ordenados = e.pasajes
       .map((p) => ({ p, s: puntuar(q, p.texto, idf) }))
       .filter((x) => x.s > 0)
@@ -233,7 +262,56 @@ export function buscarFuentes(
   }
 
   salida.sort((a, b) => b.puntos - a.puntos);
-  return salida.slice(0, opts.limite ?? 14);
+  return { todas: salida, examinadas: corpus.length, total: completo.length };
+}
+
+/**
+ * Devuelve las fuentes que hablan de la pregunta **y la cuenta de la poda**.
+ * `vias` permite al operador restringir («sólo dossiers», «sólo países»).
+ */
+export function buscarConPoda(
+  pregunta: string,
+  opts: { vias?: ViaFuente[]; limite?: number } = {}
+): BusquedaPodada {
+  const tope = opts.limite ?? TOPE;
+  const { todas, examinadas, total } = candidatasDe(pregunta, opts);
+  const candidatas = todas.slice(0, tope);
+  return {
+    candidatas,
+    poda: {
+      total,
+      examinadas,
+      fueraDeVias: total - examinadas,
+      relevantes: todas.length,
+      devueltas: candidatas.length,
+      porTope: Math.max(0, todas.length - candidatas.length),
+      bajoUmbral: examinadas - todas.length,
+      umbral: UMBRAL,
+    },
+  };
+}
+
+/**
+ * Devuelve las fuentes de la casa que hablan de la pregunta, ordenadas.
+ * (Firma histórica: sin la cuenta de la poda. Para contarla, `buscarConPoda`.)
+ */
+export function buscarFuentes(
+  pregunta: string,
+  opts: { vias?: ViaFuente[]; limite?: number } = {}
+): FuenteCandidata[] {
+  return buscarConPoda(pregunta, opts).candidatas;
+}
+
+/** La poda en una frase, para el aviso que ve el operador. */
+export function fraseDePoda(p: PodaCandidatas): string {
+  if (!p.relevantes) {
+    return `Se examinaron ${p.examinadas} fuentes de la casa y ninguna llega al umbral (${p.umbral}).`;
+  }
+  const partes = [`Se usaron ${p.devueltas} de ${p.relevantes} fuentes que hablan del asunto`];
+  if (p.porTope) partes.push(`${p.porTope} quedaron fuera por puntuación, no por falta de datos`);
+  if (p.fueraDeVias) partes.push(`${p.fueraDeVias} no se examinaron por las vías elegidas`);
+  if (p.bajoUmbral) partes.push(`${p.bajoUmbral} no mencionan el asunto`);
+  return partes.join("; ") + ".";
 }
 
 /** Los pasajes de las fuentes elegidas que de verdad responden a la pregunta. */

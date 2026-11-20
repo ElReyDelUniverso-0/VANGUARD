@@ -101,6 +101,8 @@ export default function CentroInteligencia({
   const [vias, setVias] = useState<ViaFuente[]>([]);
   const [buscando, setBuscando] = useState(false);
   const [candidatas, setCandidatas] = useState<Candidata[]>([]);
+  // la cuenta de lo que se usó y de lo que quedó fuera (poda explícita)
+  const [poda, setPoda] = useState<{ relevantes: number; devueltas: number; porTope: number; bajoUmbral: number; fueraDeVias: number; examinadas: number } | null>(null);
   const [vivas, setVivas] = useState<Candidata[]>([]);
   const [elegidas, setElegidas] = useState<string[]>([]);
   const [investigando, setInvestigando] = useState(false);
@@ -171,6 +173,7 @@ export default function CentroInteligencia({
       }
       setCandidatas(j.candidatas ?? []);
       setVivas(j.vivas ?? []);
+      setPoda(j.poda ?? null);
       // preselección honesta: las tres mejores, para que el operador pueda
       // investigar en un clic sin dejar de elegir
       setElegidas([...(j.candidatas ?? []).slice(0, 3).map((c: Candidata) => c.id)]);
@@ -529,6 +532,15 @@ export default function CentroInteligencia({
               nota={`${elegidas.length} marcada(s)`}
               tono="cyan"
             >
+              {poda ? (
+                <p className="mb-2 border-l-2 border-amber/60 pl-2 font-mono text-[11.5px] leading-snug text-muted-foreground">
+                  Se usaron <b className="text-foreground">{poda.devueltas}</b> de{" "}
+                  <b className="text-foreground">{poda.relevantes}</b> fuentes que hablan del asunto
+                  {poda.porTope ? `; ${poda.porTope} quedaron fuera por puntuación, no por falta de datos` : ""}
+                  {poda.bajoUmbral ? `; ${poda.bajoUmbral} de las ${poda.examinadas} examinadas no mencionan el asunto` : ""}
+                  {poda.fueraDeVias ? `; ${poda.fueraDeVias} no se examinaron por las vías elegidas` : ""}.
+                </p>
+              ) : null}
               <div className="space-y-2">
                 {candidatas.map((c) => (
                   <label
@@ -1252,6 +1264,12 @@ function PanelInvestigacion({ inv }: { inv: Investigacion }) {
         <div className="mt-2">
           <Barra valor={inv.confianza} tono={inv.confianza > 66 ? "cyan" : inv.confianza > 33 ? "amber" : "rojo"} />
         </div>
+        {inv.auditoriaCitas ? (
+          <Bloque titulo="Validación de citas" nota="lo que el modelo presentó y lo que pasó el filtro">
+            <p className="font-mono text-[12px] leading-relaxed text-muted-foreground">{inv.auditoriaCitas.nota}</p>
+          </Bloque>
+        ) : null}
+
         {inv.avisos.length ? (
           <ul className="mt-2 space-y-1">
             {inv.avisos.map((a, i) => (
