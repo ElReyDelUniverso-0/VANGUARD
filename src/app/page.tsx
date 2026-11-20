@@ -40,6 +40,7 @@ import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 // v406.0 LA TRAVESÍA — el hilo (continúa donde lo dejaste) y la puerta a la entrada inmersiva
 import { HiloPortada, BotonTravesia, BotonDirectorio } from "@/components/travesia/hilo-portada";
 import { DescubreHoy, NovedadesPortada } from "@/components/portada/portada-nueva";
+import { ParaTi } from "@/components/vida/para-ti";
 // v422.1 REBIRTH · la entrada del ecosistema (MISIÓN: dejar de ser «un diario
 // con módulos» y ser una casa con diez familias). Tres piezas nuevas, todas
 // de servidor: la entrada cinematográfica, el mapa de las diez familias y la
@@ -138,6 +139,9 @@ export default async function Portada() {
 
         {/* v422.1 · LA PORTADA VIVA — cuatro registros reales abiertos cada día */}
         <PortadaViva />
+
+        {/* v421.9 VIDA · PARA TI — el carril que aprende de tus impresiones */}
+        <ParaTi />
 
         <div id="historias" className="vx-entra">
           <TituloSeccion sello="Sección 03 · El mundo, hoy" titulo="Las historias del día" sub="Cada frente abierto, con sus cables y su hora." enlace="/conflictos" textoEnlace="Todos los conflictos" />

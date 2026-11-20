@@ -20,3 +20,13 @@
 - Producción: proyecto `vanguard-kq9r` (`prj_uJKJQvYBrY8wRtsS82Jl73cmj1lB`), build `dpl_8GuMpetd691hZcWSduqK97jJ2nuK` — READY y PROMOTED, commit `c6a9fd0` de `main`.
 - URL: https://vanguard-kq9r.vercel.app — `/worlds` responde 200 (235 KB) con los cinco mundos renderizados y cabecera **v422.0**.
 - Sitemap: `/worlds` indexado en `/sitemaps/mapas/sitemap.xml`; llms.txt y la constelación INTELIGENCIA (19 salas) lo anuncian; la portada muestra la pestaña «Mundos vivos». Todas las puertas linkeadas responden 200.
+
+### v422.2 · MISIÓN 05 — VIDA (2026-11-19)
+- **Mandato**: «que Vanguard sea hermoso y dopamínico; el menú no se ve interactivo ni cambiado».
+- **Lo construido**: capa de identidad `src/app/vida.css` (paleta de cinco familias, Inter —ya descargada, cero bytes nuevos—, aurora de cuatro orbes, foco que sigue al puntero, cabecera y barra de pestañas animadas, tarjetas con borde de luz, cortina de arranque de 1,7 s una vez por sesión, aparición al desplazar) + cuatro componentes cliente nuevos `components/vida/{aurora,cortina,orbita,para-ti}` + el motor `lib/vida/algoritmo.ts`.
+- **El menú**: la órbita —botón flotante con los diez módulos reales de `modulos.ts`, su color y entrada escalonada; cierra con Esc, con un toque fuera o al elegir; `aria-expanded` real; no aparece en `/vanguard2`—. Se SUMA a la cabecera de 03 y a la barra adaptativa: no se sustituye nada.
+- **Algoritmo de impresiones**: favoritos (+8), aperturas (+2,2 × min(aperturas,8)), afinidad de grupo (+1,4 ×), novedad (+3 × olvido) y repetición reciente (−4 × decaimiento, vida media 3 días). Determinista (desempate por hash) y **explicable**: cada recomendación dice su razón. Todo en el aparato; nada viaja al servidor.
+- **El carril «Para ti»** en la portada: tu tarjeta (degradado estable por persona, inicial, nombre de `/api/auth/me`) y seis puertas ordenadas por tu uso.
+- **Pruebas**: `node scripts/pruebas-vida.mjs` → **20 pasan · 0 fallan** (determinismo, saturación, olvido simétrico, afinidad, almacén corrupto, formato zustand de `vg171-favoritos`, tonos estables, razones siempre legibles). Una prueba falló y destapó un fallo real del modelo (lo visto hace un mes seguía castigado): se corrigió el modelo, no la prueba.
+- **Accesibilidad**: respeta los tres niveles de `data-vg-anim` y `prefers-reduced-motion`; la aurora solo anima `transform`/`opacity`; la cortina no se gasta en pestaña oculta (prefetch).
+- **Documentación**: `docs/VIDA.md`.

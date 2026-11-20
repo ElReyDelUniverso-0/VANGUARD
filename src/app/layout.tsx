@@ -32,6 +32,9 @@ import "./animaciones-generadas.css";
 // rompía la resolución del módulo).
 import "./memoria/memoria.css";
 import "./movil.css";
+// v421.9 VIDA — capa de identidad (color, letra, luz y movimiento). Va la última
+// a propósito: a igual especificidad, gana; no usa !important contra nadie.
+import "./vida.css";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
@@ -57,6 +60,10 @@ import { SoloCasa } from "@/components/vanguard2/solo-casa";
 import { FueraDePortada } from "@/components/portada/fuera-de-portada";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
 import { MenuVanguardMount } from "@/components/vanguard/menu-vanguard-mount";
+// v421.9 VIDA — aurora, cortina de arranque y órbita (menú vivo)
+import { Aurora } from "@/components/vida/aurora";
+import { Cortina } from "@/components/vida/cortina";
+import { Orbita } from "@/components/vida/orbita";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
@@ -962,6 +969,10 @@ try{
             <CapasGlobales />
           </SoloCasa>
         </FueraDePortada>
+        {/* v421.9 VIDA: el fondo respira, el arranque se siente, el menú orbita */}
+        <Aurora />
+        <Cortina />
+        <Orbita />
         <MenuVanguardMount />
         <Toaster />
         <Sonner />

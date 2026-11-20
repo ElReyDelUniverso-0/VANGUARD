@@ -1,0 +1,688 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v421.9 · VIDA — LA CAPA QUE LE DA PULSO A LA CASA
+   Agente 05 · identidad visual
+
+   QUÉ ES: una capa de identidad encima de lo que ya existe. No reescribe
+   ninguna hoja anterior ni ningún componente de otro agente: cambia COLOR,
+   LETRA, LUZ y MOVIMIENTO. Nada de geometría (ni anchos, ni rejillas, ni
+   posiciones), para que ninguna sala se rompa.
+
+   REGLAS DE LA CASA QUE RESPETA:
+   · `data-vg-anim` (v416.0): «reducidas» acorta, «desactivadas» apaga todo.
+   · prefers-reduced-motion: mismas garantías sin depender del script.
+   · Los tokens viejos siguen mandando: esta capa los empuja, no los sustituye.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── paleta dopamínica: cinco familias, todas sobre fondo profundo ── */
+  --vida-1: #7c5cff; /* violeta eléctrico */
+  --vida-2: #22d3ee; /* cian de radar */
+  --vida-3: #ff4d8d; /* rosa señal */
+  --vida-4: #ffd166; /* ámbar de mando */
+  --vida-5: #34d399; /* verde de conquista */
+
+  --vida-tinta: #f6f4ff;
+  --vida-fondo: #04050c;
+  --vida-cristal: rgba(255, 255, 255, 0.045);
+  --vida-borde: rgba(255, 255, 255, 0.1);
+  --vida-luz: rgba(124, 92, 255, 0.35);
+
+  /* ── LA LETRA: Inter ya viaja en la casa (v400.0), solo no se usaba ── */
+  --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* El texto de la casa, ahora con Inter: mismo peso de red, otra cara. */
+body {
+  font-family: var(--font-sans);
+  letter-spacing: -0.006em;
+  background-color: var(--vida-fondo);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Los títulos ganan jerarquía real: más peso, menos aire entre letras. */
+h1,
+h2 {
+  letter-spacing: -0.025em;
+}
+h2,
+h3 {
+  font-weight: 700;
+}
+h1 {
+  font-weight: 800;
+}
+
+/* Cifras tabulares: los números dejan de bailar cuando se actualizan. */
+.vx-cifra,
+[data-cifra],
+time,
+.vida-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ── selección y foco: que se sienta vivo, no azul de fábrica ── */
+::selection {
+  background: color-mix(in srgb, var(--vida-1) 55%, transparent);
+  color: #fff;
+}
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--vida-2) 80%, transparent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── barra de desplazamiento con carácter ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--vida-1) 60%, transparent) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--vida-1), var(--vida-3));
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--vida-2), var(--vida-1));
+  background-clip: content-box;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LA AURORA — el fondo deja de ser negro plano
+   Cuatro orbes de luz que respiran muy despacio (transform y opacidad:
+   nada que obligue a repintar el texto encima).
+   ═══════════════════════════════════════════════════════════════════ */
+.vida-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+.vida-aurora i {
+  position: absolute;
+  display: block;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  will-change: transform;
+  animation: vida-flotar 34s ease-in-out infinite alternate;
+}
+.vida-aurora i:nth-child(1) {
+  top: -28vmax;
+  left: -14vmax;
+  background: radial-gradient(circle, color-mix(in srgb, var(--vida-1) 62%, transparent), transparent 68%);
+}
+.vida-aurora i:nth-child(2) {
+  top: -18vmax;
+  right: -20vmax;
+  background: radial-gradient(circle, color-mix(in srgb, var(--vida-2) 50%, transparent), transparent 68%);
+  animation-duration: 42s;
+  animation-delay: -8s;
+}
+.vida-aurora i:nth-child(3) {
+  bottom: -34vmax;
+  left: 22%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--vida-3) 44%, transparent), transparent 70%);
+  animation-duration: 48s;
+  animation-delay: -16s;
+}
+.vida-aurora i:nth-child(4) {
+  bottom: -26vmax;
+  right: -8vmax;
+  background: radial-gradient(circle, color-mix(in srgb, var(--vida-5) 34%, transparent), transparent 70%);
+  animation-duration: 38s;
+  animation-delay: -22s;
+}
+/* el velo: garantiza que el texto siga leyéndose sobre tanta luz */
+.vida-aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 50% -10%, transparent 30%, rgba(4, 5, 12, 0.66) 78%),
+    linear-gradient(180deg, rgba(4, 5, 12, 0.35), rgba(4, 5, 12, 0.82));
+}
+@keyframes vida-flotar {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4vmax, 3vmax, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-3vmax, 5vmax, 0) scale(0.96);
+  }
+}
+
+/* La luz que sigue al puntero: un foco suave, sin rastro ni partículas. */
+.vida-foco {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    420px circle at var(--vida-x, 50%) var(--vida-y, 30%),
+    color-mix(in srgb, var(--vida-2) 12%, transparent),
+    transparent 62%
+  );
+  transition: opacity 0.4s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL MENÚ — que se note que está vivo
+   Solo estados y color: las clases son las de la cabecera de siempre.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-cab {
+  background: linear-gradient(180deg, rgba(8, 9, 20, 0.86), rgba(8, 9, 20, 0.55)) !important;
+  backdrop-filter: blur(14px) saturate(1.25);
+  border-bottom: 1px solid transparent !important;
+  border-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--vida-1) 60%, transparent), color-mix(in srgb, var(--vida-2) 45%, transparent), transparent) 1;
+}
+.vx-nav a {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.vx-nav a::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: center;
+  background: linear-gradient(90deg, var(--vida-2), var(--vida-1), var(--vida-3));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--vida-1) 70%, transparent);
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.vx-nav a:hover,
+.vx-nav a[aria-current="page"] {
+  color: #fff;
+}
+.vx-nav a:hover::after,
+.vx-nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* La pestaña de móvil, con indicador que se enciende */
+.vx-tabbar {
+  backdrop-filter: blur(16px) saturate(1.3);
+  border-top: 1px solid color-mix(in srgb, var(--vida-1) 26%, transparent) !important;
+}
+.vx-tabbar a {
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+.vx-tabbar a:active {
+  transform: scale(0.94);
+}
+.vx-tabbar a[aria-current="page"] {
+  color: #fff;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--vida-2) 70%, transparent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LAS SUPERFICIES — tarjetas con borde de luz y reacción al puntero
+   Se aplica a las tarjetas de la casa por su clase, sin renombrarlas.
+   ═══════════════════════════════════════════════════════════════════ */
+[class*="vx-tarjeta"],
+[class*="tarjeta-"],
+.vida-tarjeta {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+}
+@media (hover: hover) {
+  [class*="vx-tarjeta"]:hover,
+  [class*="tarjeta-"]:hover,
+  .vida-tarjeta:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--vida-2) 34%, transparent);
+    box-shadow:
+      0 18px 44px -24px rgba(0, 0, 0, 0.9),
+      0 0 0 1px color-mix(in srgb, var(--vida-2) 18%, transparent),
+      0 0 40px -18px color-mix(in srgb, var(--vida-1) 55%, transparent);
+  }
+}
+
+/* Enlaces de la casa: subrayado que crece, sin tocar el color de marca */
+main a:not([class]):hover {
+  text-decoration-color: var(--vida-2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL MENÚ ORBITAL (componente nuevo, no sustituye a nadie)
+   ═══════════════════════════════════════════════════════════════════ */
+.vida-orbita {
+  position: fixed;
+  right: clamp(14px, 2.2vw, 26px);
+  bottom: calc(clamp(14px, 2.2vw, 26px) + env(safe-area-inset-bottom, 0px));
+  /* por encima de la barra de pestañas (60) y por debajo de los diálogos (70+) */
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+/* En móvil la barra de pestañas ocupa el borde inferior: el botón sube
+   para no taparla ni robarle el toque. */
+@media (max-width: 979px) {
+  .vida-orbita {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+  }
+  .vida-orbita-boton {
+    width: 52px;
+    height: 52px;
+  }
+}
+.vida-orbita-boton {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--vida-2) 40%, transparent);
+  background:
+    radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--vida-2) 55%, transparent), transparent 62%),
+    linear-gradient(140deg, var(--vida-1), #2a1a6b);
+  color: #fff;
+  box-shadow:
+    0 14px 34px -12px color-mix(in srgb, var(--vida-1) 80%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
+}
+.vida-orbita-boton:hover {
+  transform: scale(1.07) rotate(-6deg);
+  box-shadow:
+    0 20px 44px -12px color-mix(in srgb, var(--vida-2) 70%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.vida-orbita[data-abierta="1"] .vida-orbita-boton {
+  transform: rotate(45deg);
+}
+.vida-orbita-anillo {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid var(--vida-borde);
+  background: linear-gradient(180deg, rgba(12, 14, 28, 0.95), rgba(8, 9, 18, 0.98));
+  box-shadow: 0 30px 70px -30px #000, 0 0 0 1px rgba(255, 255, 255, 0.04);
+  max-height: min(62vh, 520px);
+  overflow: auto;
+}
+.vida-orbita-anillo a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px 7px 8px;
+  border-radius: 11px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 12.5px;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease, color 0.15s ease;
+  animation: vida-entrar 0.32s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.vida-orbita-anillo a:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  transform: translateX(-3px);
+}
+.vida-orbita-punto {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #07070d;
+}
+@keyframes vida-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LA CORTINA — el arranque se siente como un tráiler (1,7 s)
+   ═══════════════════════════════════════════════════════════════════ */
+.vida-cortina {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(60% 60% at 50% 40%, rgba(124, 92, 255, 0.22), transparent 70%),
+    #04050c;
+  animation: vida-cortina-fuera 0.55s ease 1.35s forwards;
+}
+.vida-cortina-marca {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 7vw, 62px);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  background: linear-gradient(100deg, #fff 12%, var(--vida-2) 42%, var(--vida-1) 62%, var(--vida-3) 88%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: vida-brillo 1.5s ease forwards;
+}
+.vida-cortina-lema {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  animation: vida-subir 0.7s ease 0.25s backwards;
+}
+.vida-cortina-linea {
+  margin: 16px auto 0;
+  height: 2px;
+  width: min(240px, 60vw);
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--vida-2), var(--vida-1), transparent);
+  transform-origin: left;
+  animation: vida-linea 1.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes vida-brillo {
+  from {
+    background-position: 130% 0;
+    opacity: 0;
+    filter: blur(6px);
+  }
+  40% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    background-position: -30% 0;
+    opacity: 1;
+  }
+}
+@keyframes vida-subir {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes vida-linea {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes vida-cortina-fuera {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LA APARICIÓN AL DESPLAZAR — nada entra de golpe
+   ═══════════════════════════════════════════════════════════════════ */
+.vida-ver {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.vida-ver[data-visible="1"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPETO: los tres niveles de la casa y el sistema operativo
+   ═══════════════════════════════════════════════════════════════════ */
+[data-vg-anim="desactivadas"] .vida-aurora i,
+[data-vg-anim="desactivadas"] .vida-cortina,
+[data-vg-anim="desactivadas"] .vida-cortina-marca,
+[data-vg-anim="desactivadas"] .vida-orbita-anillo a,
+[data-vg-anim="desactivadas"] .vida-ver {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+[data-vg-anim="desactivadas"] .vida-cortina {
+  display: none !important;
+}
+[data-vg-anim="reducidas"] .vida-aurora i {
+  animation-duration: 90s;
+}
+[data-vg-anim="reducidas"] .vida-cortina {
+  animation-duration: 0.2s;
+  animation-delay: 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vida-aurora i,
+  .vida-cortina,
+  .vida-cortina-marca,
+  .vida-cortina-linea,
+  .vida-orbita-anillo a,
+  .vida-ver {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .vida-cortina {
+    display: none !important;
+  }
+  .vida-foco {
+    display: none;
+  }
+}
+
+/* En pantallas pequeñas la aurora se calma: menos blur, menos chispa */
+@media (max-width: 640px) {
+  .vida-aurora i {
+    filter: blur(60px);
+    opacity: 0.38;
+  }
+  .vida-foco {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   «PARA TI» — el carril que aprende (v421.9)
+   Sección propia, con la misma rejilla que ya usa la portada, para no
+   romper el ritmo de las demás secciones.
+   ═══════════════════════════════════════════════════════════════════ */
+.vida-parati {
+  position: relative;
+}
+.vida-parati-cab {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.vida-avatar {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #04050c;
+  letter-spacing: -0.03em;
+  box-shadow: 0 10px 30px -12px rgba(124, 92, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+.vida-parati-sello {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.vida-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+.vida-parati-titulo {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+.vida-parati-sub {
+  margin: 6px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  opacity: 0.68;
+}
+.vida-parati-rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+.vida-carta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 16px 14px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    linear-gradient(160deg, color-mix(in oklab, var(--vida-c1) 22%, transparent), transparent 62%),
+    rgba(255, 255, 255, 0.032);
+  border: 1px solid color-mix(in oklab, var(--vida-c1) 34%, rgba(255, 255, 255, 0.09));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+}
+.vida-carta::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10% auto;
+  height: 90%;
+  background: radial-gradient(60% 100% at 50% 0%, color-mix(in oklab, var(--vida-c2) 40%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: -1;
+}
+.vida-carta:hover,
+.vida-carta:focus-visible {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--vida-c1) 66%, white 10%);
+  box-shadow: 0 18px 40px -22px color-mix(in oklab, var(--vida-c1) 90%, black), 0 0 0 1px color-mix(in oklab, var(--vida-c1) 40%, transparent);
+}
+.vida-carta:hover::before,
+.vida-carta:focus-visible::before {
+  opacity: 1;
+}
+.vida-carta-num {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+.vida-carta-nombre {
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.vida-carta-grupo {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.vida-carta-razon {
+  margin-top: 9px;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--vida-c2);
+  background: color-mix(in oklab, var(--vida-c2) 14%, transparent);
+  border: 1px solid color-mix(in oklab, var(--vida-c2) 30%, transparent);
+}
+.vida-parati-rejilla[data-listo="1"] .vida-carta {
+  animation: vida-carta-entra 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes vida-carta-entra {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.vida-parati-pie {
+  margin: 14px 0 0;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+.vida-parati-pie a {
+  color: var(--vida-2);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--vida-2) 45%, transparent);
+}
+
+[data-vg-anim="desactivadas"] .vida-parati-rejilla .vida-carta,
+[data-vg-anim="desactivadas"] .vida-carta {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vida-carta,
+  .vida-parati-rejilla[data-listo="1"] .vida-carta {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .vida-carta:hover {
+    transform: none;
+  }
+}

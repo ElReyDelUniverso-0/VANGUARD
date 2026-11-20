@@ -6920,7 +6920,10 @@
 // cifras derivadas (src/lib/experiencia/registro.ts), una entrada que dice
 // qué es la casa antes de las noticias, el mapa del ecosistema y una portada
 // viva con cuatro registros reales elegidos por día.
-export const APP_VERSION = "v422.1";
+export const APP_VERSION = "v422.2";
+export const APP_CODENAME = "VIDA";
+// (anterior) export const APP_VERSION = "v422.1";
+// (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";
 // (anterior) export const APP_CODENAME = "EL ARO DE CONTROL";
