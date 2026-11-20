@@ -17,6 +17,7 @@
 // experiencia a pantalla completa.
 // ═══════════════════════════════════════════════════════════════════
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import "./caras.css";
 
@@ -39,14 +40,31 @@ const CARAS = [
 
 const OCULTAS = ["/vanguard2"];
 
+/** La ruta de la casa, sin barras de más y con la raíz bien dicha.
+ *  En el servidor la raíz llega a veces como "" o "/index"; la portada es "/"
+ *  y así se compara (si no, en producción la cara HOY salía apagada). */
+function normalizarRuta(bruta: string | null | undefined): string {
+  const limpia = (bruta || "/").split("?")[0].split("#")[0].replace(/\/+$/, "");
+  if (limpia === "" || limpia === "/index" || /^https?:\/\/[^/]+$/.test(limpia)) return "/";
+  return limpia.startsWith("/") ? limpia : `/${limpia}`;
+}
+
 export function Caras() {
-  const ruta = usePathname() || "/";
+  const delRouter = normalizarRuta(usePathname());
+  // el marcador se corrige en el aparato: la ruta que ve el navegador manda
+  // (en producción el servidor no siempre dice "/" para la portada)
+  const [ruta, setRuta] = useState(delRouter);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const viva = normalizarRuta(window.location.pathname);
+    if (viva !== ruta) setRuta(viva);
+  }, [delRouter, ruta]);
   if (OCULTAS.some((r) => ruta === r || ruta.startsWith(r + "/"))) return null;
 
   const enRadio = ruta === "/radio" || ruta.startsWith("/radio/");
 
   return (
-    <nav className="vxc" aria-label="Las dos caras de la casa">
+    <nav className="vxc" aria-label="Las dos caras de la casa" data-ruta={ruta}>
       <span className="vxc-sello" aria-hidden>LA CASA</span>
       {CARAS.map((c) => {
         const activa = c.activa(ruta);
