@@ -194,6 +194,58 @@
   color: #b8c6d8;
 }
 
+
+/* ── el titular de ahora: la entrada respira con el cable más fuerte ── */
+.vxe-ent-ahora {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 2px 12px;
+  width: min(760px, 100%);
+  margin: clamp(16px, 2.2vw, 22px) 0 0;
+  padding: 10px 14px 10px 12px;
+  text-decoration: none;
+  color: var(--vxe-tinta);
+  border-left: 3px solid #ff5a5f;
+  background: linear-gradient(90deg, rgba(255, 90, 95, 0.1), rgba(255, 90, 95, 0.01) 72%);
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.vxe-ent-ahora:hover { background: linear-gradient(90deg, rgba(232, 197, 106, 0.14), rgba(232, 197, 106, 0.02) 72%); border-left-color: var(--vxe-oro); }
+
+.vxe-ent-ahora-rot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ff8b8f;
+}
+.vxe-ent-ahora-punto {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #ff5a5f;
+  animation: vxe-latido 2.4s ease-out infinite;
+}
+.vxe-ent-ahora-tit {
+  font-size: clamp(14px, 1.5vw, 17px);
+  line-height: 1.32;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f2f6fb;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.vxe-ent-ahora-meta {
+  grid-column: 2;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--vxe-tenue);
+}
+
 /* ── las cuatro puertas: verbo + qué hay dentro + ruta real ── */
 .vxe-ent-acciones {
   display: grid;

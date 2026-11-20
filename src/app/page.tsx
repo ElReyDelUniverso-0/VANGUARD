@@ -20,7 +20,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./portada.css";
 import { obtenerNotas, relevancia, type Nota } from "@/lib/portada/notas";
-import { CONFLICTOS, REGIONES, conflictoPorKey, horaCorta, type Region } from "@/lib/portada/clasificar";
+import { CONFLICTOS, REGIONES, conflictoPorKey, haceTexto, horaCorta, type Region } from "@/lib/portada/clasificar";
 import { Cabecera, BarraMovil } from "@/components/portada/cabecera";
 import { Tarjeta, Etiqueta } from "@/components/portada/tarjeta";
 import { Foto } from "@/components/portada/foto";
@@ -143,7 +143,21 @@ export default async function Portada() {
           el mismo». El teletipo (una tira que se mueve) iba delante y no decía
           nada a quien llegaba de un enlace: ahora abre LA ENTRADA y el teletipo
           pasa justo detrás, como la última hora de lo que acabas de entender. */}
-      <Entrada cables={notas.length} frentes={frentes} hora={hora} />
+      <Entrada
+        cables={notas.length}
+        frentes={frentes}
+        hora={hora}
+        titular={
+          heroe
+            ? {
+                titulo: heroe.titulo,
+                fuente: heroe.fuente,
+                href: `/lectura/${heroe.id}`,
+                hace: haceTexto(heroe.fecha),
+              }
+            : null
+        }
+      />
       <Teletipo notas={notas} />
       <AvisoNuevas primera={notas[0]?.id ?? null} />
 
@@ -151,25 +165,12 @@ export default async function Portada() {
       <FocoAcademiaMotores />
 
       <main className="vx-wrap">
-        {/* el hilo: sigue donde lo dejaste (Travesía, ya existía) */}
-        <HiloPortada />
-
-        {/* v422.1 · EL ECOSISTEMA — las diez familias con sus puertas reales.
-            Sustituye a las «ocho áreas» escritas a mano: una sola lista,
-            `lib/experiencia/registro`, con cifras derivadas de los datos. */}
-        <Ecosistema />
-
-        {/* v422.1 · LA PORTADA VIVA — cuatro registros reales abiertos cada día */}
-        <PortadaViva />
-
-        {/* v421.9 VIDA · PARA TI — el carril que aprende de tus impresiones */}
-        <ParaTi />
-
-        <div id="historias" className="vx-entra">
-          <TituloSeccion sello="Sección 03 · El mundo, hoy" titulo="Las historias del día" sub="Cada frente abierto, con sus cables y su hora." enlace="/conflictos" textoEnlace="Todos los conflictos" />
-          <Historias grupos={historias} />
-        </div>
-
+        {/* v431.4 · ORDEN DE LECTURA PARA EL QUE LLEGA — el Dueño: «uno se
+            pierde mucho». La portada tenía DOCE bloques seguidos y la noticia
+            grande estaba en el sexto: nadie llegaba. Ahora, después de la
+            entrada, solo tres cosas: qué pasa ahora, qué hay dentro y dónde.
+            Todo lo demás sigue existiendo, plegado al final (details), para el
+            que quiera bajar. */}
         {heroe ? (
           <section id="ahora" className="vx-top vxp-ancla vxp-top" aria-label="Lo más importante ahora">
             <Link href={`/lectura/${heroe.id}`} className="vx-heroe vx-entra">
@@ -227,6 +228,29 @@ export default async function Portada() {
           </section>
         )}
 
+
+        {/* v422.1 · EL ECOSISTEMA — las diez familias con sus puertas reales.
+            Sustituye a las «ocho áreas» escritas a mano: una sola lista,
+            `lib/experiencia/registro`, con cifras derivadas de los datos. */}
+        <Ecosistema />
+
+        <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
+          <TituloSeccion sello="Sección 07 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
+          <MapaPortada notas={notas} />
+        </section>
+
+
+        {/* v422.1 · LA PORTADA VIVA — cuatro registros reales abiertos cada día */}
+        <PortadaViva />
+
+        {/* v421.9 VIDA · PARA TI — el carril que aprende de tus impresiones */}
+        <ParaTi />
+
+        <div id="historias" className="vx-entra">
+          <TituloSeccion sello="Sección 03 · El mundo, hoy" titulo="Las historias del día" sub="Cada frente abierto, con sus cables y su hora." enlace="/conflictos" textoEnlace="Todos los conflictos" />
+          <Historias grupos={historias} />
+        </div>
+
         {destacadas.length > 0 && (
           <section className="vx-sec" aria-label="Destacadas">
             <TituloSeccion sello="Sección 04 · Inteligencia" titulo="Lo que tienes que saber" sub="Las historias que más pesan hoy en el mundo." />
@@ -260,10 +284,20 @@ export default async function Portada() {
           <SpotPortada />
         </section>
 
-        <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
-          <TituloSeccion sello="Sección 07 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
-          <MapaPortada notas={notas} />
-        </section>
+        {/* ── LO DEMÁS, PLEGADO ─────────────────────────────────────────
+            Existe todo lo de antes (historias por frente, destacadas, descubre,
+            módulos, el spot, los teatros por región, la bitácora y las salas),
+            pero no se le echa encima a quien entra. Se abre con un clic, sin
+            JavaScript: es un <details> de verdad. ── */}
+        <details className="vx-mas">
+          <summary>
+            <span className="vx-mas-rotulo">todo lo demás de la portada</span>
+            <span className="vx-mas-sub">historias por frente · destacadas · descubre hoy · módulos · el spot · teatros por región · bitácora · salas</span>
+            <span className="vx-mas-abrir" aria-hidden />
+          </summary>
+          <div className="vx-mas-cuerpo">
+            {/* el hilo: sigue donde lo dejaste */}
+            <HiloPortada />
 
         {regiones.map(({ r, lista }) => (
           <section key={r} className="vx-sec" aria-label={REGIONES[r].nombre}>
@@ -296,6 +330,8 @@ export default async function Portada() {
             ))}
           </div>
         </section>
+          </div>
+        </details>
       </main>
 
       <Pie />

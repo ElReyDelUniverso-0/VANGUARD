@@ -6970,7 +6970,7 @@
 // (anterior) export const APP_VERSION = "v431.2";
 // (anterior) export const APP_CODENAME = "OPERACIÓN";
 export const APP_VERSION = "v431.4";
-export const APP_CODENAME = "OPERACIÓN";
+export const APP_CODENAME = "LA CASA SE ORDENA";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";

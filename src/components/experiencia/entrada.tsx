@@ -33,6 +33,9 @@ import { BotonMente } from "@/components/mente/boton-mente";
 
 export type FrenteVivo = { key: string; nombre: string; n: number };
 
+/** El cable más fuerte del momento: le da pulso a la entrada sin inventarlo. */
+export type TitularVivo = { titulo: string; fuente: string; href: string; hace: string };
+
 const PUERTAS: { n: string; titulo: string; detalle: string; href: string }[] = [
   { n: "01", titulo: "Ver qué pasa", detalle: "La última hora del mundo, con su fuente a la vista.", href: "/en-vivo" },
   { n: "02", titulo: "Mirar el planeta", detalle: "El globo vivo: guerras, fronteras y mapas.", href: "/mundo" },
@@ -55,10 +58,13 @@ export function Entrada({
   cables,
   frentes,
   hora,
+  titular,
 }: {
   cables: number;
   frentes: FrenteVivo[];
   hora: string;
+  /** el cable más fuerte de ahora mismo (opcional: si no hay, la entrada sigue) */
+  titular?: TitularVivo | null;
 }) {
   const c = cifrasEcosistema();
   const top = frentes.slice(0, 4);
@@ -97,6 +103,19 @@ export function Entrada({
           {c.paises} países, simuladores, historia, ciencia, academia y un juego de guerra. En español. Gratis. Sin
           registrarte para leer.
         </p>
+
+        {titular ? (
+          <Link className="vxe-ent-ahora" href={titular.href}>
+            <span className="vxe-ent-ahora-rot">
+              <span className="vxe-ent-ahora-punto" aria-hidden />
+              ahora
+            </span>
+            <span className="vxe-ent-ahora-tit">{titular.titulo}</span>
+            <span className="vxe-ent-ahora-meta">
+              {titular.fuente} · {titular.hace}
+            </span>
+          </Link>
+        ) : null}
 
         <div className="vxe-ent-acciones">
           {PUERTAS.map((p) => (
