@@ -488,6 +488,19 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     alias: "voz maestra maestro asistente orbe hablar audio locutora analista general cronista pausas persona explicar clases geopolítica microfono",
   },
   {
+    id: "mod:radio",
+    nombre: "RADIO VANGUARD",
+    lema: "La casa en voz alta, con pausas que se oyen",
+    descripcion:
+      "El programa del día leído de los cables reales: sintonía, titulares, cada asunto desarrollado por región con su fuente y su hora, y cierre. El guion es puro (lib/radio/guion.ts) y declara el silencio que deja cada bloque; el estudio encadena la boca de la casa bloque a bloque respetando ese silencio en vez de simularlo con puntos suspensivos. Sobre eso, una conversación honesta (lib/radio/conversar.ts): entiende saludo, resumen, región, tema, fuente, hora, «algo bueno» y silencio, contesta citando fuente y cuando no hay nada sobre lo preguntado lo dice. Personalizable y guardado en el aparato: tres estilos de locución, cuatro personas, voz concreta con su calidad medida, velocidad, tono, pausas y longitud. Si el aparato no puede hablar, el programa sigue entero en pantalla y se puede copiar. No sustituye a /voz (la Voz Maestra): la suma.",
+    categoria: "REDACCION",
+    ruta: "/radio",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables", "mod:voz"],
+    alias: "radio programa boletin locucion leer noticias voz pausas silencio conversacion preguntar estilo locutora podcast audio escuchar",
+  },
+  {
     id: "mod:cronica",
     nombre: "LA CRÓNICA DEL DÍA",
     lema: "Qué pasó de verdad, en un parte",

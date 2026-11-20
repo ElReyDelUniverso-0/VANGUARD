@@ -1,18 +1,18 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-20",
-  "paginas": 178,
+  "paginas": 179,
   "rutasApi": 136,
-  "total": 314,
-  "bienConectadas": 158,
+  "total": 315,
+  "bienConectadas": 161,
   "huerfanas": [],
-  "paginasConReferencias": 178,
-  "mediaReferencias": 12.89,
+  "paginasConReferencias": 179,
+  "mediaReferencias": 12.93,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 101,
+      "referencias": 103,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -132,7 +132,7 @@
     {
       "ruta": "/api",
       "tipo": "api",
-      "referencias": 160,
+      "referencias": 161,
       "desde": [
         "app/audios/grabador.tsx",
         "app/audios/page.tsx",
@@ -252,7 +252,7 @@
     {
       "ruta": "/api/auth/me",
       "tipo": "api",
-      "referencias": 9,
+      "referencias": 10,
       "desde": [
         "app/modo/selector-modo.tsx",
         "components/vanguard/modo-activo.tsx",
@@ -1859,12 +1859,12 @@
     {
       "ruta": "/cronica",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/centinela/page.tsx",
         "app/musica/page.tsx",
         "app/navegacion/navegacion-sala.tsx",
-        "app/torre/page.tsx"
+        "app/radio/page.tsx"
       ]
     },
     {
@@ -2001,8 +2001,9 @@
     {
       "ruta": "/ecosistema",
       "tipo": "pagina",
-      "referencias": 2,
+      "referencias": 3,
       "desde": [
+        "app/radio/page.tsx",
         "lib/bitacora.ts",
         "lib/nucleo/registro.ts"
       ]
@@ -2050,7 +2051,7 @@
     {
       "ruta": "/en-vivo",
       "tipo": "pagina",
-      "referencias": 39,
+      "referencias": 40,
       "desde": [
         "app/centinela/page.tsx",
         "app/cronica/page.tsx",
@@ -2103,12 +2104,12 @@
     {
       "ruta": "/espacio",
       "tipo": "pagina",
-      "referencias": 14,
+      "referencias": 16,
       "desde": [
         "components/mundos/guardar-espacio.tsx",
         "components/planeta/guardar.tsx",
         "components/planeta/marco.tsx",
-        "lib/catalogo-real.ts"
+        "components/vida/orbita.tsx"
       ]
     },
     {
@@ -2287,7 +2288,7 @@
     {
       "ruta": "/lectura/[clave]",
       "tipo": "pagina",
-      "referencias": 16,
+      "referencias": 18,
       "desde": [
         "app/noticia/[id]/page.tsx",
         "app/page.tsx",
@@ -2605,8 +2606,10 @@
     {
       "ruta": "/mi-universo",
       "tipo": "pagina",
-      "referencias": 1,
+      "referencias": 3,
       "desde": [
+        "components/vida/orbita.tsx",
+        "components/vida/para-ti.tsx",
         "lib/navegacion/espacios.ts"
       ]
     },
@@ -2761,7 +2764,7 @@
     {
       "ruta": "/navegacion",
       "tipo": "pagina",
-      "referencias": 16,
+      "referencias": 18,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/ecosistema/page.tsx",
@@ -2932,6 +2935,17 @@
         "app/labs/page.tsx",
         "app/resiliencia/page.tsx",
         "app/resiliencia/recursos/[iso]/page.tsx"
+      ]
+    },
+    {
+      "ruta": "/radio",
+      "tipo": "pagina",
+      "referencias": 4,
+      "desde": [
+        "lib/bitacora.ts",
+        "lib/navegacion/espacios.ts",
+        "lib/nucleo/registro.ts",
+        "lib/version.ts"
       ]
     },
     {
@@ -3136,7 +3150,7 @@
     {
       "ruta": "/vanguard2",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 14,
       "desde": [
         "app/layout.tsx",
         "components/portada/carcasa.tsx",
@@ -3180,12 +3194,12 @@
     {
       "ruta": "/voz",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 13,
       "desde": [
         "app/catalogo/page.tsx",
         "app/musica/page.tsx",
-        "components/portada/modulos.ts",
-        "lib/agente/maestro.ts"
+        "app/radio/page.tsx",
+        "components/portada/modulos.ts"
       ]
     },
     {

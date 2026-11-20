@@ -83,7 +83,7 @@ export const ESPACIOS: Espacio[] = [
     color: "#e8c56a",
     icono: "newspaper",
     detecta: {
-      rutas: ["", "/cronica", "/en-vivo", "/noticia", "/lectura", "/galeria", "/audios", "/traductor", "/vertigo", "/musica"],
+      rutas: ["", "/cronica", "/en-vivo", "/noticia", "/lectura", "/galeria", "/audios", "/traductor", "/vertigo", "/musica", "/radio"],
       salas: ["centro", "inicio", "redaccion", "noticias", "verdades", "verifica", "cambios", "envivo", "pantalla", "foryou", "videos", "directos", "memes", "canalbrief", "briefings", "briefing", "galeria"],
       modulos: ["medios"],
       constelaciones: ["inicio", "emisora"],
@@ -92,6 +92,7 @@ export const ESPACIOS: Espacio[] = [
       { id: "portada", nombre: "Portada", href: "/", icono: "home", desc: "El centro mundial de noticias, en vivo por importancia e impacto" },
       { id: "cronica", nombre: "Crónica del día", href: "/cronica", icono: "notebook-pen", desc: "Qué pasó de verdad en las últimas 24 horas, teatro por teatro" },
       { id: "en-vivo", nombre: "En vivo", href: "/en-vivo", icono: "radio", desc: "Cables entrando minuto a minuto, con hora y fuente" },
+      { id: "radio-vanguard", nombre: "Radio Vanguard", href: "/radio", icono: "mic", desc: "El programa del día en voz alta, con pausas reales y preguntas", desde: "v422.3" },
       { id: "guerra-hoy", nombre: "Guerra hoy", href: "/guerra-hoy", icono: "siren", desc: "El resumen de todos los frentes abiertos" },
       { id: "galeria", nombre: "Medios", href: "/galeria", icono: "images", desc: "Escucha y mira el mundo: imágenes, audio y directos" },
       { id: "traductor", nombre: "Traductor", href: "/traductor", icono: "languages", desc: "Las noticias del mundo en ocho idiomas" },

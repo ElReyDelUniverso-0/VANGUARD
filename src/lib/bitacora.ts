@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v422.3",
+    nombre: "RADIO VANGUARD",
+    hitos: [
+      "EL GUION ES DATO, NO TEXTO (src/lib/radio/guion.ts): los cables reales se ordenan en sintonía, titulares, desarrollo por región, cierre e invitación. Cada bloque declara cuánto SILENCIO deja después (`pausaMs`) y de qué nota sale (`notaId`, `fuente`, `href` a /lectura/…). Es puro: sin DOM, sin red, sin reloj — y por eso se puede probar en Node.",
+      "PAUSAS REALES, NO PUNTOS SUSPENSIVOS: el estudio (/radio) no simula la respiración. Encadena la boca de la casa (`lib/voz/decir`) bloque a bloque y espera el silencio declarado antes del siguiente, señalando en pantalla lo que suena con su fuente al lado.",
+      "LA CONVERSACIÓN QUE NO INVENTA (src/lib/radio/conversar.ts): interpreta la pregunta (saludo, resumen, región, tema, fuente, hora, algo bueno, silencio, ayuda), busca en los cables y contesta citando fuente. Cuando no hay nada sobre lo preguntado devuelve `hallado: false` y lo dice: «no tengo un cable sobre eso».",
+      "PERSONALIZABLE Y GUARDADO EN EL APARATO: tres estilos de locución (serena, cercana, filosa), las cuatro personas de la voz maestra, la voz concreta del sistema con su nota de calidad medida, velocidad, tono, pausas, longitud del programa y si se lee el resumen. Todo en localStorage: sin cuenta, sin servidor, sin enviar audio.",
+      "SI EL APARATO NO HABLA, LA RADIO SIGUE: el programa entero queda en pantalla, con sus fuentes, y se puede copiar. La casa nunca se queda muda del todo.",
+      "/radio NO DUPLICA /voz: la Voz Maestra (v367.2) es la mesa de consulta con el maestro de geopolítica; esta es el PROGRAMA del día. Cada una enlaza a la otra y la navegación declarada sigue siendo una sola.",
+      "117 COMPROBACIONES PROPIAS (scripts/pruebas-radio.mjs): transpila el TypeScript real y lo EJECUTA — sin cables, recorte por frase completa, pausa > 0 en cada bloque, duración coherente, cero `undefined`/`NaN` en lo que se va a decir, fuente y enlace reales por bloque, tres estilos distintos, once intenciones de conversación y el «no lo tengo» honesto.",
+    ],
+    tipo: "ia",
+  },
+  {
     version: "v422.1",
     nombre: "VANGUARD REBIRTH",
     hitos: [

@@ -6920,8 +6920,22 @@
 // cifras derivadas (src/lib/experiencia/registro.ts), una entrada que dice
 // qué es la casa antes de las noticias, el mapa del ecosistema y una portada
 // viva con cuatro registros reales elegidos por día.
-export const APP_VERSION = "v422.2";
-export const APP_CODENAME = "VIDA";
+// v422.2 VIDA · (de otro agente: la capa de identidad, el menú orbital y la
+// aurora detrás del contenido). Queda como versión anterior de la casa.
+// (anterior) export const APP_VERSION = "v422.2";
+// (anterior) export const APP_CODENAME = "VIDA";
+// v422.3 RADIO VANGUARD — LA CASA EN VOZ ALTA. Encargo del Dueño: «una voz
+// que suene real, con pausas naturales, que lea, explique y dirija; una
+// conversación dinámica… humana, super inteligente, personalizable». Nace
+// `/radio`: un guion puro armado con los cables reales (lib/radio/guion.ts),
+// un intérprete honesto de preguntas (lib/radio/conversar.ts) y un estudio
+// que encadena la boca de la casa bloque a bloque respetando el silencio
+// que cada bloque declara. No se reescribe /voz (v367.2): se suma.
+// (nota de serie: v422.2 lo tomó «VIDA» mientras esta sala se construía; por la
+// regla de la casa —comprobar origin/main antes de fijar versión y subir el
+// último dígito— RADIO VANGUARD sale como v422.3, no como v422.2.)
+export const APP_VERSION = "v422.3";
+export const APP_CODENAME = "RADIO VANGUARD";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";
