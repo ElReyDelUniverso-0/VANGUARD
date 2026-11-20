@@ -25,6 +25,7 @@ export const BITACORA: EntradaBitacora[] = [
     nombre: "UN SOLO MUNDO · ZONA CERO",
     tipo: "mundo",
     hitos: [
+      "EL TRÁILER: «Vanguard en 80 segundos», el recorrido completo de la casa en vídeo (noticias, Guerra Hoy, el globo 3D, 249 países, Lingua, Armería y Enciclopedia, el Cuartel y la Zona Cero) con capturas reales, voz y banda propias. Vive a la vista en la portada y en su propia sala, /trailer, con capítulos que saltan a cada sala y enlaces para entrar en ella.",
       "UN SOLO MUNDO: la portada y el juego dejan de ser dos mundos. El Cuartel entra bajo la misma carcasa (cabecera, pestañas del módulo Juego, teletipo, barra móvil) y la misma piel de oro que el resto de módulos; cada módulo conserva su información.",
       "Sin cromo duplicado en el Cuartel: la segunda marca con buscador y la barra de zonas se apartan (sus acciones siguen en pestañas, riel y barra común); la barra del agente con rango y créditos se queda y deja de ser una segunda cabecera pegada.",
       "La Puerta reescrita: la casa entera («Vanguard · un solo mundo») y su centro («Zona Cero · el ojo»), las dos en el mismo oro; el Cruce entre mundos se retira y «Elegir mundo» pasa a ser «Zona Cero».",

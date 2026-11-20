@@ -50,6 +50,8 @@ import { Entrada } from "@/components/experiencia/entrada";
 import { Ecosistema } from "@/components/experiencia/ecosistema";
 import { PortadaViva } from "@/components/experiencia/portada-viva";
 import { FocoAcademiaMotores } from "@/components/portada/foco-academia-motores";
+// v432.0 EL TRÁILER
+import { TrailerVanguard } from "@/components/trailer/trailer-vanguard";
 
 
 export const revalidate = 300;
@@ -228,6 +230,13 @@ export default async function Portada() {
           </section>
         )}
 
+
+        {/* v432.0 · EL TRÁILER — Vanguard explicado en 80 segundos, a la vista
+            (no plegado): capítulos que saltan a cada sala del vídeo. */}
+        <section id="trailer" className="vx-sec vxp-ancla" aria-label="El tráiler de Vanguard">
+          <TituloSeccion sello="Sección · El tráiler" titulo="Vanguard en 80 segundos" sub="Todo lo que hay en esta casa, contado con sus propias pantallas." enlace="/trailer" textoEnlace="Sala de proyección" />
+          <TrailerVanguard compacto />
+        </section>
 
         {/* v422.1 · EL ECOSISTEMA — las diez familias con sus puertas reales.
             Sustituye a las «ocho áreas» escritas a mano: una sola lista,

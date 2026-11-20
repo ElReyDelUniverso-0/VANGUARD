@@ -1,0 +1,24 @@
+/* v432.0 EL TRÁILER — la sala de proyección (oro de la casa, sin dependencias) */
+.vt-trailer { display: grid; gap: 22px; align-items: start; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .vt-trailer { grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; } }
+.vt-pantalla { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 9; background: #000;
+  border: 1px solid rgba(232,197,106,.45); box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 18px 50px rgba(0,0,0,.55), 0 0 34px rgba(232,197,106,.12); }
+.vt-pantalla video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+.vt-lado { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.vt-sello { font: 700 11px/1.2 var(--font-orbitron, ui-monospace, monospace); letter-spacing: .16em; text-transform: uppercase; color: #e8c56a; }
+.vt-lema { margin: 0; font-size: 1.15rem; font-weight: 800; line-height: 1.25; color: #f4f1ea; }
+.vt-capitulos { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.vt-capitulos li { display: flex; align-items: center; gap: 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,.06); background: rgba(10,12,18,.7); }
+.vt-capitulos li[data-activo="1"] { border-color: rgba(232,197,106,.7); background: rgba(232,197,106,.1); }
+.vt-capitulos button { flex: 1; min-width: 0; display: flex; gap: 10px; align-items: center; padding: 8px 10px; background: none; border: 0; color: #e6e3dc; font: inherit; font-size: .9rem; text-align: left; cursor: pointer; }
+.vt-capitulos button:hover, .vt-capitulos button:focus-visible { color: #fff; }
+.vt-capitulos button:focus-visible { outline: 2px solid #e8c56a; outline-offset: -2px; border-radius: 10px; }
+.vt-t { flex: none; font: 600 12px/1 ui-monospace, monospace; color: #e8c56a; min-width: 34px; }
+.vt-ir { flex: none; padding: 6px 10px; font-size: .78rem; color: #9aa0ac; text-decoration: none; white-space: nowrap; }
+.vt-ir:hover { color: #e8c56a; }
+.vt-acc { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.vt-btn { display: inline-flex; align-items: center; padding: 9px 14px; border-radius: 999px; background: #e8c56a; color: #0b0c10; font-weight: 800; font-size: .85rem; text-decoration: none; border: 1px solid #e8c56a; }
+.vt-btn.vt-sec { background: transparent; color: #e8c56a; }
+.vt-compacto .vt-capitulos { grid-template-columns: 1fr 1fr; }
+@media (min-width: 900px) { .vt-compacto .vt-capitulos { grid-template-columns: 1fr; } }
+.vt-compacto .vt-capitulos button { padding: 6px 8px; font-size: .82rem; }

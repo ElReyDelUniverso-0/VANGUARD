@@ -34,6 +34,7 @@ export function Pie() {
               <li><Link href="/mundo">Mapa 3D</Link></li>
               <li><Link href="/vertigo">El Vértigo</Link></li>
               <li><Link href="/zona-cero">Zona Cero</Link></li>
+              <li><Link href="/trailer">El tráiler</Link></li>
               <li><Link href="/historia">Historia</Link></li>
             </ul>
           </div>

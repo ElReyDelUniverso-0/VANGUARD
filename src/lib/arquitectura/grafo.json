@@ -2,7 +2,7 @@
   "version": "v414.0",
   "generado": "2026-11-20",
   "fuente": {
-    "censo": "src/lib/arquitectura/censo.json · 2026-11-20 · 181 páginas · 140 rutas de API",
+    "censo": "src/lib/arquitectura/censo.json · 2026-11-20 · 182 páginas · 140 rutas de API",
     "registro": "103 módulos · 165 dependencias declaradas"
   },
   "areas": [
@@ -10,7 +10,7 @@
       "id": "components/vanguard",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 151,
+      "enlacesSalientes": 150,
       "enlacesEntrantes": 0,
       "paginas": 0,
       "api": 0
@@ -28,7 +28,7 @@
       "id": "components/portada",
       "tipo": "soporte",
       "rutas": 0,
-      "enlacesSalientes": 89,
+      "enlacesSalientes": 90,
       "enlacesEntrantes": 0,
       "paginas": 0,
       "api": 0
@@ -214,15 +214,6 @@
       "api": 5
     },
     {
-      "id": "lib/arquitectura",
-      "tipo": "soporte",
-      "rutas": 0,
-      "enlacesSalientes": 18,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
-    },
-    {
       "id": "app/conflicto",
       "tipo": "ruta",
       "rutas": 2,
@@ -238,6 +229,15 @@
       "enlacesSalientes": 1,
       "enlacesEntrantes": 17,
       "paginas": 6,
+      "api": 0
+    },
+    {
+      "id": "lib/arquitectura",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 17,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
       "api": 0
     },
     {
@@ -844,6 +844,24 @@
       "api": 0
     },
     {
+      "id": "app/page.tsx",
+      "tipo": "ruta",
+      "rutas": 0,
+      "enlacesSalientes": 5,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
+    },
+    {
+      "id": "app/trailer",
+      "tipo": "ruta",
+      "rutas": 1,
+      "enlacesSalientes": 2,
+      "enlacesEntrantes": 3,
+      "paginas": 1,
+      "api": 0
+    },
+    {
       "id": "lib/navegacion",
       "tipo": "soporte",
       "rutas": 0,
@@ -1130,15 +1148,6 @@
       "enlacesEntrantes": 4,
       "paginas": 0,
       "api": 1
-    },
-    {
-      "id": "app/page.tsx",
-      "tipo": "ruta",
-      "rutas": 0,
-      "enlacesSalientes": 4,
-      "enlacesEntrantes": 0,
-      "paginas": 0,
-      "api": 0
     },
     {
       "id": "app/clasico",
@@ -1798,7 +1807,7 @@
       "api": 1
     },
     {
-      "id": "lib/agente",
+      "id": "components/trailer",
       "tipo": "soporte",
       "rutas": 0,
       "enlacesSalientes": 2,
@@ -1994,6 +2003,15 @@
       "enlacesEntrantes": 1,
       "paginas": 0,
       "api": 1
+    },
+    {
+      "id": "lib/agente",
+      "tipo": "soporte",
+      "rutas": 0,
+      "enlacesSalientes": 1,
+      "enlacesEntrantes": 0,
+      "paginas": 0,
+      "api": 0
     },
     {
       "id": "components/memoria",
