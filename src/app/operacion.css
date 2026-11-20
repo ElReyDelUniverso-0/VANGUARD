@@ -181,7 +181,17 @@ body::after {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 40%, transparent 52%, rgba(0, 0, 0, 0.55) 100%);
+  /* Viñeta de sala oscura + las líneas de escáner que ya tenía la casa: este
+     pseudo-elemento era suyo (globals.css), así que se suma, no se sustituye. */
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0px,
+      rgba(0, 0, 0, 0.1) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    radial-gradient(120% 90% at 50% 40%, transparent 52%, rgba(0, 0, 0, 0.55) 100%);
 }
 
 /* el foco del puntero deja de ser luz de discoteca: es una mira tenue */
@@ -790,8 +800,11 @@ body::after {
   opacity: 0.9;
 }
 .op-sello {
+  /* La cabecera de la casa es sticky top:0, 64 px de alto, z-index 50: un sello
+     a top:12px con z-index 94 le caía ENCIMA de los botones. Va justo debajo de
+     la línea de la cabecera, pegado al margen derecho. */
   position: fixed;
-  top: 12px;
+  top: calc(64px + 8px);
   right: 12px;
   z-index: 94;
   display: flex;
