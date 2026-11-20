@@ -323,3 +323,23 @@ POST /api/centro/investigar {…, sinModelo:true} → ok · investigacion
 
 Para ello la lista `PUERTAS_DE_MAQUINA` admite ahora `metodo` y `cuerpo`: hasta
 hoy solo sabía hacer `GET`.
+
+### 12.4 Medido en producción (commits `85486db` + este)
+
+| Qué | Resultado |
+|---|---|
+| `/navegacion` servido | la herramienta **«Cámara de Inteligencia»** aparece en el HTML (2 veces) y `/inteligencia` 4 veces |
+| barra contextual dentro de la sala | «Inteligencia · Cámara de Inteligencia» |
+| organizador ANTES de guardar | «Organizador: creará «Investigación · Tecnología» — primer proyecto de la casa: se creará uno · etiquetas: Tecnología · Economía» |
+| desplegable | primera opción: `automático: «Investigación · Tecnología»` |
+| Guardar sin elegir proyecto | «Proyecto creado en «Investigación · Tecnología» (…). Etiquetas: Tecnología · Economía.» |
+| almacenamiento | `vg:centro:v1:proyectos` → 1 proyecto, 1 investigación, `etiquetas: ["Tecnología","Economía"]` |
+| tras recargar | las etiquetas «Tecnología · Economía» siguen en la lista de guardadas |
+| consola | **0 `pageerror`** en todo el recorrido (390×844) |
+| auditoría `--smoke` | AGENTE 9 · CONTRATO **8/8** puertas cumplen `{ok, …}` (antes 7/8: la de investigar pedía un cuerpo con al menos una fuente) |
+
+Nota de honestidad sobre la versión: `/api/health` sigue firmando **v420.3**
+porque la fuente única de versión la mueve otro departamento en el mismo `main`;
+este trabajo entra como commits `85486db` (organizador + navegación + auditoría)
+y el de esta medición. La sala se sirve con esos cambios (comprobado en el HTML
+publicado), no con un número nuevo.

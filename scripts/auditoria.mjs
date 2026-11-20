@@ -307,7 +307,9 @@ if (iSmoke > -1 && process.argv[iSmoke + 1]) {
     // el censo por GET, y las dos llamadas reales por POST con su contrato.
     { ruta: "/api/centro/buscar", claves: ["ok", "censo", "vias"] },
     { ruta: "/api/centro/buscar", metodo: "POST", cuerpo: { pregunta: "otan" }, claves: ["ok", "candidatas", "censo", "avisos"] },
-    { ruta: "/api/centro/investigar", metodo: "POST", cuerpo: { pregunta: "otan", fuentes: [], sinModelo: true }, claves: ["ok", "investigacion"] },
+    // sinModelo:true → motor determinista: la auditoría no gasta modelo y el
+    // resultado es reproducible; con una sola fuente del corpus, para no abusar.
+    { ruta: "/api/centro/investigar", metodo: "POST", cuerpo: { pregunta: "litografía ultravioleta extrema", fuentes: ["dossier:semiconductores-litografia"], sinModelo: true }, claves: ["ok", "investigacion"] },
   ];
   // Lo que NUNCA debe salir por una respuesta pública (la regla del Dueño).
   const SECRETOS = [/ghp_[A-Za-z0-9]{20,}/, /sk-[A-Za-z0-9]{20,}/, /-----BEGIN [A-Z ]*PRIVATE KEY-----/, /SUPABASE_SERVICE_ROLE/i, /AUTH_SECRET\s*[:=]\s*["'][^"']{8,}/];
