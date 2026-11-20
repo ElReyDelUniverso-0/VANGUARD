@@ -1,5 +1,5 @@
 // ============================================================
-// VANGUARD · MOTORES ANALÍTICOS GLOBALES (v423.0)
+// VANGUARD · MOTORES ANALÍTICOS GLOBALES (v423.0 - REVOLUCIÓN)
 //
 // Implementaciones matemáticas puras sin dependencias externas:
 // 1. Lanchester: Ley cuadrática y lineal de combate y atrición
@@ -9,6 +9,7 @@
 // 5. Lotka-Volterra: Dinámica de disuasión y carreras armamentistas
 // 6. Modelo de Gravedad Geopolítica: Flujos bilaterales de comercio/influencia
 // 7. Brier Score: Calibración y honestidad de pronósticos probabilísticos
+// 8. Escala de Escalada de Herman Kahn: Índice de umbrales nucleares y DEFCON
 // ============================================================
 
 export interface ResultadoLanchester {
@@ -106,8 +107,6 @@ export function calcularHaversineKm(
 
 /**
  * Agrupamiento espacial DBSCAN para detección de frentes y conglomerados de calor.
- * epsKm: radio en km para vecindad
- * minPts: mínimo de puntos para considerarse núcleo
  */
 export function clusterizarDBSCAN(
   puntos: PuntoGeo[],
@@ -130,7 +129,7 @@ export function clusterizarDBSCAN(
 
     const vecinos = regionQuery(p);
     if (vecinos.length < minPts) {
-      asignados.set(p.id, -1); // Ruido provisional
+      asignados.set(p.id, -1);
     } else {
       clusterId++;
       asignados.set(p.id, clusterId);
@@ -174,14 +173,13 @@ export function clusterizarDBSCAN(
 
 /**
  * Modelo Nelson-Siegel para curvas de rendimiento de deuda soberana y estrés financiero.
- * y(m) = beta0 + beta1 * ((1 - exp(-m/tau))/(m/tau)) + beta2 * (((1 - exp(-m/tau))/(m/tau)) - exp(-m/tau))
  */
 export function curvaNelsonSiegel(
   madurezAnios: number,
-  beta0: number, // Nivel a largo plazo
-  beta1: number, // Pendiente (corto - largo)
-  beta2: number, // Curvatura (joroba a medio plazo)
-  tau = 1.5 // Parámetro de decaimiento temporal
+  beta0: number,
+  beta1: number,
+  beta2: number,
+  tau = 1.5
 ): number {
   if (madurezAnios <= 0) return beta0 + beta1;
   const m = madurezAnios / tau;
@@ -192,8 +190,6 @@ export function curvaNelsonSiegel(
 
 /**
  * Dinámica Lotka-Volterra de disuasión y equilibrio armamentista.
- * dx/dt = x * (alpha - beta * y)
- * dy/dt = -y * (gamma - delta * x)
  */
 export function simularDisuasionLotkaVolterra(
   x0: number,
@@ -227,11 +223,10 @@ export function simularDisuasionLotkaVolterra(
 }
 
 /**
- * Modelo de gravedad para atracción geopolítica y flujo de influencia:
- * F_ij = G * (M_i * M_j) / (D_ij ^ gamma)
+ * Modelo de gravedad para atracción geopolítica y flujo de influencia bilateral.
  */
 export function gravedadGeopolitica(
-  masaI: number, // PIB o poder nacional compuesto
+  masaI: number,
   masaJ: number,
   distanciaKm: number,
   gamma = 1.15,
@@ -242,9 +237,7 @@ export function gravedadGeopolitica(
 }
 
 /**
- * Cálculo del Brier Score para validación y honestidad de pronósticos.
- * BS = (1/N) * sum((prob - resultadoReal)^2)
- * Rango [0, 1]: 0 es calibración perfecta, 0.25 es adivinanza aleatoria al 50%.
+ * Cálculo del Brier Score para validación y honestidad de pronósticos probabilísticos.
  */
 export function calcularBrierScore(
   pronosticos: { probabilidad: number; ocurrio: boolean }[]
@@ -265,4 +258,89 @@ export function calcularBrierScore(
   else if (score > 0.12) interpretacion = "Buena discriminación de señales";
 
   return { score, interpretacion };
+}
+
+/**
+ * Modelo de Escalada Nuclear de Herman Kahn (44 peldaños comprimidos en 7 fases).
+ */
+export interface EstadoEscalada {
+  fase: number; // 1 a 7
+  nombreFase: string;
+  nivelDefcon: 1 | 2 | 3 | 4 | 5;
+  probabilidadUsoNuclear: number; // 0.0 - 1.0
+  descripcionDoctrinal: string;
+  indicadoresClave: string[];
+}
+
+export function evaluarEscaladaKahn(peldanioKahn: number): EstadoEscalada {
+  const r = Math.max(1, Math.min(44, Math.round(peldanioKahn)));
+
+  if (r <= 3) {
+    return {
+      fase: 1,
+      nombreFase: "Desacuerdo Sub-crisis",
+      nivelDefcon: 5,
+      probabilidadUsoNuclear: 0.001,
+      descripcionDoctrinal: "Disputas retóricas, notas diplomáticas formales y gestos políticos sin despliegue de fuerzas.",
+      indicadoresClave: ["Declaraciones de cancillería", "Intercambio de embajadores", "Retórica en foros multilaterales"],
+    };
+  }
+  if (r <= 9) {
+    return {
+      fase: 2,
+      nombreFase: "Crisis Tradicional",
+      nivelDefcon: 4,
+      probabilidadUsoNuclear: 0.015,
+      descripcionDoctrinal: "Movilización de reservas convencionales, ejercicios militares no anunciados cerca de fronteras.",
+      indicadoresClave: ["Alerta en bases aéreas", "Aumento de vuelos SIGINT", "Embargos selectivos"],
+    };
+  }
+  if (r <= 15) {
+    return {
+      fase: 3,
+      nombreFase: "Enfrentamiento Armado Intenso",
+      nivelDefcon: 3,
+      probabilidadUsoNuclear: 0.08,
+      descripcionDoctrinal: "Guerra convencional abierta sin uso de armas de destrucción masiva. Pérdidas significativas de material.",
+      indicadoresClave: ["Dispersión de bombarderos", "Ciberataques a satélites militares", "Combate de alta intensidad en el frente"],
+    };
+  }
+  if (r <= 21) {
+    return {
+      fase: 4,
+      nombreFase: "Umbral Nuclear / Demostración",
+      nivelDefcon: 2,
+      probabilidadUsoNuclear: 0.28,
+      descripcionDoctrinal: "Demostración nuclear táctica en zona deshabitada o detonación electromagnética (EMP) a gran altitud.",
+      indicadoresClave: ["Salida de submarinos SSBN", "Carga de ojivas en silos ICBM", "Evacuación de centros de mando"],
+    };
+  }
+  if (r <= 31) {
+    return {
+      fase: 5,
+      nombreFase: "Guerra Nuclear Táctica de Campo",
+      nivelDefcon: 1,
+      probabilidadUsoNuclear: 0.65,
+      descripcionDoctrinal: "Uso de armas nucleares de bajo rendimiento contra formaciones blindadas o bases logísticas avanzadas.",
+      indicadoresClave: ["Ataques contra cuarteles generales de teatro", "Destrucción de puertos de reabastecimiento", "Iónosfera perturbada por radiación"],
+    };
+  }
+  if (r <= 38) {
+    return {
+      fase: 6,
+      nombreFase: "Ataque Contra-Fuerza Estratégico",
+      nivelDefcon: 1,
+      probabilidadUsoNuclear: 0.88,
+      descripcionDoctrinal: "Ataque masivo contra silos de misiles y bases navales enemigas para neutralizar la segunda respuesta.",
+      indicadoresClave: ["Lanzamiento de salvas ICBM", "Defensa antimisiles saturada", "Comando y control aerotransportado 'Doomsday' activo"],
+    };
+  }
+  return {
+    fase: 7,
+    nombreFase: "Guerra Contra-Valor / Devastación Espasmódica",
+    nivelDefcon: 1,
+    probabilidadUsoNuclear: 0.999,
+    descripcionDoctrinal: "Destrucción mutua asegurada (MAD) dirigida contra las grandes metrópolis y el tejido industrial global.",
+    indicadoresClave: ["Impactos masivos en capitales y megalópolis", "Invierno nuclear y colapso de biosfera", "Fin de la gobernanza organizada"],
+  };
 }

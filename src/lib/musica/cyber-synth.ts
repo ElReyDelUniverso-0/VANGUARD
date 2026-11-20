@@ -73,7 +73,7 @@ export function iniciarCyberSynth(volumen = 0.35) {
 
         // Onda diente de sierra suave con leve desafinación estéreo para grosor
         osc.type = idx === 0 ? "triangle" : "sawtooth";
-        const detune = (idx - 2) * 5; // Detune de +-10 cents
+        const detune = (idx - 2) * 5;
         osc.frequency.setValueAtTime(freq, ctx!.currentTime);
         osc.detune.setValueAtTime(detune, ctx!.currentTime);
 
@@ -88,10 +88,8 @@ export function iniciarCyberSynth(volumen = 0.35) {
       });
     }
 
-    // Arrancar primer acorde
     tocarAcorde(ACORDES[0]);
 
-    // Progresión cíclica lenta cada 8 segundos
     const cambioRef = window.setInterval(() => {
       indiceAcorde = (indiceAcorde + 1) % ACORDES.length;
       tocarAcorde(ACORDES[indiceAcorde]);

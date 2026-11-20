@@ -8,7 +8,7 @@ import { Pie } from "@/components/portada/pie";
 export const metadata: Metadata = {
   title: "Motores & Algoritmos Globales · Vanguard",
   description:
-    "Laboratorio analítico interactivo: Leyes de Lanchester, Nelson-Siegel, gravedad geopolítica, Brier Score y censo de las 100 plataformas líderes de inteligencia.",
+    "Laboratorio analítico interactivo: Leyes de Lanchester, Nelson-Siegel, gravedad geopolítica, Brier Score, escala de escalada Kahn y censo de las 100 plataformas líderes de inteligencia.",
 };
 
 export default function PaginaMotores() {
@@ -20,7 +20,7 @@ export default function PaginaMotores() {
         {/* Cabecera de Sección */}
         <div className="mb-8 border-b border-purple-500/20 pb-6">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded bg-purple-500/10 px-2 py-0.5 font-mono text-xs uppercase tracking-widest text-purple-400">
+            <span className="rounded bg-purple-500/10 px-2 py-0.5 font-mono text-xs uppercase tracking-widest text-purple-400 border border-purple-500/30">
               VANGUARD LABS · v423.0
             </span>
             <span className="font-mono text-xs text-zinc-500">
@@ -42,13 +42,19 @@ export default function PaginaMotores() {
               href="/motores/censo"
               className="rounded border border-purple-500/40 bg-purple-950/30 px-3 py-1 font-mono text-xs text-purple-300 transition hover:bg-purple-900/40"
             >
-              📊 Visor Censo 100 Plataformas
+              📊 Censo 100 Plataformas
             </Link>
             <Link
               href="/motores/lanchester"
               className="rounded border border-zinc-800 bg-zinc-900/60 px-3 py-1 font-mono text-xs text-zinc-300 transition hover:border-purple-500/40 hover:text-purple-300"
             >
               ⚔️ Atrición de Lanchester
+            </Link>
+            <Link
+              href="/motores/escalada"
+              className="rounded border border-zinc-800 bg-zinc-900/60 px-3 py-1 font-mono text-xs text-zinc-300 transition hover:border-purple-500/40 hover:text-purple-300"
+            >
+              ☢️ Escalada Kahn & DEFCON
             </Link>
             <Link
               href="/motores/dbscan"
