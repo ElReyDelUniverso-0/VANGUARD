@@ -26,16 +26,31 @@ export async function pedirJson<T>(
 ): Promise<RespuestaCruda<T>> {
   const { segundos = 3600, tiempoMs = 9000 } = opciones;
   const t0 = Date.now();
+  // El tope se cumple DOS veces: el `signal` corta la petición y la carrera
+  // corta la espera. Hacen falta las dos: medido el 2026-09-22, una búsqueda de
+  // LoC con rango de años devolvía la página en 16 s con el tope puesto en 12 —
+  // el `fetch` de Next, con caché de por medio, no siempre obedece al signal.
+  let temporizador: ReturnType<typeof setTimeout> | undefined;
   try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": AGENTE, Accept: "application/json" },
-      signal: AbortSignal.timeout(tiempoMs),
-      next: { revalidate: segundos },
+    const corte = new Promise<never>((_, rechazar) => {
+      temporizador = setTimeout(() => {
+        const e = new Error("la fuente no contestó a tiempo");
+        e.name = "TimeoutError";
+        rechazar(e);
+      }, tiempoMs);
     });
+    const res = await Promise.race([
+      fetch(url, {
+        headers: { "User-Agent": AGENTE, Accept: "application/json" },
+        signal: AbortSignal.timeout(tiempoMs),
+        next: { revalidate: segundos },
+      }),
+      corte,
+    ]);
     if (!res.ok) {
       return { datos: null, error: `la fuente respondió ${res.status}`, ms: Date.now() - t0 };
     }
-    const datos = (await res.json()) as T;
+    const datos = (await Promise.race([res.json() as Promise<T>, corte])) as T;
     return { datos, error: null, ms: Date.now() - t0 };
   } catch (e) {
     const motivo =
@@ -43,6 +58,8 @@ export async function pedirJson<T>(
         ? "la fuente no contestó a tiempo"
         : "no se pudo consultar la fuente";
     return { datos: null, error: motivo, ms: Date.now() - t0 };
+  } finally {
+    if (temporizador) clearTimeout(temporizador);
   }
 }
 

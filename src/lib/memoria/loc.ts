@@ -139,7 +139,7 @@ export async function buscarLoc(opciones: {
   });
   if (desde || hasta) params.set("dates", `${desde ?? 1000}/${hasta ?? 2026}`);
   const url = `https://www.loc.gov/${coleccion}/?${params.toString()}`;
-  const { datos, error } = await pedirJson<RespuestaBusquedaLoc>(url, { tiempoMs: 12000 });
+  const { datos, error } = await pedirJson<RespuestaBusquedaLoc>(url, { tiempoMs: 10000 });
 
   if (!datos) {
     return { fuente: "loc", total: null, documentos: [], error: error ?? "sin respuesta" };
