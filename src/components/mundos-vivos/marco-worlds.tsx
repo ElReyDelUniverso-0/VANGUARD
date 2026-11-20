@@ -1,7 +1,7 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════
-// v422.0 VANGUARD WORLDS — EL MARCO DEL MUNDO VIVO
+// v422.3 VANGUARD WORLDS — EL MARCO DEL MUNDO VIVO
 //
 // LO QUE NO HACE: no crea un motor nuevo. Reutiliza el globo de la casa
 // (GlobeMap3D, el de /mapas y /mundo) y las capas declaradas del Centro
@@ -14,13 +14,16 @@
 //  · LUGAR  — la ficha del lugar con sus experiencias reales de Vanguard
 //
 // NAVEGACIÓN: arrastra gira, la rueda acerca, toque trabalha en móvil
-// (globe.gl lo soporta nativo). Rail izquierdo = mundos, rail derecho =
-// lugares o la ficha. ESC vuelve un paso. Todo el chrome viaja en i18n.
+// (globe.gl lo soporta nativo). Barra de contexto (Mundo → Zona →
+// Lugar) con volver y hint de Esc. Rail izquierdo = mundos, rail
+// derecho = lugares o la ficha. Todo el chrome viaja en i18n.
 //
 // RENDIMIENTO: el globo entra SOLO en el navegador (dynamic ssr:false,
 // patrón de la casa); si no hay WebGL o el visitante elige «plano»,
-// se despliega la alternativa 2D dibujada en código (SVG). El giro
-// automático se detiene con prefers-reduced-motion (ley de la casa).
+// se despliega la alternativa 2D dibujada en código (SVG) con las
+// fronteras reales de país (Natural Earth 110m, la misma fuente del
+// Atlas de la casa). El giro automático se detiene con
+// prefers-reduced-motion (ley de la casa).
 // ═══════════════════════════════════════════════════════════════════
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -29,6 +32,8 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { useT } from "@/lib/i18n";
 import { CATEGORIA_MUNDOS, type PoiMundo, type ZonaMundo } from "@/lib/mundos-vivos/tipos";
+import { COUNTRY_FEATURES } from "@/lib/world-geo";
+import { geoGraticule10, geoNaturalEarth1, geoPath } from "d3-geo";
 import type { CapaCliente } from "@/lib/mapas-payload";
 
 // El globo toca `window` al cargarse: entra SOLO en el navegador, como
@@ -53,6 +58,14 @@ export interface MarcoWorldsProps {
     cifras: { zonas: number; lugares: number; experiencias: number };
     capas: CapaCliente[];
   };
+}
+
+/** Bandera emoji a partir del ISO2 (símbolos regional-indicator, en código). */
+function bandera(iso2: string): string {
+  const c = iso2.toUpperCase();
+  if (c.length !== 2 || !/^[A-Z]{2}$/.test(c)) return "🏳️";
+  const cp = (ch: string) => 0x1f1e6 + (ch.charCodeAt(0) - 65);
+  return String.fromCodePoint(cp(c[0]), cp(c[1]));
 }
 
 /** Detección de WebGL: la alternativa 2D es la ley cuando no hay motor. */
@@ -87,6 +100,7 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
   const [plano, setPlano] = useState(false); // el visitante elige la vista 2D
   const [webgl, setWebgl] = useState(true);
   const [abiertas, setAbiertas] = useState({ zones: true, layers: false });
+  const [pantalla, setPantalla] = useState(false); // pantalla completa del escenario
 
   const nonceVuelo = useRef(0);
   const [vuelo, setVuelo] = useState<{ lat: number; lng: number; altitude: number; nonce: number } | null>(null);
@@ -97,6 +111,7 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
   const [indiceAltura, setIndiceAltura] = useState(3);
 
   const [reducido, setReducido] = useState(false);
+  const escenarioRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setWebgl(usoWebgl());
@@ -114,12 +129,23 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      if (document.fullscreenElement) {
+        void document.exitFullscreen().catch(() => {});
+        return;
+      }
       if (lugarId) setLugarId(null);
       else if (zonaId) setZonaId(null);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [lugarId, zonaId]);
+
+  // pantalla completa: seguir el estado real del navegador
+  useEffect(() => {
+    const onFs = () => setPantalla(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onFs);
+    return () => document.removeEventListener("fullscreenchange", onFs);
+  }, []);
 
   const zona = useMemo(() => zonas.find((z) => z.id === zonaId) ?? null, [zonas, zonaId]);
   const lugaresZona = useMemo(() => zona?.lugares ?? [], [zona]);
@@ -159,10 +185,33 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
     [volar],
   );
 
+  // reiniciar la vista: vuelve a volar al estado actual (lugar > zona > mundo)
+  const reiniciarVista = useCallback(() => {
+    if (lugar) {
+      volar(lugar.lat, lugar.lng, 0.85);
+    } else if (zona) {
+      volar(zona.centro.lat, zona.centro.lng, zona.centro.altitud);
+    } else {
+      nonceVuelo.current += 1;
+      setVuelo({ lat: 20, lng: 0, altitude: 1.5, nonce: nonceVuelo.current });
+    }
+  }, [lugar, zona, volar]);
+
+  const togglePantalla = useCallback(() => {
+    const el = escenarioRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => {});
+    } else {
+      void el.requestFullscreen?.().catch(() => {});
+    }
+  }, []);
+
   const marcadores = useMemo(() => {
     const todo = zonas.flatMap((z) =>
       z.lugares.map((p) => ({
         id: p.id,
+        nombre: p.nombre,
         lat: p.lat,
         lng: p.lng,
         color: z.acento,
@@ -179,34 +228,45 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
     return todo;
   }, [zonas, zonaId, abrirLugar]);
 
+  // coincide con: nombre del lugar, país, ISO2 o la experiencia que linkea
+  const lugaresCoinciden = useCallback((p: PoiMundo, q: string) => {
+    if (p.nombre.toLowerCase().includes(q)) return true;
+    if (p.pais.nombre.toLowerCase().includes(q)) return true;
+    if (p.pais.iso2.toLowerCase().includes(q)) return true;
+    return p.experiencias.some(
+      (e) => e.etiqueta.toLowerCase().includes(q) || e.ruta.toLowerCase().includes(q),
+    );
+  }, []);
+
   const resultados = useMemo(() => {
     const q = consulta.trim().toLowerCase();
     const base = lugar ? [] : lugaresZona;
     if (q.length < 2) return base;
-    return base.filter(
-      (p) =>
-        p.nombre.toLowerCase().includes(q) ||
-        p.pais.nombre.toLowerCase().includes(q) ||
-        p.pais.iso2.toLowerCase().includes(q),
-    );
-  }, [consulta, lugaresZona, lugar]);
+    return base.filter((p) => lugaresCoinciden(p, q));
+  }, [consulta, lugaresZona, lugar, lugaresCoinciden]);
 
   const todosLosLugares = useMemo(() => zonas.flatMap((z) => z.lugares), [zonas]);
   const lugaresBusqueda = useMemo(() => {
     const q = consulta.trim().toLowerCase();
     if (q.length < 2) return [];
-    return todosLosLugares.filter(
-      (p) =>
-        p.nombre.toLowerCase().includes(q) ||
-        p.pais.nombre.toLowerCase().includes(q) ||
-        p.pais.iso2.toLowerCase().includes(q),
-    );
-  }, [consulta, todosLosLugares]);
+    return todosLosLugares.filter((p) => lugaresCoinciden(p, q));
+  }, [consulta, todosLosLugares, lugaresCoinciden]);
+
+  const mundoDeLugar = useCallback(
+    (pid: string) => zonas.find((z) => z.lugares.some((l) => l.id === pid)) ?? null,
+    [zonas],
+  );
 
   const categoriaDe = (clave: string) =>
     CATEGORIA_MUNDOS.find((c) => c.clave === clave) ?? CATEGORIA_MUNDOS[0];
 
   const mostrarGlobo = webgl && !plano;
+  const busquedaActiva = consulta.trim().length >= 2;
+
+  // buscador: Enter abre el primer resultado
+  const abrirPrimero = (lista: PoiMundo[]) => {
+    if (lista.length > 0) abrirLugar(lista[0]);
+  };
 
   return (
     <div className={`vx-worlds ${zonaId ? "vx-worlds-zona" : ""}`}>
@@ -223,8 +283,41 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
         </div>
       </header>
 
+      {/* ── BARRA DE CONTEXTO: MUNDO → ZONA → LUGAR ────────────────── */}
+      <nav className="vx-worlds-contexto" aria-label={t("worlds.contexto")}>
+        <button
+          type="button"
+          className={`vx-worlds-contexto-crumb ${!zonaId && !lugarId ? "vx-worlds-contexto-actual" : ""}`}
+          onClick={salirZona}
+        >
+          {t("worlds.todosLosMundos")}
+        </button>
+        {zonaId && (
+          <>
+            <span className="vx-worlds-contexto-sep">›</span>
+            <button
+              type="button"
+              className={`vx-worlds-contexto-crumb ${!lugarId ? "vx-worlds-contexto-actual" : ""}`}
+              onClick={() => {
+                setLugarId(null);
+                if (zona) volar(zona.centro.lat, zona.centro.lng, zona.centro.altitud);
+              }}
+            >
+              {zona?.nombre}
+            </button>
+          </>
+        )}
+        {lugarId && (
+          <>
+            <span className="vx-worlds-contexto-sep">›</span>
+            <span className="vx-worlds-contexto-crumb vx-worlds-contexto-actual">{lugar?.nombre}</span>
+          </>
+        )}
+        <span className="vx-worlds-contexto-esc">{t("worlds.esc")}</span>
+      </nav>
+
       {/* ── EL GLOBES / EL PLANO ───────────────────────────────────── */}
-      <div className="vx-worlds-escenario">
+      <div className="vx-worlds-escenario" ref={escenarioRef}>
         {mostrarGlobo ? (
           <GlobeMap3D
             markers={marcadores}
@@ -250,6 +343,7 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
             onLugar={abrirLugar}
             buscador={consulta}
             onBuscar={setConsulta}
+            onEnter={(lista) => abrirPrimero(lista)}
             t={t}
           />
         )}
@@ -294,11 +388,30 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
           </button>
           <button
             type="button"
+            className="vx-worlds-boton"
+            onClick={reiniciarVista}
+            aria-label={t("worlds.reiniciar")}
+            title={t("worlds.reiniciar")}
+          >
+            ⟲
+          </button>
+          <button
+            type="button"
             className={`vx-worlds-boton ${giro ? "vx-worlds-boton-on" : ""}`}
             onClick={() => setGiro((v) => !v)}
             aria-pressed={giro}
           >
             {t("worlds.girar")}
+          </button>
+          <button
+            type="button"
+            className={`vx-worlds-boton ${pantalla ? "vx-worlds-boton-on" : ""}`}
+            onClick={togglePantalla}
+            aria-pressed={pantalla}
+            aria-label={pantalla ? t("worlds.salirPantalla") : t("worlds.pantalla")}
+            title={pantalla ? t("worlds.salirPantalla") : t("worlds.pantalla")}
+          >
+            {pantalla ? "⤢" : "⛶"}
           </button>
           <button
             type="button"
@@ -312,7 +425,7 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
       </div>
 
       {/* ── RAIL IZQUIERDO: LOS MUNDOS ───────────────────────────── */}
-      <aside className={`vx-worlds-rail vx-worlds-rail-zones ${abiertas.zones ? "" : "vx-worlds-cerrado"}`}>
+      <aside className={`vx-worlds-rail vx-worlds-rail-zones ${abiertas.zones ? "" : "vx-worlds-cerrado"}`} aria-label={t("worlds.mundos")}>
         <div className="vx-worlds-rail-cabecera">
           <span>{t("worlds.mundos")}</span>
           <button
@@ -349,13 +462,13 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
       </aside>
 
       {/* ── RAIL DERECHO: LOS LUGARES / LA FICHA ──────────────────── */}
-      <aside className="vx-worlds-rail vx-worlds-rail-lugares">
+      <aside className="vx-worlds-rail vx-worlds-rail-lugares" aria-label={lugar ? t("worlds.fichaLugar") : zona ? t("worlds.lugaresDeZona") : t("worlds.lugares")}>
         <div className="vx-worlds-rail-cabecera">
           <span>{lugar ? t("worlds.fichaLugar") : zona ? t("worlds.lugaresDeZona") : t("worlds.lugares")}</span>
         </div>
 
         {lugar ? (
-          <LugarFicha lugar={lugar} t={t} categoriaDe={categoriaDe} />
+          <LugarFicha lugar={lugar} zona={zona} t={t} categoriaDe={categoriaDe} />
         ) : zona ? (
           <>
             <div className="vx-worlds-zona-info">
@@ -366,19 +479,34 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
               className="vx-worlds-buscar"
               value={consulta}
               onChange={(e) => setConsulta(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") abrirPrimero(resultados);
+              }}
               placeholder={t("worlds.buscar")}
               aria-label={t("worlds.buscar")}
             />
+            <div className="vx-worlds-resultados" aria-live="polite">
+              {busquedaActiva && (
+                <span className="vx-worlds-resultados-cuenta">
+                  {t("worlds.resultados", { cuenta: resultados.length })}
+                </span>
+              )}
+            </div>
             <ul className="vx-worlds-lista">
               {resultados.map((p) => (
                 <li key={p.id}>
                   <button type="button" className="vx-worlds-lugar" onClick={() => abrirLugar(p)}>
-                    <span className="vx-worlds-lugar-nombre">{p.nombre}</span>
-                    <span className="vx-worlds-lugar-pais">{p.pais.nombre}</span>
+                    <span className="vx-worlds-lugar-cabeza">
+                      <span className="vx-worlds-lugar-bandera">{bandera(p.pais.iso2)}</span>
+                      <span className="vx-worlds-lugar-nombre">{p.nombre}</span>
+                    </span>
+                    <span className="vx-worlds-lugar-pais">
+                      {p.pais.nombre} · <span className="vx-worlds-lugar-exp">{p.experiencias.length} {t("worlds.expPlural")}</span>
+                    </span>
                   </button>
                 </li>
               ))}
-              {resultados.length === 0 && <li className="vx-worlds-vacio">{t("worlds.sinResultados")}</li>}
+              {busquedaActiva && resultados.length === 0 && <li className="vx-worlds-vacio">{t("worlds.sinResultados")}</li>}
             </ul>
           </>
         ) : (
@@ -387,13 +515,23 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
               className="vx-worlds-buscar"
               value={consulta}
               onChange={(e) => setConsulta(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") abrirPrimero(lugaresBusqueda);
+              }}
               placeholder={t("worlds.buscar")}
               aria-label={t("worlds.buscar")}
             />
+            <div className="vx-worlds-resultados" aria-live="polite">
+              {busquedaActiva && (
+                <span className="vx-worlds-resultados-cuenta">
+                  {t("worlds.resultados", { cuenta: lugaresBusqueda.length })}
+                </span>
+              )}
+            </div>
             <ul className="vx-worlds-lista">
               {lugaresBusqueda.length > 0
                 ? lugaresBusqueda.map((p) => {
-                    const zi = zonas.find((z) => z.lugares.some((l) => l.id === p.id));
+                    const zi = mundoDeLugar(p.id);
                     return (
                       <li key={p.id}>
                         <button
@@ -405,8 +543,13 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
                           }}
                           style={{ ["--vx-acento" as string]: zi?.acento }}
                         >
-                          <span className="vx-worlds-lugar-nombre">{p.nombre}</span>
-                          <span className="vx-worlds-lugar-pais">{p.pais.nombre}</span>
+                          <span className="vx-worlds-lugar-cabeza">
+                            <span className="vx-worlds-lugar-bandera">{bandera(p.pais.iso2)}</span>
+                            <span className="vx-worlds-lugar-nombre">{p.nombre}</span>
+                          </span>
+                          <span className="vx-worlds-lugar-pais">
+                            {zi?.nombre ?? p.pais.nombre} · {p.pais.nombre}
+                          </span>
                         </button>
                       </li>
                     );
@@ -482,26 +625,42 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
   );
 }
 
-/** La ficha de un lugar: sus experiencias reales de Vanguard. */
+/** La ficha de un lugar: su mundo, su bandera y sus experiencias reales. */
 function LugarFicha({
   lugar,
+  zona,
   t,
   categoriaDe,
 }: {
   lugar: PoiMundo;
+  zona: ZonaMundo | null;
   t: (k: string, v?: Record<string, string | number>) => string;
   categoriaDe: (clave: string) => { etiqueta: string; acento: string };
 }) {
   return (
-    <div className="vx-worlds-lugar-ficha">
+    <motion.div
+      className="vx-worlds-lugar-ficha"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.18 }}
+    >
       <div className="vx-worlds-lugar-ficha-cabecera">
-        <h3>{lugar.nombre}</h3>
-        <span className="vx-worlds-lugar-ficha-pais">{lugar.pais.nombre} · {lugar.pais.iso2.toUpperCase()}</span>
+        <h3>
+          <span className="vx-worlds-lugar-ficha-bandera" aria-hidden="true">{bandera(lugar.pais.iso2)}</span>
+          {lugar.nombre}
+        </h3>
+        <span className="vx-worlds-lugar-ficha-pais">
+          {zona ? `${t("worlds.en")} ${zona.nombre} · ` : ""}
+          {lugar.pais.nombre} · {lugar.pais.iso2.toUpperCase()}
+        </span>
       </div>
       <p className="vx-worlds-lugar-ficha-nota">{lugar.nota}</p>
       <div className="vx-worlds-lugar-ficha-etapa">
         <span className="vx-worlds-lugar-ficha-coordenadas">
           {lugar.lat.toFixed(2)}, {lugar.lng.toFixed(2)}
+        </span>
+        <span className="vx-worlds-lugar-ficha-cuenta">
+          {lugar.experiencias.length} {t("worlds.expPlural")}
         </span>
       </div>
       <div className="vx-worlds-lugar-ficha-experiencias">
@@ -521,11 +680,13 @@ function LugarFicha({
           })}
         </ul>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-/** La alternativa 2D: el mismo mundo dibujado en código (SVG), sin WebGL. */
+/** La alternativa 2D: el mismo mundo dibujado en código (SVG), con las
+ *  fronteras reales de país (Natural Earth 110m — la misma fuente del
+ *  Atlas 2D de la casa) y los puntos de cada lugar. */
 function PlanoMundos({
   zonas,
   zonaId,
@@ -535,40 +696,90 @@ function PlanoMundos({
   onLugar,
   buscador,
   onBuscar,
+  onEnter,
   t,
 }: {
   zonas: ZonaMundo[];
   zonaId: string | null;
   lugarId: string | null;
-  marcadores: { id: string; lat: number; lng: number; color: string; size: number }[];
+  marcadores: { id: string; nombre: string; lat: number; lng: number; color: string; size: number }[];
   onZona: (z: ZonaMundo) => void;
   onLugar: (p: PoiMundo) => void;
   buscador: string;
   onBuscar: (v: string) => void;
+  onEnter: (lista: PoiMundo[]) => void;
   t: (k: string, v?: Record<string, string | number>) => string;
 }) {
   const lugarPorId = new Map(zonas.flatMap((z) => z.lugares).map((p) => [p.id, p]));
-  // proyección equirectangular: x = lng, y = -lat (el norte arriba)
-  const W = 1000;
-  const H = 500;
-  const px = (lng: number) => ((lng + 180) / 360) * W;
-  const py = (lat: number) => ((90 - lat) / 180) * H;
+
+  // proyección Natural Earth (la misma del Atlas 2D de la casa)
+  const ANCHO = 960;
+  const ALTO = 500;
+  const { tracepaises, path, proyecta, reticulado } = useMemo(() => {
+    const proyecta = geoNaturalEarth1().fitExtent(
+      [
+        [8, 8],
+        [ANCHO - 8, ALTO - 8],
+      ],
+      { type: "Sphere" },
+    );
+    const path = geoPath(proyecta);
+    const tracepaises = COUNTRY_FEATURES.map((f) => {
+      try {
+        const d = path(f) ?? "";
+        if (!d) return null;
+        return { id: String(f.id ?? ""), nombre: f.properties?.name ?? "", d };
+      } catch {
+        return null;
+      }
+    }).filter((x): x is { id: string; nombre: string; d: string } => Boolean(x));
+    let reticulado = "";
+    try {
+      reticulado = path(geoGraticule10()) ?? "";
+    } catch {
+      /* reticulado opcional */
+    }
+    return { tracepaises, path, proyecta, reticulado };
+  }, []);
+
+  const xy = (lat: number, lng: number): [number, number] | null => {
+    try {
+      const p = proyecta([lng, lat]);
+      return p ? [p[0], p[1]] : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // los puntos del mundo activo llevan etiqueta; el resto, solo tooltip
+  const puntos = useMemo(() => {
+    return marcadores
+      .map((m) => {
+        const p = xy(m.lat, m.lng);
+        return p ? { ...m, x: p[0], y: p[1] } : null;
+      })
+      .filter(
+        (x): x is { id: string; nombre: string; lat: number; lng: number; color: string; size: number; x: number; y: number } =>
+          Boolean(x),
+      );
+  }, [marcadores]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="vx-worlds-plano">
-      <svg viewBox={`0 0 ${W} ${H}`} className="vx-worlds-plano-svg" role="img" aria-label={t("worlds.plano")}>
-        <rect x={0} y={0} width={W} height={H} className="vx-worlds-plano-fondo" />
-        {[-60, -30, 0, 30, 60].map((lat) => (
-          <line key={`la-${lat}`} x1={0} y1={py(lat)} x2={W} y2={py(lat)} className="vx-worlds-plano-malla" />
+      <svg viewBox={`0 0 ${ANCHO} ${ALTO}`} className="vx-worlds-plano-svg" role="img" aria-label={t("worlds.plano")}>
+        <rect x={0} y={0} width={ANCHO} height={ALTO} className="vx-worlds-plano-fondo" />
+        {/* el planeta: esfera + reticulado + fronteras reales de país */}
+        <path d={path({ type: "Sphere" }) ?? ""} className="vx-worlds-plano-esfera" />
+        {reticulado && <path d={reticulado} className="vx-worlds-plano-reticulado" />}
+        {tracepaises.map((p) => (
+          <path key={p.id || p.nombre} d={p.d} className="vx-worlds-plano-frontera" />
         ))}
-        {[-120, -60, 0, 60, 120].map((lng) => (
-          <line key={`lo-${lng}`} x1={px(lng)} y1={0} x2={px(lng)} y2={H} className="vx-worlds-plano-malla" />
-        ))}
-        {marcadores.map((m) => (
+        {puntos.map((m) => (
           <g key={m.id} className="vx-worlds-plano-punto-grupo">
+            <title>{m.nombre}</title>
             <circle
-              cx={px(m.lng)}
-              cy={py(m.lat)}
+              cx={m.x}
+              cy={m.y}
               r={m.size * 60}
               className={`vx-worlds-plano-punto ${lugarId === m.id ? "vx-worlds-plano-punto-activo" : ""}`}
               style={{ ["--vx-acento" as string]: m.color }}
@@ -577,6 +788,16 @@ function PlanoMundos({
                 if (p) onLugar(p);
               }}
             />
+            {(zonaId && m.size > 0.2) && (
+              <text
+                x={m.x + m.size * 60 + 5}
+                y={m.y + 3}
+                className="vx-worlds-plano-etiqueta"
+                style={{ ["--vx-acento" as string]: m.color }}
+              >
+                {m.nombre}
+              </text>
+            )}
           </g>
         ))}
       </svg>
@@ -602,6 +823,22 @@ function PlanoMundos({
         className="vx-worlds-buscar vx-worlds-buscar-plano"
         value={buscador}
         onChange={(e) => onBuscar(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            const lista = zonas.flatMap((z) => z.lugares);
+            const q = buscador.trim().toLowerCase();
+            const coinc = q.length >= 2
+              ? lista.filter(
+                  (p) =>
+                    p.nombre.toLowerCase().includes(q) ||
+                    p.pais.nombre.toLowerCase().includes(q) ||
+                    p.pais.iso2.toLowerCase().includes(q) ||
+                    p.experiencias.some((e) => e.etiqueta.toLowerCase().includes(q) || e.ruta.toLowerCase().includes(q)),
+                )
+              : [];
+            onEnter(coinc);
+          }
+        }}
         placeholder={t("worlds.buscar")}
         aria-label={t("worlds.buscar")}
       />

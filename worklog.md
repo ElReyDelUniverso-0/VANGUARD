@@ -42,6 +42,7 @@
   - `.vx-worlds` y el escenario refuerzan `min-width: 0` para evitar overflow; rails de mundos colapsados por defecto en móvil (≤900px).
 - **Verificación**: tsc limpio en los archivos tocados; redeploy a Vercel (production con más memoria) y re-audito headless para confirmar que el flotante se ancla al escenario. **Resultado PASS**: en 1440×900 el flotante quedó en (x=975, y=796) — DENTRO del escenario (x 274–1106, y 783–1528); antes estaba en y=12 (viewport). En 390×844: flotante en (x=247, y=685), también dentro del escenario; rails colapsados (railZones 0×0); sin overflow horizontal en ambos. Deployment `dpl_9bawQAJ73xA6rAixGdG5xY4w91zG` — READY/PROMOTED, `vanguard-kq9r.vercel.app/worlds` → 200.
 
+
 ### v422.3 · MISIÓN 05 — VIDA 2 (2026-11-19)
 - **Mandato**: «míralo, mejóralo, supera lo que hiciste, hazlo 100 veces mejor, púlalo».
 - **La órbita 2**: botón magnético con anillo cónico, VELO que desenfoca el resto, BUSCADOR en vivo («ma» → Mapa 3D, Mapas…), dos grupos (Módulos / Tu lado), flechas y Esc con foco devuelto, y **cada puerta anota su impresión** (el menú también enseña al algoritmo).
@@ -52,3 +53,16 @@
 - **Motor**: nuevas piezas puras `elegirSorprendente` y `resumenSenal`, y la memoria central `lib/vida/senal.ts` (una sola clave, tolerante a basura). Una prueba destapó que un valor negativo del almacén inflaba el contador de aperturas: se ignora la basura en el código.
 - **Pruebas**: \`node scripts/pruebas-vida.mjs\` → **28 pasan · 0 fallan**.
 - **Accesibilidad**: todo respeta \`data-vg-anim\` (completas/reducidas/desactivadas) y \`prefers-reduced-motion\`; inclinación y paralaje se apagan en táctil; la casa inmersiva \`/vanguard2\` sigue sin capas 2D.
+
+
+
+### Pulido de render · MISIÓN 04 (v422.3 · 2026-11-19)
+- **Plano 2D con fronteras reales**: el plano alternativo de `/worlds` pasó de rejilla + puntos a un mapa de verdad — esfera Natural Earth, reticulado y los polígonos de país de Natural Earth 110m (`COUNTRY_FEATURES`, la misma fuente del Atlas 2D de la casa). Puntos con `<title>` (tooltip) y etiquetas para los lugares del mundo activo.
+- **Barra de contexto**: crumbs Mundo → Zona → Lugar con volver al paso anterior y hint de Esc, encima del escenario.
+- **Ficha de lugar**: breadcrumb de zona, bandera emoji (ISO2), cuenta de experiencias y animación de entrada.
+- **Buscador**: Enter abre el primer resultado; contador en `aria-live`; la búsqueda también casa con la etiqueta y la ruta de la experiencia linkeada. Los resultados transversales muestran el mundo del lugar.
+- **Nuevos mandos del escenario**: `⟲` reiniciar la vista (vuela al estado actual) y `⛶` pantalla completa (Fullscreen API, Estado seguido con `fullscreenchange`; Esc también sale).
+- **A11y**: `focus-visible` en todos los mandos, `aria-label` en rails, región `aria-live` para el contador de resultados.
+- **i18n completo**: las claves `worlds.*` (24 existentes + 8 nuevas) estaban solo en ES; ahora los 7 diccionarios diferenciados (en/pt/fr/de/it/ru/zh) las tienen completas.
+- **Pruebas**: `tsc` limpio en los archivos tocados (marco, CSS no compilado, i18n); verificación final en producción con audit headless.
+

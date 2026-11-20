@@ -21,10 +21,11 @@
   display: grid;
   grid-template-areas:
     "cabecera cabecera cabecera"
+    "contexto contexto contexto"
     "zones escenario lugares"
     "capas capas capas";
   grid-template-columns: 240px 1fr 300px;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto;
   gap: 14px;
   padding: 20px;
   max-width: 1500px;
@@ -65,6 +66,45 @@
   color: var(--gris);
 }
 .vx-worlds-cifras strong { color: var(--teal); font-size: 18px; margin-right: 4px; }
+
+/* ── barra de contexto: MUNDO → ZONA → LUGAR ───────────────────────── */
+.vx-worlds-contexto {
+  grid-area: contexto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 2px;
+  font-size: 12px;
+  color: var(--gris);
+}
+.vx-worlds-contexto-crumb {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: none;
+  color: #c9c3b4;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.vx-worlds-contexto-crumb:hover { border-color: var(--borde); color: var(--tinta); }
+.vx-worlds-contexto-actual {
+  border-color: var(--oro);
+  color: var(--oro);
+  background: rgba(245, 197, 66, .08);
+}
+.vx-worlds-contexto-actual:hover { color: var(--oro); }
+.vx-worlds-contexto-sep { color: var(--gris); }
+.vx-worlds-contexto-esc {
+  margin-left: auto;
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gris);
+  opacity: .8;
+}
 
 /* ── escenario (globe o plano) ────────────────────────────────────── */
 .vx-worlds-escenario {
@@ -219,12 +259,21 @@
 .vx-worlds-buscar::placeholder { color: var(--gris); }
 .vx-worlds-buscar:focus { outline: 2px solid var(--oro); outline-offset: 1px; }
 
+/* contador de resultados (aria-live) */
+.vx-worlds-resultados { display: flex; justify-content: flex-end; min-height: 16px; }
+.vx-worlds-resultados-cuenta {
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
 /* lista de lugares */
 .vx-worlds-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .vx-worlds-lugar {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   width: 100%;
   padding: 9px 10px;
   border-radius: 10px;
@@ -236,22 +285,42 @@
   border-left: 3px solid var(--vx-acento, var(--oro));
 }
 .vx-worlds-lugar:hover { border-color: var(--vx-acento, var(--oro)); }
+.vx-worlds-lugar-cabeza { display: flex; align-items: center; gap: 8px; }
+.vx-worlds-lugar-bandera { font-size: 16px; line-height: 1; }
 .vx-worlds-lugar-nombre { font-size: 13.5px; font-weight: 600; }
 .vx-worlds-lugar-pais { font-size: 11px; color: var(--gris); letter-spacing: .04em; }
+.vx-worlds-lugar-exp { color: var(--teal); }
 .vx-worlds-vacio { font-size: 12px; color: var(--gris); padding: 10px; text-align: center; }
 
 /* ── ficha del lugar ──────────────────────────────────────────────── */
 .vx-worlds-lugar-ficha { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
 .vx-worlds-lugar-ficha-cabecera { display: flex; flex-direction: column; gap: 2px; }
-.vx-worlds-lugar-ficha-cabecera h3 { margin: 0; font-size: 19px; color: var(--oro); }
+.vx-worlds-lugar-ficha-cabecera h3 {
+  margin: 0;
+  font-size: 19px;
+  color: var(--oro);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.vx-worlds-lugar-ficha-bandera { font-size: 20px; line-height: 1; }
 .vx-worlds-lugar-ficha-pais { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--gris); }
 .vx-worlds-lugar-ficha-nota { margin: 0; font-size: 13px; line-height: 1.6; color: #c9c3b4; }
-.vx-worlds-lugar-ficha-etapa { display: flex; justify-content: flex-end; }
+.vx-worlds-lugar-ficha-etapa { display: flex; justify-content: space-between; align-items: center; }
 .vx-worlds-lugar-ficha-coordenadas {
   font-family: ui-monospace, monospace;
   font-size: 11px;
   color: var(--teal);
   border: 1px solid rgba(94, 234, 212, .3);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.vx-worlds-lugar-ficha-cuenta {
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--oro);
+  border: 1px solid var(--borde);
   border-radius: 999px;
   padding: 3px 10px;
 }
@@ -362,6 +431,18 @@
   border: 1px solid var(--borde);
 }
 .vx-worlds-plano-fondo { fill: #0a0c10; }
+.vx-worlds-plano-esfera { fill: rgba(20,34,54,.30); stroke: rgba(120,150,220,.18); stroke-width: .6; }
+.vx-worlds-plano-reticulado { fill: none; stroke: rgba(120,150,220,.10); stroke-width: .5; }
+.vx-worlds-plano-frontera { fill: rgba(148,163,205,.05); stroke: rgba(120,150,220,.20); stroke-width: .35; }
+.vx-worlds-plano-etiqueta {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--vx-acento, var(--oro));
+  paint-order: stroke;
+  stroke: #07070a;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
 .vx-worlds-plano-malla { stroke: rgba(154, 149, 138, 0.14); stroke-width: 0.6; }
 .vx-worlds-plano-punto {
   fill: var(--vx-acento, var(--oro));
@@ -381,6 +462,7 @@
   .vx-worlds {
     grid-template-areas:
       "cabecera"
+      "contexto"
       "escenario"
       "zones"
       "lugares"
@@ -393,6 +475,24 @@
   .vx-worlds-rail-zones.vx-worlds-cerrado,
   .vx-worlds-rail-lugares.vx-worlds-cerrado { display: none; }
   .vx-worlds-escenario { min-height: 300px; }
+}
+
+/* el foco te ve: ley de la casa */
+.vx-worlds button:focus-visible,
+.vx-worlds input:focus-visible,
+.vx-worlds a:focus-visible {
+  outline: 2px solid var(--oro);
+  outline-offset: 2px;
+}
+
+/* escenario en pantalla completa */
+.vx-worlds-escenario:fullscreen {
+  border-radius: 0;
+  border: none;
+  height: 100vh;
+}
+.vx-worlds-escenario:fullscreen .vx-worlds-carga {
+  height: 100vh;
 }
 
 /* reducido de movimiento: sin animaciones (ley de la casa) */

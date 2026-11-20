@@ -729,7 +729,15 @@ const ES: Dict = {
   "worlds.cobertura": "{conDato} con dato · {conPoligono} con polígono",
   "worlds.experiencias": "Experiencias de Vanguard",
   "worlds.plano": "Plano 2D de los mundos de VANGUARD",
-  "worlds.planoLeyenda": "Cada punto es un lugar real; sellícalo para su ficha.",
+  "worlds.planoLeyenda": "Cada punto es un lugar real; sellícalo para su ficha. Las líneas son las fronteras reales de país.",
+  "worlds.contexto": "Navegación del mundo",
+  "worlds.esc": "Esc para volver",
+  "worlds.reiniciar": "Reiniciar vista",
+  "worlds.pantalla": "Pantalla completa",
+  "worlds.salirPantalla": "Salir de pantalla completa",
+  "worlds.resultados": "{cuenta} resultados",
+  "worlds.expPlural": "experiencias",
+  "worlds.en": "en",
 };
 
 
