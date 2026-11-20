@@ -50,6 +50,12 @@ import { Registrador } from "@/components/travesia/registrador";
 // Si el gateway de lenguaje está caído, la propia mente lo dice y pasa a modo
 // casa: no hay simulación de inteligencia en ningún punto.
 import { MenteGlobal } from "@/components/mente/mente-global";
+// v431.4 UNA CASA, UNA VOZ: las dos caras (Hoy ↔ Salas ↔ Radio) en el mismo
+// interruptor y la emisora de la casa montada UNA vez, para que suene en toda
+// la casa sin cortarse al navegar. Orden del Dueño: «la voz está en otro lado,
+// está en Cuartel… ¿por qué no lo centralizas?».
+import { Caras } from "@/components/vanguard/caras";
+import { EmisoraGlobal } from "@/components/radio/emisora-global";
 import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -962,6 +968,9 @@ try{
         {/* v405.10: el muelle contextual — se adapta a la sala en la que estás */}
         <BarraAdaptativa />
         <Registrador />
+        {/* v431.4: el interruptor de cara y la voz de la casa, en todas partes */}
+        <Caras />
+        <EmisoraGlobal />
         {/* v431.0: LA MENTE — habla desde cualquier sala y te lleva a los sitios.
             Se monta fuera de /vanguard2 y de las salas inmersivas (canvas puro). */}
         <MenteGlobal />

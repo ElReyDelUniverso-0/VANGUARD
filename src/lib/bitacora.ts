@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v431.5",
+    nombre: "UNA CASA, UNA VOZ",
+    hitos: [
+      "EL ENCARGO: «la voz está en otro lado, está en Cuartel… ¿por qué no fusionas los dos mundos, el Cuartel y la portada, y lo centralizas?». No se fusionaron las URLs —180 páginas viven en ellas y sus enlaces se romperían—: se fusionó la VOZ. Una casa, dos caras, una sola emisora.",
+      "UN SOLO ENCADENADO (src/lib/radio/usa-emision.ts): el bucle que dice un bloque, espera su `pausaMs` real y avisa de cada frase existía DOS veces (estudio y Cuartel), y ese era el defecto de fondo: una pausa arreglada en una copia seguía rota en la otra. Ahora `usaEmision()` es la única pieza, con `empezar`, `parar`, `saltar` y `frase`, y el estudio de /radio dejó de tener su copia.",
+      "EL PROGRAMA SE PIDE AL SERVIDOR (/api/radio/programa?min=2|5|10|15): el guion se construye donde vive el archivo —`agrupar` y `guion` leen la base y no pueden entrar en el navegador— y viaja en JSON con sus cifras REALES: cuántos cables, cuántos medios, cuántos repiten, cuántas regiones y cuál manda. Caché de cinco minutos; ninguna cifra escrita a mano.",
+      "SUENA EN TODA LA CASA: `EmisoraGlobal` se monta en el layout, así que la emisora suena en la portada, en el Cuartel y en las demás salas, no solo en su estudio. Es una píldora pequeña —emite, se calla, salta de bloque, abre el programa— y se aparta sola en /radio, /voz y /vanguard2, donde la voz ya es la protagonista y no debe haber dos bocas.",
+      "DOS CARAS DE LA MISMA CASA (components/vanguard/caras.tsx): Hoy (/) · Salas (/cuartel) · Radio (/radio). Un interruptor de tres posiciones montado una sola vez, que dice en cuál estás y no repite la barra de secciones: la navegación de la casa sigue siendo la única. En /vanguard2 no se pinta.",
+      "LA VOZ DEJA DE ESTAR EN UN SOLO CUARTO: lo que antes solo existía al entrar a /radio ahora se oye desde cualquier sala, con el mismo guion, la misma boca (`decir`), los mismos gustos guardados y los mismos subtítulos frase a frase.",
+      "GUARDIA: las pruebas de la radio crecen y cambian de dueño —las que exigían el bucle DENTRO del estudio ahora exigen que el bucle viva en `usa-emision` y que el estudio lo importe, y que no quede una segunda copia (`setTimeout … pausaMs` prohibido en el componente)—. Se comprueba también que la emisora esté montada en el layout, que la API lea cables reales, que las dos caras apunten a / y /cuartel, y que el interruptor NO duplique la navegación.",
+    ],
+    tipo: "ia",
+  },
+  {
     version: "v431.2",
     nombre: "RADIO VANGUARD · EDICIÓN",
     hitos: [

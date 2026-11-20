@@ -44,6 +44,7 @@ import {
 } from "@/lib/voz/decir";
 import { type BloqueGuion, type EstiloRadio, construirPrograma, programaAGuion } from "@/lib/radio/guion";
 import { SUGERENCIAS, type Memoria, MEMORIA_VACIA, responder } from "@/lib/radio/conversar";
+import { usaEmision } from "@/lib/radio/usa-emision";
 import "./radio.css";
 
 const LS = "vanguard:radio:v2";
@@ -130,9 +131,6 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
   const [reloj, setReloj] = useState<{ hora?: number; ahora: number }>({ ahora: ahoraServidor });
   const [voces, setVoces] = useState<VozDisponible[]>([]);
   const [avisos, setAvisos] = useState<string[]>([]);
-  const [sonando, setSonando] = useState(false);
-  const [bloqueActual, setBloqueActual] = useState(-1);
-  const [subtitulo, setSubtitulo] = useState<{ texto: string; i: number; total: number } | null>(null);
   const [charla, setCharla] = useState<{ quien: "tu" | "radio"; texto: string; rotulos?: { texto: string; href: string; fuente: string }[] }[]>([]);
   const [memoria, setMemoria] = useState<Memoria>(MEMORIA_VACIA);
   const [siguientes, setSiguientes] = useState<string[]>([]);
@@ -141,8 +139,6 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
   const [micro, setMicro] = useState(false);
   const [escuchando, setEscuchando] = useState(false);
   const [continuarEn, setContinuarEn] = useState<number | null>(null);
-  const vivo = useRef(false);
-  const temporizador = useRef<number | null>(null);
   const reconocedor = useRef<Reconocimiento | null>(null);
   const pantalla = useRef<unknown>(null);
 
@@ -208,71 +204,43 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
     };
   }, []);
 
+  // ② LA EMISIÓN: un solo encadenado para toda la casa (lib/radio/usa-emision).
+  // Aquí ya no hay copia del bucle: la misma pieza que usa la emisora global.
+  const emision = usaEmision(programa.bloques, ajustes.gustos, {
+    onBloque: (i) => {
+      try {
+        window.localStorage.setItem(LS_POS, JSON.stringify({ generadoEn: programa.generadoEn, bloque: i }));
+      } catch {
+        /* modo privado */
+      }
+    },
+    onFin: () => {
+      try {
+        window.localStorage.removeItem(LS_POS);
+      } catch {
+        /* noop */
+      }
+    },
+  });
+  const { sonando, bloqueActual } = emision;
+  const subtitulo = emision.frase;
+
   const parar = useCallback(() => {
-    vivo.current = false;
-    if (temporizador.current) window.clearTimeout(temporizador.current);
-    pararBoca();
-    setSonando(false);
-    setBloqueActual(-1);
-    setSubtitulo(null);
+    emision.parar();
     try {
       (pantalla.current as { release?: () => Promise<void> } | null)?.release?.();
     } catch {
       /* noop */
     }
     pantalla.current = null;
-  }, []);
-
-  // ② el programa, bloque a bloque, con su silencio y sus subtítulos
-  const decirBloque = useCallback(
-    (i: number) => {
-      if (!vivo.current) return;
-      if (i >= programa.bloques.length) {
-        vivo.current = false;
-        setSonando(false);
-        setBloqueActual(-1);
-        setSubtitulo(null);
-        try {
-          window.localStorage.removeItem(LS_POS);
-        } catch {
-          /* noop */
-        }
-        return;
-      }
-      const bloque = programa.bloques[i];
-      setBloqueActual(i);
-      setSubtitulo(null);
-      try {
-        window.localStorage.setItem(LS_POS, JSON.stringify({ generadoEn: programa.generadoEn, bloque: i }));
-      } catch {
-        /* noop */
-      }
-      const ok = decir(bloque.texto, {
-        gustos: ajustes.gustos,
-        interrumpir: i === 0,
-        onFrase: (texto, indice, total) => setSubtitulo({ texto, i: indice, total }),
-        onFin: () => {
-          if (!vivo.current) return;
-          temporizador.current = window.setTimeout(() => decirBloque(i + 1), bloque.pausaMs);
-        },
-      });
-      if (!ok) {
-        vivo.current = false;
-        setSonando(false);
-        setSubtitulo(null);
-      }
-    },
-    [ajustes.gustos, programa]
-  );
+  }, [emision]);
 
   const emitir = useCallback(
     (desde = 0) => {
-      if (sonando) {
+      if (emision.sonando) {
         parar();
         return;
       }
-      vivo.current = true;
-      setSonando(true);
       setContinuarEn(null);
       // la pantalla no se apaga mientras escuchas (si el aparato lo permite)
       try {
@@ -281,31 +249,19 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
       } catch {
         /* noop */
       }
-      decirBloque(desde);
+      emision.empezar(desde);
     },
-    [decirBloque, parar, sonando]
+    [emision, parar]
   );
 
   const pausar = useCallback(() => {
-    if (!sonando) return;
+    if (!emision.sonando) return;
     if (window.speechSynthesis?.paused) reanudarBoca();
     else pausarBoca();
-    setSonando((s) => s);
     setAjustes((a) => ({ ...a }));
-  }, [sonando]);
+  }, [emision.sonando]);
 
-  const saltar = useCallback(
-    (delta: number) => {
-      const destino = Math.max(0, Math.min(programa.bloques.length - 1, (bloqueActual < 0 ? 0 : bloqueActual) + delta));
-      vivo.current = false;
-      pararBoca();
-      if (temporizador.current) window.clearTimeout(temporizador.current);
-      vivo.current = true;
-      setSonando(true);
-      decirBloque(destino);
-    },
-    [bloqueActual, decirBloque, programa.bloques.length]
-  );
+  const saltar = useCallback((delta: number) => emision.saltar(delta), [emision]);
 
   // ③ la conversación (con memoria de la charla)
   const preguntar = useCallback(
@@ -321,8 +277,7 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
         parar();
         return;
       }
-      vivo.current = false;
-      pararBoca();
+      emision.parar();
       decir(r.texto, { gustos: ajustes.gustos });
     },
     [ajustes.gustos, memoria, notas, parar]
@@ -436,7 +391,9 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
           <p className="vxr-caption-pie">
             {sonando && subtitulo
               ? `bloque ${bloqueActual + 1} de ${programa.bloques.length} · frase ${subtitulo.i + 1} de ${subtitulo.total}`
-              : bloque
+              : sonando
+                ? `bloque ${bloqueActual + 1} de ${programa.bloques.length} · silencio`
+                : bloque
                 ? `bloque ${bloqueActual + 1} de ${programa.bloques.length}`
                 : `${programa.bloques.length} bloques · ${programa.asuntos} asuntos`}
           </p>
@@ -476,14 +433,7 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
                 type="button"
                 className={i === bloqueActual ? "vxr-tramo vxr-tramo--activo" : i < bloqueActual ? "vxr-tramo vxr-tramo--oido" : "vxr-tramo"}
                 style={{ flexGrow: Math.max(1, Math.round(ms / 1000)) }}
-                onClick={() => {
-                  vivo.current = false;
-                  pararBoca();
-                  if (temporizador.current) window.clearTimeout(temporizador.current);
-                  vivo.current = true;
-                  setSonando(true);
-                  decirBloque(i);
-                }}
+                onClick={() => emision.empezar(i)}
                 title={`${b.tipo} · ${mmss(ms)}`}
                 aria-label={`Ir al bloque ${i + 1}: ${b.tipo}`}
               />

@@ -1,0 +1,352 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v431.4 · EL INTERRUPTOR DE CARA (Hoy ↔ Salas ↔ Radio)
+   Una sola casa, dos caras. Se declara aquí y no toca ninguna clase
+   existente: prefijo `vxc-`. Se apoya en la barra inferior del móvil.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.vxc {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 62;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 197, 106, 0.28);
+  background: rgba(6, 9, 15, 0.86);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+}
+
+.vxc-sello {
+  font: 600 8.5px/1 ui-monospace, "SF Mono", Menlo, monospace;
+  letter-spacing: 0.18em;
+  color: rgba(232, 197, 106, 0.75);
+  padding: 0 7px 0 9px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.vxc-cara {
+  font: 600 11px/1 system-ui, -apple-system, Segoe UI, sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c3cddd;
+  text-decoration: none;
+  padding: 7px 11px;
+  border-radius: 999px;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.vxc-cara:hover { color: #ffe9b5; background: rgba(232, 197, 106, 0.1); }
+.vxc-cara:focus-visible { outline: 2px solid #22d3ee; outline-offset: 2px; }
+
+.vxc-cara--activa {
+  color: #0a0d14;
+  background: linear-gradient(180deg, #f2d795, #e8c56a);
+}
+
+.vxc-cara--radio { color: #cdf3fa; }
+.vxc-cara--radio.vxc-cara--activa {
+  color: #04222a;
+  background: linear-gradient(180deg, #8ff0fd, #22d3ee);
+}
+
+@media (max-width: 640px) {
+  /* en el móvil la barra de la casa vive abajo: el interruptor sube por encima */
+  .vxc { bottom: 74px; padding: 3px 4px; }
+  .vxc-sello { display: none; }
+  .vxc-cara { padding: 6px 10px; font-size: 10.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vxc-cara { transition: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v431.4 · LA EMISORA DE LA CASA (píldora global + panel)
+   Prefijo `vxe-emisora-`. No comparte clases con el estudio (`vxr-*`):
+   son dos piezas distintas que se pueden tocar por separado.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.vxe-emisora {
+  --vxe-em-tinta: #e9eef7;
+  --vxe-em-tenue: #93a1b8;
+  --vxe-em-oro: #e8c56a;
+  --vxe-em-cian: #22d3ee;
+  --vxe-em-filete: rgba(147, 161, 184, 0.22);
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 63;
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  max-width: min(360px, calc(100vw - 32px));
+  color: var(--vxe-em-tinta);
+}
+
+.vxe-emisora-pill {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--vxe-em-filete);
+  border-radius: 999px;
+  background: rgba(6, 9, 15, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.vxe-emisora-lanzar {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-right: 1px solid var(--vxe-em-filete);
+  background: rgba(232, 197, 106, 0.14);
+  color: var(--vxe-em-oro);
+  font: 600 12px/1 system-ui, sans-serif;
+  padding: 10px 12px;
+}
+
+.vxe-emisora-lanzar:hover { background: rgba(232, 197, 106, 0.24); }
+.vxe-emisora-lanzar:focus-visible { outline: 2px solid var(--vxe-em-cian); outline-offset: -2px; }
+
+.vxe-emisora-punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vxe-em-tenue);
+  flex: none;
+}
+
+.vxe-emisora-punto--on {
+  background: #ff3b30;
+  animation: vxe-em-latido 1.8s ease-out infinite;
+}
+
+@keyframes vxe-em-latido {
+  0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 59, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+}
+
+.vxe-emisora-texto {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  gap: 3px;
+  text-align: left;
+  padding: 7px 12px 8px 10px;
+  min-width: 0;
+  max-width: 250px;
+}
+
+.vxe-emisora-sello {
+  font: 600 8.5px/1 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232, 197, 106, 0.85);
+  white-space: nowrap;
+}
+
+.vxe-emisora-linea {
+  font: 500 11.5px/1.25 system-ui, sans-serif;
+  color: #c9d4e3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.vxe-emisora--abierta .vxe-emisora-linea { color: #eef3fa; }
+
+/* el panel: una hoja que sube, con el programa del día */
+.vxe-emisora-panel {
+  width: min(360px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid var(--vxe-em-filete);
+  border-radius: 6px;
+  background:
+    radial-gradient(120% 90% at 90% -20%, rgba(232, 197, 106, 0.14), transparent 60%),
+    linear-gradient(180deg, #0a0e17 0%, #05070d 100%);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6);
+}
+
+.vxe-emisora-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vxe-emisora-aire {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 600 9px/1 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--vxe-em-tenue);
+  border: 1px solid var(--vxe-em-filete);
+  border-radius: 999px;
+  padding: 5px 9px;
+}
+
+.vxe-emisora-aire--on {
+  color: var(--vxe-em-oro);
+  border-color: rgba(232, 197, 106, 0.5);
+  background: rgba(232, 197, 106, 0.08);
+}
+
+.vxe-emisora-cerrar {
+  appearance: none;
+  border: 1px solid var(--vxe-em-filete);
+  background: transparent;
+  color: var(--vxe-em-tenue);
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.vxe-emisora-cerrar:hover { color: #fff; border-color: rgba(232, 197, 106, 0.5); }
+
+.vxe-emisora-titulo {
+  margin: 0 0 8px;
+  font: 400 15px/1.3 var(--font-caviar, Georgia, serif);
+  color: #eef3fa;
+}
+
+.vxe-emisora-dur {
+  font: 500 11px/1 ui-monospace, Menlo, monospace;
+  color: var(--vxe-em-tenue);
+}
+
+.vxe-emisora-frase {
+  margin: 0 0 10px;
+  padding-left: 10px;
+  border-left: 2px solid var(--vxe-em-oro);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #f4f7fc;
+  min-height: 3.9em;
+  overflow-wrap: anywhere;
+}
+
+.vxe-emisora-rail {
+  display: flex;
+  gap: 2px;
+  height: 7px;
+  margin-bottom: 10px;
+}
+
+.vxe-emisora-tramo {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  min-width: 3px;
+  border-radius: 1px;
+  background: rgba(147, 161, 184, 0.26);
+  cursor: pointer;
+}
+
+.vxe-emisora-tramo:hover { background: rgba(232, 197, 106, 0.6); }
+.vxe-emisora-tramo:focus-visible { outline: 2px solid var(--vxe-em-cian); outline-offset: 2px; }
+.vxe-emisora-tramo--activo { background: linear-gradient(180deg, #f4dc9c, #e8c56a); }
+
+.vxe-emisora-controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.vxe-emisora-btn {
+  appearance: none;
+  cursor: pointer;
+  font: 600 11.5px/1 system-ui, sans-serif;
+  color: var(--vxe-em-tinta);
+  background: rgba(147, 161, 184, 0.1);
+  border: 1px solid var(--vxe-em-filete);
+  border-radius: 3px;
+  padding: 8px 10px;
+}
+
+.vxe-emisora-btn:hover:not(:disabled) { border-color: rgba(232, 197, 106, 0.5); }
+.vxe-emisora-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.vxe-emisora-btn:focus-visible { outline: 2px solid var(--vxe-em-cian); outline-offset: 2px; }
+
+.vxe-emisora-btn--play {
+  color: #0a0d14;
+  background: linear-gradient(180deg, #f0d18a, #dfb45a);
+  border-color: #c79f4c;
+}
+
+.vxe-emisora-min select {
+  font: 600 11px/1 system-ui, sans-serif;
+  color: var(--vxe-em-tinta);
+  background: #06090f;
+  border: 1px solid var(--vxe-em-filete);
+  border-radius: 3px;
+  padding: 7px 6px;
+}
+
+.vxe-emisora-enlace {
+  font: 600 11px/1 ui-monospace, Menlo, monospace;
+  color: var(--vxe-em-cian);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(34, 211, 238, 0.35);
+  padding-bottom: 2px;
+}
+
+.vxe-emisora-enlace:hover { color: #7ee9f8; }
+
+.vxe-emisora-pie {
+  margin: 9px 0 0;
+  font: 500 10px/1.4 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.06em;
+  color: var(--vxe-em-tenue);
+}
+
+.vxe-emisora-aviso {
+  margin: 8px 0 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 59, 48, 0.32);
+  border-left: 2px solid #ff3b30;
+  border-radius: 3px;
+  background: rgba(255, 59, 48, 0.06);
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #ffd7d4;
+}
+
+.vxe-emisora-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .vxe-emisora { bottom: 74px; left: 10px; }
+  .vxe-emisora-texto { max-width: 180px; }
+  .vxe-emisora-panel { width: min(330px, calc(100vw - 20px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vxe-emisora-punto--on { animation: none; }
+}

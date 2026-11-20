@@ -1,18 +1,18 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-20",
-  "paginas": 180,
-  "rutasApi": 138,
-  "total": 318,
+  "paginas": 181,
+  "rutasApi": 139,
+  "total": 320,
   "bienConectadas": 161,
   "huerfanas": [],
-  "paginasConReferencias": 180,
-  "mediaReferencias": 12.94,
+  "paginasConReferencias": 181,
+  "mediaReferencias": 13.05,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 108,
+      "referencias": 110,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -23,12 +23,12 @@
     {
       "ruta": "/academia",
       "tipo": "pagina",
-      "referencias": 18,
+      "referencias": 20,
       "desde": [
         "app/academia/cursos/[slug]/page.tsx",
         "app/academia/ejercicios/page.tsx",
         "components/conocimiento/academia.tsx",
-        "components/portada/areas.ts"
+        "components/experiencia/entrada.tsx"
       ]
     },
     {
@@ -132,7 +132,7 @@
     {
       "ruta": "/api",
       "tipo": "api",
-      "referencias": 163,
+      "referencias": 164,
       "desde": [
         "app/audios/grabador.tsx",
         "app/audios/page.tsx",
@@ -1167,6 +1167,14 @@
       ]
     },
     {
+      "ruta": "/api/radio/programa",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/radio/emisora-global.tsx"
+      ]
+    },
+    {
       "ruta": "/api/reclutar",
       "tipo": "api",
       "referencias": 2,
@@ -1682,7 +1690,7 @@
     {
       "ruta": "/conflicto",
       "tipo": "pagina",
-      "referencias": 39,
+      "referencias": 40,
       "desde": [
         "app/audios/emisora-cliente.tsx",
         "app/audios/page.tsx",
@@ -1693,7 +1701,7 @@
     {
       "ruta": "/conflicto/[tag]",
       "tipo": "pagina",
-      "referencias": 39,
+      "referencias": 40,
       "desde": [
         "app/audios/emisora-cliente.tsx",
         "app/audios/page.tsx",
@@ -1704,18 +1712,18 @@
     {
       "ruta": "/conflictos",
       "tipo": "pagina",
-      "referencias": 19,
+      "referencias": 20,
       "desde": [
         "app/mundos/[iso]/page.tsx",
         "app/mundos/page.tsx",
         "app/page.tsx",
-        "components/portada/carcasa.tsx"
+        "components/experiencia/entrada.tsx"
       ]
     },
     {
       "ruta": "/conocimiento",
       "tipo": "pagina",
-      "referencias": 32,
+      "referencias": 33,
       "desde": [
         "app/conocimiento/aprender/page.tsx",
         "app/conocimiento/enciclopedia/[slug]/page.tsx",
@@ -1898,7 +1906,7 @@
     {
       "ruta": "/cuartel",
       "tipo": "pagina",
-      "referencias": 43,
+      "referencias": 45,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
         "app/cuartel/layout.tsx",
@@ -2007,12 +2015,12 @@
     {
       "ruta": "/divisas",
       "tipo": "pagina",
-      "referencias": 23,
+      "referencias": 24,
       "desde": [
         "app/mapas/page.tsx",
         "app/navegacion/navegacion-sala.tsx",
-        "components/portada/areas.ts",
-        "components/portada/modulos.ts"
+        "components/experiencia/entrada.tsx",
+        "components/portada/areas.ts"
       ]
     },
     {
@@ -2069,7 +2077,7 @@
     {
       "ruta": "/en-vivo",
       "tipo": "pagina",
-      "referencias": 40,
+      "referencias": 42,
       "desde": [
         "app/centinela/page.tsx",
         "app/cronica/page.tsx",
@@ -2196,12 +2204,22 @@
     {
       "ruta": "/historia",
       "tipo": "pagina",
-      "referencias": 33,
+      "referencias": 34,
       "desde": [
         "app/calidad/page.tsx",
         "app/conocimiento/enciclopedia/page.tsx",
         "app/cruce/page.tsx",
         "app/mundo/mundo-3d-vivo.tsx"
+      ]
+    },
+    {
+      "ruta": "/informacion",
+      "tipo": "pagina",
+      "referencias": 3,
+      "desde": [
+        "components/portada/foco-academia-motores.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/guia/GuiaVisualTactivaModal.tsx"
       ]
     },
     {
@@ -2262,7 +2280,7 @@
     {
       "ruta": "/investigacion",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/inteligencia/page.tsx",
         "app/investigacion/[slug]/page.tsx",
@@ -2273,7 +2291,7 @@
     {
       "ruta": "/investigacion/[slug]",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/inteligencia/page.tsx",
         "app/investigacion/page.tsx",
@@ -2306,7 +2324,7 @@
     {
       "ruta": "/lectura/[clave]",
       "tipo": "pagina",
-      "referencias": 18,
+      "referencias": 19,
       "desde": [
         "app/noticia/[id]/page.tsx",
         "app/page.tsx",
@@ -2532,7 +2550,7 @@
     {
       "ruta": "/mapas",
       "tipo": "pagina",
-      "referencias": 37,
+      "referencias": 38,
       "desde": [
         "app/espacio/page.tsx",
         "app/mundos/page.tsx",
@@ -2678,7 +2696,7 @@
     {
       "ruta": "/motores",
       "tipo": "pagina",
-      "referencias": 9,
+      "referencias": 11,
       "desde": [
         "app/motores/censo/page.tsx",
         "app/motores/curva-rendimiento/page.tsx",
@@ -2699,10 +2717,9 @@
     {
       "ruta": "/motores/curva-rendimiento",
       "tipo": "pagina",
-      "referencias": 3,
+      "referencias": 2,
       "desde": [
         "app/motores/page.tsx",
-        "components/portada/foco-academia-motores.tsx",
         "components/portada/modulos.ts"
       ]
     },
@@ -2728,9 +2745,10 @@
     {
       "ruta": "/motores/escalada",
       "tipo": "pagina",
-      "referencias": 1,
+      "referencias": 2,
       "desde": [
-        "app/motores/page.tsx"
+        "app/motores/page.tsx",
+        "components/portada/foco-academia-motores.tsx"
       ]
     },
     {
@@ -2746,7 +2764,7 @@
     {
       "ruta": "/mundo",
       "tipo": "pagina",
-      "referencias": 47,
+      "referencias": 48,
       "desde": [
         "app/audios/emisora-cliente.tsx",
         "app/audios/page.tsx",
@@ -2801,7 +2819,7 @@
     {
       "ruta": "/noticia/[id]",
       "tipo": "pagina",
-      "referencias": 29,
+      "referencias": 30,
       "desde": [
         "app/audios/emisora-cliente.tsx",
         "app/conflicto/[tag]/page.tsx",
@@ -2966,12 +2984,12 @@
     {
       "ruta": "/radio",
       "tipo": "pagina",
-      "referencias": 4,
+      "referencias": 7,
       "desde": [
-        "lib/bitacora.ts",
-        "lib/navegacion/espacios.ts",
-        "lib/nucleo/registro.ts",
-        "lib/version.ts"
+        "components/experiencia/entrada.tsx",
+        "components/radio/emisora-global.tsx",
+        "components/vanguard/caras.tsx",
+        "lib/bitacora.ts"
       ]
     },
     {
@@ -3121,7 +3139,7 @@
     {
       "ruta": "/teatro-3d",
       "tipo": "pagina",
-      "referencias": 31,
+      "referencias": 32,
       "desde": [
         "app/espacio/page.tsx",
         "app/mundos/page.tsx",
@@ -3176,12 +3194,12 @@
     {
       "ruta": "/vanguard2",
       "tipo": "pagina",
-      "referencias": 15,
+      "referencias": 18,
       "desde": [
         "app/layout.tsx",
         "components/mente/mente-global.tsx",
-        "components/portada/carcasa.tsx",
-        "components/portada/modulos.ts"
+        "components/operacion/clasificacion.tsx",
+        "components/portada/carcasa.tsx"
       ]
     },
     {
@@ -3220,7 +3238,7 @@
     {
       "ruta": "/voz",
       "tipo": "pagina",
-      "referencias": 13,
+      "referencias": 14,
       "desde": [
         "app/catalogo/page.tsx",
         "app/musica/page.tsx",

@@ -393,10 +393,9 @@ seccion("D · el estudio, la página y los registros");
 {
   const reproductor = leer("src/components/radio/radio-vanguard.tsx");
   ok(reproductor.includes('from "@/lib/voz/decir"'), "el reproductor no usa la boca de la casa (decir)");
-  ok(/decir\(bloque\.texto/.test(reproductor), "el reproductor no dice bloque a bloque");
-  ok(/onFrase/.test(reproductor), "el reproductor no pide los subtítulos frase a frase");
-  ok(/bloque\.pausaMs/.test(reproductor), "el reproductor no respeta la pausa del bloque");
-  ok(/setTimeout\([\s\S]{0,90}pausaMs\)/.test(reproductor), "el silencio entre bloques no se espera de verdad");
+  ok(reproductor.includes("usaEmision"), "el estudio no usa el encadenado compartido (usa-emision)");
+  ok(!/setTimeout\([\s\S]{0,90}pausaMs\)/.test(reproductor), "el estudio volvió a tener su propia copia del bucle de emisión");
+  ok(/onFrase/.test(reproductor) || reproductor.includes("emision.frase"), "el reproductor no pide los subtítulos frase a frase");
   ok(reproductor.includes("guardarGustos") && reproductor.includes("leerGustos"), "la personalización no se guarda y recupera");
   ok(reproductor.includes("vxr-rail") && reproductor.includes("vxr-tramo"), "no hay rail de bloques");
   ok(reproductor.includes("vxr-caption"), "no hay subtítulos en pantalla");
@@ -408,6 +407,34 @@ seccion("D · el estudio, la página y los registros");
   ok(/onKeyDown/.test(reproductor) && /ArrowRight/.test(reproductor), "no hay atajos de teclado");
   ok(reproductor.includes("programaAGuion"), "no se puede copiar el guion de trabajo");
   ok(!/innerHTML/.test(reproductor), "el reproductor inyecta HTML (peligro de romper la página)");
+
+  // ── UNA SOLA EMISIÓN PARA TODA LA CASA (v431.5) ──
+  const emision = leer("src/lib/radio/usa-emision.ts");
+  ok(/export function usaEmision/.test(emision), "no existe el encadenado compartido usaEmision");
+  ok(/decir\(bloque\.texto/.test(emision), "usaEmision no dice bloque a bloque");
+  ok(/bloque\.pausaMs/.test(emision), "usaEmision no respeta la pausa declarada");
+  ok(/setTimeout\([\s\S]{0,90}pausaMs\)/.test(emision), "usaEmision no espera el silencio de verdad");
+  ok(/onFrase/.test(emision), "usaEmision no avisa de cada frase (sin subtítulos)");
+  ok(/pararBoca/.test(emision), "usaEmision no puede cortar la voz");
+
+  const emisora = leer("src/components/radio/emisora-global.tsx");
+  ok(emisora.includes("usaEmision"), "la emisora global no usa el mismo encadenado que el estudio");
+  ok(emisora.includes("/api/radio/programa"), "la emisora global no pide el programa al servidor");
+  ok(emisora.includes("RUTAS_SIN_EMISORA"), "la emisora no se aparta en las salas que ya tienen voz");
+  ok(existsSync(join(RAIZ, "src/app/api/radio/programa/route.ts")), "no existe /api/radio/programa");
+  const api = leer("src/app/api/radio/programa/route.ts");
+  ok(api.includes("obtenerNotas"), "la API del programa no lee los cables reales");
+  ok(api.includes("construirPrograma"), "la API del programa no usa el guion de la casa");
+  ok(/revalidate = 300/.test(api), "la API del programa no declara caché");
+
+  const layout = leer("src/app/layout.tsx");
+  ok(layout.includes("<EmisoraGlobal"), "la voz no está montada en la casa entera (layout)");
+  ok(layout.includes("<Caras"), "el interruptor de cara no está montado en la casa entera");
+
+  const caras = leer("src/components/vanguard/caras.tsx");
+  ok(/href: "\/"|href="\/"/.test(caras) && /href: "\/cuartel"|href="\/cuartel"/.test(caras), "las dos caras no apuntan a la portada y al Cuartel");
+  ok(caras.includes('href="/radio"'), "el interruptor no lleva a la radio");
+  ok(!/SECTIONS|ALL_TABS/.test(caras), "el interruptor duplica la navegación de salas (debe ser solo dos caras)");
 
   const decir = leer("src/lib/voz/decir.ts");
   ok(/onFrase\?:/.test(decir), "decir() no ofrece el aviso por frase que usa la radio");
@@ -432,10 +459,10 @@ seccion("D · el estudio, la página y los registros");
   ok(espacios.includes('"/radio"'), "la barra de la casa no tiene /radio (quedaría huérfana)");
 
   const bitacora = leer("src/lib/bitacora.ts");
-  ok(bitacora.includes('version: "v431.2"'), "la bitácora no tiene la entrada v431.2");
+  ok(bitacora.includes('version: "v431.5"'), "la bitácora no tiene la entrada v431.5");
 
   const version = leer("src/lib/version.ts");
-  ok(version.includes('export const APP_VERSION = "v431.2"'), "la versión en marcha no es v431.2");
+  ok(version.includes('export const APP_VERSION = "v431.5"'), "la versión en marcha no es v431.5");
 
   const css = leer("src/components/radio/radio.css");
   ok(css.includes(".vxr {"), "el CSS no define el contenedor .vxr");

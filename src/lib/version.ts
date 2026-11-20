@@ -1,3 +1,22 @@
+// v431.5 UNA CASA, UNA VOZ — la voz estaba en otro lado (Cuartel) y la casa
+// tenía dos mundos que no se hablaban. No se fusionan URLs (rompería 180
+// páginas y sus enlaces): se fusiona la VOZ.
+// ① UN SOLO ENCADENADO (src/lib/radio/usa-emision.ts): usaEmision() sostiene el
+//    bloque, su silencio (pausaMs) y sus frases (onFrase). El estudio (/radio)
+//    dejó de tener su copia del bucle y ahora usa la misma pieza que suena en
+//    toda la casa; el bug de las pausas arreglado en un sitio ya no puede
+//    quedarse sin arreglar en el otro.
+// ② EL PROGRAMA SE PIDE AL SERVIDOR (/api/radio/programa?min=2|5|10|15): el
+//    guion se construye donde vive el archivo (agrupar + guion, que arrastran
+//    db y no pueden entrar en el navegador) y viaja en JSON con sus cifras
+//    reales —cables, medios, repetidos, regiones— y caché de 5 minutos.
+// ③ SUENA EN TODA LA CASA (components/radio/emisora-global.tsx, montada en el
+//    layout): una píldora pequeña que emite, se calla, salta de bloque y abre
+//    el programa. Se aparta sola en /radio, /voz y /vanguard2, donde la voz ya
+//    es la protagonista.
+// ④ DOS CARAS, UNA CASA (components/vanguard/caras.tsx): Hoy (/) · Salas
+//    (/cuartel) · Radio (/radio). Un interruptor de tres posiciones, no un
+//    menú paralelo: la navegación de salas sigue siendo la única.
 // v420.2 WORLD NETWORKS · preserva Lingua, Cámara y Memory Archive.
 // v420.1 VANGUARD MEMORY ARCHIVE — AGENTE 4 · ARCHIVO DOCUMENTAL. Encargo
 // del Dueño: «construir la memoria documental de la humanidad». No otra
@@ -6965,12 +6984,26 @@
 // entra a VANGUARD, porque VANGUARD nunca se explica el mismo… uno se pierde
 // mucho». La portada abre ahora con el nombre, qué es esto en una frase, cuatro
 // puertas con verbo, ocho salidas de emergencia y los frentes reales del día.
+// v431.4 · OPERACIÓN (publicada por el otro frente de la casa: el sello no
+// tapa la cabecera).
+// v431.5 · UNA CASA, UNA VOZ — la voz estaba en el Cuartel y la portada era
+// otro mundo. No se fusionan URLs: se fusiona la emisora. Un solo encadenado
+// (lib/radio/usa-emision.ts) para el estudio y para la píldora que suena en
+// toda la casa; el guion se sirve desde /api/radio/programa; un interruptor de
+// tres caras (Hoy · Salas · Radio) sin duplicar la navegación.
+// (anterior) export const APP_VERSION = "v431.4";
+// (anterior) export const APP_CODENAME = "OPERACIÓN";
 // (anterior) export const APP_VERSION = "v431.3";
 // (anterior) export const APP_CODENAME = "LA ENTRADA SE EXPLICA";
-// (anterior) export const APP_VERSION = "v431.2";
-// (anterior) export const APP_CODENAME = "OPERACIÓN";
-export const APP_VERSION = "v431.4";
-export const APP_CODENAME = "LA CASA SE ORDENA";
+// (anterior) export const APP_VERSION = "v431.4";
+// (anterior) export const APP_CODENAME = "LA CASA SE ORDENA";
+// v431.5 · UNA CASA, UNA VOZ — la voz estaba en el Cuartel y la portada era
+// otro mundo. No se fusionan URLs: se fusiona la emisora. Un solo encadenado
+// (lib/radio/usa-emision.ts) para el estudio y para la píldora que suena en
+// toda la casa; el guion se sirve desde /api/radio/programa; un interruptor de
+// tres caras (Hoy · Salas · Radio) sin duplicar la navegación.
+export const APP_VERSION = "v431.5";
+export const APP_CODENAME = "UNA CASA, UNA VOZ";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";
