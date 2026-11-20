@@ -44,6 +44,11 @@ export const metadata: Metadata = {
   title: "EL NÚCLEO — el mapa que conecta todo Vanguard",
   description:
     "El censo completo de módulos de Vanguard: redacción, mundo, simulación, comunidad y sistema. Búsqueda global sobre fuentes autorizadas, entidades conectadas y enlaces contextuales entre páginas.",
+  // v421.6 — COHERENCIA: next.config.ts (v402.0) manda X-Robots-Tag
+  // «noindex, follow» a esta sala, y la cabecera gana siempre sobre el HTML.
+  // La página declaraba «index, follow»: dos órdenes contrarias para Google.
+  // Se declara lo que de verdad pasa; la política del módulo ESTADO no cambia.
+  robots: { index: false, follow: true },
   alternates: { canonical: `${SITE_URL}/nucleo` },
   openGraph: {
     type: "website",
