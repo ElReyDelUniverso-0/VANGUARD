@@ -8,14 +8,18 @@
 // En táctil no hay foco (no existe puntero) y el CSS ya apaga la animación
 // si el sistema pide menos movimiento.
 // ═══════════════════════════════════════════════════════════════════
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export function Aurora() {
+  const ruta = usePathname();
   const foco = useRef<HTMLDivElement>(null);
+  // la casa inmersiva no lleva capas 2D encima (mandato v151.0)
+  const inmersiva = ruta?.startsWith("/vanguard2") ?? false;
 
   useEffect(() => {
     const el = foco.current;
-    if (!el) return;
+    if (!el || inmersiva) return;
     // sin puntero (táctil) no hay foco que seguir
     if (typeof window.matchMedia === "function" && window.matchMedia("(hover: none)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -38,7 +42,9 @@ export function Aurora() {
       window.removeEventListener("pointermove", mover);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [inmersiva]);
+
+  if (inmersiva) return null;
 
   return (
     <div aria-hidden="true">

@@ -101,7 +101,8 @@ time,
 .vida-aurora {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  /* detrás del contenido: es luz de fondo, no un velo sobre el texto */
+  z-index: -1;
   pointer-events: none;
   overflow: hidden;
   contain: strict;
@@ -168,7 +169,7 @@ time,
 .vida-foco {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: -1;
   pointer-events: none;
   background: radial-gradient(
     420px circle at var(--vida-x, 50%) var(--vida-y, 30%),
