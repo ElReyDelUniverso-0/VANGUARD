@@ -7,9 +7,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import "./trailer.css";
-
-export const TRAILER_SRC = "/videos/trailer-vanguard.mp4";
-export const TRAILER_POSTER = "/videos/trailer-vanguard.jpg";
+import { TRAILER_POSTER, TRAILER_SRC } from "./trailer-datos";
 
 const CAPITULOS: { t: number; titulo: string; ruta: string }[] = [
   { t: 0, titulo: "Qué es Vanguard", ruta: "/" },

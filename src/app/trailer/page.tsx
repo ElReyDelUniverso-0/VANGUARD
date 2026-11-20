@@ -3,7 +3,8 @@ import Link from "next/link";
 // v432.0 EL TRÁILER — la página de proyección: el tráiler con capítulos que
 // saltan a cada sala y, debajo, la misma ruta escrita para quien prefiera leer.
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
-import { TrailerVanguard, TRAILER_POSTER, TRAILER_SRC } from "@/components/trailer/trailer-vanguard";
+import { TrailerVanguard } from "@/components/trailer/trailer-vanguard";
+import { TRAILER_POSTER, TRAILER_SRC } from "@/components/trailer/trailer-datos";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://vanguard-kq9r.vercel.app";
 
