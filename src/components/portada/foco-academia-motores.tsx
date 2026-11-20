@@ -1,13 +1,62 @@
 // ============================================================
-// FOCO PÚBLICO: VANGUARD ACADEMY & MOTORES GLOBALES (v423.0)
-// Tarjetas de gran impacto visual en portada principal
+// FOCO PÚBLICO: INFORMACIÓN PERFECTA, ACADEMY & MOTORES (v431.3)
+// Tres pilares unificados con portadas vectoriales y guía táctica
 // ============================================================
+"use client";
+
 import Link from "next/link";
 import { PortadaHermosaModulo } from "./portadas-hermosas";
+import { HelpCircle, Sparkles } from "lucide-react";
 
 export function FocoAcademiaMotores() {
   return (
     <section className="vx-wrap my-8" aria-label="Novedades destacadas de Vanguard">
+      {/* ══════════ BANNER HERO: INFORMACIÓN PERFECTA UNIFICADA ══════════ */}
+      <div className="mb-4 relative overflow-hidden rounded-2xl border border-sky-500/40 bg-gradient-to-r from-[#031525] via-[#020c18] to-[#01060e] p-6 shadow-[0_0_35px_rgba(56,189,248,0.2)]">
+        <span className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-sky-400" />
+        <span className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-sky-400" />
+        <span className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-sky-400" />
+        <span className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-sky-400" />
+
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-sky-500/20 px-2.5 py-0.5 font-mono text-[10px] font-bold text-sky-300 border border-sky-500/40">
+                ★ FUSIÓN TOTAL DE INTELIGENCIA
+              </span>
+              <span className="rounded-full bg-black/60 px-2 py-0.5 font-mono text-[10px] text-zinc-300 border border-zinc-700">
+                16 POTENCIAS · ARSENAL · SECRETOS · CIENCIA
+              </span>
+            </div>
+            <h2 className="mt-2 text-2xl sm:text-3xl font-black uppercase text-zinc-100 flex items-center gap-2">
+              <span>Centro de Información Perfecta</span>
+              <span className="text-xs font-mono rounded bg-sky-400 text-black px-1.5 py-0.5 font-bold">NUEVO</span>
+            </h2>
+            <p className="mt-1 text-sm text-zinc-300 leading-relaxed">
+              Todos los datos dispersos han sido fusionados en una sola consola táctica: potencias con radar de 6 ejes, arsenales estratégicos, puntos de estrangulamiento de crudo y ciencia de frontera. Sin módulos repetidos.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("abrir-guia-vanguard"))}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-sky-400 bg-sky-500/20 px-4 py-2 font-mono text-xs font-bold text-sky-200 hover:bg-sky-500/30 shadow-[0_0_15px_rgba(56,189,248,0.3)] transition"
+            >
+              <HelpCircle size={14} />
+              <span>¿Cómo funciona? Guía Visual</span>
+            </button>
+            <Link
+              href="/informacion"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-sky-400 bg-sky-500 px-4 py-2 font-mono text-xs font-bold text-black hover:bg-sky-400 shadow-[0_0_20px_rgba(56,189,248,0.5)] transition"
+            >
+              <span>Abrir Información Perfecta →</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════ DOS PILARES COMPLEMENTARIOS: ACADEMY & MOTORES ══════════ */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* TARJETA 1: VANGUARD ACADEMY */}
         <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-emerald-500/30 bg-[#020e0a]/80 shadow-[0_0_25px_rgba(16,185,129,0.12)] transition duration-300 hover:border-emerald-400 hover:shadow-[0_0_35px_rgba(16,185,129,0.25)]">
@@ -85,7 +134,7 @@ export function FocoAcademiaMotores() {
                 Motores & 100 Plataformas
               </h3>
               <p className="mt-2 text-sm text-zinc-300 leading-relaxed">
-                Directorio taxonómico de los 100 sistemas globales líderes (Liveuamap, ACLED, Sentinel, SIPRI, Bloomberg) y simulador matemático en vivo: leyes de Lanchester, tipos soberanos y Brier score.
+                Directorio taxonómico de los 100 sistemas globales líderes (Liveuamap, ACLED, Sentinel, SIPRI, Bloomberg) y simulador matemático en vivo: leyes de Lanchester, escalada Herman Kahn / DEFCON y Brier score.
               </p>
             </div>
 
@@ -94,11 +143,11 @@ export function FocoAcademiaMotores() {
                 <Link href="/motores/censo" className="rounded bg-purple-950/60 px-2 py-1 text-purple-300 hover:bg-purple-900/60">
                   Censo 100
                 </Link>
+                <Link href="/motores/escalada" className="rounded bg-purple-950/60 px-2 py-1 text-purple-300 hover:bg-purple-900/60">
+                  DEFCON
+                </Link>
                 <Link href="/motores/lanchester" className="rounded bg-purple-950/60 px-2 py-1 text-purple-300 hover:bg-purple-900/60">
                   Lanchester
-                </Link>
-                <Link href="/motores/curva-rendimiento" className="rounded bg-purple-950/60 px-2 py-1 text-purple-300 hover:bg-purple-900/60">
-                  Tipos
                 </Link>
                 <Link href="/motores/disuasion" className="rounded bg-purple-950/60 px-2 py-1 text-purple-300 hover:bg-purple-900/60">
                   Disuasión

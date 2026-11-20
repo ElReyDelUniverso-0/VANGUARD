@@ -14,6 +14,42 @@ interface PortadaProps {
 
 export function PortadaHermosaModulo({ id, color }: PortadaProps) {
   switch (id) {
+    case "informacion":
+      return (
+        <div className="vx-portada-arte bg-gradient-to-br from-[#031726] via-[#020b14] to-[#01050a]">
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 240" fill="none">
+            <defs>
+              <radialGradient id="info-glow" cx="50%" cy="50%" r="65%">
+                <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+              </radialGradient>
+              <linearGradient id="info-gold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="50%" stopColor="#818cf8" />
+                <stop offset="100%" stopColor="#f59e0b" />
+              </linearGradient>
+            </defs>
+            <rect width="400" height="240" fill="url(#info-glow)" />
+            {/* Anillos concéntricos de datos */}
+            <circle cx="200" cy="110" r="75" stroke="#38bdf8" strokeWidth="0.8" opacity="0.3" strokeDasharray="3 3" />
+            <circle cx="200" cy="110" r="54" stroke="#818cf8" strokeWidth="1.2" opacity="0.5" />
+            <circle cx="200" cy="110" r="32" stroke="#f59e0b" strokeWidth="1.4" opacity="0.7" />
+            {/* Núcleo de Fusión */}
+            <circle cx="200" cy="110" r="16" fill="#0c4a6e" stroke="#38bdf8" strokeWidth="1.5" />
+            <polygon points="200,98 204,106 212,110 204,114 200,122 196,114 188,110 196,106" fill="#ffffff" />
+            {/* Ejes orbitales */}
+            <ellipse cx="200" cy="110" rx="80" ry="24" stroke="#38bdf8" strokeWidth="1" transform="rotate(25 200 110)" opacity="0.6" strokeDasharray="4 2" />
+            <ellipse cx="200" cy="110" rx="80" ry="24" stroke="#f59e0b" strokeWidth="1" transform="rotate(-25 200 110)" opacity="0.6" strokeDasharray="4 2" />
+            {/* Nodos de telemetría */}
+            <circle cx="130" cy="78" r="3.5" fill="#38bdf8" />
+            <circle cx="270" cy="142" r="3.5" fill="#f59e0b" />
+            <text x="200" y="215" textAnchor="middle" fill="#38bdf8" fontFamily="monospace" fontSize="9" letterSpacing="0.25em" opacity="0.9">
+              CENTRO DE INFORMACIÓN PERFECTA · VANGUARD
+            </text>
+          </svg>
+        </div>
+      );
+
     case "academia":
       return (
         <div className="vx-portada-arte bg-gradient-to-br from-[#021f14] via-[#04120c] to-[#010805]">

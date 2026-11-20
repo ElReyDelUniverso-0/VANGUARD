@@ -17,6 +17,7 @@ import { IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
 import { BuscadorUniversal } from "@/components/vanguard/buscador-universal";
 import { BotonMenuAdictivo } from "./menu-adictivo";
 import { BotonCyberRadio } from "@/components/vanguard/cyber-radio-modal";
+import { BotonGuiaVisual } from "@/components/vanguard/guia/GuiaVisualTactivaModal";
 
 // v402.6 LOS NUEVE MÓDULOS — la cabecera lee los módulos de modulos.ts
 // (la portada está en el logo: ocho módulos caben en una sola fila)
@@ -74,6 +75,7 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
           ))}
         </nav>
         <div className="vx-cab-der">
+          <BotonGuiaVisual />
           <BotonMenuAdictivo />
           <BotonCyberRadio />
           <Reloj />

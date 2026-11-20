@@ -20,10 +20,10 @@ export function BotonMenuAdictivo() {
 
   const modulosFiltrados = MODULOS_PUBLICOS.filter((m) => {
     if (filtro === "todos") return true;
-    if (filtro === "novedades") return m.id === "academia" || m.id === "motores";
-    if (filtro === "conflictos") return m.id === "conflictos" || m.id === "arsenal" || m.id === "mapa";
-    if (filtro === "inteligencia") return m.id === "academia" || m.id === "motores" || m.id === "conocimiento" || m.id === "secretos" || m.id === "ciencia";
-    if (filtro === "datos") return m.id === "datos" || m.id === "planeta" || m.id === "mapa";
+    if (filtro === "novedades") return m.id === "informacion" || m.id === "academia" || m.id === "motores";
+    if (filtro === "conflictos") return m.id === "conflictos" || m.id === "arsenal" || m.id === "mapa" || m.id === "informacion";
+    if (filtro === "inteligencia") return m.id === "informacion" || m.id === "academia" || m.id === "motores" || m.id === "conocimiento" || m.id === "secretos" || m.id === "ciencia";
+    if (filtro === "datos") return m.id === "datos" || m.id === "planeta" || m.id === "mapa" || m.id === "informacion";
     if (filtro === "juego") return m.id === "juego" || m.id === "medios";
     return true;
   });
@@ -67,6 +67,16 @@ export function BotonMenuAdictivo() {
             </div>
 
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setAbierto(false);
+                  window.dispatchEvent(new CustomEvent("abrir-guia-vanguard"));
+                }}
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-sky-500/40 bg-sky-950/40 px-3 py-1.5 font-mono text-xs font-bold text-sky-300 hover:bg-sky-900/40 transition"
+              >
+                🧭 Guía Visual
+              </button>
               <button
                 type="button"
                 onClick={saltarAleatorio}

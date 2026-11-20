@@ -30,6 +30,23 @@ export type Modulo = {
 // cada uno con su portada (/modulo/[id]) y su barra de pestañas.
 export const MODULOS: Modulo[] = [
   {
+    id: "informacion",
+    nombre: "Información Perfecta",
+    corto: "Información",
+    lema: "Toda la inteligencia mundial fusionada en un solo centro",
+    nav: "/informacion",
+    img: "/ilustraciones/radar.jpg",
+    gancho: "Países con radar de 6 ejes, arsenales estratégicos, puntos de estrangulamiento y ciencia de frontera.",
+    pestanas: [
+      { href: "/informacion", label: "Consola Maestra", txt: "La consola táctica unificada con todos los frentes de inteligencia." },
+      { href: "/informacion", label: "Potencias", txt: "16 naciones estratégicas analizadas en 6 ejes." },
+      { href: "/informacion", label: "Arsenal", txt: "Armamento avanzado, alcances y fichas técnicas." },
+      { href: "/informacion", label: "Estrangulamiento", txt: "Puntos críticos del comercio y crudo mundial." },
+      { href: "/informacion", label: "Ciencia", txt: "Tecnologías de ruptura y TRL militar." },
+      { href: "/informacion", label: "Comparador", txt: "Duelo 1v1 entre cualquier par de potencias." },
+    ],
+  },
+  {
     id: "conflictos",
     nombre: "Conflictos",
     corto: "Conflictos",
@@ -306,7 +323,7 @@ export const portadaDe = (m: Modulo) => `/modulo/${m.id}`;
 
 /** a dónde lleva la cabecera: los módulos con sala-vestíbulo propia entran
  *  directo a ella; los nuevos entran por su portada */
-const CON_VESTIBULO = ["conflictos", "mapa", "juego", "academia", "motores"];
+const CON_VESTIBULO = ["conflictos", "mapa", "juego", "academia", "motores", "informacion"];
 export const entradaDe = (m: Modulo) => (CON_VESTIBULO.includes(m.id) ? m.nav : portadaDe(m));
 
 /** los módulos que se enseñan al público (el Estado vive aparte, al pie) */
