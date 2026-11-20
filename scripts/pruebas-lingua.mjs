@@ -133,8 +133,21 @@ if (BASE) {
     const lista = j.datos?.resultados ?? j.resultados ?? [];
     afirmar(lista.some((r) => r.origen === "fnt:lingua"), "sin resultados fnt:lingua");
   });
+  // v421.4 — /sitemap.xml es un índice de 7 archivos: se leen los hijos
+  const sitemapCompleto = async () => {
+    const idx = await get("/sitemap.xml");
+    if (idx.status !== 200 || !/<sitemapindex[\s>]/.test(idx.texto)) return idx.texto;
+    let texto = idx.texto;
+    for (const m of idx.texto.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+      try {
+        const r = await get(new URL(m[1]).pathname);
+        if (r.status === 200) texto += r.texto;
+      } catch { /* un hijo caído no invalida el resto */ }
+    }
+    return texto;
+  };
   await prueba("sitemap y llms.txt incluyen Lingua", async () => {
-    afirmar((await get("/sitemap.xml")).texto.includes("/lingua/familias/indo1319"), "sitemap");
+    afirmar((await sitemapCompleto()).includes("/lingua/familias/indo1319"), "sitemap");
     afirmar((await get("/llms.txt")).texto.includes("## Lingua"), "llms.txt");
   });
   await prueba("puntos del mapa servidos como estáticos", async () => {
