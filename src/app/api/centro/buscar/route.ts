@@ -51,8 +51,9 @@ export async function POST(req: NextRequest) {
   } else if (!candidatas.length) {
     avisos.push("El corpus fijo de la casa no tiene nada con esas palabras; lo que hay abajo viene del feed vivo del núcleo, no de un dossier.");
   }
-  // La poda se dice SIEMPRE que haya algo que contar: qué se usó y qué no.
-  if (candidatas.length) avisos.push(fraseDePoda(poda));
+  // La poda se dice SIEMPRE —también cuando no hay nada—: qué se examinó y
+  // qué se usó. Sin resultados también es un resultado, y se declara.
+  avisos.push(fraseDePoda(poda));
 
   return NextResponse.json({
     ok: true,

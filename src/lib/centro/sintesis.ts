@@ -308,6 +308,24 @@ export async function investigar(enc: EncargoInvestigacion): Promise<Investigaci
     avisos.push(`${degradadas} afirmación(es) presentadas como hecho pasaron a NO CONFIRMADO por falta de cita válida.`);
   }
 
+  // Sin modelo no hay citas que validar, pero el bloque se declara igual: el
+  // silencio de una casilla vacía se lee peor que una frase honesta.
+  if (!auditoriaCitas) {
+    const n = base.afirmaciones.length;
+    auditoriaCitas = {
+      presentadas: n,
+      publicables: n,
+      descartadasTexto: 0,
+      descartadasTope: 0,
+      degradadas: 0,
+      citasRechazadas: 0,
+      nota:
+        motor === "llm"
+          ? `El modelo no devolvió afirmaciones publicables: 0 de ${n} · ${mapa.size} citas disponibles en el material`
+          : `${n} afirmaciones extractivas (citas literales, sin redacción de modelo): no hay citas que validar · ${mapa.size} citas disponibles en el material`,
+    };
+  }
+
   // La bibliografía se construye SIEMPRE del corpus real, nunca del modelo.
   const bibliografia = bibliografiaDe(fuentes.map((f) => f.id)) as Bibliografia;
 
@@ -327,7 +345,7 @@ export async function investigar(enc: EncargoInvestigacion): Promise<Investigaci
     generado: new Date().toISOString(),
     ms: Date.now() - inicio,
     avisos,
-    ...(auditoriaCitas ? { auditoriaCitas } : {}),
+    auditoriaCitas,
   };
 }
 
