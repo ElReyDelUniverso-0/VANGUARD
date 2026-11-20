@@ -6636,3 +6636,15 @@ producción habría entregado un archivo que existe y no dice nada.
 Acceso Git confirmado por el propietario. Rebase sobre ce83c8c preservando Cámara de Inteligencia y ambos enlaces de país. Resolución de versión: v419.2, sin sustituir el registro v419.1 previo. Despliegue y validación pública pendientes de resultado. No se guarda la credencial en archivos del proyecto.
 
 Publicación: se incorporó main c97ef5a (Cámara, Lingua, Memory Archive); versión final v420.2. Enlaces recíprocos de la biblioteca /memoria y sitemap de las fichas. Se corrigió el normalizador del censo para prefijos con varios segmentos dinámicos consecutivos: /memoria/documento/[fuente]/[id] generaba barras dobles y un falso huérfano pese a enlaces reales en TarjetaDocumento. No se suprimió la prueba.
+
+
+## MISIÓN 03 · VANGUARD INFRASTRUCTURE ATLAS · entregada v420.3 · 2026-11-19
+- Base oficial: 84b0b9c8; entrega sobre el remoto actual (c97ef5a → 9f5bf72 → c019875 → 84b0b9c).
+- 176 obras documentadas en fuentes públicas (Wikipedia como fuente citada), 11 categorías: aeropuertos, puertos, ferrocarril, puentes, túneles, centrales energéticas, presas/embalses, agua, educación, sanitaria, edificios emblemáticos.
+- Cuatro puertas: /infraestructura (atlas + explorador con filtros por categoría/país/texto y cifras), /infraestructura/explorador (transporte · energía y agua · arquitectura y servicios), /infraestructura/gran-obra (catálogo ordenable), /infraestructura/obra/[id] (ficha con los NINE campos del mandato + JSON-LD, `dynamicParams=false` + generateStaticParams).
+- Censo: mod:infraestructura, mod:infra-gran-obra, mod:infra-explorador, mod:infra-ficha, fnt:infraestructura. Sitemap: 4 puertas + 176 fichas. Costura con /mundos/[iso] (obrasDePais). Pestaña «Atlas infraestructura» en el módulo Datos.
+- Honestidad: fecha null = «sin dato documentado»; fotos solo autorizadas y en la casa (SVG inline); información pública y apropiada — nada de vulnerabilidades, control de acceso ni detalles operativos; ISO-2 validado contra geo-paises; verificacion ∈ documentado/confirmado/por verificar.
+- QA local: 16/16 pruebas del Atlas, tsc focal limpio, censo offline intacto (103 ✓), smoke live: 4 puertas + ficha Golden Gate + /mundos/us + sitemap (182 URLs Atlas) todo 200.
+- Versionación: remoto ya tiene v420.0 (VANGUARD LINGUA), v420.1 (VANGUARD MEMORY ARCHIVE) y v420.2 (VANGUARD WORLD NETWORKS) → la Atlas se entrega como **v420.3**.
+- PUBLICADA: commits 12dcbdf0 (v420.3 Atlas) + 8a2e6bf7 (de-fang del detector) en main remoto.
+- Lección de publicación: el push rechazaba con «pre-receive hook declined» (secret scanning/push protection) porque el commit llevaba artefactos `.next/dev/` forzados con `git add -A -f` y un ejemplo falso `ghp_…` de 36 caracteres en el EJEMPLO del detector del escudo. Corrección: commits limpios (solo src/ + script de prueba force-add por convención) y los ejemplos didácticos del detector de-fangados. No se publican credenciales.
