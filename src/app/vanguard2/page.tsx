@@ -19,7 +19,12 @@ export const metadata: Metadata = {
   title: "El universo 3D total (Vanguard-2)",
   description:
     "El nuevo Vanguard: cada sección vive en su propio mundo 3D independiente. Letras, datos, gráficos y controles — todo en volumen, cada mínimo detalle.",
-  robots: { index: true, follow: true },
+  // v421.6 — MEDIDO: esta sala sirve 624 caracteres de texto visible y un H1,
+  // sin canonical, y comparte el 58 % del vocabulario con la portada. Es una
+  // pantalla de entrada, no contenido: indexarla pone dos puertas de la misma
+  // casa a competir por «Vanguard». Se deja navegable (follow) y fuera del
+  // índice. Si algún día es la casa oficial, esta línea y el mapa son el cambio.
+  robots: { index: false, follow: true },
 };
 
 // v208.0 LA LUPA — el zoom vuelve: maximumScale:1 + userScalable:false
