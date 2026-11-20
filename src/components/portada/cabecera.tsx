@@ -15,6 +15,8 @@ import { IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
 // cables en vivo. Antes el icono de lupa llevaba a /guerra-hoy: una lupa que
 // no buscaba. Ahora busca.
 import { BuscadorUniversal } from "@/components/vanguard/buscador-universal";
+import { BotonMenuAdictivo } from "./menu-adictivo";
+import { BotonCyberRadio } from "@/components/vanguard/cyber-radio-modal";
 
 // v402.6 LOS NUEVE MÓDULOS — la cabecera lee los módulos de modulos.ts
 // (la portada está en el logo: ocho módulos caben en una sola fila)
@@ -72,6 +74,8 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
           ))}
         </nav>
         <div className="vx-cab-der">
+          <BotonMenuAdictivo />
+          <BotonCyberRadio />
           <Reloj />
           <BuscadorUniversal />
           <Link href="/en-vivo" className="vx-vivo" aria-label="EN VIVO">

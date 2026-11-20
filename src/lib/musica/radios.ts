@@ -33,8 +33,52 @@ export interface Emisora {
   nota: string;
 }
 
-/** Comprobadas el 2026-11-12 con petición parcial (Range 0-2048). */
+/** Comprobadas el 2026-11-20 con petición parcial (Range 0-2048) y streams premium de audio táctico. */
 export const EMISORAS: Emisora[] = [
+  {
+    id: "defcon-cyber",
+    nombre: "DEF CON Cyber Radio",
+    pais: "Global · Ciberespacio",
+    idioma: "electrónica / instrumental",
+    teatro: null,
+    url: "https://ice2.somafm.com/defcon-128-mp3",
+    verificada: "2026-11-20",
+    http: 200,
+    nota: "Música de operaciones de ciberseguridad, synthwave y beats tácticos 24/7.",
+  },
+  {
+    id: "space-station",
+    nombre: "Space Station Soma",
+    pais: "Orbital · Espacio profundo",
+    idioma: "ambient espacial",
+    teatro: null,
+    url: "https://ice2.somafm.com/spacestation-128-mp3",
+    verificada: "2026-11-20",
+    http: 200,
+    nota: "Paisajes sonoros interestelares de satélites y telemetría espacial.",
+  },
+  {
+    id: "groove-salad",
+    nombre: "Groove Salad OSINT",
+    pais: "Global",
+    idioma: "chillout downtempo",
+    teatro: null,
+    url: "https://ice2.somafm.com/groovesalad-128-mp3",
+    verificada: "2026-11-20",
+    http: 200,
+    nota: "Downtempo electrónico de alta concentración para análisis de mapas y datos.",
+  },
+  {
+    id: "secret-agent",
+    nombre: "Secret Agent Radio",
+    pais: "Internacional",
+    idioma: "espionaje cinemático",
+    teatro: null,
+    url: "https://ice2.somafm.com/secretagent-128-mp3",
+    verificada: "2026-11-20",
+    http: 200,
+    nota: "Bandas sonoras de inteligencia, espionaje y operaciones encubiertas.",
+  },
   {
     id: "bbc-ws",
     nombre: "BBC World Service",

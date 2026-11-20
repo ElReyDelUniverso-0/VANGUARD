@@ -46,6 +46,11 @@ import {
 } from "@/lib/musica/radios";
 import { arrancarAmbiente, ambienteSonando, efecto, pararAmbiente, type Efecto } from "@/lib/musica/efectos";
 import { decir, pararBoca, type PersonaId } from "@/lib/voz/decir";
+import {
+  iniciarCyberSynth,
+  pararCyberSynth,
+  setVolumenCyberSynth,
+} from "@/lib/musica/cyber-synth";
 
 interface Cable {
   titulo: string;
@@ -87,6 +92,7 @@ export function MusicaSala() {
   const [teatro, setTeatro] = useState("ukraine");
   const [emisora, setEmisora] = useState<Emisora | null>(null);
   const [radioCasa, setRadioCasa] = useState(false);
+  const [synthActivo, setSynthActivo] = useState(false);
   const [boletin, setBoletin] = useState("");
   const [aviso, setAviso] = useState("");
   const [parte, setParte] = useState<ParteCronica | null>(null);
@@ -142,6 +148,8 @@ export function MusicaSala() {
     setSonandoReal(false);
     setEmisora(null);
     setRadioCasa(false);
+    pararCyberSynth();
+    setSynthActivo(false);
   }, []);
 
   const ponerPista = useCallback(
@@ -245,6 +253,61 @@ export function MusicaSala() {
 
   return (
     <div className="flex flex-col gap-5">
+      {/* ══════════ ⓪ CYBERSYNTH & AUDIO TÁCTICO ══════════ */}
+      <section className="rounded-md border border-sky-500/40 bg-sky-950/20 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-sky-400">
+              AUDIO TÁCTICO CYBERPUNK · SINTETIZADOR NEURAL VANGUARD
+            </p>
+            <h2 className="mt-1 text-xl font-bold text-zinc-100">Música de Operaciones & Paisajes Ambientales</h2>
+            <p className="mt-1 text-sm text-zinc-400">
+              Sintetizador analógico nativo con pads cinemáticos, arpegios espaciales y cero ruido molesto de sirenas o estática.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (synthActivo) {
+                  pararCyberSynth();
+                  setSynthActivo(false);
+                } else {
+                  apagarTodo();
+                  iniciarCyberSynth(mudo ? 0.001 : vol);
+                  setSynthActivo(true);
+                }
+              }}
+              className={`inline-flex items-center gap-1.5 rounded border px-3 py-1.5 font-mono text-xs font-bold uppercase transition ${
+                synthActivo
+                  ? "border-sky-400 bg-sky-500/20 text-sky-200 shadow-[0_0_12px_rgba(56,189,248,0.4)]"
+                  : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-sky-500 hover:text-white"
+              }`}
+            >
+              {synthActivo ? <Square size={13} /> : <Play size={13} />}
+              {synthActivo ? "Detener Cybersynth" : "Iniciar Cybersynth"}
+            </button>
+          </div>
+        </div>
+
+        {synthActivo && (
+          <div className="mt-3 rounded border border-sky-500/30 bg-zinc-950/70 p-3">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-sky-400">
+              SINTETIZADOR EN VIVO · PADS EN MODO DÓRICO
+            </span>
+            <div className="mt-2 flex h-8 items-end gap-1">
+              {[14, 28, 18, 32, 22, 16, 30, 20, 26, 15, 29, 21].map((h, i) => (
+                <span
+                  key={i}
+                  className="w-1 rounded-t bg-sky-400 animate-pulse"
+                  style={{ height: `${h}px`, animationDuration: `${0.5 + (i % 4) * 0.2}s` }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
       {/* ══════════ ① MÚSICA REAL ══════════ */}
       <section className="rounded-md border border-amber-500/40 bg-amber-500/5 p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">

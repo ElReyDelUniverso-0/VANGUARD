@@ -49,6 +49,7 @@ import "@/components/experiencia/experiencia.css";
 import { Entrada } from "@/components/experiencia/entrada";
 import { Ecosistema } from "@/components/experiencia/ecosistema";
 import { PortadaViva } from "@/components/experiencia/portada-viva";
+import { FocoAcademiaMotores } from "@/components/portada/foco-academia-motores";
 
 
 export const revalidate = 300;
@@ -127,6 +128,9 @@ export default async function Portada() {
 
       {/* v422.1 · LA ENTRADA — qué es esto, en cinco segundos, antes de las noticias */}
       <Entrada cables={notas.length} />
+
+      {/* NOVEDADES 2026: Vanguard Academy y Laboratorio de Motores */}
+      <FocoAcademiaMotores />
 
       <main className="vx-wrap">
         {/* el hilo: sigue donde lo dejaste (Travesía, ya existía) */}

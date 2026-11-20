@@ -148,7 +148,7 @@ export function efecto(nombre: Efecto, volumen = 0.5) {
   }
 }
 
-/** El ambiente continuo de una emisora de la casa (estática + morse + sirena + tambor). */
+/** El ambiente continuo de una emisora de la casa (armónicos cálidos y pulso táctico, sin estridencias). */
 export function arrancarAmbiente(a: {
   estatica: number;
   morse: boolean;
@@ -161,31 +161,25 @@ export function arrancarAmbiente(a: {
   const nodos: AudioNode[] = [];
   const timers: number[] = [];
 
-  if (a.estatica > 0) {
-    const s = ruido(c, 2);
-    s.loop = true;
+  // Pulso ambiental de baja frecuencia (drone táctico cálido)
+  try {
+    const o = c.createOscillator();
+    o.type = "sine";
+    o.frequency.value = 55; // La (A1)
     const f = c.createBiquadFilter();
-    f.type = "highpass";
-    f.frequency.value = 900;
+    f.type = "lowpass";
+    f.frequency.value = 180;
     const g = c.createGain();
-    g.gain.value = Math.min(0.14, a.estatica * 0.25);
-    s.connect(f);
+    g.gain.value = 0.05;
+    o.connect(f);
     f.connect(g);
     g.connect(master);
-    s.start();
-    nodos.push(s, g);
-  }
-  if (a.morse) {
-    timers.push(
-      window.setInterval(() => efecto("morse", 0.35), 9000),
-    );
-  }
-  if (a.sirena !== "ninguna") {
-    const vol = a.sirena === "cercana" ? 0.5 : 0.18;
-    timers.push(window.setInterval(() => efecto("sirena", vol), a.sirena === "cercana" ? 11000 : 17000));
-  }
+    o.start();
+    nodos.push(o, f, g);
+  } catch {}
+
   if (a.tambor) {
-    timers.push(window.setInterval(() => efecto("tambor", 0.3), 2100));
+    timers.push(window.setInterval(() => efecto("tambor", 0.15), 4000));
   }
   ambiente = { nodos, timers };
 }

@@ -226,6 +226,41 @@ export const MODULOS: Modulo[] = [
     ],
   },
   {
+    id: "academia",
+    nombre: "Vanguard Academy",
+    corto: "Academia",
+    lema: "Formación e inteligencia estratégica con certificación SHA-256",
+    nav: "/academia",
+    img: "/ilustraciones/recluta.jpg",
+    gancho: "10 cursos interactivos, rutas especializadas, cuestionarios y certificados criptográficos.",
+    pestanas: [
+      { href: "/academia", label: "Portal", txt: "Visión general, progreso y catálogo interactivo." },
+      { href: "/academia/cursos", label: "Cursos", txt: "Los 10 cursos nucleares de análisis y geopolítica." },
+      { href: "/academia/rutas", label: "Rutas", txt: "Trayectorias de especialización profesional guiadas." },
+      { href: "/academia/ejercicios", label: "Ejercicios", txt: "Casos prácticos de lectura de cables y mapas." },
+      { href: "/academia/certificados", label: "Certificados", txt: "Validación criptográfica SHA-256 de diplomas." },
+      { href: "/academia/glosario", label: "Glosario", txt: "Términos doctrinales, militares y de OSINT." },
+      { href: "/academia/historial", label: "Historial", txt: "Tus intentos, calificaciones y tiempo dedicado." },
+    ],
+  },
+  {
+    id: "motores",
+    nombre: "Motores & Algoritmos",
+    corto: "Motores",
+    lema: "Laboratorio matemático y censo de las 100 plataformas líderes",
+    nav: "/motores",
+    img: "/ilustraciones/operaciones.jpg",
+    gancho: "Modelos cuantitativos deterministas y comparativa taxonómica con 100 plataformas globales.",
+    pestanas: [
+      { href: "/motores", label: "Laboratorio", txt: "Simulador interactivo y visor del censo de plataformas." },
+      { href: "/motores/censo", label: "Censo 100", txt: "Directorio de 100 plataformas clasificadas en 8 dimensiones." },
+      { href: "/motores/lanchester", label: "Lanchester", txt: "Leyes diferenciales de atrición y combate a distancia." },
+      { href: "/motores/dbscan", label: "DBSCAN", txt: "Agrupador espacial geodésico para frentes cinéticos." },
+      { href: "/motores/curva-rendimiento", label: "Nelson-Siegel", txt: "Curvas de rendimiento y tipos soberanos." },
+      { href: "/motores/disuasion", label: "Disuasión", txt: "Dinámica Lotka-Volterra de equilibrios armamentistas." },
+    ],
+  },
+  {
     id: "estado",
     nombre: "Estado de Vanguard",
     corto: "Estado",
@@ -271,7 +306,7 @@ export const portadaDe = (m: Modulo) => `/modulo/${m.id}`;
 
 /** a dónde lleva la cabecera: los módulos con sala-vestíbulo propia entran
  *  directo a ella; los nuevos entran por su portada */
-const CON_VESTIBULO = ["conflictos", "mapa", "juego"];
+const CON_VESTIBULO = ["conflictos", "mapa", "juego", "academia", "motores"];
 export const entradaDe = (m: Modulo) => (CON_VESTIBULO.includes(m.id) ? m.nav : portadaDe(m));
 
 /** los módulos que se enseñan al público (el Estado vive aparte, al pie) */

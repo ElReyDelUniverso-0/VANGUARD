@@ -6,6 +6,7 @@
 // ============================================================
 import Link from "next/link";
 import { MODULOS_PUBLICOS, portadaDe } from "./modulos";
+import { PortadaHermosaModulo } from "./portadas-hermosas";
 
 export function ModulosRejilla({ excepto, compacta = false }: { excepto?: string; compacta?: boolean }) {
   const lista = MODULOS_PUBLICOS.filter((m) => m.id !== excepto);
@@ -17,9 +18,11 @@ export function ModulosRejilla({ excepto, compacta = false }: { excepto?: string
         const visibles = m.pestanas.slice(0, 4);
         const resto = m.pestanas.length - visibles.length;
         return (
-          <Link key={m.id} href={portadaDe(m)} className="vx-mod">
+          <Link key={m.id} href={portadaDe(m)} className="vx-mod group overflow-hidden">
             <span className="vx-mira vx-esquinas" aria-hidden />
-            <div className="vx-mod-bg" style={{ backgroundImage: `url(${m.img})` }} />
+            <div className="vx-mod-bg overflow-hidden">
+              <PortadaHermosaModulo id={m.id} />
+            </div>
             <div className="vx-mod-cab">
               <span className="vx-mod-num">{String(n).padStart(2, "0")}</span>
               {vivos > 0 && (

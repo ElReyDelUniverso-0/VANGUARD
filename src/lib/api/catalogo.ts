@@ -513,6 +513,7 @@ export const RUTAS_INVENTARIADAS: string[] = [
   "/api/maestro",
   "/api/media/[id]",
   "/api/memes",
+  "/api/mi-universo",
   "/api/memes/[id]",
   "/api/mente",
   "/api/mercado",
