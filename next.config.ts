@@ -141,6 +141,23 @@ const nextConfig: NextConfig = {
         destination: `${SITE_URL}/:path*`,
         permanent: true,
       })),
+      // v421.3 LAS CUATRO PUERTAS QUE NUNCA EXISTIERON — medido el 2026-11-20:
+      // el catálogo de infraestructura generaba cuatro ids con «ó» y «ñ»
+      // («central-eólica-offshore-hornsea/walney/wir», «sanitaria-hospital-del-niño»).
+      // La ficha usa dynamicParams = false, así que Next respondía 404 ANTES de
+      // ejecutar la página: ni la forma cruda ni la percent-encoded resolvían, y
+      // las cuatro viajaban anunciadas en el sitemap. Los ids ya son ASCII; estas
+      // reglas de borde cierran las dos variantes viejas con 301 a la buena (el
+      // redirect de next.config corre ANTES del enrutado, sin tocar la sala).
+      ...[
+        ["central-\u00f3lica-offshore-hornsea", "central-eolica-offshore-hornsea"],
+        ["central-\u00f3lica-offshore-walney", "central-eolica-offshore-walney"],
+        ["central-\u00f3lica-offshore-wir", "central-eolica-offshore-wir"],
+        ["sanitaria-hospital-del-ni\u00f1o", "sanitaria-hospital-del-nino"],
+      ].flatMap(([viejo, nuevo]) => [
+        { source: `/infraestructura/obra/${viejo}`, destination: `/infraestructura/obra/${nuevo}`, permanent: true },
+        { source: `/infraestructura/obra/${encodeURIComponent(viejo)}`, destination: `/infraestructura/obra/${nuevo}`, permanent: true },
+      ]),
       { source: "/clasico", destination: "/cuartel", permanent: true },
       // v402.4 — salas que vivieron sueltas y hoy son pestañas del Cuartel:
       // el enlace viejo (y el botón del Teatro Total) aterriza en su sala.
