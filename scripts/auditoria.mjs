@@ -303,6 +303,11 @@ if (iSmoke > -1 && process.argv[iSmoke + 1]) {
     { ruta: "/api/auth/me", claves: ["ok"] },
     { ruta: "/api/creadores/yo", claves: ["rol"] },
     { ruta: "/api/duelo", claves: ["ok"] },
+    // v421.0 · la Cámara de Inteligencia también es una puerta de máquina:
+    // el censo por GET, y las dos llamadas reales por POST con su contrato.
+    { ruta: "/api/centro/buscar", claves: ["ok", "censo", "vias"] },
+    { ruta: "/api/centro/buscar", metodo: "POST", cuerpo: { pregunta: "otan" }, claves: ["ok", "candidatas", "censo", "avisos"] },
+    { ruta: "/api/centro/investigar", metodo: "POST", cuerpo: { pregunta: "otan", fuentes: [], sinModelo: true }, claves: ["ok", "investigacion"] },
   ];
   // Lo que NUNCA debe salir por una respuesta pública (la regla del Dueño).
   const SECRETOS = [/ghp_[A-Za-z0-9]{20,}/, /sk-[A-Za-z0-9]{20,}/, /-----BEGIN [A-Z ]*PRIVATE KEY-----/, /SUPABASE_SERVICE_ROLE/i, /AUTH_SECRET\s*[:=]\s*["'][^"']{8,}/];
@@ -326,7 +331,12 @@ if (iSmoke > -1 && process.argv[iSmoke + 1]) {
   }
   for (const p of PUERTAS_DE_MAQUINA) {
     try {
-      const res = await fetch(base + p.ruta, { redirect: "manual" });
+      const res = await fetch(base + p.ruta, {
+        redirect: "manual",
+        ...(p.metodo
+          ? { method: p.metodo, headers: { "content-type": "application/json" }, body: JSON.stringify(p.cuerpo ?? {}) }
+          : {}),
+      });
       const texto = await res.text();
       let json = null;
       try { json = JSON.parse(texto); } catch { json = null; }

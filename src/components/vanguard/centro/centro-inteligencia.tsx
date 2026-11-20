@@ -64,6 +64,7 @@ import {
   anadirHistorial,
   nuevoId,
 } from "@/lib/centro/store";
+import { archivarAuto, sugerirDestino } from "@/lib/centro/organizador";
 import { Barra, Bloque, Boton, Chip, Etiqueta, Vacio } from "./piezas";
 
 type Candidata = Fuente & { puntos: number; muestra: string[]; pasajesN: number };
@@ -255,15 +256,30 @@ export default function CentroInteligencia({
 
   const archivar = useCallback(() => {
     if (!inv) return;
+    const documentos = docs
+      .filter((d) => docsSeleccionados.includes(d.id))
+      .map((d) => ({ id: d.id, nombre: d.nombre }));
+
+    // sin proyecto elegido no se bloquea: el organizador decide y lo declara
     if (!proyectoDestino) {
-      decir("error", "Elige un proyecto (o crea uno abajo).");
+      const r = archivarAuto(inv, documentos);
+      if (!r.ok) {
+        decir("error", r.error ?? "No se pudo guardar.");
+        return;
+      }
+      setProyectos(leerProyectos());
+      setHistorial(leerHistorial());
+      decir(
+        "ok",
+        `${r.destino.crear ? "Proyecto creado" : "Archivado"} en «${r.destino.nombre}» (${r.destino.motivo}). Etiquetas: ${
+          r.destino.etiquetas.join(" · ") || "ninguna"
+        }.`
+      );
       return;
     }
-    const r = archivarInvestigacion(
-      proyectoDestino,
-      inv,
-      docs.filter((d) => docsSeleccionados.includes(d.id)).map((d) => ({ id: d.id, nombre: d.nombre }))
-    );
+
+    const etiquetas = sugerirDestino(inv, proyectos, documentos).etiquetas;
+    const r = archivarInvestigacion(proyectoDestino, inv, documentos, "", etiquetas);
     if (!r.ok) {
       decir("error", r.error ?? "No se pudo guardar.");
       return;
@@ -271,7 +287,7 @@ export default function CentroInteligencia({
     setProyectos(leerProyectos());
     setHistorial(leerHistorial());
     decir("ok", "Investigación guardada en el proyecto. Puedes cerrar y volver otro día.");
-  }, [inv, proyectoDestino, docs, docsSeleccionados, decir]);
+  }, [inv, proyectoDestino, proyectos, docs, docsSeleccionados, decir]);
 
   // ── documentos ────────────────────────────────────────────────────────
   const subir = useCallback(
@@ -393,6 +409,11 @@ export default function CentroInteligencia({
     setTab("investigar");
     decir("info", "Investigación recuperada del proyecto. Puedes generar su informe otra vez o seguir tirando del hilo.");
   };
+
+  // El organizador propone destino y etiquetas ANTES de guardar: el operador
+  // ve a dónde va y con qué nombre, y puede corregirlo en el desplegable.
+  const docsElegidos = docs.filter((d) => docsSeleccionados.includes(d.id)).map((d) => ({ id: d.id, nombre: d.nombre }));
+  const destinoAuto = almacenOk && inv ? sugerirDestino(inv, proyectos, docsElegidos) : null;
 
   // ─────────────────────────────────────────────────────────────────────
   return (
@@ -646,16 +667,31 @@ export default function CentroInteligencia({
                 className="min-h-[38px] rounded-sm border border-border bg-background px-2 font-mono text-[12px] text-foreground"
                 aria-label="Proyecto donde guardar"
               >
-                <option value="">— guardar en proyecto —</option>
+                <option value="">
+                  {destinoAuto
+                    ? `automático: «${destinoAuto.nombre}»`
+                    : "— guardar en proyecto —"}
+                </option>
                 {proyectos.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.nombre}
                   </option>
                 ))}
               </select>
-              <Boton onClick={archivar} tono="fantasma" titulo="Guarda esta investigación en el navegador, dentro del proyecto elegido">
+              <Boton
+                onClick={archivar}
+                tono="fantasma"
+                titulo="Guarda esta investigación en el navegador: en el proyecto elegido o, si no eliges, en el que propone el organizador"
+              >
                 <BookMarked className="h-3.5 w-3.5" /> Guardar
               </Boton>
+              {destinoAuto ? (
+                <p className="w-full font-mono text-[11.5px] leading-snug text-muted-foreground">
+                  Organizador: {destinoAuto.crear ? "creará" : "guardará en"} «{destinoAuto.nombre}» —{" "}
+                  {destinoAuto.motivo}
+                  {destinoAuto.etiquetas.length ? ` · etiquetas: ${destinoAuto.etiquetas.join(" · ")}` : ""}
+                </p>
+              ) : null}
               <Boton
                 onClick={async () => {
                   const ok = await copiar(inv.sintesis + "\n\n" + inv.afirmaciones.map((a) => `[${a.clase}] ${a.texto}`).join("\n"));
@@ -1050,6 +1086,9 @@ export default function CentroInteligencia({
                         <span className="font-mono text-[11.5px] text-muted-foreground">
                           {g.investigacion.fuentes.length} fuentes · conf. {g.investigacion.confianza}
                         </span>
+                        {g.etiquetas.length ? (
+                          <span className="font-mono text-[11.5px] text-amber/80">{g.etiquetas.join(" · ")}</span>
+                        ) : null}
                         <button
                           type="button"
                           onClick={() => {

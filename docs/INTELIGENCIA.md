@@ -253,3 +253,73 @@ Guion automatizado sobre la sala publicada:
 En la primera pasada el aro cazó un **React #418** en la sala: `hayAlmacen()` se
 preguntaba durante el primer render (el servidor no tiene localStorage y el
 navegador sí). Corregido: se decide después de montar.
+
+---
+
+## 12. El organizador automático y la entrada en la casa (v421)
+
+La misión pedía, además de investigar, **organizar solo por proyectos** y **vivir
+dentro de la casa**. Las dos cosas se cierran en este paso, sin modelo y sin red.
+
+### 12.1 El organizador (`src/lib/centro/organizador.ts`, nuevo)
+
+Hasta aquí el archivo era manual: había que crear un proyecto, elegirlo en un
+desplegable y pulsar Guardar; y toda investigación se guardaba con
+`etiquetas: []`. Ahora, al pulsar **Guardar**:
+
+1. **Etiqueta** la investigación con hasta seis etiquetas legibles, sacadas de
+   su propia pregunta, su síntesis, sus fuentes y sus documentos: hasta tres de
+   **tema** (Defensa, Tecnología, Energía, Economía, Política, Salud, Clima,
+   Derechos, Ciencia, Historia — vocabulario español e inglés), hasta dos de
+   **lugar** (los que ya entraron como ficha de país) y el tipo de material
+   (`documentos del operador`).
+2. **Sugiere destino**: si un proyecto existente comparte **dos o más** palabras
+   significativas con la investigación, propone ese y **dice qué comparte**
+   («comparte «semiconductores», «litografía», «chips»»); si no, propone crear
+   uno nuevo llamado `Investigación · <etiqueta principal>`.
+3. **Archiva sin bloquear**: el desplegable ya no es obligatorio. La primera
+   opción dice `automático: «<nombre>»` y, debajo del botón, la interfaz escribe
+   a dónde va, por qué y con qué etiquetas. El operador puede seguir eligiendo
+   un proyecto a mano: lo automático es la propuesta, no el candado.
+
+Prueba local sobre dos investigaciones sintéticas (compilado el módulo y
+ejecutado con `node`):
+
+| Investigación | Etiquetas | Destino |
+|---|---|---|
+| Litografía EUV + ficha de Taiwán | `Tecnología`, `Taiwán` | proyecto existente «Semiconductores y litografía» — comparte «semiconductores», «litografía», «chips» |
+| Gasto militar OTAN en el Báltico + fichas de Polonia y Estonia | `Defensa`, `Polonia`, `Estonia` | ninguno encaja → creará «Investigación · Defensa» |
+| la misma, con un PDF adjunto | + `documentos del operador` | igual |
+
+**Límite declarado:** es un organizador **por vocabulario**, no por
+comprensión. Dos investigaciones sobre lo mismo dichas con palabras distintas no
+se juntan solas; por eso el desplegable sigue ahí.
+
+### 12.2 La Cámara entra en la navegación de la casa
+
+`/inteligencia` no estaba en ninguna de las seis navegaciones. Se ha añadido al
+**registro de espacios de trabajo** (`src/lib/navegacion/espacios.ts`), que es la
+fuente única de la barra contextual, de la sala `/navegacion` y del buscador
+(`regla ③` del registro: una herramienta nueva es una entrada más en la lista, no
+un parche en tres sitios):
+
+- espacio **Inteligencia** → herramienta **Cámara de Inteligencia** (`/inteligencia`, `desde: "v420.0"`);
+- ruta `/inteligencia` añadida a la detección del espacio, para que la barra la
+  reconozca al estar dentro.
+
+Comprobado antes de commitear: ningún `id` repetido en el registro, `/inteligencia`
+declarada una sola vez, e icono existente en el trazador (`book-marked`).
+
+### 12.3 La puerta entra en la auditoría automática
+
+`scripts/auditoria.mjs` comprueba ya, en cada pasada contra producción, el
+contrato de las dos llamadas reales de la Cámara (antes solo se medían a mano):
+
+```
+GET  /api/centro/buscar                → ok · censo · vias
+POST /api/centro/buscar   {pregunta}   → ok · candidatas · censo · avisos
+POST /api/centro/investigar {…, sinModelo:true} → ok · investigacion
+```
+
+Para ello la lista `PUERTAS_DE_MAQUINA` admite ahora `metodo` y `cuerpo`: hasta
+hoy solo sabía hacer `GET`.

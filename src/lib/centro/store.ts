@@ -109,7 +109,8 @@ export function archivarInvestigacion(
   proyectoId: string,
   inv: Investigacion,
   documentos: { id: string; nombre: string }[] = [],
-  notas = ""
+  notas = "",
+  etiquetas: string[] = []
 ): { ok: boolean; error?: string } {
   const todos = leerProyectos();
   const i = todos.findIndex((p) => p.id === proyectoId);
@@ -121,7 +122,7 @@ export function archivarInvestigacion(
     documentos,
     guardado: new Date().toISOString(),
     notas,
-    etiquetas: [],
+    etiquetas: etiquetas.slice(0, 8),
   };
   todos[i] = {
     ...todos[i],

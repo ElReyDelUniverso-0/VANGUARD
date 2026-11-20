@@ -108,7 +108,7 @@ export const ESPACIOS: Espacio[] = [
     color: "#3ddcff",
     icono: "radar",
     detecta: {
-      rutas: ["/espia", "/centinela", "/oscura", "/verdad-cruda", "/poder", "/modulo/secretos"],
+      rutas: ["/inteligencia", "/espia", "/centinela", "/oscura", "/verdad-cruda", "/poder", "/modulo/secretos"],
       salas: ["salaguerra", "comunidad", "redmundial", "googles", "mente", "imagenes", "grafo", "espejo", "maquina", "expedientes", "ojodios", "osint", "canales", "wikiguerra", "centinela", "espectro", "pulsos", "evaluacion", "perdidas", "monitorglobal", "camaras", "cielos", "sismo", "ciber", "pulso", "radar", "geopolitica", "observatorio", "abusos", "incidentes", "memorial", "sala18", "dronguerra", "recluta", "espionaje", "crisis", "oscura"],
       modulos: ["secretos"],
       constelaciones: ["inteligencia", "observatorio", "oscsuro"],
@@ -118,6 +118,7 @@ export const ESPACIOS: Espacio[] = [
       { id: "centinela", nombre: "Centinela", href: "/centinela", icono: "radar", desc: "La vigilancia continua: lo que se mueve y lo que se calla" },
       { id: "oscura", nombre: "Verdad cruda", href: "/verdad-cruda", icono: "skull", desc: "Abusos documentados con su fuente pública citada" },
       { id: "poder", nombre: "El poder", href: "/poder", icono: "landmark", desc: "Quién decide de verdad y con qué instrumentos" },
+      { id: "camara", nombre: "Cámara de Inteligencia", href: "/inteligencia", icono: "book-marked", desc: "Investigar con fuentes: eliges qué documentos y fichas entran, y la Cámara separa hechos, interpretaciones y datos sin confirmar", desde: "v420.0" },
       { id: "mente", nombre: "La Mente", href: "/cuartel?sala=mente", icono: "brain", desc: "El cerebro de IA de la casa: pregunta y razona contigo" },
       { id: "espejo", nombre: "El Espejo", href: "/cuartel?sala=espejo", icono: "venetian-mask", desc: "Una crisis, todas las perspectivas" },
       { id: "expedientes", nombre: "Expedientes", href: "/cuartel?sala=expedientes", icono: "file-search", desc: "Los papeles desclasificados de la casa" },
