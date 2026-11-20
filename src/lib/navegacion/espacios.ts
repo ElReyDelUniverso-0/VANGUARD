@@ -47,8 +47,6 @@ export const ESPACIOS: Espacio[] = [
       { id: "conflictos", nombre: "Tablero de conflictos", href: "/conflictos", icono: "swords", desc: "Las regiones en seguimiento con su intensidad medida" },
       { id: "rostros", nombre: "Rostros del poder", href: "/rostros", icono: "users", desc: "Quién manda en cada sitio, con su sede real" },
       { id: "datos-vivos", nombre: "Datos vivos", href: "/pulso-mundial", icono: "activity", desc: "El planeta medido en tiempo real: sismos, clima espacial, señales" },
-      // v421.8 · las amenazas del territorio se enseñan en el centro de resiliencia
-      { id: "peligros-naturales", nombre: "Peligros naturales", href: "/resiliencia/peligros", icono: "siren", desc: "Doce fichas: cómo se forma cada amenaza, qué señales se reconocen y qué hacer", desde: "v421.8" },
     ],
     vecinos: ["simular", "investigar", "leer"],
   },
@@ -110,14 +108,12 @@ export const ESPACIOS: Espacio[] = [
     color: "#3ddcff",
     icono: "radar",
     detecta: {
-      rutas: ["/inteligencia", "/espia", "/centinela", "/oscura", "/verdad-cruda", "/poder", "/modulo/secretos", "/ciencia"],
+      rutas: ["/inteligencia", "/espia", "/centinela", "/oscura", "/verdad-cruda", "/poder", "/modulo/secretos"],
       salas: ["salaguerra", "comunidad", "redmundial", "googles", "mente", "imagenes", "grafo", "espejo", "maquina", "expedientes", "ojodios", "osint", "canales", "wikiguerra", "centinela", "espectro", "pulsos", "evaluacion", "perdidas", "monitorglobal", "camaras", "cielos", "sismo", "ciber", "pulso", "radar", "geopolitica", "observatorio", "abusos", "incidentes", "memorial", "sala18", "dronguerra", "recluta", "espionaje", "crisis", "oscura"],
-      modulos: ["secretos", "ciencia"],
+      modulos: ["secretos"],
       constelaciones: ["inteligencia", "observatorio", "oscsuro"],
     },
     herramientas: [
-      /* v421.9 */ { id: "science-frontier", nombre: "Science Frontier", href: "/ciencia", icono: "flask-conical", desc: "Publicaciones reales con tipo editorial y nivel de evidencia separados, y su enlace original" },
-      { id: "science-explorador", nombre: "Explorador de descubrimientos", href: "/ciencia/explorador", icono: "git-branch", desc: "Una pregunta científica y todos sus pasos, con lo que añadió cada uno" },
       { id: "espia", nombre: "Servicios secretos", href: "/espia", icono: "fingerprint", desc: "Agencias, agentes y expedientes con su documento a la vista" },
       { id: "centinela", nombre: "Centinela", href: "/centinela", icono: "radar", desc: "La vigilancia continua: lo que se mueve y lo que se calla" },
       { id: "oscura", nombre: "Verdad cruda", href: "/verdad-cruda", icono: "skull", desc: "Abusos documentados con su fuente pública citada" },
@@ -246,38 +242,6 @@ export const ESPACIOS: Espacio[] = [
     ],
     vecinos: ["jugar", "crear", "leer"],
   },
-  // ────────────────────────────────────────────────────────── COMUNIDAD
-  // v421.8 · MISIÓN 09 — el espacio de la gente que se prepara. No es un
-  // módulo ni una sala del cuartel: es el centro de resiliencia civil y sus
-  // puertas, declaradas aquí para que la barra, el buscador y la sala
-  // /navegacion las conozcan sin tocar ningún componente.
-  {
-    clave: "comunidad",
-    nombre: "Comunidad y preparación",
-    lema: "Que el barrio llegue entero al día siguiente",
-    color: "#34d399",
-    icono: "shield-check",
-    detecta: {
-      rutas: ["/resiliencia"],
-      salas: [],
-    },
-    herramientas: [
-      { id: "resiliencia-centro", nombre: "Centro de resiliencia", href: "/resiliencia", icono: "shield-check", desc: "Quince secciones de prevención, preparación y recuperación para comunidades, con las recomendaciones de los organismos reconocidos", desde: "v421.8" },
-      { id: "resiliencia-evaluacion", nombre: "Evaluación comunitaria", href: "/resiliencia/evaluacion", icono: "gauge", desc: "Veinticuatro preguntas, seis categorías y un resultado orientativo que se queda en el navegador", desde: "v421.8" },
-      { id: "resiliencia-familia", nombre: "Plan de la familia", href: "/resiliencia/familia", icono: "users", desc: "Continuidad familiar: contactos, puntos de encuentro, documentos y medicinas", desde: "v421.8" },
-      { id: "resiliencia-listas", nombre: "Listas de preparación", href: "/resiliencia/listas", icono: "check", desc: "Ocho listas marcables que se guardan en este navegador", desde: "v421.8" },
-      { id: "resiliencia-peligros", nombre: "Fichas de peligros", href: "/resiliencia/peligros", icono: "siren", desc: "Cómo se forma cada amenaza, qué señales se reconocen y qué hacer", desde: "v421.8" },
-      { id: "resiliencia-guia", nombre: "Guías por emergencia", href: "/resiliencia/guias", icono: "book-open", desc: "Doce guías con pasos, cifras, mitos y avisos", desde: "v421.8" },
-      { id: "resiliencia-accesibilidad", nombre: "Emergencias accesibles", href: "/resiliencia/accesibilidad", icono: "eye", desc: "Ocho perfiles y qué necesita cada uno: la preparación no vale si deja fuera a alguien", desde: "v421.8" },
-      { id: "resiliencia-servicios", nombre: "Cortes de agua y luz", href: "/resiliencia/servicios", icono: "activity", desc: "Cuánto aguanta una casa sin servicio y cómo se sostiene el barrio", desde: "v421.8" },
-      { id: "resiliencia-comunicacion", nombre: "Comunicación vecinal", href: "/resiliencia/comunicacion", icono: "radio", desc: "Árbol de llamadas, canales y cómo se frena un bulo", desde: "v421.8" },
-      { id: "resiliencia-recuperacion", nombre: "Recuperación comunitaria", href: "/resiliencia/recuperacion", icono: "history", desc: "Las fases después del día uno, con sus plazos reales", desde: "v421.8" },
-      { id: "resiliencia-glosario", nombre: "Glosario de protección civil", href: "/resiliencia/glosario", icono: "file-stack", desc: "Treinta y cuatro términos explicados sin tecnicismos", desde: "v421.8" },
-      { id: "resiliencia-recursos", nombre: "Recursos por país", href: "/resiliencia/recursos/do", icono: "landmark", desc: "Los organismos de protección civil y sus números, escritos en texto", desde: "v421.8" },
-      { id: "resiliencia-biblioteca", nombre: "Biblioteca de riesgo", href: "/resiliencia/biblioteca", icono: "archive", desc: "Doce lecciones y cuatro rutas de lectura", desde: "v421.8" },
-    ],
-    vecinos: ["leer", "geo", "social"],
-  },
   // ────────────────────────────────────────────────────────────── SISTEMA
   {
     clave: "sistema",
@@ -311,11 +275,18 @@ export const ESPACIOS: Espacio[] = [
     color: "#c084fc",
     icono: "briefcase",
     detecta: {
-      rutas: ["/espacio"],
+      // v421.8 — /mi-universo es la parrilla personal (My Universe); /espacio
+      // sigue siendo la mesa de proyectos. Dos salas del mismo espacio, ninguna
+      // reemplaza a la otra.
+      rutas: ["/espacio", "/mi-universo"],
       salas: [],
     },
     herramientas: [
       { id: "espacio-trabajo", nombre: "Espacio de trabajo", href: "/espacio", icono: "briefcase", desc: "Proyectos con sus mapas, simulaciones, escenarios y notas; paneles reorganizables, sesiones e historial", desde: "v405.11" },
+      // v421.8 MY UNIVERSE — la entrada nueva va AQUÍ, en la lista, como manda
+      // la regla ③ de este archivo: ni la barra, ni /navegacion, ni el buscador
+      // se tocan para añadir una herramienta.
+      { id: "mi-universo", nombre: "Mi universo", href: "/mi-universo", icono: "layout-grid", desc: "Tu espacio personal configurable: módulos reales arrastrables, zonas propias, tamaños, cuatro distribuciones, temas, espacios independientes y copias del trazado", desde: "v421.8" },
       { id: "perfil-mio", nombre: "Tu carnet", href: "/perfil", icono: "user-check", desc: "Identidad, progreso y personalización del operador" },
       { id: "modo-mio", nombre: "Modo y cuenta", href: "/modo", icono: "user-cog", desc: "El selector de modo de la casa" },
       { id: "navegacion-mia", nombre: "La arquitectura", href: "/navegacion", icono: "compass", desc: "Los once espacios y sus herramientas: de dónde sale cada acceso" },
