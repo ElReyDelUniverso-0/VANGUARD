@@ -1,4 +1,4 @@
-# VIDA · v422.3 — la capa que le da pulso a la casa
+# VIDA · v431.1 — la capa que le da pulso a la casa
 
 > Mandato del Dueño: *«más hermoso, colorido, dopamínico; interactivo; que se sienta de otro mundo; cambiar lo aburrido, la letra, el menú; un algoritmo de impresiones; que se sienta que hay personas reales dentro.»*
 > Y después: *«míralo, mejóralo, supera lo que hiciste, hazlo 100 veces mejor, púlalo.»*
@@ -55,3 +55,18 @@ node scripts/pruebas-vida.mjs          # 28 pasan · 0 fallan
 ```
 
 En producción: la portada debe traer `vida-progreso`, `vida-aurora`, `vida-orbita`, `vida-ruleta` y las seis tarjetas; `/vanguard2` **no** debe traer órbita, aurora ni cortina.
+
+---
+
+## v431.1 · VIDA 3 — el pulido (tercera vuelta del Dueño: «mejora todo lo que hiciste»)
+
+| Pieza | Qué cambia |
+|---|---|
+| **Estrella propia** | Cada tarjeta del carril lleva un botón de estrella (`vx421-vida-favoritos`). Pesa **+6**; la estrella de la casa (`vg171-favoritos`) sigue pesando **+8** y manda (si están las dos, no se suman). Es un `<button>` de verdad **fuera** del enlace: HTML válido y sin robarle el toque a la tarjeta. |
+| **El tiempo en palabras** | `haceCuanto()`: «ahora mismo», «hace 5 min», «hace 2 h», «ayer», «hace 4 días», «hace un mes»… Si el reloj del aparato va raro, dice «ahora» en vez de una fecha imposible. |
+| **«Lo abriste hace…»** | Cada tarjeta dice cuándo la abriste por última vez. |
+| **Arranque para el que llega** | Si el aparato no ha aprendido nada, tres puertas de verdad («Conflictos», «Mapa 3D», «Datos vivos») buscadas en el registro, no escritas a mano. |
+| **La órbita recuerda** | Arriba del todo: **«seguir donde lo dejaste»** y las **tres últimas** puertas con su tiempo en palabras. Tus estrellas salen marcadas (★) en la lista. |
+| **Atajo «/»** | Abre la órbita desde cualquier sala (salvo que estés escribiendo en un campo). |
+| **El barrido** | Al cambiar de sala, una franja de luz cruza la pantalla en 0,62 s (`components/vida/barrido.tsx`). No aparece en la primera carga (ahí está la cortina) y se limpia sola del DOM. |
+| **Pruebas** | **35 pasan · 0 fallan** (7 nuevas: prioridad de estrellas, que no se sumen dos veces, que el detalle siga cuadrando, limpieza de `mios`, y `haceCuanto` con casos raros). |

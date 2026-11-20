@@ -1,33 +1,41 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════
-// v422.3 · «PARA TI» 2 — el carril que aprende, ahora con ruleta
+// v431.1 · «PARA TI» 3 — el carril que aprende (y ahora se deja marcar)
 //
 // · Las puertas salen del registro real (modulos.ts): ni un href a mano.
-// · El orden lo decide TU uso (lib/vida/algoritmo), y cada tarjeta dice
-//   por qué está ahí.
-// · Tarjetas con inclinación 3D y foco de luz que sigue al ratón.
-// · RULETA («Sorpréndeme»): la sorpresa con memoria — nunca repite lo que ya
-//   estás viendo ni lo que abriste hace una hora, y prefiere lo que nunca
-//   tocaste. Rueda los nombres 500 ms y aterriza.
-// · MEDIDOR vivo: cuántas puertas distintas y cuántas aperturas ha aprendido.
-// · «Borrar lo aprendido»: el visitante manda (y se puede deshacer volviendo).
+// · El orden lo decide TU uso; cada tarjeta dice por qué está ahí y, si la
+//   abriste antes, CUÁNDO («lo abriste hace 2 h»).
+// · ESTRELLA propia por tarjeta: la marca pesa +6 en el algoritmo (la de la
+//   casa, `vg171-favoritos`, sigue pesando +8 y manda). Botón de verdad, no
+//   un botón dentro de un enlace: HTML válido y sin robarle el toque a la
+//   tarjeta.
+// · ARRANQUE: si el aparato no ha aprendido nada, tres puertas para empezar.
+// · RULETA («Sorpréndeme») con memoria + medidor vivo + borrar lo aprendido.
 //
 // HONESTIDAD: todo en el aparato. El servidor pinta un orden estable y el
-// aparato lo personaliza al hidratar: sin saltos, sin parpadeos.
+// aparato lo personaliza al hidratar: sin saltos ni parpadeos.
 // ═══════════════════════════════════════════════════════════════════
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as PunteroReact } from "react";
 import { MODULOS } from "@/components/portada/modulos";
 import {
   elegirSorprendente,
+  haceCuanto,
   inicialDe,
   puntuar,
   tonoDe,
   type Candidato,
   type Recomendacion,
 } from "@/lib/vida/algoritmo";
-import { anotar, cuantoAprendido, olvidarTodo, senalActual } from "@/lib/vida/senal";
+import {
+  alternarFavorito,
+  anotar,
+  cuantoAprendido,
+  misFavoritos,
+  olvidarTodo,
+  senalActual,
+} from "@/lib/vida/senal";
 
 /** Las puertas salen del registro; si una sala se repite, se queda la primera. */
 const CANDIDATOS: Candidato[] = (() => {
@@ -52,6 +60,11 @@ const CANDIDATOS: Candidato[] = (() => {
 /** Orden de arranque: sin señales, idéntico en el servidor y en el aparato. */
 const ARRANQUE: Recomendacion[] = puntuar(CANDIDATOS, {}, 6);
 
+/** Las tres puertas del que llega nuevo, buscadas en el registro (nunca a mano). */
+const PARA_EMPEZAR: Candidato[] = ["conflictos", "mapa", "datos"]
+  .map((id) => CANDIDATOS.find((c) => c.id === id))
+  .filter((c): c is Candidato => Boolean(c));
+
 export function ParaTi() {
   const [filas, setFilas] = useState<Recomendacion[]>(ARRANQUE);
   const [listo, setListo] = useState(false);
@@ -60,18 +73,24 @@ export function ParaTi() {
   const [cuantos, setCuantos] = useState(6);
   const [suerte, setSuerte] = useState<Recomendacion | null>(null);
   const [rodando, setRodando] = useState<string | null>(null);
+  const [mios, setMios] = useState<string[]>([]);
+  const [vistos, setVistos] = useState<Record<string, number>>({});
+  const [ahora, setAhora] = useState(0);
   const ruletaTimer = useRef<number | null>(null);
 
-  const recomputar = () => {
+  const recomputar = (cuantosAhora = cuantos) => {
     const senal = senalActual();
-    setFilas(puntuar(CANDIDATOS, senal, cuantos));
+    setFilas(puntuar(CANDIDATOS, senal, cuantosAhora));
     setMedidor(cuantoAprendido());
+    setMios(misFavoritos());
+    setVistos(senal.vistos ?? {});
+    setAhora(senal.ahora ?? Date.now());
   };
 
   // 1) personalizar al hidratar
   useEffect(() => {
     try {
-      recomputar();
+      recomputar(6);
     } catch {
       /* sin almacén se queda el orden de arranque: la casa sigue igual */
     }
@@ -95,12 +114,13 @@ export function ParaTi() {
 
   useEffect(() => {
     if (!listo) return;
-    recomputar();
+    recomputar(cuantos);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cuantos, listo]);
 
   /** Inclinación 3D + foco: se escribe en el estilo del elemento, sin re-render. */
-  function inclinar(e: PunteroReact<HTMLAnchorElement>) {
+  function inclinar(e: PunteroReact<HTMLElement>) {
+    if (typeof window.matchMedia !== "function") return;
     if (window.matchMedia("(hover: none)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = e.currentTarget;
@@ -112,15 +132,10 @@ export function ParaTi() {
     el.style.setProperty("--vida-mx", `${(px * 100).toFixed(1)}%`);
     el.style.setProperty("--vida-my", `${(py * 100).toFixed(1)}%`);
   }
-  function desinclinar(e: PunteroReact<HTMLAnchorElement>) {
+  function desinclinar(e: PunteroReact<HTMLElement>) {
     const el = e.currentTarget;
     el.style.setProperty("--vida-tx", "0deg");
     el.style.setProperty("--vida-ty", "0deg");
-  }
-
-  /** Anota la impresión al abrir: así el carril aprende de verdad. */
-  function abrir(id: string) {
-    anotar(id);
   }
 
   /** La ruleta: 500 ms de nombres pasando y aterriza en una puerta que sorprenda. */
@@ -149,10 +164,68 @@ export function ParaTi() {
   function borrar() {
     olvidarTodo();
     setSuerte(null);
-    recomputar();
+    recomputar(cuantos);
+  }
+
+  function marcar(id: string) {
+    alternarFavorito(id);
+    recomputar(cuantos);
   }
 
   const t = tonoDe(nombre);
+  const nuevo = listo && medidor.aperturas === 0;
+
+  const tarjeta = (f: Recomendacion, i: number, extra?: { suerte?: boolean }) => {
+    const c = tonoDe(f.id);
+    const marca = vistos[f.id] ?? vistos[f.href];
+    const cuando = marca !== undefined && ahora > 0 ? haceCuanto(ahora - marca) : null;
+    const esMio = mios.includes(f.id) || mios.includes(f.href);
+    return (
+      <article
+        key={`${f.id}${extra?.suerte ? "-suerte" : ""}`}
+        className="vida-carta"
+        data-num={extra?.suerte ? "✦" : String(i + 1).padStart(2, "0")}
+        data-suerte={extra?.suerte ? "1" : undefined}
+        onPointerMove={inclinar}
+        onPointerLeave={desinclinar}
+        style={
+          {
+            "--vida-c1": extra?.suerte ? "#ffd166" : c.a,
+            "--vida-c2": extra?.suerte ? "#ff4d8d" : c.b,
+            animationDelay: `${i * 55}ms`,
+            ...(extra?.suerte ? { marginBottom: "13px" } : {}),
+          } as CSSProperties
+        }
+      >
+        <Link href={f.href} className="vida-carta-enlace" onClick={() => anotar(f.id)}>
+          <span className="vida-carta-num" aria-hidden="true">
+            {extra?.suerte ? "LA RULETA DICE" : String(i + 1).padStart(2, "0")}
+          </span>
+          <span className="vida-carta-nombre">{f.nombre}</span>
+          <span className="vida-carta-grupo">{f.grupo}</span>
+          {cuando && <span className="vida-carta-hace">{cuando}</span>}
+          <span className="vida-carta-razon">{f.razon}</span>
+        </Link>
+        <button
+          type="button"
+          className="vida-estrella"
+          aria-pressed={esMio}
+          aria-label={esMio ? `Quitar ${f.nombre} de tus estrellas` : `Marcar ${f.nombre} con estrella`}
+          title={esMio ? "Quitar la estrella" : "Poner estrella (pesa en el orden)"}
+          onClick={() => marcar(f.id)}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" fill={esMio ? "currentColor" : "none"}>
+            <path
+              d="M12 3.6l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.8l5.9-.9L12 3.6z"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </article>
+    );
+  };
 
   return (
     <section id="para-ti" className="vx-sec vida-parati" aria-label="Recomendado para ti" data-vida-ver>
@@ -189,59 +262,22 @@ export function ParaTi() {
         </div>
       </div>
 
-      {suerte && (
-        <Link
-          href={suerte.href}
-          className="vida-carta"
-          data-suerte="1"
-          data-num="✦"
-          onClick={() => abrir(suerte.id)}
-          style={
-            {
-              "--vida-c1": "#ffd166",
-              "--vida-c2": "#ff4d8d",
-              marginBottom: "13px",
-            } as CSSProperties
-          }
-        >
-          <span className="vida-carta-num" aria-hidden="true">
-            LA RULETA DICE
-          </span>
-          <span className="vida-carta-nombre">{suerte.nombre}</span>
-          <span className="vida-carta-grupo">{suerte.grupo}</span>
-          <span className="vida-carta-razon">{suerte.razon}</span>
-        </Link>
+      {nuevo && PARA_EMPEZAR.length > 0 && (
+        <div className="vida-arranque">
+          <p>¿Primera vez? Empieza por aquí →</p>
+          {PARA_EMPEZAR.map((c) => (
+            <Link key={c.id} href={c.href} className="vida-sugerencia" onClick={() => anotar(c.id)}>
+              <i aria-hidden="true" />
+              {c.nombre}
+            </Link>
+          ))}
+        </div>
       )}
 
+      {suerte && tarjeta(suerte, 0, { suerte: true })}
+
       <div className="vida-parati-rejilla" data-listo={listo ? "1" : "0"}>
-        {filas.map((f, i) => {
-          const c = tonoDe(f.id);
-          return (
-            <Link
-              key={f.id}
-              href={f.href}
-              className="vida-carta"
-              data-num={String(i + 1).padStart(2, "0")}
-              onClick={() => abrir(f.id)}
-              onPointerMove={inclinar}
-              onPointerLeave={desinclinar}
-              style={
-                {
-                  "--vida-c1": c.a,
-                  "--vida-c2": c.b,
-                  animationDelay: `${i * 55}ms`,
-                } as CSSProperties
-              }
-            >
-              <span className="vida-carta-num" aria-hidden="true">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="vida-carta-nombre">{f.nombre}</span>
-              <span className="vida-carta-grupo">{f.grupo}</span>
-              <span className="vida-carta-razon">{f.razon}</span>
-            </Link>
-          );
-        })}
+        {filas.map((f, i) => tarjeta(f, i))}
       </div>
 
       <p className="vida-parati-pie">

@@ -39,6 +39,8 @@ export type Senal = {
   favoritos?: string[];
   /** impresiones de esta capa: clave → instante de la última apertura */
   vistos?: Record<string, number>;
+  /** estrellas de VIDA (`vx421-vida-favoritos`): lo que marcaste desde el carril */
+  mios?: string[];
   /** ahora, en ms (se inyecta para poder probar) */
   ahora?: number;
 };
@@ -47,7 +49,7 @@ export type Recomendacion = Candidato & {
   puntos: number;
   razon: string;
   /** por qué, en datos: lo que se usó para puntuar (auditable) */
-  detalle: { favorito: number; impresiones: number; afinidad: number; novedad: number; repeticion: number };
+  detalle: { favorito: number; estrella: number; impresiones: number; afinidad: number; novedad: number; repeticion: number };
 };
 
 /** vida media del recuerdo de una visita: 3 días */
@@ -76,6 +78,7 @@ export function hash(texto: string): number {
 export function puntuar(candidatos: Candidato[], senal: Senal = {}, cuantos = 6): Recomendacion[] {
   const uso = senal.uso ?? {};
   const favoritos = new Set(senal.favoritos ?? []);
+  const mios = new Set(senal.mios ?? []);
   const vistos = senal.vistos ?? {};
   const ahora = senal.ahora ?? Date.now();
 
@@ -88,6 +91,8 @@ export function puntuar(candidatos: Candidato[], senal: Senal = {}, cuantos = 6)
   const filas: Recomendacion[] = candidatos.map((c) => {
     const n = aperturas(c);
     const favorito = favoritos.has(c.id) || favoritos.has(c.href) ? 8 : 0;
+    // la estrella de VIDA pesa menos que la de la casa: la casa manda
+    const estrella = favorito > 0 ? 0 : mios.has(c.id) || mios.has(c.href) ? 6 : 0;
     const impresiones = Math.round(2.2 * Math.min(n, 8) * 100) / 100;
     const afinidad = Math.round(1.4 * Math.min(porGrupo[c.grupo] ?? 0, 6) * 100) / 100;
     const visto = vistos[c.id] ?? vistos[c.href];
@@ -98,11 +103,12 @@ export function puntuar(candidatos: Candidato[], senal: Senal = {}, cuantos = 6)
     const novedad = Math.round(3 * (1 - frescura) * 100) / 100;
     const repeticion = visto === undefined ? 0 : -Math.round(4 * frescura * 100) / 100;
 
-    const puntos = Math.round((favorito + impresiones + afinidad + novedad + repeticion) * 100) / 100;
+    const puntos = Math.round((favorito + estrella + impresiones + afinidad + novedad + repeticion) * 100) / 100;
 
     // la razón más fuerte, en palabras que se entienden sin manual
     let razon: string;
     if (favorito > 0) razon = "lo fijaste tú";
+    else if (estrella > 0) razon = "tu estrella";
     else if (repeticion < -2.4) razon = "lo abriste hace un momento";
     else if (n > 0 && impresiones >= afinidad) razon = "vuelves mucho por aquí";
     else if (afinidad > 0 && n === 0) razon = `cerca de lo que más abres (${c.grupo})`;
@@ -110,7 +116,7 @@ export function puntuar(candidatos: Candidato[], senal: Senal = {}, cuantos = 6)
     else if (visto === undefined) razon = "nunca lo has abierto";
     else razon = "una puerta de la casa";
 
-    return { ...c, puntos, razon, detalle: { favorito, impresiones, afinidad, novedad, repeticion } };
+    return { ...c, puntos, razon, detalle: { favorito, estrella, impresiones, afinidad, novedad, repeticion } };
   });
 
   filas.sort((a, b) => b.puntos - a.puntos || hash(a.id) - hash(b.id));
@@ -152,6 +158,7 @@ export function normalizarSenal(bruto: {
   uso?: unknown;
   favoritos?: unknown;
   vistos?: unknown;
+  mios?: unknown;
   ahora?: number;
 }): Senal {
   const uso: Record<string, number> = {};
@@ -178,7 +185,9 @@ export function normalizarSenal(bruto: {
     }
   }
 
-  return { uso, favoritos: [...new Set(favoritos)], vistos, ahora: bruto.ahora };
+  const listaMios = Array.isArray(bruto.mios) ? bruto.mios.filter((x): x is string => typeof x === "string") : [];
+
+  return { uso, favoritos: [...new Set(favoritos)], mios: [...new Set(listaMios)], vistos, ahora: bruto.ahora };
 }
 
 /** Paleta de la casa, en orden fijo (los colores no se inventan por pieza). */
@@ -256,6 +265,31 @@ export function elegirSorprendente(
     ...elegido,
     puntos: 0,
     razon: yaVisto ? "la ruleta dice que vuelvas" : "la ruleta te enseña algo nuevo",
-    detalle: { favorito: 0, impresiones: 0, afinidad: 0, novedad: 0, repeticion: 0 },
+    detalle: { favorito: 0, estrella: 0, impresiones: 0, afinidad: 0, novedad: 0, repeticion: 0 },
   };
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// v431.1 · EL TIEMPO EN PALABRAS — «lo abriste hace 2 h» dice más que una fecha
+// ══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Convierte una diferencia en milisegundos en algo que se lee de un vistazo.
+ * Nunca devuelve «hace 0 min» ni fechas raras: redondea a la unidad que
+ * importa. Con instantes futuros (reloj del aparato adelantado) dice «ahora».
+ */
+export function haceCuanto(edadMs: number): string {
+  if (!Number.isFinite(edadMs) || edadMs < 0) return "ahora";
+  const min = Math.floor(edadMs / 60000);
+  if (min < 1) return "ahora mismo";
+  if (min < 60) return `hace ${min} min`;
+  const horas = Math.floor(min / 60);
+  if (horas < 24) return `hace ${horas} h`;
+  const dias = Math.floor(horas / 24);
+  if (dias === 1) return "ayer";
+  if (dias < 30) return `hace ${dias} días`;
+  const meses = Math.floor(dias / 30);
+  if (meses < 12) return meses === 1 ? "hace un mes" : `hace ${meses} meses`;
+  const anios = Math.floor(meses / 12);
+  return anios === 1 ? "hace un año" : `hace ${anios} años`;
 }

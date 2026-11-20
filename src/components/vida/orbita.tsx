@@ -1,24 +1,24 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════
-// v422.3 · LA ÓRBITA 2 — el menú que se siente como abrir una consola
+// v431.1 · LA ÓRBITA 3 — ahora recuerda dónde estabas
 //
-//   · Botón magnético: se inclina hacia el puntero y lleva un anillo cónico
-//     girando. Es lo primero que se ve de VIDA, así que tenía que ser un objeto.
-//   · Al abrir, un VELO oscurece y desenfoca el resto: la órbita manda.
-//   · BUSCADOR: escribes «ma» y quedan Mapa 3D, Mapas, … en el momento.
-//   · DOS GRUPOS: los módulos de la casa y tu lado (Mi universo, tu mesa…).
-//   · Teclado: Esc cierra, las flechas recorren, Enter entra. Foco devuelto
-//     al botón al cerrar (nadie se queda perdido).
-//   · Cada puerta que abres ANOTA su impresión: el menú también enseña.
+//   · Botón magnético con anillo cónico; al abrir, un VELO desenfoca la casa.
+//   · BUSCADOR en vivo («ma» → Mapa 3D, Mapas…), sin acentos y sin mayúsculas.
+//   · ARRIBA: «seguir donde lo dejaste» y las tres últimas puertas, con su
+//     tiempo en palabras («hace 2 h»). La casa te devuelve el hilo.
+//   · Tus estrellas salen marcadas en la lista (★) y pesan en el algoritmo.
+//   · Teclado: Esc cierra y devuelve el foco al botón, ↑↓ recorren, Enter entra.
+//     La tecla «/» abre la órbita desde cualquier sala (si no estás escribiendo).
+//   · Cada puerta abierta ANOTA su impresión: el menú también enseña.
 //   · No existe en /vanguard2: ahí manda el 3D.
 // ═══════════════════════════════════════════════════════════════════
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as PunteroReact } from "react";
 import { MODULOS } from "@/components/portada/modulos";
-import { PALETA } from "@/lib/vida/algoritmo";
-import { anotar } from "@/lib/vida/senal";
+import { PALETA, haceCuanto } from "@/lib/vida/algoritmo";
+import { anotar, misFavoritos, recientes } from "@/lib/vida/senal";
 
 const EXTRAS = [
   { id: "mi-universo", nombre: "Mi universo", href: "/mi-universo" },
@@ -44,6 +44,8 @@ const ENTRADAS: Entrada[] = [
   })),
 ];
 
+const POR_ID = new Map(ENTRADAS.map((e) => [e.id, e]));
+
 /** sin acentos, en minúsculas: «mapa» encuentra «Mapa 3D» */
 const plano = (t: string) =>
   t
@@ -55,6 +57,8 @@ export function Orbita() {
   const ruta = usePathname();
   const [abierto, setAbierto] = useState(false);
   const [q, setQ] = useState("");
+  const [vuelta, setVuelta] = useState<{ id: string; hace: number }[]>([]);
+  const [estrellas, setEstrellas] = useState<string[]>([]);
   const caja = useRef<HTMLDivElement>(null);
   const boton = useRef<HTMLButtonElement>(null);
   const busca = useRef<HTMLInputElement>(null);
@@ -75,13 +79,23 @@ export function Orbita() {
     return out;
   }, [lista]);
 
+  // al abrir se lee la memoria del aparato (nunca en el servidor)
+  const abrir = () => {
+    const ahora = Date.now();
+    // las tres últimas, de la más reciente a la más vieja (y con nombre real)
+    const recien = recientes(3, ahora).filter((r) => POR_ID.has(r.id) || POR_ID.has(r.id.split("/")[0]));
+    setVuelta(recien);
+    setEstrellas(misFavoritos());
+    setAbierto(true);
+  };
+
   // cerrar al cambiar de sala
   useEffect(() => {
     setAbierto(false);
     setQ("");
   }, [ruta]);
 
-  // abierto: Esc, clic fuera y flechas
+  // abierto: Esc, clic fuera, flechas y foco al buscador
   useEffect(() => {
     if (!abierto) return;
     const t = window.setTimeout(() => busca.current?.focus(), 70);
@@ -92,7 +106,7 @@ export function Orbita() {
         return;
       }
       if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-      const enlaces = caja.current?.querySelectorAll<HTMLAnchorElement>(".vida-orbita-lista a");
+      const enlaces = caja.current?.querySelectorAll<HTMLAnchorElement>(".vida-orbita-anillo a");
       if (!enlaces || enlaces.length === 0) return;
       e.preventDefault();
       const actual = document.activeElement as HTMLElement | null;
@@ -112,8 +126,23 @@ export function Orbita() {
     };
   }, [abierto]);
 
+  // «/» abre la órbita desde cualquier sala (salvo que estés escribiendo)
+  useEffect(() => {
+    const atajo = (e: KeyboardEvent) => {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      const escribiendo = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
+      if (escribiendo || abierto) return;
+      e.preventDefault();
+      abrir();
+    };
+    window.addEventListener("keydown", atajo);
+    return () => window.removeEventListener("keydown", atajo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [abierto]);
+
   // el imán: el botón se inclina hacia el puntero
-  function imantar(e: React.PointerEvent<HTMLButtonElement>) {
+  function imantar(e: PunteroReact<HTMLButtonElement>) {
     const el = e.currentTarget;
     const r = el.getBoundingClientRect();
     const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
@@ -121,22 +150,29 @@ export function Orbita() {
     el.style.setProperty("--vida-mag-x", `${(dx * 9).toFixed(2)}px`);
     el.style.setProperty("--vida-mag-y", `${(dy * 9).toFixed(2)}px`);
   }
-  function soltar(e: React.PointerEvent<HTMLButtonElement>) {
+  function soltar(e: PunteroReact<HTMLButtonElement>) {
     e.currentTarget.style.setProperty("--vida-mag-x", "0px");
     e.currentTarget.style.setProperty("--vida-mag-y", "0px");
   }
 
   if (ruta?.startsWith("/vanguard2")) return null;
 
+  const nombreDe = (id: string) => POR_ID.get(id)?.nombre ?? POR_ID.get(id.split("/")[0])?.nombre ?? id;
+
   return (
     <div className="vida-orbita" data-abierta={abierto ? "1" : "0"} ref={caja}>
       {abierto && <div className="vida-orbita-velo" aria-hidden="true" />}
 
       {abierto && (
-        <nav className="vida-orbita-anillo" aria-label="Todas las puertas de Vanguard">
+        <nav
+          className="vida-orbita-anillo"
+          role="dialog"
+          aria-modal="false"
+          aria-label="Todas las puertas de Vanguard"
+        >
           <div className="vida-orbita-cab">
             <p>
-              ¿A dónde vamos? <span>{lista.length} puertas</span>
+              ¿A dónde vamos? <span aria-live="polite">{lista.length} puertas</span>
             </p>
             <input
               ref={busca}
@@ -149,6 +185,23 @@ export function Orbita() {
               autoComplete="off"
             />
           </div>
+
+          {!q.trim() && vuelta.length > 0 && (
+            <div className="vida-orbita-recientes">
+              <p>Seguir donde lo dejaste</p>
+              {vuelta.map((r) => {
+                const e = POR_ID.get(r.id) ?? POR_ID.get(r.id.split("/")[0]);
+                if (!e) return null;
+                return (
+                  <Link key={r.id} href={e.href} onClick={() => anotar(e.id)}>
+                    <i aria-hidden="true" />
+                    <span>{e.nombre}</span>
+                    <span>{haceCuanto(r.hace)}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
 
           <div className="vida-orbita-lista">
             {grupos.length === 0 && <p className="vida-orbita-vacio">Nada con ese nombre. Prueba «mapa» o «datos».</p>}
@@ -169,7 +222,7 @@ export function Orbita() {
                       {e.nombre.charAt(0)}
                     </span>
                     <span>{e.nombre}</span>
-                    <em>{e.href}</em>
+                    <em>{estrellas.includes(e.id) ? "★" : e.href}</em>
                   </Link>
                 ))}
               </div>
@@ -180,7 +233,9 @@ export function Orbita() {
             <span>
               <kbd className="vida-kbd">Esc</kbd> cierra · <kbd className="vida-kbd">↑↓</kbd> recorre
             </span>
-            <span>aprende de ti</span>
+            <span>
+              <kbd className="vida-kbd">/</kbd> abre · aprende de ti
+            </span>
           </div>
         </nav>
       )}
@@ -191,10 +246,10 @@ export function Orbita() {
         className="vida-orbita-boton"
         aria-expanded={abierto}
         aria-label={abierto ? "Cerrar el menú de puertas" : "Abrir el menú de puertas"}
-        title={abierto ? "Cerrar (Esc)" : "Todas las puertas (aquí, a un toque)"}
+        title={abierto ? "Cerrar (Esc)" : "Todas las puertas (o pulsa /)"}
         onPointerMove={imantar}
         onPointerLeave={soltar}
-        onClick={() => setAbierto((v) => !v)}
+        onClick={() => (abierto ? setAbierto(false) : abrir())}
       >
         <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true" fill="none">
           <circle cx="12" cy="12" r="2.5" fill="currentColor" />

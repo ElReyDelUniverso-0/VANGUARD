@@ -65,6 +65,8 @@ import { FueraDePortada } from "@/components/portada/fuera-de-portada";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
 import { MenuVanguardMount } from "@/components/vanguard/menu-vanguard-mount";
 // v422.3 VIDA — aurora con paralaje, cortina, órbita y pulso de lectura
+import { Barrido } from "@/components/vida/barrido";
+// v422.3 VIDA — aurora con paralaje, cortina, órbita y pulso de lectura
 import { Progreso } from "@/components/vida/progreso";
 // v421.9 VIDA — aurora, cortina de arranque y órbita (menú vivo)
 import { Aurora } from "@/components/vida/aurora";
@@ -983,6 +985,7 @@ try{
         <Aurora />
         <Cortina />
         <Orbita />
+        <Barrido />
         <MenuVanguardMount />
         <Toaster />
         <Sonner />

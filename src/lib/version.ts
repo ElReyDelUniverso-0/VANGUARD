@@ -6948,8 +6948,10 @@
 // (anterior) export const APP_CODENAME = "VIDA 2";
 // (anterior) export const APP_VERSION = "v422.3";
 // (anterior) export const APP_CODENAME = "RADIO VANGUARD";
-export const APP_VERSION = "v431.0";
-export const APP_CODENAME = "LA MENTE CON MANOS";
+// (anterior) export const APP_VERSION = "v431.0";
+// (anterior) export const APP_CODENAME = "LA MENTE CON MANOS";
+export const APP_VERSION = "v431.1";
+export const APP_CODENAME = "VIDA 3";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";

@@ -280,6 +280,61 @@ prueba("el resumen de un aparato recién estrenado es cero, no NaN", () => {
   afirmar(r.puertas === 0 && r.aperturas === 0 && r.recientes === 0, JSON.stringify(r));
 });
 
+// ─── v431.1: estrellas propias y tiempo en palabras ──────────────
+prueba("la estrella de la casa manda sobre la estrella de VIDA", () => {
+  const casa = A.puntuar(PUERTAS, { favoritos: ["mapa"], ahora: AHORA }, 0);
+  const mia = A.puntuar(PUERTAS, { mios: ["mapa"], ahora: AHORA }, 0);
+  const m = porId(casa, "mapa");
+  const v = porId(mia, "mapa");
+  afirmar(m.puntos > v.puntos, `casa ${m.puntos} debería pesar más que VIDA ${v.puntos}`);
+  afirmar(m.razon === "lo fijaste tú", "razón casa: " + m.razon);
+  afirmar(v.razon === "tu estrella", "razón VIDA: " + v.razon);
+  afirmar(v.detalle.estrella === 6, "estrella: " + v.detalle.estrella);
+});
+
+prueba("una estrella de VIDA no se suma dos veces con la de la casa", () => {
+  const r = A.puntuar(PUERTAS, { favoritos: ["mapa"], mios: ["mapa"], ahora: AHORA }, 0);
+  const m = porId(r, "mapa");
+  afirmar(m.detalle.estrella === 0, "se sumaron las dos: " + JSON.stringify(m.detalle));
+  afirmar(m.detalle.favorito === 8, "favorito: " + m.detalle.favorito);
+});
+
+prueba("marcar con estrella sube la puerta al principio", () => {
+  const r = A.puntuar(PUERTAS, { mios: ["historia"], ahora: AHORA }, 3);
+  afirmar(r[0].id === "historia", "primera: " + r[0].id);
+});
+
+prueba("el detalle sigue cuadrando con los puntos al añadir la estrella", () => {
+  const r = A.puntuar(PUERTAS, { mios: ["mapa"], uso: { mapa: 2 }, vistos: { ciencia: AHORA - 1000 }, ahora: AHORA }, 0);
+  for (const f of r) {
+    const suma = Object.values(f.detalle).reduce((a, b) => a + b, 0);
+    afirmar(Math.abs(suma - f.puntos) < 0.02, `${f.id}: ${suma} ≠ ${f.puntos}`);
+  }
+});
+
+prueba("normalizarSenal acepta y limpia las estrellas de VIDA", () => {
+  const s = A.normalizarSenal({ mios: ["mapa", "mapa", 3, null, "ciencia"] });
+  afirmar(JSON.stringify(s.mios) === JSON.stringify(["mapa", "ciencia"]), "mios: " + JSON.stringify(s.mios));
+  afirmar(A.normalizarSenal({ mios: "no-es-array" }).mios.length === 0, "aceptó basura");
+});
+
+prueba("haceCuanto habla como una persona", () => {
+  afirmar(A.haceCuanto(0) === "ahora mismo", A.haceCuanto(0));
+  afirmar(A.haceCuanto(30_000) === "ahora mismo", A.haceCuanto(30_000));
+  afirmar(A.haceCuanto(5 * 60_000) === "hace 5 min", A.haceCuanto(5 * 60_000));
+  afirmar(A.haceCuanto(2 * 3_600_000) === "hace 2 h", A.haceCuanto(2 * 3_600_000));
+  afirmar(A.haceCuanto(26 * 3_600_000) === "ayer", A.haceCuanto(26 * 3_600_000));
+  afirmar(A.haceCuanto(4 * DIA) === "hace 4 días", A.haceCuanto(4 * DIA));
+  afirmar(A.haceCuanto(40 * DIA) === "hace un mes", A.haceCuanto(40 * DIA));
+  afirmar(A.haceCuanto(3 * 365 * DIA) === "hace 3 años", A.haceCuanto(3 * 365 * DIA));
+});
+
+prueba("haceCuanto aguanta relojes raros sin decir tonterías", () => {
+  afirmar(A.haceCuanto(-5000) === "ahora", "negativo: " + A.haceCuanto(-5000));
+  afirmar(A.haceCuanto(NaN) === "ahora", "NaN: " + A.haceCuanto(NaN));
+  afirmar(A.haceCuanto(Infinity) === "ahora", "infinito: " + A.haceCuanto(Infinity));
+});
+
 console.log("─".repeat(62));
 console.log(`  ${pasan} pasan · ${fallan} fallan`);
 process.exit(fallan === 0 ? 0 : 1);

@@ -477,8 +477,8 @@ time,
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 16px 17px 14px;
+  gap: 0;
+  padding: 0;
   border-radius: 17px;
   text-decoration: none;
   color: inherit;
@@ -1154,5 +1154,223 @@ kbd.vida-kbd {
   .vida-cortina-mods {
     max-width: 84vw;
     gap: 10px;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   v431.1 · VIDA 3 — el pulido fino
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* 12 · LA TARJETA CON ESTRELLA
+   El relleno pasa al enlace (la tarjeta es ahora un contenedor), así la
+   estrella puede ser un botón de verdad —no un botón dentro de un enlace,
+   que es HTML inválido— sin robarle el toque al resto de la tarjeta. */
+.vida-carta-enlace {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 17px 15px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: inherit;
+}
+.vida-estrella {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(9, 10, 18, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease, border-color 0.2s ease,
+    background 0.2s ease;
+}
+.vida-carta:hover .vida-estrella,
+.vida-estrella:focus-visible,
+.vida-estrella[aria-pressed="true"] {
+  opacity: 1;
+  transform: none;
+}
+.vida-estrella:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.34);
+  transform: scale(1.08);
+}
+.vida-estrella[aria-pressed="true"] {
+  color: var(--vida-4);
+  border-color: color-mix(in srgb, var(--vida-4) 55%, transparent);
+  background: color-mix(in srgb, var(--vida-4) 16%, rgba(9, 10, 18, 0.6));
+  box-shadow: 0 0 18px -6px var(--vida-4);
+}
+.vida-estrella svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.vida-estrella:active svg {
+  transform: scale(0.82);
+}
+
+/* 13 · EL TIEMPO DICHO EN PALABRAS */
+.vida-carta-hace {
+  margin-top: 3px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(246, 244, 255, 0.4);
+}
+
+/* 14 · EL ARRANQUE: tres puertas para el que llega nuevo */
+.vida-arranque {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 0 0 14px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  border: 1px dashed color-mix(in srgb, var(--vida-2) 30%, transparent);
+  background: color-mix(in srgb, var(--vida-2) 6%, transparent);
+}
+.vida-arranque p {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(246, 244, 255, 0.62);
+}
+.vida-sugerencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  border: 1px solid color-mix(in srgb, var(--vida-2) 40%, transparent);
+  background: rgba(255, 255, 255, 0.05);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, background 0.2s ease;
+}
+.vida-sugerencia:hover {
+  transform: translateY(-2px);
+  border-color: var(--vida-2);
+  background: rgba(255, 255, 255, 0.1);
+}
+.vida-sugerencia i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* 15 · LA ÓRBITA: «seguir donde lo dejaste» y recientes */
+.vida-orbita-recientes {
+  padding: 8px 8px 2px;
+}
+.vida-orbita-recientes p {
+  margin: 0 0 4px;
+  padding: 0 8px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(246, 244, 255, 0.35);
+}
+.vida-orbita-recientes a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 12.4px;
+  font-weight: 600;
+  color: rgba(246, 244, 255, 0.8);
+  transition: background 0.16s ease, color 0.16s ease;
+}
+.vida-orbita-recientes a:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+.vida-orbita-recientes a span:last-child {
+  margin-left: auto;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: rgba(246, 244, 255, 0.34);
+  white-space: nowrap;
+}
+.vida-orbita-recientes i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vida-5);
+  box-shadow: 0 0 10px var(--vida-5);
+  flex: 0 0 6px;
+}
+
+/* 16 · EL BARRIDO — cambiar de sala se siente como pasar de página */
+.vida-barrido {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  background: linear-gradient(
+    104deg,
+    transparent 34%,
+    color-mix(in srgb, var(--vida-2) 14%, transparent) 46%,
+    color-mix(in srgb, var(--vida-1) 20%, transparent) 51%,
+    color-mix(in srgb, var(--vida-3) 12%, transparent) 55%,
+    transparent 66%
+  );
+  transform: translate3d(-130%, 0, 0);
+  animation: vida-barrido 0.62s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+@keyframes vida-barrido {
+  to {
+    transform: translate3d(130%, 0, 0);
+  }
+}
+
+/* en táctil la estrella no se esconde: no hay hover que la revele */
+@media (hover: none) {
+  .vida-estrella {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* respeto: nada de esto anima si la casa lo prohíbe */
+[data-vg-anim="desactivadas"] .vida-barrido,
+[data-vg-anim="desactivadas"] .vida-estrella {
+  animation: none !important;
+  transition: none !important;
+}
+[data-vg-anim="desactivadas"] .vida-barrido {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vida-barrido,
+  .vida-estrella,
+  .vida-sugerencia {
+    animation: none !important;
+    transition: none !important;
+  }
+  .vida-barrido {
+    display: none !important;
   }
 }

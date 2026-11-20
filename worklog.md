@@ -66,3 +66,12 @@
 - **i18n completo**: las claves `worlds.*` (24 existentes + 8 nuevas) estaban solo en ES; ahora los 7 diccionarios diferenciados (en/pt/fr/de/it/ru/zh) las tienen completas.
 - **Pruebas**: `tsc` limpio en los archivos tocados (marco, CSS no compilado, i18n); verificación final en producción con audit headless.
 
+### v431.1 · MISIÓN 05 — VIDA 3 (2026-11-19)
+- **Mandato**: «mejora todo lo que hiciste» (tercera vuelta del Dueño sobre la misma capa).
+- **Estrella propia**: botón por tarjeta (`vx421-vida-favoritos`), +6 en el algoritmo; la de la casa (+8, `vg171-favoritos`) manda y no se suman. Es un `<button>` FUERA del enlace: HTML válido y sin robar el toque a la tarjeta.
+- **El tiempo en palabras**: `haceCuanto()` («ahora mismo», «hace 5 min», «hace 2 h», «ayer», «hace 4 días»…) y cada tarjeta dice cuándo la abriste.
+- **Arranque**: si el aparato no ha aprendido nada, tres puertas reales del registro para empezar.
+- **La órbita recuerda**: «seguir donde lo dejaste» + las tres últimas puertas con su tiempo; estrellas marcadas (★) en la lista; atajo **/** para abrirla desde cualquier sala.
+- **El barrido**: franja de luz al cambiar de sala (0,62 s, sin bloquear clics, se limpia sola, no en la primera carga).
+- **Pruebas**: `node scripts/pruebas-vida.mjs` → **35 pasan · 0 fallan** (7 nuevas).
+- **Verificado en producción**: marcas `vida-estrella`, `vida-carta-hace`, `vida-arranque`, `vida-orbita-recientes` y `vida-barrido` en la hoja servida; rutas 200; `/vanguard2` sin capas 2D.
