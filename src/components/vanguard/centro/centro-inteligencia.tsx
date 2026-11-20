@@ -103,6 +103,8 @@ export default function CentroInteligencia({
   const [candidatas, setCandidatas] = useState<Candidata[]>([]);
   // la cuenta de lo que se usó y de lo que quedó fuera (poda explícita)
   const [poda, setPoda] = useState<{ relevantes: number; devueltas: number; porTope: number; bajoUmbral: number; fueraDeVias: number; examinadas: number } | null>(null);
+  // los avisos de la búsqueda, tal cual los firma el servidor (poda incluida)
+  const [avisosBusqueda, setAvisosBusqueda] = useState<string[]>([]);
   const [vivas, setVivas] = useState<Candidata[]>([]);
   const [elegidas, setElegidas] = useState<string[]>([]);
   const [investigando, setInvestigando] = useState(false);
@@ -174,6 +176,7 @@ export default function CentroInteligencia({
       setCandidatas(j.candidatas ?? []);
       setVivas(j.vivas ?? []);
       setPoda(j.poda ?? null);
+      setAvisosBusqueda(Array.isArray(j.avisos) ? j.avisos : []);
       // preselección honesta: las tres mejores, para que el operador pueda
       // investigar en un clic sin dejar de elegir
       setElegidas([...(j.candidatas ?? []).slice(0, 3).map((c: Candidata) => c.id)]);
@@ -750,6 +753,11 @@ export default function CentroInteligencia({
 
           {!inv && !candidatas.length && !buscando ? (
             <Bloque titulo="Cómo se usa" nota="sin humo">
+              {avisosBusqueda.length && poda && poda.relevantes === 0 ? (
+                <p className="mb-3 border-l-2 border-red-hud/60 pl-2 font-mono text-[11.5px] leading-snug text-muted-foreground">
+                  {avisosBusqueda.join(" · ")}
+                </p>
+              ) : null}
               <ol className="space-y-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
                 <li>1 · Escribe la pregunta y pulsa <span className="text-amber">Buscar fuentes</span>. La Cámara mira en {censo.fuentes} fuentes de la casa y te enseña qué va a citar de cada una.</li>
                 <li>2 · Marca las que quieras (o deja las tres que vienen marcadas) y pulsa <span className="text-cyan-hud">Investigar</span>.</li>
