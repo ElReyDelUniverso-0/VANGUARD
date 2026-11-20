@@ -491,12 +491,12 @@ export function CentroInformacionPerfecta() {
                 </div>
 
                 <div className="mt-4 border-t border-zinc-800/80 pt-3">
-                  {w.specs && w.specs.length > 0 && (
+                  {w.specs && Object.keys(w.specs).length > 0 && (
                     <div className="grid grid-cols-2 gap-2 font-mono text-[11px] mb-3">
-                      {w.specs.slice(0, 2).map((s, i) => (
+                      {Object.entries(w.specs).slice(0, 2).map(([k, v], i) => (
                         <div key={i} className="bg-zinc-900/80 p-1.5 rounded border border-zinc-800">
-                          <span className="text-zinc-500 block text-[9px] uppercase">{s.k}</span>
-                          <span className="text-zinc-200 font-bold">{s.v}</span>
+                          <span className="text-zinc-500 block text-[9px] uppercase truncate">{k}</span>
+                          <span className="text-zinc-200 font-bold truncate">{v}</span>
                         </div>
                       ))}
                     </div>
