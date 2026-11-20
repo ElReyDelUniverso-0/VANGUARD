@@ -59,6 +59,22 @@ async function pedir(ruta, init = {}) {
   }
 }
 
+// v421.4 — /sitemap.xml es un ÍNDICE desde v421.0. Las pruebas que preguntaban
+// «¿el sitemap anuncia /nucleo?» leían el índice, donde ya no hay páginas:
+// concatenar los hijos mantiene la pregunta intacta sobre la casa entera.
+async function pedirSitemapCompleto() {
+  const idx = await pedir("/sitemap.xml");
+  if (idx.status !== 200 || !/<sitemapindex[\s>]/.test(idx.texto)) return idx;
+  let texto = idx.texto;
+  for (const m of idx.texto.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+    try {
+      const r = await pedir(new URL(m[1]).pathname);
+      if (r.status === 200) texto += r.texto;
+    } catch { /* un hijo caído no invalida el resto */ }
+  }
+  return { ...idx, texto };
+}
+
 // ─────────────────────────────────────────────────────────────
 // PARTE A — EL CENSO, OFFLINE
 // ─────────────────────────────────────────────────────────────
@@ -2133,7 +2149,7 @@ async function parteB() {
   });
 
   await verificar("sitemap anuncia /nucleo a Google", async () => {
-    const r = await pedir("/sitemap.xml");
+    const r = await pedirSitemapCompleto();
     afirmar(r.status === 200 && r.texto.includes("/nucleo"), "sitemap sin /nucleo");
   });
 
@@ -2422,7 +2438,7 @@ async function parteB() {
     afirmar(/\d+ cables del archivo/.test(r.texto), "el conteo vivo del archivo no viaja (¿cambió la BD?)");
     afirmar(r.texto.includes("pulso dormido — sin sala de teatro todavía"), "el vacío honesto de las regiones sin sala no viaja");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/conflictos"), "el sitemap vivo no anuncia el tablero");
   });
 
@@ -2493,7 +2509,7 @@ async function parteB() {
     afirmar(r.texto.includes("M777"), "el arma que cierra el archivo no viaja");
     // la puerta honesta al aparato y el sitemap vivo
     afirmar(r.texto.includes("vive en el aparato"), "la puerta al aparato no viaja");
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/armeria"), "el sitemap vivo no anuncia la armería");
   });
 
@@ -2708,7 +2724,7 @@ async function parteB() {
     afirmar(texto.includes("EUR — Euro · € · 37 países"), "la fila del euro compartido no viaja");
     afirmar(texto.includes("USD — Dólar estadounidense · $ · 16 países"), "la fila del dólar compartido no viaja");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/divisas"), "el sitemap vivo no anuncia la sala");
   });
 
@@ -2796,7 +2812,7 @@ async function parteB() {
     afirmar(texto.includes("39,6%"), "el esfuerzo de Ucrania no viaja");
     afirmar(texto.includes("5 de noviembre de 2026"), "la fecha de la captura no viaja en prosa");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/poder"), "el sitemap vivo no anuncia la sala");
   });
 
@@ -2876,7 +2892,7 @@ async function parteB() {
     // la foto LOCAL viaja en el HTML (cero hotlinking)
     afirmar(r.texto.includes('src="/imagenes-reales/arco.jpg"'), "la foto local del arco no viaja en el HTML");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/galeria"), "el sitemap vivo no anuncia la sala");
   });
 
@@ -3043,7 +3059,7 @@ async function parteB() {
     afirmar(plano.includes("Alejandría Oscura") && plano.includes("/guerra-hoy"), "las puertas honestas no viajan");
     afirmar(plano.includes("application/ld+json") && plano.includes('"@type":"CollectionPage"'), "el JSON-LD no viaja");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/oscura"), "el sitemap vivo no anuncia la sala");
   });
 
@@ -4400,7 +4416,7 @@ async function parteB() {
     afirmar(texto.includes("9.000+"), "la cifra del coste no viaja");
     afirmar(texto.includes("ONU/OHCHR 2025"), "la fuente de la cifra no viaja");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/verdad-cruda"), "el sitemap vivo no anuncia la sala");
   });
 
@@ -4498,7 +4514,7 @@ async function parteB() {
     afirmar(texto.includes("La Casa Blanca"), "la sede real no viaja");
     afirmar(texto.includes("Donald Trump ↔ Xi Jinping — GRAN PARIDAD"), "la ruta del poder no viaja resuelta");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/atlas"), "el sitemap vivo no anuncia la sala");
   });
 
@@ -4557,7 +4573,7 @@ async function parteB() {
     afirmar(limpio.includes("Cartel de Medellín"), "el expediente de Medellín no viaja");
     afirmar(limpio.includes("Pablo Escobar"), "el líder real no viaja");
     // el sitemap vivo anuncia la sala
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/archivo-mundial"), "el sitemap vivo no anuncia la sala");
   });
 
@@ -4829,7 +4845,7 @@ async function parteB() {
     // las puertas y el sitemap vivo
     afirmar(r.texto.includes("vive en el aparato"), "la puerta honesta no viaja");
     afirmar(r.texto.includes("Esta sala funciona sin JavaScript"), "el noscript compuesto no viaja");
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/rostros"), "el sitemap vivo no anuncia la galería");
   });
 
@@ -6033,7 +6049,7 @@ async function parteB() {
 
   // ── v269.0 EL MAPA DEL ARCHIVO viva: el mapa de Google sirve el archivo entero ──
   await verificar("EL MAPA DEL ARCHIVO viva: el sitemap sirve las puertas del archivo y las páginas profundas (v269)", async () => {
-    const r = await pedir("/sitemap.xml");
+    const r = await pedirSitemapCompleto();
     afirmar(r.status === 200, "el sitemap no responde");
     const puertas = (r.texto.match(/\/noticia\//g) || []).length;
     afirmar(puertas >= 1800, `el mapa solo anuncia ${puertas} puertas de noticia — el archivo entero no viaja`);
@@ -8004,7 +8020,7 @@ async function parteB() {
     afirmar(glbResp.status === 200, `/assets/models/tank.glb no 200 (${glbResp.status})`);
     const ent = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:teatro-3d")}`);
     afirmar(ent.status === 200 && ent.json?.ok === true, "ficha vg:simulacion:teatro-3d no responde ok");
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/teatro-3d"), "el sitemap vivo no anuncia /teatro-3d");
   });
 
@@ -8057,7 +8073,7 @@ async function parteB() {
     afirmar(r2.status === 200, `/novedades?funcion=verificador-osint no 200 (${r2.status})`);
     const r3 = await pedir("/teatro-3d?lat=35.68&lng=139.76&nombre=Tokio");
     afirmar(r3.status === 200, `/teatro-3d con lat/lng no 200 (${r3.status})`);
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/novedades"), "el sitemap vivo no anuncia /novedades");
   });
 
@@ -8095,7 +8111,7 @@ async function parteB() {
   await verificar("THE DAILY UNIVERSE vivo: /universo y sitemap", async () => {
     const u = await pedir("/universo");
     afirmar(u.status === 200 && u.texto.includes("THE DAILY UNIVERSE"), `/universo no 200 o sin contenido (${u.status})`);
-    const rs = await pedir("/sitemap.xml");
+    const rs = await pedirSitemapCompleto();
     afirmar(rs.status === 200 && rs.texto.includes("/universo"), "el sitemap vivo no anuncia /universo");
   });
 
