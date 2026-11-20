@@ -64,7 +64,7 @@
 - **Nuevos mandos del escenario**: `⟲` reiniciar la vista (vuela al estado actual) y `⛶` pantalla completa (Fullscreen API, Estado seguido con `fullscreenchange`; Esc también sale).
 - **A11y**: `focus-visible` en todos los mandos, `aria-label` en rails, región `aria-live` para el contador de resultados.
 - **i18n completo**: las claves `worlds.*` (24 existentes + 8 nuevas) estaban solo en ES; ahora los 7 diccionarios diferenciados (en/pt/fr/de/it/ru/zh) las tienen completas.
-- **Pruebas**: `tsc` limpio en los archivos tocados (marco, CSS no compilado, i18n); verificación final en producción con audit headless.
+- **Pruebas**: `tsc` limpio en los archivos tocados; deployment `dpl_EMzXJSHyvWrPK69hwE2RBgUdCUNr` — READY/PROMOTED, `/worlds` → 200. Audit headless PASS: **0 errores JS**; barra de contexto presente; 6 mandos en el escenario (+, −, ⟲, girar, ⛶, 2D); breadcrumb Mundo → Zona → Lugar; ficha con bandera (🇲🇽) y 4 experiencias; plano 2D con **177 fronteras reales de país**, 39 puntos, 39 tooltips y 8 etiquetas. Audit con locale ES: «Todos los mundos · Esc para volver», «El mundo vivo», cifras 5/39/121 — los diccionarios diferenciados ahora traen las keys completas.
 
 ### v431.1 · MISIÓN 05 — VIDA 3 (2026-11-19)
 - **Mandato**: «mejora todo lo que hiciste» (tercera vuelta del Dueño sobre la misma capa).
