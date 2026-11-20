@@ -56,8 +56,11 @@
 }
 
 @media (max-width: 640px) {
-  /* en el móvil la barra de la casa vive abajo: el interruptor sube por encima */
-  .vxc { bottom: 74px; padding: 3px 4px; }
+  /* En el móvil la casa ya tiene su muelle abajo (v417: cada flotante en su
+     carril) y un botón «MÁS» a la izquierda. Estas dos piezas suben POR ENCIMA
+     del muelle y se apilan —arriba la cara, debajo la emisora— medidas para no
+     taparse entre sí ni tapar el carril de nadie: 390×844, comprobado. */
+  .vxc { bottom: 158px; padding: 3px 4px; }
   .vxc-sello { display: none; }
   .vxc-cara { padding: 6px 10px; font-size: 10.5px; }
 }
@@ -341,12 +344,31 @@
   white-space: nowrap;
 }
 
-@media (max-width: 640px) {
-  .vxe-emisora { bottom: 74px; left: 10px; }
-  .vxe-emisora-texto { max-width: 180px; }
-  .vxe-emisora-panel { width: min(330px, calc(100vw - 20px)); }
-}
+
 
 @media (prefers-reduced-motion: reduce) {
   .vxe-emisora-punto--on { animation: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EL MÓVIL: la emisora se centra sobre el muelle de la casa.
+   Va al FINAL del archivo a propósito — estas reglas tienen que ganar a
+   las de escritorio que están más arriba (a igual especificidad manda la
+   última, y si no, la emisora se quedaba pegada a la esquina de 16px).
+   Medido a 390×844: la cara queda en y≈654 y la emisora en y≈689, por
+   encima del muelle (y≈739), el botón MÁS (y≈728) y la barra (y≈780).
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .vxe-emisora {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 118px;
+    justify-items: center;
+    max-width: calc(100vw - 24px);
+  }
+  .vxe-emisora-lanzar { padding: 9px 11px; }
+  .vxe-emisora-texto { max-width: 130px; padding: 6px 10px 7px 9px; }
+  .vxe-emisora-linea { display: none; }
+  .vxe-emisora--abierta .vxe-emisora-linea { display: block; max-width: 130px; }
+  .vxe-emisora-panel { width: calc(100vw - 24px); max-height: min(48vh, 380px); overflow: auto; }
 }
