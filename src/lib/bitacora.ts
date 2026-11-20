@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v422.1",
+    nombre: "VANGUARD REBIRTH",
+    hitos: [
+      "UNA SOLA LISTA PARA TODA LA CASA: nace src/lib/experiencia/registro.ts con las diez familias del encargo (actualidad, geografía, historia, ciencia, economía y datos, educación, simulaciones, narrativa, investigación y nuevos mundos), cada una con su puerta real, sus experiencias y sus CIFRAS DERIVADAS de los mismos datos que usan las salas: si el índice científico crece, la portada lo dice sin que nadie edite una cifra.",
+      "LA ENTRADA (/): antes de la primera noticia, una composición que dice qué es Vanguard —una frase, tres acciones y cinco cifras reales— y que se apaga entera con prefers-reduced-motion. El h1 de la casa vive aquí.",
+      "EL ECOSISTEMA: la portada deja de tener tres front doors que competían (ocho áreas escritas a mano, la rejilla de módulos y el directorio) y pasa a leer una sola lista de diez familias con cuarenta experiencias reales. El directorio y el Núcleo siguen para quien busca una sala por nombre.",
+      "LA PORTADA VIVA: cuatro aperturas diarias hechas con registros reales —una publicación con su DOI y su nivel de evidencia, un expediente de memoria con lo que NO tiene, una obra del atlas de infraestructura con su fecha y un país de los 249—; la selección rota por día, es la misma para todos y no se rellena si falta.",
+      "/ecosistema: la misma composición, con URL propia e índice de las cuarenta experiencias. Un componente, dos montajes.",
+      "133 COMPROBACIONES PROPIAS (scripts/pruebas-experiencia.mjs): diez familias, ninguna ruta rota contra src/app/**/page.tsx, ninguna experiencia repetida, ninguna cifra escrita a mano y la portada montando lo nuevo sin perder el mapa, el hilo, las historias ni los módulos.",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v421.8",
     nombre: "VANGUARD CIVIL RESILIENCE",
     hitos: [

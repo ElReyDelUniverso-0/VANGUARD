@@ -6911,8 +6911,17 @@
 //    portada, espacios de trabajo, sitemap, llms.txt, catálogo de la API y
 //    departamento de arquitectura. 1.237 comprobaciones propias
 //    (tools/ciencia/comprobar.mjs).
-export const APP_VERSION = "v422.0";
-export const APP_CODENAME = "VANGUARD WORLDS";
+// (anterior) export const APP_VERSION = "v422.0";
+// (anterior) export const APP_CODENAME = "VANGUARD WORLDS";
+// v422.1 VANGUARD REBIRTH — MISIÓN 01 · LA ARQUITECTURA DEL ECOSISTEMA.
+// Encargo del Dueño: «Vanguard debe dejar de sentirse como una colección de
+// herramientas independientes». No entra una sala nueva: entra la ESTRUCTURA
+// que las lee a todas — un registro único de diez familias con puertas y
+// cifras derivadas (src/lib/experiencia/registro.ts), una entrada que dice
+// qué es la casa antes de las noticias, el mapa del ecosistema y una portada
+// viva con cuatro registros reales elegidos por día.
+export const APP_VERSION = "v422.1";
+export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";
 // (anterior) export const APP_CODENAME = "EL ARO DE CONTROL";
 // (anterior) export const APP_VERSION = "v418.1";

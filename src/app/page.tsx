@@ -39,7 +39,15 @@ import { BotonMundos } from "@/components/mundos/puerta-mundos";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 // v406.0 LA TRAVESÍA — el hilo (continúa donde lo dejaste) y la puerta a la entrada inmersiva
 import { HiloPortada, BotonTravesia, BotonDirectorio } from "@/components/travesia/hilo-portada";
-import { HeroeVanguard, AreasRejilla, DescubreHoy, NovedadesPortada } from "@/components/portada/portada-nueva";
+import { DescubreHoy, NovedadesPortada } from "@/components/portada/portada-nueva";
+// v422.1 REBIRTH · la entrada del ecosistema (MISIÓN: dejar de ser «un diario
+// con módulos» y ser una casa con diez familias). Tres piezas nuevas, todas
+// de servidor: la entrada cinematográfica, el mapa de las diez familias y la
+// portada viva con cuatro registros reales elegidos por día.
+import "@/components/experiencia/experiencia.css";
+import { Entrada } from "@/components/experiencia/entrada";
+import { Ecosistema } from "@/components/experiencia/ecosistema";
+import { PortadaViva } from "@/components/experiencia/portada-viva";
 
 
 export const revalidate = 300;
@@ -116,19 +124,25 @@ export default async function Portada() {
       <Teletipo notas={notas} />
       <AvisoNuevas primera={notas[0]?.id ?? null} />
 
+      {/* v422.1 · LA ENTRADA — qué es esto, en cinco segundos, antes de las noticias */}
+      <Entrada cables={notas.length} />
+
       <main className="vx-wrap">
-        <div id="historias" className="vx-entra">
-          <Historias grupos={historias} />
-        </div>
+        {/* el hilo: sigue donde lo dejaste (Travesía, ya existía) */}
         <HiloPortada />
 
-        <HeroeVanguard cables={notas.length} />
+        {/* v422.1 · EL ECOSISTEMA — las diez familias con sus puertas reales.
+            Sustituye a las «ocho áreas» escritas a mano: una sola lista,
+            `lib/experiencia/registro`, con cifras derivadas de los datos. */}
+        <Ecosistema />
 
-        {/* v406.2 LAS OCHO PUERTAS — qué se puede hacer aquí, cada una a su módulo real */}
-        <section id="areas" className="vx-sec vxp-ancla" aria-label="Explora Vanguard por áreas">
-          <TituloSeccion sello="Sección 01 · Explora" titulo="¿Qué quieres hacer hoy?" sub="Ocho puertas a todo lo que tiene Vanguard: elige una y entra." enlace="/modulos" textoEnlace="Ver todo" />
-          <AreasRejilla />
-        </section>
+        {/* v422.1 · LA PORTADA VIVA — cuatro registros reales abiertos cada día */}
+        <PortadaViva />
+
+        <div id="historias" className="vx-entra">
+          <TituloSeccion sello="Sección 03 · El mundo, hoy" titulo="Las historias del día" sub="Cada frente abierto, con sus cables y su hora." enlace="/conflictos" textoEnlace="Todos los conflictos" />
+          <Historias grupos={historias} />
+        </div>
 
         {heroe ? (
           <section id="ahora" className="vx-top vxp-ancla vxp-top" aria-label="Lo más importante ahora">
@@ -189,7 +203,7 @@ export default async function Portada() {
 
         {destacadas.length > 0 && (
           <section className="vx-sec" aria-label="Destacadas">
-            <TituloSeccion sello="Sección 02 · Inteligencia" titulo="Lo que tienes que saber" sub="Las historias que más pesan hoy en el mundo." />
+            <TituloSeccion sello="Sección 04 · Inteligencia" titulo="Lo que tienes que saber" sub="Las historias que más pesan hoy en el mundo." />
             <div className="vx-bento vx-entra-3">
               {destacadas.map((n, i) => (
                 <Tarjeta key={n.id} nota={n} grande={i === 0} cable={i + 2} />
@@ -200,13 +214,13 @@ export default async function Portada() {
 
         {/* v406.2 DESCUBRE HOY — el archivo real de la casa, distinto cada día */}
         <section id="descubre" className="vx-sec vxp-ancla" aria-label="Descubre hoy">
-          <TituloSeccion sello="Sección 03 · Descubre" titulo="Descubre hoy" sub="Seis hallazgos del archivo de Vanguard que cambian cada día." enlace="/archivo-mundial" textoEnlace="Archivo mundial" />
+          <TituloSeccion sello="Sección 05 · Descubre" titulo="Descubre hoy" sub="Seis hallazgos del archivo de Vanguard que cambian cada día." enlace="/archivo-mundial" textoEnlace="Archivo mundial" />
           <DescubreHoy />
         </section>
 
         {/* v402.6 LOS NUEVE MÓDULOS — lo que la casa tiene además de noticias, a la vista */}
         <section id="modulos" className="vx-sec vxp-ancla" aria-label="Los módulos de Vanguard">
-          <TituloSeccion sello={`Sección 04 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Países en cifras, conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
+          <TituloSeccion sello={`Sección 06 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Países en cifras, conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
           <ModulosRejilla compacta />
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: 12, marginTop: 18 }}>
             <BotonMundos />
@@ -221,7 +235,7 @@ export default async function Portada() {
         </section>
 
         <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
-          <TituloSeccion sello="Sección 05 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
+          <TituloSeccion sello="Sección 07 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
           <MapaPortada notas={notas} />
         </section>
 
@@ -238,12 +252,12 @@ export default async function Portada() {
 
         {/* v406.2 LO NUEVO EN LA CASA — la bitácora, las tres últimas entregas */}
         <section id="novedades" className="vx-sec vxp-ancla" aria-label="Lo nuevo en Vanguard">
-          <TituloSeccion sello="Sección 06 · Bitácora" titulo="Lo nuevo en la casa" sub="Las tres últimas entregas de Vanguard, con lo que cambió." enlace="/novedades" textoEnlace="Todas las novedades" />
+          <TituloSeccion sello="Sección 08 · Bitácora" titulo="Lo nuevo en la casa" sub="Las tres últimas entregas de Vanguard, con lo que cambió." enlace="/novedades" textoEnlace="Todas las novedades" />
           <NovedadesPortada />
         </section>
 
         <section className="vx-sec" aria-label="Las salas favoritas">
-          <TituloSeccion sello="Sección 07 · Las salas" titulo="Explora Vanguard" sub="Las salas favoritas de la casa: en 3D, en directo y jugando." />
+          <TituloSeccion sello="Sección 09 · Las salas" titulo="Explora Vanguard" sub="Las salas favoritas de la casa: en 3D, en directo y jugando." />
           <div className="vx-salas">
             {SALAS.map((s) => (
               <Link key={s.href} href={s.href} className="vx-sala">

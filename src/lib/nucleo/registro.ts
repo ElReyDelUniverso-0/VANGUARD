@@ -55,6 +55,9 @@ export interface ModuloNucleo {
 }
 
 export const MODULOS_NUCLEO: ModuloNucleo[] = [
+  // v422.0 REBIRTH: el mapa de la casa, buscable como cualquier otra sala.
+  { id:"mod:ecosistema", nombre:"EL ECOSISTEMA", lema:"Diez familias, una sola casa", descripcion:"El mapa de todo lo que hay: diez familias (actualidad, geografía, historia, ciencia, economía y datos, educación, simulaciones, narrativa, investigación y nuevos mundos) con sus cuarenta experiencias, sus cifras derivadas y sus puertas reales. Es el índice de índices de la casa.", categoria:"SISTEMA", ruta:"/ecosistema", permiso:"publico", estado:"VIVO",
+    dependencias:[], alias:"ecosistema mapa familias indice de indices todo lo que hay arquitectura experiencia entrar recorrer vanguard completo" },
   // v421.9 — MISIÓN 06: el departamento científico. No repite la
   // Enciclopedia: indexa publicaciones y explica su evolución.
   { id:"mod:science-frontier", nombre:"SCIENCE FRONTIER", lema:"Ciencia rastreada hasta su origen", descripcion:"Buscador de publicaciones reales con DOI o arXiv, filtros por disciplina, tipo editorial y nivel de evidencia; explorador de descubrimientos que sigue una idea paso a paso; catálogos de instituciones, premios, experimentos y tecnología. Declara lo que no demuestra.", categoria:"MUNDO", ruta:"/ciencia", permiso:"publico", estado:"VIVO",
