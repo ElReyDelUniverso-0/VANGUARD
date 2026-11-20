@@ -2,17 +2,17 @@
   "version": "v412.0",
   "fecha": "2026-11-20",
   "paginas": 179,
-  "rutasApi": 136,
-  "total": 315,
+  "rutasApi": 138,
+  "total": 317,
   "bienConectadas": 161,
   "huerfanas": [],
   "paginasConReferencias": 179,
-  "mediaReferencias": 12.93,
+  "mediaReferencias": 13,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 103,
+      "referencias": 108,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -132,7 +132,7 @@
     {
       "ruta": "/api",
       "tipo": "api",
-      "referencias": 161,
+      "referencias": 163,
       "desde": [
         "app/audios/grabador.tsx",
         "app/audios/page.tsx",
@@ -949,11 +949,28 @@
     {
       "ruta": "/api/mente",
       "tipo": "api",
-      "referencias": 3,
+      "referencias": 5,
       "desde": [
+        "components/mente/panel-mente.tsx",
         "components/vanguard/panels/creador-panel.tsx",
         "components/vanguard/panels/mente-panel.tsx",
         "lib/api/catalogo.ts"
+      ]
+    },
+    {
+      "ruta": "/api/mente/chat",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/mente/panel-mente.tsx"
+      ]
+    },
+    {
+      "ruta": "/api/mente/estado",
+      "tipo": "api",
+      "referencias": 1,
+      "desde": [
+        "components/mente/panel-mente.tsx"
       ]
     },
     {
@@ -1881,7 +1898,7 @@
     {
       "ruta": "/cuartel",
       "tipo": "pagina",
-      "referencias": 42,
+      "referencias": 43,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
         "app/cuartel/layout.tsx",
@@ -2001,11 +2018,12 @@
     {
       "ruta": "/ecosistema",
       "tipo": "pagina",
-      "referencias": 3,
+      "referencias": 5,
       "desde": [
         "app/radio/page.tsx",
-        "lib/bitacora.ts",
-        "lib/nucleo/registro.ts"
+        "components/vida/orbita.tsx",
+        "components/vida/para-ti.tsx",
+        "lib/bitacora.ts"
       ]
     },
     {
@@ -2062,12 +2080,12 @@
     {
       "ruta": "/entrar",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 12,
       "desde": [
         "app/mi-universo/universo-cliente.tsx",
+        "components/mente/mente-global.tsx",
         "components/mundos/mundos.ts",
-        "components/mundos/puerta-mundos.tsx",
-        "components/portada/areas.ts"
+        "components/mundos/puerta-mundos.tsx"
       ]
     },
     {
@@ -2638,7 +2656,7 @@
     {
       "ruta": "/modulo/[id]",
       "tipo": "pagina",
-      "referencias": 11,
+      "referencias": 12,
       "desde": [
         "app/modulos/page.tsx",
         "components/mundos/mundos.ts",
@@ -2819,12 +2837,12 @@
     {
       "ruta": "/offline",
       "tipo": "pagina",
-      "referencias": 6,
+      "referencias": 7,
       "desde": [
+        "components/mente/mente-global.tsx",
         "components/mundos/mundos.ts",
         "components/portada/carcasa.tsx",
-        "components/vanguard/navegacion/barra-adaptativa.tsx",
-        "lib/catalogo-real.ts"
+        "components/vanguard/navegacion/barra-adaptativa.tsx"
       ]
     },
     {
@@ -3150,12 +3168,12 @@
     {
       "ruta": "/vanguard2",
       "tipo": "pagina",
-      "referencias": 14,
+      "referencias": 15,
       "desde": [
         "app/layout.tsx",
+        "components/mente/mente-global.tsx",
         "components/portada/carcasa.tsx",
-        "components/portada/modulos.ts",
-        "components/vanguard/navegacion/barra-adaptativa.tsx"
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -3183,7 +3201,7 @@
     {
       "ruta": "/vertigo",
       "tipo": "pagina",
-      "referencias": 25,
+      "referencias": 26,
       "desde": [
         "app/en-vivo/sala-en-vivo.tsx",
         "app/historia/page.tsx",

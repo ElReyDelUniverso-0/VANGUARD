@@ -21,6 +21,23 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v431.2",
+    nombre: "RADIO VANGUARD · EDICIÓN",
+    hitos: [
+      "LA MESA DE EDICIÓN (src/lib/radio/agrupar.ts, puro): antes de abrir el micrófono se lee el archivo entero. Los cables que cuentan lo mismo se agrupan comparando palabras (Jaccard) y frente+región —diez medios cubriendo un bombardeo eran diez bloques y ahora son uno— y el grupo conserva TODAS sus fuentes para poder decir quién más lo firma.",
+      "LA SELECCIÓN NO REPITE SITIO: se exige diversidad de región y de medio antes de completar por relevancia (la `relevancia()` real de la portada). Un programa de cuatro asuntos ya no puede ser cuatro veces el mismo frente si hay alternativa en el archivo.",
+      "DURA LO QUE TÚ DIGAS: 2, 5, 10 o 15 minutos; el número de asuntos sale de esa duración (`asuntosPara`), no de un número fijo, y la duración estimada se ve antes de darle al play.",
+      "DA CIFRAS, NO ADJETIVOS: «150 cables de 10 medios, 39 repiten lo que cuenta otro», «este asunto lo firman tres medios: X, Y y Z». Todas son cuentas sobre las notas; ninguna está escrita a mano. La página publica las mismas cifras en su cabecera y en las cuatro reglas de edición.",
+      "SUBTÍTULOS DE VERDAD: decir() acepta ahora `onFrase` (opcional, compatible con todas las salas que ya lo usaban) y la radio lo usa para poner en pantalla la frase exacta que está sonando, con «bloque 4 de 13 · frase 2 de 5». No es un resumen del bloque: es lo que se oye.",
+      "RAIL, PRESETS Y ATAJOS: el programa entero como barra proporcional a su duración, con salto a cualquier bloque por clic; cuatro presets reales (Mañana serena, Frente abierto, Paseo largo, Solo lo esencial); espacio/←/→/Esc; y «Copiar mi radio» da un enlace con tus ajustes.",
+      "CONVERSACIÓN CON MEMORIA: después de hablar de Europa, «cuéntame más» continúa, «la segunda» sabe de qué cable hablas y «repite» repite. Y contesta cifras reales: cuántos cables y medios hay, qué región tiene más, qué medio firma más, cuál fue el último y de qué se habla hoy, además de comparar dos regiones. El «no tengo un cable sobre eso» sigue siendo la respuesta cuando no hay dato.",
+      "SE ACUERDA DE DÓNDE IBAS: la posición se guarda por programa y al volver el botón dice «Continuar (bloque 7)». Media Session lleva el programa a la pantalla de bloqueo y a los auriculares; Wake Lock evita que se apague la pantalla mientras escuchas.",
+      "HABLAS TÚ: micrófono del aparato (SpeechRecognition, si existe) para preguntar en voz alta. Si no existe, el botón no se pinta: no se promete lo que el aparato no tiene.",
+      "294 COMPROBACIONES PROPIAS (scripts/pruebas-radio.mjs): ejecutan el TypeScript real —agrupar, elegir, caber en el tiempo, no repetir fórmulas, 15 intenciones de conversación con memoria, y que el estudio, la boca, la página y los registros estén puestos de verdad—.",
+    ],
+    tipo: "ia",
+  },
+  {
     version: "v422.3",
     nombre: "RADIO VANGUARD",
     hitos: [

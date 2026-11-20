@@ -314,6 +314,14 @@ export interface OpcionesDecir {
   /** ¿cortar lo que esté sonando? (por defecto SÍ: una sola voz manda) */
   interrumpir?: boolean;
   onFin?: () => void;
+  /**
+   * v431.2 · CADA FRASE, AVISADA. Se llama antes de decir cada trozo con su
+   * texto, su índice y el total. Existe para que la pantalla pueda enseñar
+   * lo que suena EXACTAMENTE (subtítulos de la radio), sin que la sala tenga
+   * que reimplementar la boca ni adivinar por dónde va. Es opcional: los
+   * otros llamantes de la casa siguen igual.
+   */
+  onFrase?: (texto: string, indice: number, total: number) => void;
 }
 
 /**
@@ -345,6 +353,11 @@ export function decir(texto: string, opts: OpcionesDecir = {}): boolean {
       return;
     }
     const bloque = actual.bloques[actual.i++];
+    try {
+      opts.onFrase?.(bloque.texto, actual.i - 1, actual.bloques.length);
+    } catch {
+      /* un subtítulo roto no puede parar la voz */
+    }
     const u = new SpeechSynthesisUtterance(bloque.texto);
     u.voice = voz;
     u.lang = voz.lang || "es-ES";

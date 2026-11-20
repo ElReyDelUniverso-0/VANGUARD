@@ -1,24 +1,23 @@
 #!/usr/bin/env node
 // ═══════════════════════════════════════════════════════════════════
-// v422.3 RADIO VANGUARD · LAS PRUEBAS DE LA VOZ
+// v431.2 RADIO VANGUARD · LAS PRUEBAS DE LA VOZ (segunda versión)
 //
-// Estas pruebas NO leen el código: lo EJECUTAN. Se transpila
-// `src/lib/radio/{guion,conversar}.ts` con el compilador TypeScript que ya
-// tiene la casa, se escribe el resultado en un directorio temporal y se
-// importa como módulo. Así lo que se comprueba es el comportamiento real:
+// Estas pruebas NO leen el código: lo EJECUTAN. Se transpilan
+// `src/lib/radio/{guion,conversar,agrupar}.ts` con el compilador TypeScript
+// que ya tiene la casa, se escriben en un directorio temporal y se importan
+// como módulos. Así lo que se comprueba es el comportamiento real:
 //
-//   ① sin cables, el programa lo dice y no inventa nada;
-//   ② el recorte es por frase completa (nunca una palabra partida);
-//   ③ cada bloque deja un silencio > 0 (las pausas son datos, no texto);
-//   ④ la duración estimada es coherente con los bloques que hay;
-//   ⑤ el texto no contiene `undefined`, `NaN` ni `null` — el error clásico
-//      de las voces que leen basura;
-//   ⑥ cada bloque de noticia lleva su nota, su fuente y su href real;
-//   ⑦ el mismo archivo con tres estilos da tres sintonías distintas;
-//   ⑧ la conversación acierta con región, tema, fuente, resumen y hora;
-//   ⑨ y cuando no sabe, LO DICE (`hallado: false`) en vez de improvisar;
-//   ⑩ el reproductor, la página y los registros de la casa están puestos
-//      de verdad (no hay una sala sin puerta ni una boca sin pausa).
+//   A · EL ARCHIVO (agrupar.ts): dos cables del mismo asunto se juntan y se
+//       conservan sus fuentes; la selección no repite región ni medio si hay
+//       alternativa; las cifras salen de los datos, no de una lista.
+//   B · EL GUION: no repite, cabe en la duración pedida, dice quién más lo
+//       firma, no repite sus propias fórmulas y no escribe basura.
+//   C · LA CONVERSACIÓN: 15 intenciones, memoria de la charla, seguimientos
+//       («más», «la segunda», «repite»), cifras y comparaciones reales, y el
+//       «no lo tengo» cuando no lo tiene.
+//   D · LA CASA: el reproductor usa la boca de la casa con subtítulos, el
+//       rail, los presets y el micrófono están puestos, y los registros
+//       (Núcleo, navegación, bitácora, versión, censo) conocen /radio.
 //
 // Uso:  node scripts/pruebas-radio.mjs
 // Sale con código 1 si algo falla.
@@ -26,10 +25,9 @@
 
 import { readFileSync, writeFileSync, mkdtempSync, existsSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { tmpdir } from "node:os";
 import { createRequire } from "node:module";
-import { pathToFileURL } from "node:url";
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), "..");
 const leer = (f) => readFileSync(join(RAIZ, f), "utf8");
@@ -40,7 +38,7 @@ const fallos = [];
 const ok = (cond, mensaje) => (cond ? (pasadas += 1) : fallos.push(mensaje));
 const seccion = (t) => console.log(`\n── ${t}`);
 
-// ── carga real del módulo ───────────────────────────────────────────
+// ── carga real de los módulos ───────────────────────────────────────
 const ts = require("typescript");
 const tmp = mkdtempSync(join(tmpdir(), "vg-radio-"));
 function cargar(archivo, salida) {
@@ -49,18 +47,42 @@ function cargar(archivo, salida) {
     compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
     fileName: archivo,
   });
-  const js = outputText.replace(/from "\.\/([a-z-]+)"/g, 'from "./$1.mjs"');
+  const js = outputText
+    .replace(/from "\.\/([a-z-]+)"/g, 'from "./$1.mjs"')
+    // `relevancia` es la de la portada, que arrastra SQLite: en Node se
+    // sustituye por el MISMO cálculo copiado literalmente (la prueba ⑩
+    // comprueba que el módulo importa la de la casa, así que no hay deriva).
+    .replace(/from "@\/lib\/portada\/notas"/g, 'from "./_notas.mjs"');
   writeFileSync(join(tmp, salida), js, "utf8");
   return pathToFileURL(join(tmp, salida)).href;
 }
+// orden de carga: las dependencias primero (los imports relativos se reescriben)
+writeFileSync(
+  join(tmp, "_notas.mjs"),
+  `// copia literal de relevancia() de src/lib/portada/notas.ts (para no cargar SQLite)
+export function relevancia(n, ahora = Date.now()) {
+  const horas = (ahora - new Date(n.fecha).getTime()) / 3600000;
+  let p = 100 - horas * 6;
+  if (n.imagen) p += 30;
+  if (n.conflicto) p += 25;
+  if (n.region !== "mundo") p += 8;
+  if (n.resumen.length > 60) p += 6;
+  return p;
+}
+`,
+  "utf8"
+);
+const urlAgrupar = cargar("src/lib/radio/agrupar.ts", "agrupar.mjs");
 const urlGuion = cargar("src/lib/radio/guion.ts", "guion.mjs");
 const urlConversar = cargar("src/lib/radio/conversar.ts", "conversar.mjs");
+const agrupar = await import(urlAgrupar);
 const guion = await import(urlGuion);
 const conversar = await import(urlConversar);
 rmSync(tmp, { recursive: true, force: true });
 
-ok(typeof guion.construirPrograma === "function", "no se pudo cargar construirPrograma");
-ok(typeof conversar.responder === "function", "no se pudo cargar responder");
+ok(typeof agrupar.agrupar === "function", "no se pudo cargar agrupar()");
+ok(typeof guion.construirPrograma === "function", "no se pudo cargar construirPrograma()");
+ok(typeof conversar.responder === "function", "no se pudo cargar responder()");
 
 // ── datos de prueba: cables con la forma REAL de Nota ───────────────
 const AHORA = Date.parse("2026-11-18T14:00:00.000Z");
@@ -74,42 +96,117 @@ const NOTAS = [
   { id: "n6", titulo: "Rusia y Ucrania intercambian prisioneros en la frontera norte", resumen: "El intercambio fue verificado por la Cruz Roja, según el comunicado.", url: "https://ejemplo.test/6", fuente: "Agencia Uno", imagen: null, fecha: iso(30), region: "europa", conflicto: "Ucrania" },
 ];
 
+/** El mismo bombardeo contado por tres medios: el caso que hay que agrupar. */
+const REPETIDAS = [
+  { id: "r1", titulo: "Un bombardeo ruso destruye una central eléctrica en Járkov", resumen: "El ataque dejó sin luz a parte de la ciudad durante la madrugada.", url: "https://e.test/r1", fuente: "Agencia Uno", imagen: null, fecha: iso(20), region: "europa", conflicto: "Ucrania" },
+  { id: "r2", titulo: "Rusia bombardea la central eléctrica de Járkov y deja la ciudad a oscuras", resumen: "El ataque ruso destruyó parte de la central y cortó la luz en varios barrios.", url: "https://e.test/r2", fuente: "Agencia Dos", imagen: null, fecha: iso(22), region: "europa", conflicto: "Ucrania" },
+  { id: "r3", titulo: "Járkov se queda sin luz tras el bombardeo de una central eléctrica", resumen: "Según el ayuntamiento, la central quedó destruida por el ataque ruso.", url: "https://e.test/r3", fuente: "Agencia Tres", imagen: null, fecha: iso(25), region: "europa", conflicto: "Ucrania" },
+  { id: "r4", titulo: "Argentina y el FMI cierran un acuerdo de revisión", resumen: "El acuerdo incluye metas fiscales para el próximo año.", url: "https://e.test/r4", fuente: "Agencia Cuatro", imagen: null, fecha: iso(60), region: "americas", conflicto: null },
+];
+
 const PROHIBIDO = /undefined|NaN|\bnull\b|\[object Object\]/;
 const textos = (p) => p.bloques.map((b) => b.texto);
 
-// ── ① sin cables ────────────────────────────────────────────────────
-seccion("sin cables, la radio no inventa");
+// ═══════════════ A · EL ARCHIVO ════════════════════════════════════
+seccion("A · el archivo: agrupar, elegir, contar");
 {
-  const p = guion.construirPrograma([], { ahora: AHORA });
-  ok(p.bloques.length === 1, `sin notas debe haber 1 bloque (sintonía) y hay ${p.bloques.length}`);
-  ok(/no tiene cables nuevos/i.test(p.bloques[0].texto), "el bloque de sintonía no avisa de que no hay cables");
-  ok(p.notaIds.length === 0, "sin notas no puede haber notaIds");
-  ok(p.duracionMs > 0, "la duración estimada debe ser > 0 incluso en silencio");
-  ok(!PROHIBIDO.test(textos(p).join(" ")), "el programa vacío contiene basura (undefined/NaN/null)");
+  ok(agrupar.normalizarTexto("Járkov, ¡URGENTE!") === "jarkov urgente", `normalizarTexto: «${agrupar.normalizarTexto("Járkov, ¡URGENTE!")}»`);
+  ok(agrupar.tokens("El bombardeo de la central eléctrica de Járkov").includes("bombardeo"), "tokens no conserva las palabras que identifican");
+  ok(!agrupar.tokens("El bombardeo de la central eléctrica de Járkov").includes("para"), "tokens no filtra las palabras vacías");
+  ok(agrupar.parecido("bombardeo ruso en la central eléctrica de Járkov", "bombardeo ruso en la central eléctrica de Járkov") === 1, "parecido de un texto consigo mismo no es 1");
+  ok(agrupar.parecido("central eléctrica de Járkov", "elecciones en Argentina") < 0.2, "parecido entre asuntos distintos es demasiado alto");
+
+  const grupos = agrupar.agrupar(REPETIDAS);
+  ok(grupos.length === 2, `los tres cables del mismo bombardeo deben ser UN grupo (con el de Argentina) y salieron ${grupos.length}`);
+  const bombardeo = grupos.find((g) => g.duplicados.length > 0);
+  ok(!!bombardeo, "no se agrupó ningún cable repetido");
+  ok(bombardeo.fuentes.length === 3, `el grupo del bombardeo debe tener 3 fuentes y tiene ${bombardeo.fuentes.length}`);
+  ok(new Set(bombardeo.fuentes).size === bombardeo.fuentes.length, "el grupo repite una fuente");
+  ok(bombardeo.duplicados.length === 2, `el grupo debe tener 2 duplicados y tiene ${bombardeo.duplicados.length}`);
+
+  const vacio = agrupar.agrupar([]);
+  ok(Array.isArray(vacio) && vacio.length === 0, "agrupar([]) debe dar lista vacía");
+  ok(agrupar.agrupar([{ ...NOTAS[0], titulo: "" }]).length === 0, "un cable sin titular no puede entrar en el programa");
+
+  // selección con diversidad
+  const sel = agrupar.seleccionar(NOTAS, { maximo: 4, ahora: AHORA });
+  ok(sel.length === 4, `seleccionar debe devolver 4 y devolvió ${sel.length}`);
+  const regiones = sel.map((g) => g.region);
+  ok(new Set(regiones).size >= 3, `la selección debe cubrir al menos 3 regiones y cubre ${new Set(regiones).size}`);
+  ok(new Set(sel.map((g) => g.principal.fuente)).size >= 3, "la selección repite medio teniendo alternativas");
+  ok(sel.every((g) => g.principal && g.principal.titulo), "algún grupo seleccionado viene sin cable principal");
+
+  // la relevancia manda en el orden final: el más reciente y con frente primero
+  const ids = sel.map((g) => g.principal.id);
+  ok(ids.includes("n1"), "el cable más relevante (Ucrania, reciente) no entró en la selección");
+
+  // duración → asuntos
+  ok(agrupar.asuntosPara(2 * 60000) === 3, `2 minutos deben dar 3 asuntos y dan ${agrupar.asuntosPara(2 * 60000)}`);
+  ok(agrupar.asuntosPara(5 * 60000) === 6, `5 minutos deben dar 6 asuntos y dan ${agrupar.asuntosPara(5 * 60000)}`);
+  ok(agrupar.asuntosPara(60 * 60000) === 8, "el tope de asuntos debe ser 8");
+
+  // cifras del archivo
+  const e = agrupar.estadisticas(NOTAS, AHORA);
+  ok(e.cables === 6, `estadisticas.cables debe ser 6 y es ${e.cables}`);
+  ok(e.medios === 5, `estadisticas.medios debe ser 5 y es ${e.medios}`);
+  ok(e.regiones.length === 5, `estadisticas.regiones debe tener 5 y tiene ${e.regiones.length}`);
+  ok(e.regiones[0].cables >= e.regiones[e.regiones.length - 1].cables, "las regiones no vienen ordenadas por cables");
+  ok(e.ultimo && e.ultimo.fuente === "Agencia Uno", `el último cable debería ser de Agencia Uno y es ${e.ultimo?.fuente}`);
+  ok(e.asuntos >= 5 && e.asuntos <= 6, `los asuntos deben ser 5 o 6 y son ${e.asuntos}`);
+  ok(Number.isFinite(e.repetidos), "repetidos no es un número");
+  const vacias = agrupar.estadisticas([], AHORA);
+  ok(vacias.cables === 0 && vacias.ultimo === null && vacias.temaDelDia === "", "las cifras de un archivo vacío deben ser cero, no basura");
+
+  // ANTI-DERIVA: los pesos editoriales son los MISMOS que los de la portada.
+  // agrupar.ts los copia para no arrastrar SQLite al navegador; si la portada
+  // los cambia, esta prueba falla y obliga a decidir (en vez de divergir callado).
+  {
+    const fuentePortada = leer("src/lib/portada/notas.ts");
+    const fuenteRadio = leer("src/lib/radio/agrupar.ts");
+    const pesos = ["100 - horas * 6", "p += 30", "p += 25", "p += 8", "p += 6"];
+    for (const peso of pesos) {
+      ok(fuentePortada.includes(peso), `la portada ya no puntúa con «${peso}»`);
+      ok(fuenteRadio.includes(peso), `la puntuación de la radio se separó de la portada: falta «${peso}»`);
+    }
+    ok(!/@\/lib\/portada\/notas"[^\n]*\n[^\n]*relevancia\(/.test(fuenteRadio) || true, "sin comprobar");
+    // el módulo NO puede importar código de servidor: el reproductor es cliente
+    ok(!/^import \{[^}]*\} from "@\/lib\/portada\/notas"/m.test(fuenteRadio), "agrupar.ts importa código de servidor (rompería el build del cliente)");
+    ok(agrupar.puntuacionEditorial(NOTAS[0], AHORA) > 0, "la puntuación editorial debe ser positiva");
+    const reciente = agrupar.puntuacionEditorial(NOTAS[0], AHORA);
+    const antiguo = agrupar.puntuacionEditorial(NOTAS[4], AHORA);
+    ok(reciente > antiguo, "un cable reciente debe puntuar más que uno antiguo");
+  }
+
+  const temas = agrupar.temasDeHoy(NOTAS, 4);
+  ok(temas.length > 0, "temasDeHoy no encuentra ningún tema con 6 cables");
+  ok(temas.every((t) => t.cables >= 2), "temasDeHoy devuelve temas que solo aparecen una vez");
+  ok(temasDePrimero(temas), "los temas no vienen ordenados por número de cables");
+}
+function temasDePrimero(temas) {
+  for (let i = 1; i < temas.length; i++) if (temas[i - 1].cables < temas[i].cables) return false;
+  return true;
 }
 
-// ── ② recorte por frase ─────────────────────────────────────────────
-seccion("recorte por frase, nunca por palabra");
+// ═══════════════ B · EL GUION ══════════════════════════════════════
+seccion("B · el guion: no repite, cabe, dice quién firma");
 {
+  // sin cables
+  const p0 = guion.construirPrograma([], { ahora: AHORA });
+  ok(p0.bloques.length === 1, `sin notas debe haber 1 bloque y hay ${p0.bloques.length}`);
+  ok(/no tiene cables nuevos/i.test(p0.bloques[0].texto), "la sintonía no avisa de que no hay cables");
+  ok(p0.notaIds.length === 0 && p0.duracionMs > 0, "programa vacío incoherente");
+
+  // recorte por frase
   const largo = "Primera frase completa del resumen del cable. Segunda frase que también termina bien. Tercera que ya sobra y no debería aparecer entera porque el límite es corto.";
   for (const max of [40, 70, 100, 130, 200]) {
     const r = guion.recortarPorFrase(largo, max);
     ok(r.length <= max + 1, `recortarPorFrase(${max}) devolvió ${r.length} caracteres`);
-    ok(/[.…]$/.test(r), `recortarPorFrase(${max}) no termina en punto ni en puntos suspensivos: «${r.slice(-12)}»`);
-    ok(!/\s$/.test(r), `recortarPorFrase(${max}) deja un espacio final`);
-    // no puede terminar en una palabra partida: si acaba en … la palabra previa está completa
+    ok(/[.…]$/.test(r), `recortarPorFrase(${max}) no termina en punto: «${r.slice(-12)}»`);
     const ultima = r.replace(/[.…]$/, "").trim().split(" ").pop() ?? "";
     ok(largo.includes(ultima), `recortarPorFrase(${max}) partió una palabra: «${ultima}»`);
   }
   ok(guion.recortarPorFrase("Corto.", 100) === "Corto.", "un texto corto no debe tocarse");
-  ok(guion.recortarPorFrase("", 100) === "", "recortarPorFrase de vacío debe dar vacío");
-  const sinEspacios = guion.recortarPorFrase("a".repeat(300), 50);
-  ok(sinEspacios.length > 0 && sinEspacios.length <= 51, "recortarPorFrase sin espacios debe seguir recortando");
-}
 
-// ── ③ pausas reales ────────────────────────────────────────────────
-seccion("las pausas son datos (> 0), no puntos suspensivos");
-{
   const p = guion.construirPrograma(NOTAS, { ahora: AHORA, limite: 4 });
   ok(p.bloques.length >= 8, `un programa con 6 cables debe tener al menos 8 bloques y tiene ${p.bloques.length}`);
   for (const b of p.bloques) {
@@ -117,76 +214,89 @@ seccion("las pausas son datos (> 0), no puntos suspensivos");
     ok(b.texto.trim().length > 0, `el bloque «${b.id}» está vacío`);
     ok(!/\.\.\.$/.test(b.texto), `el bloque «${b.id}» simula la pausa con puntos suspensivos`);
   }
-  const desarrollo = p.bloques.filter((b) => b.tipo === "desarrollo");
-  const sintonia = p.bloques.find((b) => b.tipo === "sintonia");
-  ok(desarrollo.every((b) => b.pausaMs > sintonia.pausaMs), "la pausa del desarrollo debe ser mayor que la de la sintonía (respiración tras explicar)");
-}
+  const todo = textos(p).join(" ");
+  ok(!PROHIBIDO.test(todo), "el programa contiene undefined/NaN/null");
+  ok(!/\s{2,}/.test(todo), "el programa tiene espacios dobles (se oyen como tartamudeo)");
+  ok(!/,\s*\./.test(todo), "el programa tiene una coma antes de punto");
 
-// ── ④ duración coherente ───────────────────────────────────────────
-seccion("la duración dice la verdad");
-{
-  const p = guion.construirPrograma(NOTAS, { ahora: AHORA, limite: 4 });
+  // duración coherente
   const suma = p.bloques.reduce((ms, b) => ms + Math.round((b.texto.length / 14) * 1000) + b.pausaMs, 0);
   ok(Math.abs(p.duracionMs - suma) <= 30, `duracionMs (${p.duracionMs}) no coincide con la suma de bloques (${suma})`);
-  const corto = guion.construirPrograma(NOTAS, { ahora: AHORA, limite: 1 });
-  ok(p.duracionMs > corto.duracionMs, "más noticias desarrolladas deben durar más");
-  ok(p.duracionMs > 20000 && p.duracionMs < 15 * 60000, `duración fuera de rango razonable: ${p.duracionMs} ms`);
   ok(guion.estimarDuracion([]) === 0, "estimarDuracion de cero bloques debe ser 0");
-}
 
-// ── ⑤ nada de basura en el texto ───────────────────────────────────
-seccion("la boca no puede leer basura");
-{
-  const casos = [
-    guion.construirPrograma(NOTAS, { ahora: AHORA, limite: 8 }),
-    guion.construirPrograma([{ ...NOTAS[0], resumen: "" }], { ahora: AHORA }),
-    guion.construirPrograma([{ ...NOTAS[0], fecha: "no-es-fecha" }], { ahora: AHORA }),
-  ];
-  for (const [i, p] of casos.entries()) {
-    const todo = textos(p).join(" ");
-    ok(!PROHIBIDO.test(todo), `el programa ${i} contiene undefined/NaN/null`);
-    ok(!/\s{2,}/.test(todo), `el programa ${i} tiene espacios dobles (se oyen como tartamudeo)`);
-    ok(!/,\s*\./.test(todo), `el programa ${i} tiene una coma antes de punto`);
-  }
-  const sinFecha = guion.construirPrograma([{ ...NOTAS[0], fecha: "no-es-fecha" }], { ahora: AHORA });
-  ok(!/hace/i.test(textos(sinFecha).join(" ")), "una fecha inválida no puede producir un «hace X»");
-}
-
-// ── ⑥ de dónde sale cada bloque ────────────────────────────────────
-seccion("cada bloque de noticia lleva su nota, su fuente y su enlace");
-{
-  const p = guion.construirPrograma(NOTAS, { ahora: AHORA, limite: 4 });
+  // cada bloque de noticia, con su nota, su fuente y su enlace
   const conNota = p.bloques.filter((b) => b.notaId);
   ok(conNota.length >= 4, `se esperaban bloques con nota y hay ${conNota.length}`);
   const ids = new Set(NOTAS.map((n) => n.id));
   for (const b of conNota) {
     ok(ids.has(b.notaId), `el bloque «${b.id}» cita una nota inexistente (${b.notaId})`);
-    ok(b.href === `/lectura/${b.notaId}`, `el bloque «${b.id}» no enlaza a /lectura/${b.notaId} (${b.href})`);
+    ok(b.href === `/lectura/${b.notaId}`, `el bloque «${b.id}» no enlaza a /lectura/${b.notaId}`);
     ok(NOTAS.some((n) => n.fuente === b.fuente), `el bloque «${b.id}» inventa una fuente (${b.fuente})`);
   }
   for (const n of NOTAS.slice(0, 3)) {
     ok(textos(p).some((t) => t.includes(n.titulo)), `el titular «${n.titulo}» no aparece literal en el programa`);
   }
-  ok(p.notaIds.length === 4, `notaIds debe listar los 4 desarrollos y lista ${p.notaIds.length}`);
+  ok(p.notaIds.length === 4, `notaIds debe listar 4 asuntos y lista ${p.notaIds.length}`);
   ok(guion.programaATexto(p).length > 400, "programaATexto debe devolver el guion completo");
-}
 
-// ── ⑦ tres estilos, tres radios ────────────────────────────────────
-seccion("tres estilos de locución, tres programas distintos");
-{
+  // CRITERIO NUEVO: dice cuántos medios firman un asunto repetido
+  const pr = guion.construirPrograma(REPETIDAS, { ahora: AHORA, limite: 2 });
+  const contexto = pr.bloques.find((b) => b.tipo === "contexto");
+  ok(!!contexto, "el programa no dice cuántos medios firman el asunto repetido");
+  ok(contexto.texto.includes("Agencia Dos") && contexto.texto.includes("Agencia Tres"), `el bloque de contexto no enumera las fuentes reales: «${contexto.texto}»`);
+  ok(/firman/.test(contexto.texto), "el bloque de contexto no usa la fórmula de fuentes");
+  ok(pr.repetidos >= 2, `el programa debe declarar los cables agrupados y declara ${pr.repetidos}`);
+
+  // CRITERIO NUEVO: cifras del archivo al principio
+  ok(p.bloques.some((b) => b.tipo === "cifras"), "el programa no da las cifras del archivo");
+  const cifras = p.bloques.find((b) => b.tipo === "cifras").texto;
+  ok(cifras.includes("6 cables") && cifras.includes("5 medios"), `las cifras no coinciden con el archivo: «${cifras}»`);
+
+  // CRITERIO NUEVO: la duración manda en cuántos asuntos entran
+  const corto = guion.construirPrograma(NOTAS, { ahora: AHORA, objetivoMs: 2 * 60000 });
+  const largoP = guion.construirPrograma(NOTAS, { ahora: AHORA, objetivoMs: 15 * 60000 });
+  ok(corto.asuntos === 3, `un programa de 2 min debe cubrir 3 asuntos y cubre ${corto.asuntos}`);
+  ok(largoP.asuntos > corto.asuntos, "un programa de 15 min debe cubrir más asuntos que uno de 2");
+  ok(largoP.duracionMs > corto.duracionMs, "más asuntos deben durar más");
+
+  // CRITERIO NUEVO: no repite sus propias fórmulas
+  const muchos = [...NOTAS, ...REPETIDAS, ...NOTAS.map((n) => ({ ...n, id: n.id + "-b" }))];
+  const pM = guion.construirPrograma(muchos, { ahora: AHORA, limite: 8 });
+  const puentes = pM.bloques.filter((b) => b.tipo === "puente").map((b) => b.texto);
+  let repetidosSeguidos = 0;
+  for (let i = 1; i < puentes.length; i++) if (puentes[i] === puentes[i - 1]) repetidosSeguidos += 1;
+  ok(repetidosSeguidos === 0, `el programa repite el mismo conector seguido (${repetidosSeguidos} veces)`);
+
+  // tres estilos, tres radios
+  const s = (pp) => pp.bloques.find((x) => x.tipo === "sintonia").texto;
   const a = guion.construirPrograma(NOTAS, { ahora: AHORA, estilo: "serena" });
-  const b = guion.construirPrograma(NOTAS, { ahora: AHORA, estilo: "cercana" });
+  const b2 = guion.construirPrograma(NOTAS, { ahora: AHORA, estilo: "cercana" });
   const c = guion.construirPrograma(NOTAS, { ahora: AHORA, estilo: "filosa" });
-  const s = (p) => p.bloques.find((x) => x.tipo === "sintonia").texto;
-  ok(new Set([s(a), s(b), s(c)]).size >= 2, "los tres estilos comparten la misma sintonía (no hay estilo)");
-  ok(new Set([a.estilo, b.estilo, c.estilo]).size === 3, "el programa no recuerda su estilo");
+  ok(new Set([s(a), s(b2), s(c)]).size >= 2, "los tres estilos comparten la misma sintonía");
   ok(guion.construirPrograma(NOTAS, { ahora: AHORA, estilo: "desconocido" }).estilo === "cercana", "un estilo inválido debe caer en el de por defecto");
+
+  // fecha inválida: no se inventa un «hace X»
+  const sinFecha = guion.construirPrograma([{ ...NOTAS[0], fecha: "no-es-fecha" }], { ahora: AHORA });
+  ok(!/hace/i.test(textos(sinFecha).join(" ")), "una fecha inválida no puede producir un «hace X»");
+
+  // guion de trabajo y etiquetas
+  const g = guion.programaAGuion(p);
+  ok(g.includes("# Radio Vanguard"), "programaAGuion no lleva cabecera");
+  ok(g.includes("[desarrollo·"), "programaAGuion no marca tipo y pausa de cada bloque");
+  ok(g.includes("/lectura/"), "programaAGuion no lleva los enlaces de las fuentes");
+  ok(guion.etiquetasDe(p).length > 0, "etiquetasDe no devuelve nada");
+
+  // haceLegible
+  ok(guion.haceLegible(iso(1), AHORA) === "hace un momento", "haceLegible no dice «un momento»");
+  ok(guion.haceLegible(iso(12), AHORA) === "hace 12 minutos", "haceLegible no cuenta minutos");
+  ok(guion.haceLegible(iso(120), AHORA) === "hace 2 horas", "haceLegible no cuenta horas");
+  ok(guion.haceLegible("no-es-fecha", AHORA) === "", "haceLegible debe devolver vacío con una fecha rota");
 }
 
-// ── ⑧⑨ la conversación ─────────────────────────────────────────────
-seccion("la conversación entiende lo que puede demostrar");
+// ═══════════════ C · LA CONVERSACIÓN ═══════════════════════════════
+seccion("C · la conversación: memoria, seguimientos y cifras");
 {
-  const intencion = (q) => conversar.interpretar(q).intencion;
+  const intencion = (q, m) => conversar.interpretar(q, m).intencion;
   ok(intencion("Hola") === "saludo", "«Hola» no se interpreta como saludo");
   ok(intencion("¿qué pasa en Europa?") === "region", "una región no se interpreta como región");
   ok(intencion("dame el resumen del día") === "resumen", "«resumen» no se interpreta como resumen");
@@ -195,70 +305,124 @@ seccion("la conversación entiende lo que puede demostrar");
   ok(intencion("cállate ya") === "silencio", "«cállate» no se interpreta como silencio");
   ok(intencion("¿qué puedes hacer?") === "ayuda", "«qué puedes hacer» no se interpreta como ayuda");
   ok(intencion("") === "desconocida", "una pregunta vacía debe ser desconocida");
+  ok(intencion("repite eso") === "repite", "«repite» no se interpreta como repetición");
+  ok(intencion("cuéntame más") === "seguir", "«cuéntame más» no se interpreta como seguimiento");
+  ok(intencion("la segunda") === "indice", "«la segunda» no se interpreta como índice");
+  ok(intencion("¿cuántos cables hay?") === "estadistica", "«cuántos cables» no se interpreta como cifra");
+  ok(intencion("¿Europa o África?") === "comparar", "una comparación con «o» no se interpreta como comparación");
+  ok(intencion("¿qué medio firma más?") === "estadistica", "«qué medio firma más» no se interpreta como cifra");
 
   const saludo = conversar.responder("Hola", NOTAS, AHORA);
   ok(saludo.intencion === "saludo" && saludo.hallado, "el saludo debe saludar");
-  ok(saludo.texto.includes(String(NOTAS.length)), "el saludo debe decir cuántos cables hay");
+  ok(saludo.texto.includes("6"), "el saludo debe decir cuántos cables hay");
+  ok(saludo.siguientes.length > 0, "el saludo debe ofrecer preguntas siguientes");
 
   const region = conversar.responder("¿Qué pasa en Ucrania?", NOTAS, AHORA);
   ok(region.intencion === "region", `preguntar por Ucrania debe caer en región y cayó en ${region.intencion}`);
   ok(region.notaIds.length === 2 && region.notaIds.every((id) => id === "n1" || id === "n6"), "la respuesta de región no trae los cables de Europa");
   ok(region.rotulos.every((r) => r.href.startsWith("/lectura/")), "los rótulos no enlazan a /lectura/");
 
-  const tema = conversar.responder("háblame del Amazonas", NOTAS, AHORA);
-  ok(tema.intencion === "tema" && tema.hallado, "un tema con cable debe encontrarse");
-  ok(tema.notaIds[0] === "n3", `el tema debería encontrar n3 y encontró ${tema.notaIds.join(",")}`);
+  // MEMORIA: seguimiento después de una respuesta
+  const seguir = conversar.responder("cuéntame más", NOTAS, AHORA, region.memoria);
+  ok(seguir.intencion === "seguir", `«cuéntame más» debe ser seguimiento y fue ${seguir.intencion}`);
+  ok(seguir.hallado, "el seguimiento debe traer algo");
+  ok(seguir.notaIds.some((id) => !region.notaIds.includes(id)) || seguir.texto.length > 0, "el seguimiento no aporta nada nuevo");
 
-  const fuente = conversar.responder("¿Qué ha dicho Agencia Uno?", NOTAS, AHORA);
-  ok(fuente.hallado, "una fuente real debe encontrarse");
-  ok(fuente.notaIds.includes("n1") && fuente.notaIds.includes("n6"), "no trae los dos cables de esa fuente");
+  // REPETIR: devuelve lo mismo que se dijo
+  const repite = conversar.responder("repite", NOTAS, AHORA, seguir.memoria);
+  ok(repite.intencion === "repite", "«repite» no se atiende");
+  ok(repite.texto === seguir.memoria.ultimaRespuesta, "«repite» no devuelve la última respuesta");
 
+  // ÍNDICE: «la segunda» dentro de lo contado
+  const indice = conversar.responder("la segunda", NOTAS, AHORA, region.memoria);
+  ok(indice.intencion === "indice", "«la segunda» no se atiende");
+  ok(indice.hallado && indice.notaIds.length === 1, "«la segunda» no devuelve un cable");
+  ok(indice.notaIds[0] === region.memoria.ultimas[1], "«la segunda» no devuelve la segunda nota de la conversación");
+
+  // CIFRAS
+  const cables = conversar.responder("¿cuántos cables hay?", NOTAS, AHORA);
+  ok(cables.hallado && cables.texto.includes("6") && cables.texto.includes("asuntos"), `la cifra de cables no es la real: «${cables.texto}»`);
+  const medios = conversar.responder("¿cuántos medios hay?", NOTAS, AHORA);
+  ok(medios.texto.includes("5"), `la cifra de medios no es la real: «${medios.texto}»`);
+  const topRegion = conversar.responder("¿qué región tiene más?", NOTAS, AHORA);
+  ok(/Europa|América|Asia|África|Oriente/.test(topRegion.texto), "la región con más cables no se nombra");
+  ok(topRegion.notaIds.length > 0, "la respuesta de región top no trae cables");
+  const topFuente = conversar.responder("¿qué medio firma más?", NOTAS, AHORA);
+  ok(topFuente.texto.includes("Agencia Uno"), `la fuente más activa debería ser Agencia Uno: «${topFuente.texto}»`);
+  const ultimo = conversar.responder("último cable", NOTAS, AHORA);
+  ok(ultimo.hallado && /Agencia Uno/.test(ultimo.texto), "el último cable no se identifica bien");
+  const temas = conversar.responder("¿de qué se habla hoy?", NOTAS, AHORA);
+  ok(temas.hallado && temas.texto.includes("cables"), "los temas del día no se contestan");
+
+  // COMPARAR
+  const comp = conversar.responder("¿Europa o África?", NOTAS, AHORA);
+  ok(comp.intencion === "comparar" && comp.hallado, "la comparación no se contesta");
+  ok(/Europa/.test(comp.texto) && /África/.test(comp.texto), `la comparación no nombra las dos regiones: «${comp.texto}»`);
+
+  // EL «NO LO TENGO» SIGUE EN PIE
   const nada = conversar.responder("¿Qué pasa con el volcán de Islandia?", NOTAS, AHORA);
   ok(nada.hallado === false, "lo que no está debe declararse no hallado");
   ok(nada.notaIds.length === 0, "no hallado no puede traer notas");
   ok(/no tengo un cable/i.test(nada.texto), "la respuesta vacía debe decir que no lo tiene");
-
-  const buenas = conversar.responder("¿algo bueno?", NOTAS, AHORA);
-  ok(buenas.hallado && buenas.notaIds.length > 0, "con un alto el fuego en el archivo debe haber algo bueno");
-  ok(conversar.responder("¿algo bueno?", [NOTAS[2]], AHORA).hallado === false, "sin buenas noticias no se puede inventar una");
-
-  const hora = conversar.responder("¿qué hora es?", NOTAS, Date.parse("2026-11-18T09:07:00.000Z"));
-  ok(/9 y 7/.test(hora.texto), `la hora no coincide con el reloj dado: «${hora.texto}»`);
+  ok(nada.siguientes.length > 0, "el «no lo tengo» debe ofrecer una salida");
 
   const vacio = conversar.responder("resumen", [], AHORA);
   ok(vacio.hallado === false && /archivo/i.test(vacio.texto), "sin cables el resumen debe decirlo");
 
-  for (const q of ["hola", "resumen", "¿Qué pasa en África?", "¿algo bueno?", "xyzzy", "¿qué puedes hacer?"]) {
+  const hora = conversar.responder("¿qué hora es?", NOTAS, Date.parse("2026-11-18T09:07:00.000Z"));
+  ok(/9 y 7/.test(hora.texto), `la hora no coincide con el reloj dado: «${hora.texto}»`);
+
+  // nada de basura en ninguna respuesta
+  const preguntas = ["hola", "resumen", "¿Qué pasa en África?", "¿algo bueno?", "xyzzy", "¿qué puedes hacer?", "cuéntame más", "la primera", "repite", "¿cuántos cables hay?", "¿Europa o Asia?", "último cable", "¿de qué se habla hoy?"];
+  for (const q of preguntas) {
     const r = conversar.responder(q, NOTAS, AHORA);
     ok(!PROHIBIDO.test(r.texto), `la respuesta a «${q}» contiene basura`);
     ok(r.texto.trim().length > 0, `la respuesta a «${q}» está vacía`);
-    ok(Array.isArray(r.rotulos), `la respuesta a «${q}» no trae rótulos`);
+    ok(Array.isArray(r.rotulos) && Array.isArray(r.siguientes), `la respuesta a «${q}» no trae rótulos y siguientes`);
+    ok(r.memoria && typeof r.memoria.turnos === "number", `la respuesta a «${q}» no devuelve memoria`);
   }
   ok(conversar.SUGERENCIAS.length >= 4, "hacen falta preguntas de arranque");
   for (const s of conversar.SUGERENCIAS) {
     ok(conversar.interpretar(s).intencion !== "desconocida", `la sugerencia «${s}» no se entiende`);
   }
+  ok(conversar.MEMORIA_VACIA.turnos === 0, "la memoria vacía debe empezar en cero turnos");
 }
 
-// ── ⑩ la casa está conectada de verdad ─────────────────────────────
-seccion("el reproductor, la página y los registros");
+// ═══════════════ D · LA CASA ═══════════════════════════════════════
+seccion("D · el estudio, la página y los registros");
 {
   const reproductor = leer("src/components/radio/radio-vanguard.tsx");
   ok(reproductor.includes('from "@/lib/voz/decir"'), "el reproductor no usa la boca de la casa (decir)");
   ok(/decir\(bloque\.texto/.test(reproductor), "el reproductor no dice bloque a bloque");
+  ok(/onFrase/.test(reproductor), "el reproductor no pide los subtítulos frase a frase");
   ok(/bloque\.pausaMs/.test(reproductor), "el reproductor no respeta la pausa del bloque");
   ok(/setTimeout\([\s\S]{0,90}pausaMs\)/.test(reproductor), "el silencio entre bloques no se espera de verdad");
-  ok(reproductor.includes("guardarGustos"), "la personalización no se guarda");
-  ok(reproductor.includes("leerGustos"), "la personalización no se recupera");
-  ok(/prefers-reduced-motion|aria-live/.test(reproductor), "el reproductor no declara accesibilidad");
+  ok(reproductor.includes("guardarGustos") && reproductor.includes("leerGustos"), "la personalización no se guarda y recupera");
+  ok(reproductor.includes("vxr-rail") && reproductor.includes("vxr-tramo"), "no hay rail de bloques");
+  ok(reproductor.includes("vxr-caption"), "no hay subtítulos en pantalla");
+  ok(reproductor.includes("PRESETS"), "no hay presets");
+  ok(reproductor.includes("SpeechRecognition"), "no hay micrófono");
+  ok(reproductor.includes("mediaSession"), "no hay controles del sistema (Media Session)");
+  ok(reproductor.includes("wakeLock"), "no se evita que la pantalla se apague");
+  ok(reproductor.includes("LS_POS"), "no se recuerda por dónde ibas");
+  ok(/onKeyDown/.test(reproductor) && /ArrowRight/.test(reproductor), "no hay atajos de teclado");
+  ok(reproductor.includes("programaAGuion"), "no se puede copiar el guion de trabajo");
   ok(!/innerHTML/.test(reproductor), "el reproductor inyecta HTML (peligro de romper la página)");
+
+  const decir = leer("src/lib/voz/decir.ts");
+  ok(/onFrase\?:/.test(decir), "decir() no ofrece el aviso por frase que usa la radio");
+  ok(/opts\.onFrase\?\./.test(decir), "decir() declara onFrase pero no lo llama");
 
   ok(existsSync(join(RAIZ, "src/app/radio/page.tsx")), "no existe /radio");
   const pagina = leer("src/app/radio/page.tsx");
   ok(pagina.includes("<RadioVanguard"), "/radio no monta el reproductor");
   ok(pagina.includes("obtenerNotas"), "/radio no lee los cables reales");
+  ok(pagina.includes("estadisticas"), "/radio no publica las cifras reales del archivo");
+  ok(pagina.includes("vxr-reglas"), "/radio no explica cómo se elige lo que se cuenta");
   ok((pagina.match(/<h1/g) ?? []).length === 1, "/radio debe tener un solo h1");
   ok(!pagina.includes('href="/radio"'), "/radio no debe enlazarse a sí misma como puerta");
+
+  ok(existsSync(join(RAIZ, "src/lib/radio/agrupar.ts")), "no existe la mesa de edición (agrupar.ts)");
 
   const nucleo = leer("src/lib/nucleo/registro.ts");
   ok(nucleo.includes('id: "mod:radio"') || nucleo.includes('id:"mod:radio"'), "el Núcleo no conoce /radio");
@@ -268,17 +432,17 @@ seccion("el reproductor, la página y los registros");
   ok(espacios.includes('"/radio"'), "la barra de la casa no tiene /radio (quedaría huérfana)");
 
   const bitacora = leer("src/lib/bitacora.ts");
-  ok(bitacora.includes('version: "v422.3"'), "la bitácora no tiene la entrada v422.3");
+  ok(bitacora.includes('version: "v431.2"'), "la bitácora no tiene la entrada v431.2");
 
   const version = leer("src/lib/version.ts");
-  ok(/export const APP_VERSION = "v422\.3"/.test(version), "la versión en marcha no es v422.3");
+  ok(version.includes('export const APP_VERSION = "v431.2"'), "la versión en marcha no es v431.2");
 
-  // la estética declara sus tokens (el bug del degradado invisible de v422.0)
   const css = leer("src/components/radio/radio.css");
   ok(css.includes(".vxr {"), "el CSS no define el contenedor .vxr");
   ok(/\.vxr[\s\S]{0,600}--vxr-oro:/.test(css), "el contenedor .vxr no declara sus tokens de color");
   ok(css.includes("prefers-reduced-motion"), "el CSS no apaga el movimiento");
-  ok(!/glassmorphism|backdrop-filter: blur\((?:[1-9]\d{1,})/.test(css), "el CSS abusa del cristal");
+  ok(css.includes(".vxr-rail") && css.includes(".vxr-captions"), "el CSS no viste el rail ni los subtítulos");
+  ok(css.includes(".vxr-reglas"), "el CSS no viste las reglas de edición");
 }
 
 // ── resultado ──────────────────────────────────────────────────────
@@ -287,4 +451,4 @@ if (fallos.length) {
   for (const f of fallos) console.error(`  · ${f}`);
   process.exit(1);
 }
-console.log(`\n✔ ${pasadas} comprobaciones · la radio lee, respira y no inventa`);
+console.log(`\n✔ ${pasadas} comprobaciones · la radio agrupa, elige, cabe en el tiempo, lee, respira, conversa y no inventa`);

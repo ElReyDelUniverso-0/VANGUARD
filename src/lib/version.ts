@@ -6922,6 +6922,8 @@
 // viva con cuatro registros reales elegidos por día.
 // v422.2 VIDA · (de otro agente: la capa de identidad, el menú orbital y la
 // aurora detrás del contenido). Queda como versión anterior de la casa.
+// (anterior) export const APP_VERSION = "v422.3";
+// (anterior) export const APP_CODENAME = "RADIO VANGUARD";
 // (anterior) export const APP_VERSION = "v422.2";
 // (anterior) export const APP_CODENAME = "VIDA";
 // v422.3 RADIO VANGUARD — LA CASA EN VOZ ALTA. Encargo del Dueño: «una voz
@@ -6931,9 +6933,10 @@
 // un intérprete honesto de preguntas (lib/radio/conversar.ts) y un estudio
 // que encadena la boca de la casa bloque a bloque respetando el silencio
 // que cada bloque declara. No se reescribe /voz (v367.2): se suma.
-// (nota de serie: v422.2 lo tomó «VIDA» mientras esta sala se construía; por la
-// regla de la casa —comprobar origin/main antes de fijar versión y subir el
-// último dígito— RADIO VANGUARD sale como v422.3, no como v422.2.)
+// (nota de serie: RADIO VANGUARD salió como v422.3; mientras se construía la
+// segunda vuelta, otros agentes tomaron v422.2 «VIDA» y saltaron a v431.0 y
+// v431.1. Por la regla de la casa —comprobar origin/main antes de fijar
+// versión y subir el último dígito— esta entrega es v431.2, no v422.4.)
 // ═══════════════════════════════════════════════════════════════════════════
 // v431.0 · LA MENTE CON MANOS — orden del Dueño, textual: «mejora la IA de
 // Vanguard totalmente, hazla súper inteligente, que pueda crear cosas, que uno
@@ -6944,14 +6947,21 @@
 // o se descargan. Si el núcleo de lenguaje no responde, lo dice y pasa a MODO
 // CASA en vez de callarse o fingir.
 // ═══════════════════════════════════════════════════════════════════════════
-// (anterior) export const APP_VERSION = "v422.3";
-// (anterior) export const APP_CODENAME = "VIDA 2";
+// v431.2 RADIO VANGUARD · LA MESA DE EDICIÓN. Segunda vuelta de la misma
+// misión, sobre lo publicado en v422.3: los cables que cuentan lo mismo se
+// agrupan (lib/radio/agrupar.ts) y se dice cuántos medios lo firman; la
+// selección exige diversidad de región y fuente; el programa dura lo que se
+// le pida (2–15 min); la pantalla pone subtítulos de la frase que suena
+// (decir() avisa por frase), el rail de bloques permite saltar, y la charla
+// tiene memoria, seguimientos y cifras reales del archivo.
+// (anterior) export const APP_VERSION = "v431.1";
+// (anterior) export const APP_CODENAME = "VIDA 3";
 // (anterior) export const APP_VERSION = "v422.3";
 // (anterior) export const APP_CODENAME = "RADIO VANGUARD";
 // (anterior) export const APP_VERSION = "v431.0";
 // (anterior) export const APP_CODENAME = "LA MENTE CON MANOS";
-export const APP_VERSION = "v431.1";
-export const APP_CODENAME = "VIDA 3";
+export const APP_VERSION = "v431.2";
+export const APP_CODENAME = "RADIO VANGUARD";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";
