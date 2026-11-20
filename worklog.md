@@ -21,6 +21,7 @@
 - URL: https://vanguard-kq9r.vercel.app — `/worlds` responde 200 (235 KB) con los cinco mundos renderizados y cabecera **v422.0**.
 - Sitemap: `/worlds` indexado en `/sitemaps/mapas/sitemap.xml`; llms.txt y la constelación INTELIGENCIA (19 salas) lo anuncian; la portada muestra la pestaña «Mundos vivos». Todas las puertas linkeadas responden 200.
 
+
 ### v422.2 · MISIÓN 05 — VIDA (2026-11-19)
 - **Mandato**: «que Vanguard sea hermoso y dopamínico; el menú no se ve interactivo ni cambiado».
 - **Lo construido**: capa de identidad `src/app/vida.css` (paleta de cinco familias, Inter —ya descargada, cero bytes nuevos—, aurora de cuatro orbes, foco que sigue al puntero, cabecera y barra de pestañas animadas, tarjetas con borde de luz, cortina de arranque de 1,7 s una vez por sesión, aparición al desplazar) + cuatro componentes cliente nuevos `components/vida/{aurora,cortina,orbita,para-ti}` + el motor `lib/vida/algoritmo.ts`.
@@ -30,3 +31,14 @@
 - **Pruebas**: `node scripts/pruebas-vida.mjs` → **20 pasan · 0 fallan** (determinismo, saturación, olvido simétrico, afinidad, almacén corrupto, formato zustand de `vg171-favoritos`, tonos estables, razones siempre legibles). Una prueba falló y destapó un fallo real del modelo (lo visto hace un mes seguía castigado): se corrigió el modelo, no la prueba.
 - **Accesibilidad**: respeta los tres niveles de `data-vg-anim` y `prefers-reduced-motion`; la aurora solo anima `transform`/`opacity`; la cortina no se gasta en pestaña oculta (prefetch).
 - **Documentación**: `docs/VIDA.md`.
+
+
+### Corrección de render · MISIÓN 04 (v422.0 · 2026-11-19)
+- **Diagnóstico** (audit headless con Puppeteer/Chromium + WebGL angle/swiftshader): `/worlds` no tiene errores JS ni parpadeo; el globo y los rails renderizan. El defecto real era geometría: el botón «Capas» flotante estaba `position: absolute` sin antecesor posicionado, por lo que se anclaba al **viewport** (y=12) mientras el escenario está en y=783 — una «mache» visible. Auditoría de geometría: sin overflow horizontal, sin etiquetas duplicadas, sin parpadeo.
+- **Correcciones** en `marco-worlds.tsx` y `worlds.css`:
+  - Botón «Capas» movido **dentro** de `.vx-worlds-escenario` (que es `position: relative`) — ahora se ancla al escenario, no al viewport.
+  - Se eliminan `countryAltitude` y `bordes` del `GlobeMap3D` (props que la casa no usa en `CentroMapas` y que producen artefactos de render) y se pasa `dimColor` de la casa.
+  - Zoom por escalera (ladder de altitudes igual al `CentroMapas`) en lugar de altitudes fijas 1.9/0.6; `motionReducido` en `useEffect`.
+  - `.vx-worlds` y el escenario refuerzan `min-width: 0` para evitar overflow; rails de mundos colapsados por defecto en móvil (≤900px).
+- **Verificación**: tsc limpio en los archivos tocados; redeploy a Vercel (production con más memoria) y re-audito headless para confirmar que el flotante se ancla al escenario.
+

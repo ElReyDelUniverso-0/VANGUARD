@@ -92,11 +92,22 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
   const [vuelo, setVuelo] = useState<{ lat: number; lng: number; altitude: number; nonce: number } | null>(null);
   const nonceZoom = useRef(0);
   const [zoom, setZoom] = useState<{ altitude: number; nonce: number } | null>(null);
+  // escalera de altitudes: el mismo ladder del Centro de Mapas
+  const ALTURAS = [2.4, 2.0, 1.6, 1.3, 1.0, 0.8, 0.65, 0.5] as const;
+  const [indiceAltura, setIndiceAltura] = useState(3);
 
-  const reducido = useMemo(() => motionReducido(), []);
+  const [reducido, setReducido] = useState(false);
 
   useEffect(() => {
     setWebgl(usoWebgl());
+    setReducido(motionReducido());
+  }, []);
+
+  // móvil: los rails empiezan colapsados (la pantalla no los soporta todos)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth <= 900) {
+      setAbiertas((a) => ({ ...a, zones: false }));
+    }
   }, []);
 
   // ESC vuelve un paso: lugar → zona → mundo.
@@ -226,8 +237,7 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
             zoom={zoom}
             countryColors={capa && Object.keys(capa.colores).length > 0 ? capa.colores : null}
             countryValores={capa && Object.keys(capa.valores).length > 0 ? capa.valores : null}
-            countryAltitude={capa?.tipo === "coropleta" ? 0.012 : 0}
-            bordes={capa?.tipo !== "textura"}
+            dimColor={capa?.tipo === "textura" ? "rgba(255,255,255,0.02)" : "rgba(148,163,205,0.10)"}
             ariaLabel={t("worlds.ariaGlobo")}
           />
         ) : (
@@ -244,14 +254,26 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
           />
         )}
 
+        {/* ── BOTON CAPAS (flotante, dentro del escenario) ────────── */}
+        <button
+          type="button"
+          className={`vx-worlds-flotante ${abiertas.layers ? "vx-worlds-flotante-on" : ""}`}
+          onClick={() => setAbiertas((a) => ({ ...a, layers: !a.layers }))}
+          aria-pressed={abiertas.layers}
+        >
+          {t("worlds.capas")}
+        </button>
+
         {/* ── MANDADEROS DEL ESCENERIO ────────────────────────────── */}
         <div className="vx-worlds-mandatos">
           <button
             type="button"
             className="vx-worlds-boton"
             onClick={() => {
+              const i = Math.max(0, indiceAltura - 1);
+              setIndiceAltura(i);
               nonceZoom.current += 1;
-              setZoom({ altitude: 1.9, nonce: nonceZoom.current });
+              setZoom({ altitude: ALTURAS[i], nonce: nonceZoom.current });
             }}
             aria-label={t("worlds.acercar")}
           >
@@ -261,8 +283,10 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
             type="button"
             className="vx-worlds-boton"
             onClick={() => {
+              const i = Math.min(ALTURAS.length - 1, indiceAltura + 1);
+              setIndiceAltura(i);
               nonceZoom.current += 1;
-              setZoom({ altitude: 0.6, nonce: nonceZoom.current });
+              setZoom({ altitude: ALTURAS[i], nonce: nonceZoom.current });
             }}
             aria-label={t("worlds.alejar")}
           >
@@ -454,15 +478,6 @@ export function MarcoWorlds({ payload }: MarcoWorldsProps) {
         )}
       </AnimatePresence>
 
-      {/* ── BOTON CAPAS (flotante) ────────────────────────────────── */}
-      <button
-        type="button"
-        className={`vx-worlds-flotante ${abiertas.layers ? "vx-worlds-flotante-on" : ""}`}
-        onClick={() => setAbiertas((a) => ({ ...a, layers: !a.layers, zones: a.zones }))}
-        aria-pressed={abiertas.layers}
-      >
-        {t("worlds.capas")}
-      </button>
     </div>
   );
 }
