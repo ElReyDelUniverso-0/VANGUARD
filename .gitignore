@@ -86,3 +86,7 @@ db/*.backup-*
 # es redundancia de 5 MB). tmp/ es scratch: lo ya trackeado queda, lo nuevo no entra.
 media/rescate-db-*/
 tmp/
+
+# v421.0 · artefactos del panel (se regeneran con scripts/seo-panel.mjs, no se versionan)
+censo-seo.json
+panel-seo.html
