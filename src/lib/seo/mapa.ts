@@ -33,6 +33,12 @@ import { CATALOGO_INFRA } from "@/lib/infraestructura/catalogo";
 // v421.0 LAS FICHAS DE DATOS DE CADA PAÍS — el catálogo del Banco Mundial ya
 // dice qué países tienen hoja de datos; el mapa no inventa ni uno.
 import { catalogoPaises } from "@/lib/mundial/banco";
+// v421.7 — EL TEMARIO TAMBIÉN ES CONTENIDO: 10 cursos y 21 lecciones con
+// texto propio, título único y URL que responde 200 (medido el 2026-11-20).
+// Estaban enlazados desde /academia/cursos y no se anunciaban en ninguna parte:
+// Google solo podía llegar por un enlace. Se enumeran del MISMO catálogo que
+// usa la página, así que un curso nuevo entra solo.
+import { CURSOS_ACADEMIA } from "@/lib/academia/datos-cursos";
 
 // v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
 // «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
@@ -795,6 +801,21 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
+    // v421.7 — cada curso y cada lección con su propia puerta
+    ...CURSOS_ACADEMIA.flatMap((c) => [
+      {
+        url: `${SITE_URL}/academia/cursos/${c.slug}`,
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      },
+      ...c.capitulos.flatMap((cap) =>
+        cap.lecciones.map((lec) => ({
+          url: `${SITE_URL}/academia/cursos/${c.slug}/${cap.id}/${lec.id}`,
+          changeFrequency: "monthly" as const,
+          priority: 0.6,
+        })),
+      ),
+    ]),
     ...teatros,
     ...noticias,
     ...paisesDatos,
