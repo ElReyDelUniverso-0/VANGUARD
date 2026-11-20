@@ -169,6 +169,11 @@ export function validarAfirmaciones(
   };
 }
 
+/** «1 cita» / «2 citas»: el plural de una frase que presume de exacta. */
+function plural(n: number, uno: string, varios: string): string {
+  return `${n} ${n === 1 ? uno : varios}`;
+}
+
 /** De los números de la validación a una frase que no adorne nada. */
 export function auditarCitas(
   v: {
@@ -182,12 +187,14 @@ export function auditarCitas(
   citasDisponibles: number
 ): AuditoriaCitas {
   const publicables = v.afirmaciones.length;
-  const partes: string[] = [`${v.presentadas} afirmaciones presentadas → ${publicables} publicables`];
-  if (v.descartadasTexto) partes.push(`${v.descartadasTexto} vacías o demasiado cortas`);
+  const partes: string[] = [
+    `${plural(v.presentadas, "afirmación presentada", "afirmaciones presentadas")} → ${plural(publicables, "publicable", "publicables")}`,
+  ];
+  if (v.descartadasTexto) partes.push(`${v.descartadasTexto} ${v.descartadasTexto === 1 ? "vacía o demasiado corta" : "vacías o demasiado cortas"}`);
   if (v.descartadasTope) partes.push(`${v.descartadasTope} fuera por el tope de 10`);
-  if (v.degradadas) partes.push(`${v.degradadas} degradada(s) a NO CONFIRMADO por no citar una fuente del material`);
-  if (v.invalidas) partes.push(`${v.invalidas} cita(s) rechazada(s) por no existir en el material`);
-  partes.push(`${citasDisponibles} citas disponibles en el material`);
+  if (v.degradadas) partes.push(`${plural(v.degradadas, "degradada", "degradadas")} a NO CONFIRMADO por no citar una fuente del material`);
+  if (v.invalidas) partes.push(`${plural(v.invalidas, "cita rechazada", "citas rechazadas")} por no existir en el material`);
+  partes.push(`${plural(citasDisponibles, "cita disponible", "citas disponibles")} en el material`);
   return {
     presentadas: v.presentadas,
     publicables,
@@ -321,8 +328,8 @@ export async function investigar(enc: EncargoInvestigacion): Promise<Investigaci
       citasRechazadas: 0,
       nota:
         motor === "llm"
-          ? `El modelo no devolvió afirmaciones publicables: 0 de ${n} · ${mapa.size} citas disponibles en el material`
-          : `${n} afirmaciones extractivas (citas literales, sin redacción de modelo): no hay citas que validar · ${mapa.size} citas disponibles en el material`,
+          ? `El modelo no devolvió afirmaciones publicables: 0 de ${n} · ${plural(mapa.size, "cita disponible", "citas disponibles")} en el material`
+          : `${plural(n, "afirmación extractiva", "afirmaciones extractivas")} (citas literales, sin redacción de modelo): no hay citas que validar · ${plural(mapa.size, "cita disponible", "citas disponibles")} en el material`,
     };
   }
 

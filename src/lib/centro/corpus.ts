@@ -302,12 +302,19 @@ export function buscarFuentes(
   return buscarConPoda(pregunta, opts).candidatas;
 }
 
+/** «1 fuente» / «2 fuentes»: una frase que cuenta no puede decir «1 fuentes». */
+function nFuentes(n: number): string {
+  return `${n} ${n === 1 ? "fuente" : "fuentes"}`;
+}
+
 /** La poda en una frase, para el aviso que ve el operador. */
 export function fraseDePoda(p: PodaCandidatas): string {
   if (!p.relevantes) {
-    return `Se examinaron ${p.examinadas} fuentes de la casa y ninguna llega al umbral (${p.umbral}).`;
+    return p.examinadas === 0
+      ? "No hay fuentes que examinar en las vías elegidas."
+      : `Se examinaron ${nFuentes(p.examinadas)} de la casa y ninguna llega al umbral (${p.umbral}).`;
   }
-  const partes = [`Se usaron ${p.devueltas} de ${p.relevantes} fuentes que hablan del asunto`];
+  const partes = [`Se usaron ${p.devueltas} de ${nFuentes(p.relevantes)} que hablan del asunto`];
   if (p.porTope) partes.push(`${p.porTope} quedaron fuera por puntuación, no por falta de datos`);
   if (p.fueraDeVias) partes.push(`${p.fueraDeVias} no se examinaron por las vías elegidas`);
   if (p.bajoUmbral) partes.push(`${p.bajoUmbral} no mencionan el asunto`);
