@@ -96,15 +96,24 @@ const POR_CLAVE = new Map(CATALOGO.map((p) => [p.clave, p]));
 
 export const piezaDe = (clave: string): PiezaCatalogo | undefined => POR_CLAVE.get(clave);
 
-/** Lo que trae un espacio recién creado: seis puertas, todas reales. */
-export const CLAVES_INICIALES: string[] = [
-  "modulo:conflictos",
-  "modulo:mapa",
-  "modulo:noticias",
-  "sala:/guerra-hoy",
-  "herramienta:espacio-trabajo",
-  "herramienta:perfil-mio",
-].filter((c) => POR_CLAVE.has(c));
+/**
+ * Lo que trae un espacio recién creado.
+ * v421.8.1 — se eligen por RUTA, no por clave: el catálogo deduplica por href,
+ * así que escribir claves a mano dejaba el espacio de arranque con dos piezas
+ * de seis (medido). Una ruta sólo puede tener un dueño, y aquí se pide ese.
+ */
+const ARRANQUE = ["/guerra-hoy", "/conflictos", "/mapas", "/conocimiento", "/investigacion", "/espacio"];
+
+export const CLAVES_INICIALES: string[] = (() => {
+  const porRuta = new Map(CATALOGO.map((p) => [p.href, p.clave]));
+  const elegidas = ARRANQUE.map((h) => porRuta.get(h)).filter((c): c is string => !!c);
+  // si algún día la casa renombra esas rutas, el arranque sigue teniendo contenido
+  for (const p of CATALOGO) {
+    if (elegidas.length >= 6) break;
+    if (!elegidas.includes(p.clave)) elegidas.push(p.clave);
+  }
+  return elegidas.slice(0, 6);
+})();
 
 /** Buscador de la paleta: nombre, grupo o descripción. */
 export function buscar(consulta: string): PiezaCatalogo[] {
