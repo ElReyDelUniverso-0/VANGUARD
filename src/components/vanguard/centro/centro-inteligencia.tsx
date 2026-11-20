@@ -537,11 +537,22 @@ export default function CentroInteligencia({
             >
               {poda ? (
                 <p className="mb-2 border-l-2 border-amber/60 pl-2 font-mono text-[11.5px] leading-snug text-muted-foreground">
-                  Se usaron <b className="text-foreground">{poda.devueltas}</b> de{" "}
-                  <b className="text-foreground">{poda.relevantes}</b> fuentes que hablan del asunto
-                  {poda.porTope ? `; ${poda.porTope} quedaron fuera por puntuación, no por falta de datos` : ""}
-                  {poda.bajoUmbral ? `; ${poda.bajoUmbral} de las ${poda.examinadas} examinadas no mencionan el asunto` : ""}
-                  {poda.fueraDeVias ? `; ${poda.fueraDeVias} no se examinaron por las vías elegidas` : ""}.
+                  {poda.relevantes === 0 ? (
+                    <>
+                      Se examinaron <b className="text-foreground">{poda.examinadas}</b> fuentes de la casa y{" "}
+                      <b className="text-foreground">ninguna</b> menciona el asunto: lo de abajo viene del feed vivo
+                      del núcleo, no de un dossier.
+                      {poda.fueraDeVias ? ` (${poda.fueraDeVias} fuentes quedaron fuera por las vías elegidas.)` : ""}
+                    </>
+                  ) : (
+                    <>
+                      Se usaron <b className="text-foreground">{poda.devueltas}</b> de{" "}
+                      <b className="text-foreground">{poda.relevantes}</b> fuentes que hablan del asunto
+                      {poda.porTope ? `; ${poda.porTope} quedaron fuera por puntuación, no por falta de datos` : ""}
+                      {poda.bajoUmbral ? `; ${poda.bajoUmbral} de las ${poda.examinadas} examinadas no mencionan el asunto` : ""}
+                      {poda.fueraDeVias ? `; ${poda.fueraDeVias} no se examinaron por las vías elegidas` : ""}.
+                    </>
+                  )}
                 </p>
               ) : null}
               <div className="space-y-2">
