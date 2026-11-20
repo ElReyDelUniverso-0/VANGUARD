@@ -4,12 +4,16 @@ import { COLECCIONES_MEMORIA, PERIODOS } from "@/lib/memoria/colecciones";
 import { rutasConocimiento } from "@/lib/conocimiento/indice";
 import { rutasLingua } from "@/lib/lingua/servidor"; // v420.0
 import { rutasEnciclopedia, ULTIMA_REVISION as ULTIMA_REVISION_ENCICLOPEDIA } from "@/lib/enciclopedia/indice"; // v417.0
+import { rutasCiencia, CAPTURA as CAPTURA_CIENCIA } from "@/lib/ciencia/indice"; // v421.9
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
 import { MODULOS, SALAS_INTERNAS } from "@/components/portada/modulos";
 import { MODELOS } from "@/lib/labs/registro"; // v411.0: los quince laboratorios
 import { TEMAS_INVESTIGACION } from "@/lib/investigacion"; // v412.0: los diez dossiers de investigación sistémica
+// v421.8 MISIÓN 09 · CENTRO DE RESILIENCIA CIVIL — el índice y los países con ficha
+import { seccionesOrdenadas } from "@/lib/resiliencia/secciones";
+import { PAISES_CON_RECURSOS } from "@/lib/resiliencia/organismos";
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -322,6 +326,18 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
       // país y sus noticias. Indexable para las búsquedas de geografía,
       // mapas y datos por país.
       url: `${SITE_URL}/mapas`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      // v422.0 VANGUARD WORLDS — cinco mundos explorables como zonas
+      // geográficas reales (América, Europa, África, Asia, Oceanía) con
+      // lugares documentados y sus experiencias de Vanguard (ficha, atlas,
+      // obra, historia, datos, ciencia). Tres vistas (Mundo → Zona → Lugar),
+      // capas del Centro de Mapas y alternativa 2D. Indexable para búsquedas
+      // de mundos, geografía explorable y experiencias por lugar.
+      url: `${SITE_URL}/worlds`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
@@ -741,15 +757,35 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
     // cinco páginas responden 200, NO llevan noindex y NO estaban en el mapa.
     // Google solo podía llegar a ellas por un enlace interno; ninguna se
     // anunciaba. Se añaden aquí, no en un segundo sitio.
-    // v421.8 — MY UNIVERSE entra al mapa: es una sala pública con portada y
-    // texto propios (no una pantalla en blanco) y su contenido personal vive en
-    // el navegador, así que para Google es una página de producto más. La
-    // auditoría de cobertura (scripts/auditoria-cobertura-sitemap.mjs) la
-    // marcaba como hueco real: 200, indexable y sin URL anunciada.
-    ...["/datos", "/tierra", "/sistema", "/inteligencia", "/navegacion", "/mi-universo"].map((r) => ({
+    ...["/datos", "/tierra", "/sistema", "/inteligencia", "/navegacion"].map((r) => ({
       url: `${SITE_URL}${r}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    })),
+    // v421.8 EL CENTRO DE RESILIENCIA CIVIL — quince puertas: el centro, las
+    // catorce secciones derivadas del propio registro (una sección nueva entra
+    // sola al mapa) y la herramienta de evaluación. Las fichas de país entran
+    // solo si tienen datos verificados: los otros 224 territorios responden
+    // 404 y, por la ley del mapa, no se anuncian.
+    {
+      url: `${SITE_URL}/resiliencia`,
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
+    },
+    {
+      url: `${SITE_URL}/resiliencia/evaluacion`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    ...seccionesOrdenadas().map((s) => ({
+      url: `${SITE_URL}/resiliencia/${s.id}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...PAISES_CON_RECURSOS.map((iso) => ({
+      url: `${SITE_URL}/resiliencia/recursos/${iso}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
   ];
 
@@ -828,6 +864,12 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}${r}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    ...rutasCiencia().map((r) => ({
+      url: `${SITE_URL}${r}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+      lastModified: CAPTURA_CIENCIA,
     })),
     ...rutasEnciclopedia().map((r) => ({
       url: `${SITE_URL}${r}`,

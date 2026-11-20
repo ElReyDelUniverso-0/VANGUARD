@@ -125,6 +125,13 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
       "Catálogo mundial de obras de infraestructura civil documentadas en fuentes públicas: aeropuertos, puertos, ferrocarril, puentes, túneles, centrales, presas, agua, educación, sanitaria y edificios emblemáticos. Cada obra con sus nueve campos, su fecha conocida, sus características, su fuente y su estado de verificación. Información pública y apropiada: nada de vulnerabilidades ni detalles operativos.",
     publica_tipo: "documento",
   },
+  {
+    id: "fnt:mundos-vivos",
+    nombre: "Mundos vivos de Vanguard",
+    descripcion:
+      "Los mundos explorables de Vanguard: cinco zonas geográficas reales (América, Europa, África, Asia, Oceanía) con lugares documentados (coordinadas reales) y sus experiencias de la casa —fichas de país, atlas, obras documentadas, historia, datos y ciencia. Todo el contenido linkeado es puerta existente de Vanguard; no hay datos inventados.",
+    publica_tipo: "documento",
+  },
 ];
 
 /** ── PRIVADAS: existen, se declaran, JAMÁS se buscan ── */

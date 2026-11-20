@@ -69,6 +69,7 @@ export const SECCIONES: Seccion[] = [
     id: "mapas",
     titulo: "Mapas 3D, geografía y salas",
     prefijos: [
+      "/worlds",
       "/mapas",
       "/atlas",
       "/teatro-3d",

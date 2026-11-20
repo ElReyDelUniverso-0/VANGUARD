@@ -58,6 +58,9 @@ export const MODULOS: Modulo[] = [
       // v405.10: el centro de mapas (v405.9) entra donde le toca — el módulo del
       // mapa. No crea módulo nuevo ni sustituye a nadie: es una pestaña más.
       { href: "/mapas", label: "Centro de mapas", img: "/ilustraciones/planeta.jpg", txt: "Ocho capas geográficas sobre un solo globo: mundial, político, físico, económico, demográfico, temático, histórico y de acontecimientos." },
+      // v422.0 VANGUARD WORLDS — cinco mundos explorables como zonas reales,
+      // con sus lugares y las experiencias de Vanguard que cada uno enlaza
+      { href: "/worlds", label: "Mundos vivos", img: "/ilustraciones/planeta.jpg", txt: "Cinco mundos explorables —América, Europa, África, Asia y Oceanía— con lugares reales y sus experiencias: ficha, atlas, obra, historia, datos y ciencia. Tres vistas, capas conmutables y alternativa 2D." },
       { href: "/mundo", label: "Globo vivo", img: "/ilustraciones/mundo.jpg", txt: "El globo 3D con los teatros encendidos y sus cables." },
       { href: "/ver-guerra", label: "Frente en directo", img: "/ilustraciones/frente.jpg", txt: "El frente en directo: despachos reales y el parque militar." },
       { href: "/zona-cero", label: "Teatro global", img: "/ilustraciones/warsim.jpg", txt: "La mesa de guerra mundial con teatros y unidades." },

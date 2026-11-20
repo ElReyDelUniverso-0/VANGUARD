@@ -6911,8 +6911,8 @@
 //    portada, espacios de trabajo, sitemap, llms.txt, catálogo de la API y
 //    departamento de arquitectura. 1.237 comprobaciones propias
 //    (tools/ciencia/comprobar.mjs).
-export const APP_VERSION = "v421.9";
-export const APP_CODENAME = "VANGUARD SCIENCE FRONTIER";
+export const APP_VERSION = "v422.0";
+export const APP_CODENAME = "VANGUARD WORLDS";
 // (anterior) export const APP_VERSION = "v418.2";
 // (anterior) export const APP_CODENAME = "EL ARO DE CONTROL";
 // (anterior) export const APP_VERSION = "v418.1";

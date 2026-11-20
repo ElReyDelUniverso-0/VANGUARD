@@ -153,6 +153,11 @@ export const CONSTELACIONES: Constelacion[] = [
         "corto": "MAPA"
       },
       {
+        "clave": "worlds",
+        "nombre": "VANGUARD WORLDS (cinco mundos explorables como zonas geográficas reales: América, Europa, África, Asia y Oceanía, con lugares reales y sus experiencias de Vanguard)",
+        "corto": "WORLD"
+      },
+      {
         "clave": "canales",
         "nombre": "Canales OSINT en vivo",
         "corto": "CANALES"

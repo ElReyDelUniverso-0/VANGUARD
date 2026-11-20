@@ -90,6 +90,20 @@ export const BITACORA: EntradaBitacora[] = [
     tipo: "ia",
   },
   {
+    version: "v422.0",
+    nombre: "VANGUARD WORLDS",
+    tipo: "mundo",
+    hitos: [
+      "VANGUARD WORLDS: cinco mundos explorables como zonas geográficas reales (América, Europa, África, Asia, Oceanía), no un globo giratorio con marcadores.",
+      "38 lugares de verdad (lat/lng reales) en 20+ países; cada lugar linkea a experiencias existentes de Vanguard: ficha de país, atlas, obra documentada, historia, datos, ciencia, academia. Nada ficticio.",
+      "Tres vistas con transiciones: Mundo → Zona → Lugar; ESC vuelve un paso; buscador vuela al lugar; rails de mundos y lugares.",
+      "Capas conmutables que REUTILIZAN las ocho declaraciones del Centro de Mapas — el mismo globo, la misma fuente, cero mapas duplicados.",
+      "Alternativa 2D dibujada en código (SVG) cuando no hay WebGL o el visitante lo pide; LOD por zona; detección de prefers-reduced-motion.",
+      "Componente de globo reaprovechado (GlobeMap3D) sin una sola biblioteca nueva: globe.gl y three.js ya eran de la casa.",
+      "i18n completo (ES + 7 idiomas, 24 claves nuevas), registro del módulo, sección sitemap y versão v422.0 · VANGUARD WORLDS.",
+    ],
+  },
+  {
     version: "v421.9",
     nombre: "VANGUARD SCIENCE FRONTIER",
     tipo: "tecno",

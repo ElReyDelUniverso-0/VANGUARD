@@ -1105,6 +1105,28 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["mod:mundos", "fnt:indicadores", "fnt:atlas"],
     alias: "comparar comparador paises versus vs frente a frente cara a cara pib poblacion renta esperanza de vida diferencias",
   },
+  // ── v422.0 VANGUARD WORLDS · AGENTE 04 ──────────────────────────────
+  // Cinco mundos explorables como zonas geográficas reales (América,
+  // Europa, África, Asia, Oceanía) con lugares de verdad (lat/lng reales)
+  // y experiencias que linkean a puertas existentes de la casa: ficha de
+  // país, atlas, obra documentada, historia, datos, ciencia, academia.
+  // Tres vistas (Mundo → Zona → Lugar), capas conmutables reutilizando
+  // las declaraciones del Centro de Mapas, buscador con vuelo, y
+  // alternativa 2D dibujada en código cuando no hay WebGL. El sexto
+  // mundo es una declaración más en src/lib/mundos-vivos/zonas.ts.
+  {
+    id: "mod:worlds",
+    nombre: "VANGUARD WORLDS",
+    lema: "Cinco mundos explorables, un planeta vivo",
+    descripcion:
+      "Cinco mundos explorables como zonas reales: América, Europa, África, Asia y Oceanía, con lugares reales y sus experiencias documentadas de Vanguard (ficha, atlas, obra, historia, datos, ciencia). Navega Mundo → Zona → Lugar, conmutable entre capas del Centro de Mapas y con alternativa 2D sin WebGL. Nada ficticio: todo el contenido linkeado es una puerta existente de la casa. v422.0, departamento de mundos vivos.",
+    categoria: "MUNDO",
+    ruta: "/worlds",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:mundos-vivos", "mod:mapas", "mod:infraestructura"],
+    alias: "mundo vivo mundos explorables zonas geografia america europa africa asia oceania lugares explorable 3d 2d plano capas",
+  },
   // ── v420.3 EL ATLAS DE INFRAESTRUCTURA · MISIÓN 03 ────────────────────
   // Catálogo mundial de infraestructura civil: cuatro piezas (el atlas, el
   // catálogo de grandes obras, el explorador temático y la ficha de obra).
