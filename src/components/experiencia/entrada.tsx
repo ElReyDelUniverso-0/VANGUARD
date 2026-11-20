@@ -51,16 +51,6 @@ const CINTA: { href: string; nombre: string }[] = [
   { href: "/divisas", nombre: "Divisas" },
 ];
 
-/** Posición de cada punto en el globo (porcentajes). Orden = frentes reales. */
-const PUNTOS = [
-  { x: 58, y: 34 },
-  { x: 55, y: 47 },
-  { x: 60, y: 44 },
-  { x: 63, y: 52 },
-  { x: 41, y: 58 },
-  { x: 30, y: 43 },
-];
-
 export function Entrada({
   cables,
   frentes,
@@ -75,26 +65,13 @@ export function Entrada({
 
   return (
     <section className="vxe-ent" aria-labelledby="vxe-ent-titulo">
-      {/* ── el fondo: aurora, globo de alambre y grano. Todo CSS. ── */}
+      {/* ── el fondo: la Tierra de noche (imagen propia, /portada/entrada-mundo.jpg),
+             la aurora y el grano. Sin vídeo y sin recursos externos: si la imagen
+             no estuviera, quedan los degradados y no se pierde nada. ── */}
       <div className="vxe-ent-fondo" aria-hidden>
+        <span className="vxe-ent-tierra" />
         <span className="vxe-ent-aurora vxe-ent-a1" />
         <span className="vxe-ent-aurora vxe-ent-a2" />
-        <div className="vxe-ent-globo">
-          <span className="vxe-ent-meridiano vxe-ent-m1" />
-          <span className="vxe-ent-meridiano vxe-ent-m2" />
-          <span className="vxe-ent-meridiano vxe-ent-m3" />
-          <span className="vxe-ent-paralelo vxe-ent-p1" />
-          <span className="vxe-ent-paralelo vxe-ent-p2" />
-          <span className="vxe-ent-paralelo vxe-ent-p3" />
-          {top.map((f, i) => (
-            <span
-              key={f.key}
-              className="vxe-ent-foco"
-              style={{ ["--x" as string]: `${PUNTOS[i % PUNTOS.length].x}%`, ["--y" as string]: `${PUNTOS[i % PUNTOS.length].y}%` }}
-              title={`${f.nombre}: ${f.n} cables`}
-            />
-          ))}
-        </div>
         <span className="vxe-ent-grano" />
       </div>
 

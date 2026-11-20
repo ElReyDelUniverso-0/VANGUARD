@@ -76,48 +76,28 @@
   animation: vxe-deriva 34s ease-in-out infinite alternate-reverse;
 }
 
-/* el globo: un círculo, tres meridianos y tres paralelos. Nada más. */
-.vxe-ent-globo {
+/* la Tierra de noche: la emoción viene de aquí, no de un degradado.
+   La máscara deja respirar el texto a la izquierda y hunde el borde derecho
+   en el negro, así no hay costura entre foto y página. */
+.vxe-ent-tierra {
   position: absolute;
-  top: 50%;
-  right: clamp(-140px, -6vw, 0px);
-  width: min(48vw, 560px);
-  aspect-ratio: 1;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  border: 1px solid rgba(34, 211, 238, 0.22);
-  background:
-    radial-gradient(circle at 34% 28%, rgba(34, 211, 238, 0.16), transparent 58%),
-    radial-gradient(circle at 70% 76%, rgba(232, 197, 106, 0.1), transparent 60%);
-  box-shadow: inset 0 0 90px rgba(34, 211, 238, 0.1), 0 0 90px rgba(0, 0, 0, 0.5);
-  opacity: 0.6;
-  animation: vxe-gira 140s linear infinite;
-}
-
-.vxe-ent-meridiano,
-.vxe-ent-paralelo {
-  position: absolute;
-  border: 1px solid rgba(147, 201, 224, 0.16);
-  border-radius: 50%;
   inset: 0;
+  background-image: url("/portada/entrada-mundo.jpg");
+  background-repeat: no-repeat;
+  background-position: 64% 42%;
+  background-size: cover;
+  opacity: 0.72;
+  -webkit-mask-image: linear-gradient(100deg, transparent 0%, rgba(0, 0, 0, 0.45) 26%, #000 62%);
+  mask-image: linear-gradient(100deg, transparent 0%, rgba(0, 0, 0, 0.45) 26%, #000 62%);
+  animation: vxe-respira 18s ease-in-out infinite;
 }
-.vxe-ent-m1 { transform: scaleX(0.34); }
-.vxe-ent-m2 { transform: scaleX(0.68); }
-.vxe-ent-m3 { transform: scaleX(0.92); }
-.vxe-ent-p1 { transform: scaleY(0.34); }
-.vxe-ent-p2 { transform: scaleY(0.68); }
-.vxe-ent-p3 { transform: scaleY(0.92); }
 
-.vxe-ent-foco {
+/* un velo tenue sobre la foto: legibilidad del texto, no oscurecer por oscurecer */
+.vxe-ent-tierra::after {
+  content: "";
   position: absolute;
-  left: var(--x, 50%);
-  top: var(--y, 50%);
-  width: 7px; height: 7px;
-  margin: -3.5px 0 0 -3.5px;
-  border-radius: 50%;
-  background: #ff5a5f;
-  box-shadow: 0 0 0 0 rgba(255, 90, 95, 0.65);
-  animation: vxe-latido 3.2s ease-out infinite;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 6, 12, 0.42), rgba(4, 6, 12, 0.62));
 }
 
 .vxe-ent-grano {
@@ -383,18 +363,16 @@
   from { transform: translate3d(0, 0, 0) scale(1); }
   to { transform: translate3d(-4vw, 3vw, 0) scale(1.12); }
 }
+@keyframes vxe-respira {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
 @keyframes vxe-tiende {
   from { transform: scaleX(0); opacity: 0; }
   to { transform: scaleX(1); opacity: 1; }
 }
 
 /* ── dónde cabe el globo y dónde estorba ── */
-@media (max-width: 1279px) {
-  .vxe-ent-globo { width: min(70vw, 460px); right: -16vw; opacity: 0.34; }
-}
-@media (max-width: 820px) {
-  .vxe-ent-globo { opacity: 0.22; right: -28vw; }
-}
 
 /* ─────────────────────────── 2 · EL ECOSISTEMA ──────────────────── */
 
@@ -790,9 +768,8 @@
   .vxe-ent-nombre,
   .vxe-ent-nombre::after,
   .vxe-ent-frentes,
-  .vxe-ent-globo,
+  .vxe-ent-tierra,
   .vxe-ent-aurora,
-  .vxe-ent-foco,
   .vxe-ent-punto,
   .vxe-ent-bajar span {
     animation: none !important;
@@ -816,7 +793,7 @@
   .vxe-ent-acciones { grid-template-columns: minmax(0, 1fr); }
   .vxe-puerta { padding: 12px 32px 12px 13px; }
   .vxe-ent-frentes-mas { margin-left: 0; }
-  .vxe-ent-globo { width: 88vw; right: -34vw; opacity: 0.16; }
+  .vxe-ent-tierra { background-position: 56% 40%; opacity: 0.5; }
   .vxe-btn { width: 100%; }
   .vxe-eje-puerta { grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding: 16px 16px; }
   .vxe-eje-entrar { grid-column: 2; padding-top: 2px; }
