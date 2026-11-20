@@ -27,20 +27,24 @@ const EXTRAS = [
   { id: "ecosistema", nombre: "El ecosistema", href: "/ecosistema" },
 ];
 
-type Entrada = { id: string; nombre: string; grupo: string; href: string; acento: string };
+type Entrada = { id: string; nombre: string; grupo: string; href: string; acento: string; codigo: string };
 
 const ENTRADAS: Entrada[] = [
+  // UNA sola numeración para toda la casa: M-01… los módulos, T-01… tu lado.
+  // Es el «todos los módulos en uno»: un solo cuerpo, un solo registro.
   ...MODULOS.map((m, i) => ({
     id: m.id,
     nombre: m.nombre,
-    grupo: "Módulos",
+    grupo: "Orden de batalla",
     href: m.nav,
     acento: PALETA[i % PALETA.length],
+    codigo: `M-${String(i + 1).padStart(2, "0")}`,
   })),
   ...EXTRAS.map((e, i) => ({
     ...e,
-    grupo: "Tu lado",
+    grupo: "Personal",
     acento: PALETA[(MODULOS.length + i) % PALETA.length],
+    codigo: `T-${String(i + 1).padStart(2, "0")}`,
   })),
 ];
 
@@ -172,7 +176,7 @@ export function Orbita() {
         >
           <div className="vida-orbita-cab">
             <p>
-              ¿A dónde vamos? <span aria-live="polite">{lista.length} puertas</span>
+              Terminal de mando <span aria-live="polite">{lista.length} puertas</span>
             </p>
             <input
               ref={busca}
@@ -188,7 +192,7 @@ export function Orbita() {
 
           {!q.trim() && vuelta.length > 0 && (
             <div className="vida-orbita-recientes">
-              <p>Seguir donde lo dejaste</p>
+              <p>Último contacto</p>
               {vuelta.map((r) => {
                 const e = POR_ID.get(r.id) ?? POR_ID.get(r.id.split("/")[0]);
                 if (!e) return null;
@@ -218,8 +222,8 @@ export function Orbita() {
                     }}
                     style={{ animationDelay: `${i * 18}ms` }}
                   >
-                    <span className="vida-orbita-punto" style={{ background: e.acento, boxShadow: `0 0 18px -4px ${e.acento}` }}>
-                      {e.nombre.charAt(0)}
+                    <span className="vida-orbita-punto" title={e.codigo}>
+                      {e.codigo}
                     </span>
                     <span>{e.nombre}</span>
                     <em>{estrellas.includes(e.id) ? "★" : e.href}</em>
@@ -234,7 +238,7 @@ export function Orbita() {
               <kbd className="vida-kbd">Esc</kbd> cierra · <kbd className="vida-kbd">↑↓</kbd> recorre
             </span>
             <span>
-              <kbd className="vida-kbd">/</kbd> abre · aprende de ti
+              <kbd className="vida-kbd">/</kbd> abre · registro activo
             </span>
           </div>
         </nav>
@@ -245,8 +249,8 @@ export function Orbita() {
         type="button"
         className="vida-orbita-boton"
         aria-expanded={abierto}
-        aria-label={abierto ? "Cerrar el menú de puertas" : "Abrir el menú de puertas"}
-        title={abierto ? "Cerrar (Esc)" : "Todas las puertas (o pulsa /)"}
+        aria-label={abierto ? "Cerrar la terminal de mando" : "Abrir la terminal de mando"}
+        title={abierto ? "Cerrar (Esc)" : "Terminal de mando (o pulsa /)"}
         onPointerMove={imantar}
         onPointerLeave={soltar}
         onClick={() => (abierto ? setAbierto(false) : abrir())}

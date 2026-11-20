@@ -75,3 +75,15 @@
 - **El barrido**: franja de luz al cambiar de sala (0,62 s, sin bloquear clics, se limpia sola, no en la primera carga).
 - **Pruebas**: `node scripts/pruebas-vida.mjs` → **35 pasan · 0 fallan** (7 nuevas).
 - **Verificado en producción**: marcas `vida-estrella`, `vida-carta-hace`, `vida-arranque`, `vida-orbita-recientes` y `vida-barrido` en la hoja servida; rutas 200; `/vanguard2` sin capas 2D.
+
+### v431.2 · MISIÓN 05 — OPERACIÓN (2026-11-19)
+- **Mandato**: «cambia toda la estética de Vanguard completamente: secreta, militar, de gobierno, seria… y sin piedad. Y todos los módulos, en uno solo».
+- **Repintado por tokens**: `operacion.css` reescribe `--vx-*` (fondo, cartón, líneas, texto, acento, **radio 0**) y `--vida-*`. La portada entera cambia sin tocar una hoja ajena.
+- **Fondo**: fuera la aurora de colores. Entra **retícula de sector** de 64 px, **barrido de radar** cada 9 s, grano documental y viñeta de sala oscura.
+- **Voz**: titulares en mayúsculas con **regla roja**, fechas y cifras en **mono**, etiquetas de expediente. Movimiento seco (`steps`), cero rebotes.
+- **Terminal de mando** (antes órbita): una sola numeración para toda la casa —**M-01…** los módulos, **T-01…** tu lado—, un solo cuerpo: es el «todos los módulos en uno».
+- **Expediente personal** (antes «Para ti»): «OPERADOR: …», foco rojo, fichas de ficha única con hover de barra roja (sin inclinación 3D ni neón).
+- **Protocolo de acceso** (antes cortina): «SISTEMA CLASIFICADO · ACCESO AUTORIZADO», línea roja de carga en 20 pasos.
+- **Sello de clasificación**: franja de peligro de 3 px arriba + «CONFIDENCIAL · SECTOR 05 · hh:mm:ssZ» en la esquina (oculto en móvil y en `/vanguard2`).
+- **Nuevo**: `src/app/operacion.css`, `src/components/operacion/clasificacion.tsx`, `docs/OPERACION.md`.
+- **Pruebas**: sin cambios en el motor → `node scripts/pruebas-vida.mjs` sigue en **35 pasan · 0 fallan**.

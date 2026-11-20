@@ -35,6 +35,9 @@ import "./movil.css";
 // v421.9 VIDA — capa de identidad (color, letra, luz y movimiento). Va la última
 // a propósito: a igual especificidad, gana; no usa !important contra nadie.
 import "./vida.css";
+// v431.2 OPERACIÓN — la última palabra estética: tokens de la casa, retícula de
+// sector, sellos de clasificación y terminal de mando. Va después de todo.
+import "./operacion.css";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
@@ -72,6 +75,7 @@ import { Progreso } from "@/components/vida/progreso";
 import { Aurora } from "@/components/vida/aurora";
 import { Cortina } from "@/components/vida/cortina";
 import { Orbita } from "@/components/vida/orbita";
+import { Clasificacion } from "@/components/operacion/clasificacion";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
@@ -981,6 +985,7 @@ try{
           </SoloCasa>
         </FueraDePortada>
         {/* v421.9 VIDA: el fondo respira, el arranque se siente, el menú orbita */}
+        <Clasificacion />
         <Progreso />
         <Aurora />
         <Cortina />

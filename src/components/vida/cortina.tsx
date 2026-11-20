@@ -58,7 +58,7 @@ export function Cortina() {
     <div className="vida-cortina" role="presentation" onClick={() => setVisible(false)}>
       <div className="vida-cortina-caja">
         <p className="vida-cortina-marca">VANGUARD</p>
-        <p className="vida-cortina-lema">El mundo, en tiempo real</p>
+        <p className="vida-cortina-lema">Sistema clasificado · acceso autorizado</p>
         <ul className="vida-cortina-mods" aria-hidden="true">
           {eco.map((n, i) => (
             <li key={n} style={{ animationDelay: `${440 + i * 110}ms` }}>
@@ -67,7 +67,7 @@ export function Cortina() {
           ))}
         </ul>
         <div className="vida-cortina-linea" />
-        <p className="vida-cortina-salta">Toca para entrar</p>
+        <p className="vida-cortina-salta">Pulsa para entrar · protocolo 05</p>
       </div>
     </div>
   );

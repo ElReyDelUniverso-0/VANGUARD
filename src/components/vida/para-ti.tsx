@@ -235,9 +235,9 @@ export function ParaTi() {
         </div>
         <div className="vida-parati-texto">
           <p className="vida-parati-sello">
-            <span className="vida-punto" style={{ background: t.a, color: t.a }} /> Sección 00 · Para ti
+            <span className="vida-punto" style={{ background: t.a, color: t.a }} /> Expediente personal · sujeto activo
           </p>
-          <h2 className="vida-parati-titulo">Hola, {nombre}</h2>
+          <h2 className="vida-parati-titulo">Operador: {nombre}</h2>
           <p className="vida-parati-sub">
             {listo && medidor.aperturas > 0
               ? `He aprendido de ${medidor.puertas} ${medidor.puertas === 1 ? "puerta" : "puertas"} y ${medidor.aperturas} ${medidor.aperturas === 1 ? "apertura" : "aperturas"} en este aparato. Nada sale de aquí.`
