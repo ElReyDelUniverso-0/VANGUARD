@@ -22,6 +22,8 @@ export const CLAVE_VISTOS = "vx421-vida-vistos";
 export const CLAVE_USO = "vg195-atajos-usage";
 /** estrellas reales (lib/favoritos-store.ts) */
 export const CLAVE_FAV = "vg171-favoritos";
+/** estrellas de VIDA: lo que marcaste desde el carril */
+export const CLAVE_MIOS = "vx421-vida-favoritos";
 
 function leer(clave: string): string | null {
   try {
