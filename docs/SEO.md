@@ -185,3 +185,43 @@ Nota sobre el «No se ha podido obtener» de Search Console: los sitemaps hijos
 **no existieron en producción hasta las 01:08:05 UTC del 2026-11-20** (el
 deployment anterior, v421.0, falló el build). Un fetch de Google anterior a esa
 hora recibió 404 y GSC conserva ese estado hasta el reintento (24–72 h).
+
+### D14 — Los que leían el índice como si fuera el archivo (corregido, v421.4/v421.5)
+
+Al partir `/sitemap.xml` en un índice de 7 archivos (v421.0) quedaron cinco
+lectores haciendo `grep <loc>` sobre el índice, donde ya solo hay sitemaps:
+
+| lector | qué devolvía | efecto |
+|---|---|---|
+| `.github/workflows/faro-indexnow.yml` | 7 archivos XML | el aviso a Bing/Yandex anunciaba sitemaps, no páginas |
+| `scripts/seo/indexnow.mjs` | 7 archivos XML | lo mismo, a mano |
+| `src/lib/busqueda-google/servicio.ts` → `rutasDelSitemap()` | 7 rutas | el motor de oportunidades creía que la casa publica 7 páginas |
+| `…/servicio.ts` → `comprobacionesPublicas()` | «7 URLs» | número falso en el panel |
+| `pruebas-nucleo.mjs` (15), `pruebas-lingua.mjs` (1) | sin páginas | pruebas que no podían pasar |
+
+Todos recorren ahora el índice (y la primera rama sigue sirviendo un sitemap
+único si algún día vuelve). Probado: el faro devuelve 4.019 páginas y los tres
+motores IndexNow responden **HTTP 200**.
+
+### D15 — La octava sala no era interna (corregido, v421.6)
+
+`/navegacion` estaba en `SALAS_INTERNAS` (que el mapa usa para excluir) y **no**
+lleva `X-Robots-Tag: noindex`: de las ocho salas internas es la única que no lo
+lleva. Resultado: página 200, indexable, con canonical propio y 22 enlaces
+internos, fuera del mapa. Ahora solo se excluye lo que de verdad se declara
+noindex. `/nucleo` declaraba `index, follow` mientras la cabecera mandaba
+noindex (la cabecera gana): la página declara ya lo que pasa. `/vanguard2`
+(624 caracteres, sin canonical, 58 % de vocabulario compartido con la portada)
+pasa a `noindex, follow` para no competir con `/`.
+
+### D16 — El temario invisible (corregido, v421.7)
+
+`/academia/cursos` enlaza **10 cursos** y cada uno tiene capítulos y **21
+lecciones** con texto propio y título único: 31 páginas que responden 200 y no
+estaban anunciadas en ninguna parte. Entran al mapa enumeradas del mismo
+catálogo que usa la página (`CURSOS_ACADEMIA`). El mapa pasa de 3.987 a 4.019
+URLs, y el barrido confirma que las 4.019 responden 200.
+
+**Comandos nuevos:** `node scripts/auditoria-cobertura-sitemap.mjs` (¿qué sala
+existe y no está anunciada?) y `node scripts/diagnostico-sitemaps.mjs --barrido`
+(¿las 4.019 responden?).
