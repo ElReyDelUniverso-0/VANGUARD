@@ -15,6 +15,7 @@ import { resolve } from "node:path";
 
 const RAIZ = resolve(new URL("..", import.meta.url).pathname);
 const SALIDA = "/tmp/vanguard-mi-universo-modelo.mjs";
+const SALIDA_ALMACEN = "/tmp/vanguard-mi-universo-almacen.mjs";
 
 mkdirSync("/tmp", { recursive: true });
 if (!existsSync(SALIDA)) {
@@ -29,7 +30,20 @@ if (!existsSync(SALIDA)) {
   }
 }
 
+// el almacén usa el mismo modelo: se compila en el mismo golpe para que el
+// `import "./modelo"` resuelva a lo mismo
+const r2 = spawnSync(
+  "npx",
+  ["--yes", "esbuild", resolve(RAIZ, "src/lib/mi-universo/almacen.ts"), "--bundle", "--format=esm", `--outfile=${SALIDA_ALMACEN}`, "--log-level=error"],
+  { stdio: "inherit", cwd: RAIZ },
+);
+if (r2.status !== 0) {
+  console.error("No se pudo compilar el almacén.");
+  process.exit(1);
+}
+
 const M = await import(SALIDA);
+const A = await import(SALIDA_ALMACEN);
 
 let pasan = 0;
 let fallan = 0;
@@ -250,6 +264,64 @@ prueba("resumen cuenta lo que hay", () => {
   const e = M.espacioNuevo("x", CLAVES);
   const r = M.resumen(e);
   afirmar(r.piezas === 6 && r.zonas === 3 && r.espacios === 1 && r.instantaneas === 0, JSON.stringify(r));
+});
+
+// ── la capa de guardado, con un localStorage de mentira pero fiel ──────
+const almacen = new Map();
+globalThis.window = {
+  localStorage: {
+    getItem: (k) => (almacen.has(k) ? almacen.get(k) : null),
+    setItem: (k, v) => almacen.set(k, String(v)),
+    removeItem: (k) => almacen.delete(k),
+  },
+};
+
+prueba("guardar y recuperar: el espacio sobrevive al cierre del navegador", () => {
+  const e = M.espacioNuevo("Mi universo", CLAVES);
+  const r = A.guardar("ANA", e);
+  afirmar(r.ok === true, `no guardó: ${r.error ?? ""}`);
+  afirmar(r.bytes > 100, "guardó casi nada");
+  const otraSesion = A.cargar("ANA", CLAVES);
+  afirmar(otraSesion.origen === "dispositivo", `origen ${otraSesion.origen}`);
+  afirmar(JSON.stringify(otraSesion.espacio.nucleos.principal.piezas) === JSON.stringify(e.nucleos.principal.piezas), "el trazado cambió al guardar");
+});
+
+prueba("dos cuentas en el mismo aparato NO comparten espacio", () => {
+  const deAna = M.espacioNuevo("De Ana", CLAVES);
+  A.guardar("ANA", deAna);
+  const deBeto = A.cargar("BETO", CLAVES);
+  afirmar(deBeto.origen === "nuevo", "Beto heredó algo de Ana");
+  afirmar(deBeto.espacio.nucleos.principal.nombre === "Mi universo", "Beto nace con otro nombre");
+  A.guardar("BETO", M.espacioNuevo("De Beto", CLAVES));
+  afirmar(A.cargar("ANA", CLAVES).espacio.nucleos.principal.nombre === "De Ana", "se pisaron");
+  afirmar(A.cargar("BETO", CLAVES).espacio.nucleos.principal.nombre === "De Beto", "se pisaron al revés");
+});
+
+prueba("el invitado reclama su espacio al entrar con cuenta (sin sobrescribir)", () => {
+  const invitado = M.espacioNuevo("Del invitado", CLAVES);
+  A.guardar(null, invitado);
+  const reclamado = A.reclamar("CARLA");
+  afirmar(reclamado === true, "no reclamó");
+  afirmar(A.cargar("CARLA", CLAVES).espacio.nucleos.principal.nombre === "Del invitado", "no llegó el espacio");
+  A.guardar("CARLA", M.espacioNuevo("De Carla", CLAVES));
+  afirmar(A.reclamar("CARLA") === false, "reclamó dos veces y pisó el trabajo de Carla");
+  afirmar(A.cargar("CARLA", CLAVES).espacio.nucleos.principal.nombre === "De Carla", "perdió el espacio de Carla");
+});
+
+prueba("exportar → importar reproduce el espacio exacto", () => {
+  const e = M.crearInstantanea(M.espacioNuevo("Viajero", CLAVES), "antes de viajar");
+  const texto = M.serializar(e);
+  const importado = A.leerArchivo(texto);
+  afirmar(importado !== null, "rechazó su propio archivo");
+  afirmar(JSON.stringify(importado) === JSON.stringify(e), "el viaje cambió el espacio");
+  afirmar(A.leerArchivo('{"basura":true}') === null, "aceptó un archivo que no es suyo");
+});
+
+prueba("un guardado corrupto en el aparato se descarta sin romper nada", () => {
+  almacen.set(A.claveDe("ROTO"), "{no soy json");
+  const leido = A.cargar("ROTO", CLAVES);
+  afirmar(leido.origen === "nuevo", "intentó usar basura");
+  afirmar(leido.espacio.nucleos.principal.piezas.length > 0, "devolvió un espacio vacío");
 });
 
 console.log("─".repeat(62));
