@@ -38,9 +38,20 @@ jobs:
     steps:
       - name: Sacar las URLs del sitemap vivo
         run: |
+          # v421.4 — DESDE v421.0 EL SITEMAP ES UN ÍNDICE DE 7 ARCHIVOS.
+          # Medido el 2026-11-20: leer solo el índice devolvía 7 líneas (los
+          # propios sitemaps, archivos XML) y el faro los anunciaba como si
+          # fueran páginas. Ahora se recorre el índice: índice → hijo → <loc>.
           curl -sS --fail --max-time 60 https://vanguard-kq9r.vercel.app/sitemap.xml \
-            | grep -o '<loc>[^<]*' | sed 's/<loc>//' | sort -u > urls.txt
-          echo "URLs en el sitemap: $(wc -l < urls.txt)"
+            | grep -o '<loc>[^<]*' | sed 's/<loc>//' | sort -u > hijos.txt
+          : > urls.txt
+          while read -r hijo; do
+            curl -sS --fail --max-time 60 "$hijo" \
+              | grep -o '<loc>[^<]*' | sed 's/<loc>//' >> urls.txt \
+              || echo "  aviso: no se pudo leer $hijo"
+          done < hijos.txt
+          sort -u -o urls.txt urls.txt
+          echo "Índice: $(wc -l < hijos.txt) sitemaps · páginas: $(wc -l < urls.txt)"
 
       - name: Elegir la tanda de esta hora y avisar
         env:
@@ -105,4 +116,4 @@ jobs:
         run: |
           echo "### FARO · tanda anunciada" >> "$GITHUB_STEP_SUMMARY"
           echo "El faro gira: 200 URLs por pasada, la vuelta completa tarda ~2,6 días." >> "$GITHUB_STEP_SUMMARY"
-          echo "Sitemap: $(wc -l < urls.txt) URLs" >> "$GITHUB_STEP_SUMMARY"
+          echo "Índice: $(wc -l < hijos.txt) sitemaps · Sitemap: $(wc -l < urls.txt) páginas" >> "$GITHUB_STEP_SUMMARY"
