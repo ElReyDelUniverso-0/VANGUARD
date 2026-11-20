@@ -18,6 +18,14 @@ import {
 } from "./algoritmo";
 
 export const CLAVE_VISTOS = "vx421-vida-vistos";
+/**
+ * v431.2 · ESTA CONSTANTE FALTABA (TS2552). `senal.ts` la usaba en tres sitios
+ * (senalActual, losMios y guardarMios) y nadie la había declarado: el build de
+ * `main` quedó roto desde v431.1 y por eso producción seguía en v431.0. Se
+ * declara aquí, con el mismo patrón de nombre que sus vecinas y sin tocar
+ * ninguna otra decisión de VIDA. No es un rediseño: es el tapón que faltaba.
+ */
+export const CLAVE_MIOS = "vx431-vida-mios";
 /** uso real de la casa (lib/nav.ts) */
 export const CLAVE_USO = "vg195-atajos-usage";
 /** estrellas reales (lib/favoritos-store.ts) */
