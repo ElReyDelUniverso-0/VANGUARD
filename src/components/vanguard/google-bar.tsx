@@ -261,7 +261,7 @@ export function GoogleBar({
   };
 
   return (
-    <div className="sticky top-[78px] sm:top-[109px] z-[25] hud-panel border-b border-amber-hud/70" ref={boxRef}>
+    <div className="sticky top-[78px] sm:top-[109px] z-[25] hud-panel border-b border-amber-hud/70" ref={boxRef} data-vx-pieza="google">
       <div className="h-[46px] sm:h-[49px] px-2 sm:px-4 max-w-7xl mx-auto flex items-center gap-1.5 sm:gap-3">
         {/* logo de letras vivas */}
         <LetrasVivas compact onClick={() => { sfx.tab(); onChange("inicio"); }} />

@@ -162,14 +162,14 @@ export const MUNDOS: MundoCasa[] = [
   },
   {
     clave: "puerta",
-    nombre: "La Puerta · dos mundos",
+    nombre: "La Puerta · un solo mundo",
     clase: "puerta",
     ruta: "/",
     icono: "door-open",
-    lema: "Noticias o juego",
-    resumen: "La intro de la casa: el mundo de las noticias y el mundo del juego. Ahora con el mapa de todos los mundos detrás.",
+    lema: "Toda la casa y su centro",
+    resumen: "La intro de la casa (v432): un solo mundo — noticias, mapas, conocimiento, simulación y juego con el mismo estilo — y su centro, la Zona Cero.",
     fuente: "modulos.ts (cero cifras a mano)",
-    cifra: { valor: "2", etiqueta: "mundos declarados" },
+    cifra: { valor: "1", etiqueta: "mundo, una sola piel" },
   },
   {
     clave: "vanguard2",

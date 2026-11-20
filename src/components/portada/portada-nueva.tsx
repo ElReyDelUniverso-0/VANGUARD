@@ -113,7 +113,7 @@ export function HeroeVanguard({ cables }: { cables: number }) {
             Explorar mapas
           </Link>
           <BotonMundos className="vxp-boton-mundos">
-            <span aria-hidden>⇄</span> Elegir mundo
+            <span aria-hidden>◉</span> Zona Cero
           </BotonMundos>
         </div>
       </div>

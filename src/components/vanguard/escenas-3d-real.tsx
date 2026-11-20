@@ -563,24 +563,34 @@ export function Escena3DReal({
     if (estatico) return;
     const el = caja.current;
     if (!el || reduced) return;
+    // AGENTE 09 · v432: el bucle ya NO corre siempre. Antes cada escena giraba un
+    // requestAnimationFrame perpetuo (60 escrituras de 2 variables CSS por
+    // segundo, aunque nadie la mirara ni estuviera en pantalla): con las 44
+    // tarjetas del Cuartel eran ~5.300 recálculos de estilo por segundo. Ahora
+    // arranca al mover el puntero encima y se apaga solo al volver al reposo.
+    // El balanceo es idéntico.
     let raf = 0, tx = 0, ty = 0, cx = 0, cy = 0, vivo = true;
+    const loop = () => {
+      raf = 0;
+      if (!vivo) return;
+      cx += (tx - cx) * 0.075; cy += (ty - cy) * 0.075;
+      const quieto = Math.abs(tx - cx) < 0.002 && Math.abs(ty - cy) < 0.002;
+      if (quieto) { cx = tx; cy = ty; }
+      el.style.setProperty("--vg-tx", cx.toFixed(3));
+      el.style.setProperty("--vg-ty", cy.toFixed(3));
+      if (!quieto) raf = requestAnimationFrame(loop);
+    };
+    const despertar = () => { if (!raf && vivo) raf = requestAnimationFrame(loop); };
     const onMove = (e: PointerEvent) => {
       const r = el.getBoundingClientRect();
       const nx = ((e.clientX - r.left) / Math.max(1, r.width)) * 2 - 1;
       const ny = ((e.clientY - r.top) / Math.max(1, r.height)) * 2 - 1;
       tx = Math.max(-1, Math.min(1, nx)); ty = Math.max(-1, Math.min(1, ny));
+      despertar();
     };
-    const onLeave = () => { tx = 0; ty = 0; };
-    const loop = () => {
-      if (!vivo) return;
-      cx += (tx - cx) * 0.075; cy += (ty - cy) * 0.075;
-      el.style.setProperty("--vg-tx", cx.toFixed(3));
-      el.style.setProperty("--vg-ty", cy.toFixed(3));
-      raf = requestAnimationFrame(loop);
-    };
-    el.addEventListener("pointermove", onMove);
+    const onLeave = () => { tx = 0; ty = 0; despertar(); };
+    el.addEventListener("pointermove", onMove, { passive: true });
     el.addEventListener("pointerleave", onLeave);
-    raf = requestAnimationFrame(loop);
     return () => { vivo = false; cancelAnimationFrame(raf); el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerleave", onLeave); };
   }, [reduced, estatico]);
 

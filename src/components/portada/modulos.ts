@@ -80,7 +80,7 @@ export const MODULOS: Modulo[] = [
       { href: "/worlds", label: "Mundos vivos", img: "/ilustraciones/planeta.jpg", txt: "Cinco mundos explorables —América, Europa, África, Asia y Oceanía— con lugares reales y sus experiencias: ficha, atlas, obra, historia, datos y ciencia. Tres vistas, capas conmutables y alternativa 2D." },
       { href: "/mundo", label: "Globo vivo", img: "/ilustraciones/mundo.jpg", txt: "El globo 3D con los teatros encendidos y sus cables." },
       { href: "/ver-guerra", label: "Frente en directo", img: "/ilustraciones/frente.jpg", txt: "El frente en directo: despachos reales y el parque militar." },
-      { href: "/zona-cero", label: "Teatro global", img: "/ilustraciones/warsim.jpg", txt: "La mesa de guerra mundial con teatros y unidades." },
+      { href: "/zona-cero", label: "Zona Cero", img: "/ilustraciones/ojo-dios.jpg", txt: "El ojo de Vanguard: busca en toda la casa y pega lo que encuentres. Debajo, la mesa de guerra mundial." },
       { href: "/vanguard2", label: "Universo 3D", img: "/ilustraciones/conquistas3d.jpg", txt: "Cada sección de la casa en su propio mundo 3D." },
     ],
   },

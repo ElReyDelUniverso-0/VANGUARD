@@ -73,6 +73,7 @@ export interface GlobeFlyTo {
 
 interface GlobePolygonsLike {
   polygonsData: (d: PolyDatum[]) => GlobePolygonsLike;
+  polygonCapCurvatureResolution: (r: number) => GlobePolygonsLike;
   polygonCapColor: (a: (d: object) => string) => GlobePolygonsLike;
   polygonSideColor: (a: (d: object) => string) => GlobePolygonsLike;
   polygonStrokeColor: (a: (d: object) => string) => GlobePolygonsLike;
@@ -438,6 +439,12 @@ export function GlobeMap3D({
     const polys: PolyDatum[] = GLOBE_COUNTRY_POLYS;
 
     globe
+      // AGENTE 09 · v432: casquete de 8° (por defecto 5°). three-conic-polygon-geometry
+      // rellena cada país con una rejilla de puntos interiores comprobados con
+      // geoContains; su número crece con 1/resolución² → ~2,6× menos puntos y
+      // triángulos. La flecha del casquete (≈0,24 u con radio 100) queda por
+      // debajo de la altitud mínima usada (0,5 u): ningún país se «hunde».
+      .polygonCapCurvatureResolution(8)
       .polygonsData(polys)
       .polygonCapColor((d) => {
         const f = d as PolyDatum;

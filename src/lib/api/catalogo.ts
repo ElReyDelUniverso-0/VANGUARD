@@ -90,6 +90,22 @@ export const ENDPOINTS_DOCUMENTADOS: EndpointVanguard[] = [
     version: "1",
   },
   {
+    ruta: "/api/zona-cero",
+    metodos: ["GET"],
+    grupo: "nucleo",
+    descripcion: "El buscador del ojo de la Zona Cero: las fuentes públicas del Núcleo más el Arsenal y las salas de cada módulo, con imagen y crédito cuando la casa los tiene (foto del cable, Wikimedia Commons, bandera, ilustración propia). Sin q devuelve los destacados del día.",
+    params: [
+      { nombre: "q", donde: "query", tipo: "texto", requerido: false, descripcion: "consulta (2–64 caracteres); vacía = destacados" },
+      { nombre: "filtro", donde: "query", tipo: "texto", requerido: false, descripcion: "todo | noticias | paises | conocimiento | armas | salas | imagenes" },
+    ],
+    respuesta: "{ok,api,version,datos:{q,filtro,modo,piezas[{id,clase,etiqueta,titulo,sub,ruta,imagen?,credito?,fecha?,origen}],fuentes[]},meta}",
+    muro: "40 por minuto y cliente",
+    cache: "no-store",
+    auth: "ninguna",
+    documentado: true,
+    version: "1",
+  },
+  {
     ruta: "/api/system",
     metodos: ["GET"],
     grupo: "sistema",

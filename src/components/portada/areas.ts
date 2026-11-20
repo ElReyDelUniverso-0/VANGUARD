@@ -61,7 +61,7 @@ export const AREAS: Area[] = [
     atajos: [
       { href: "/mundo", label: "Mundo 3D" },
       { href: "/atlas", label: "Atlas" },
-      { href: "/zona-cero", label: "Teatro global" },
+      { href: "/zona-cero#teatro-global", label: "Teatro global" },
     ],
   },
   {
@@ -88,7 +88,7 @@ export const AREAS: Area[] = [
     color: "#e8c56a",
     dato: `${PAISES_GEO.length} países`,
     atajos: [
-      { href: "/entrar", label: "Elegir mundo" },
+      { href: "/zona-cero", label: "Zona Cero" },
       { href: "/universo", label: "Universo diario" },
       { href: "/cuartel", label: "El Cuartel" },
     ],

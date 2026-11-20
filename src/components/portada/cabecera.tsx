@@ -80,6 +80,15 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
           <BotonCyberRadio />
           <Reloj />
           <BuscadorUniversal />
+          {/* v432.0 ZONA CERO: el ojo de Vanguard, a un toque desde cualquier sala */}
+          <Link href="/zona-cero" className="vx-zc-ojo" data-on={ruta.startsWith("/zona-cero") ? "1" : "0"} aria-label="Zona Cero: el ojo de Vanguard" title="Zona Cero">
+            <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden>
+              <path d="M2 16Q16 4 30 16Q16 28 2 16Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+              <circle cx="16" cy="16" r="5.6" fill="currentColor" />
+              <circle cx="16" cy="16" r="2.2" fill="#06080c" />
+              <path d="M16 1.5v3M16 27.5v3M3.5 6l2 2M28.5 6l-2 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+          </Link>
           <Link href="/en-vivo" className="vx-vivo" aria-label="EN VIVO">
             <span className="vx-punto" /> <span className="vx-vivo-t">EN VIVO</span>
           </Link>

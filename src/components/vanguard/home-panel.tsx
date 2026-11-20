@@ -1072,6 +1072,12 @@ export function HomePanel() {
                 borderColor: `${t.hex}55`,
                 background: "rgba(7,7,11,0.92)",
                 boxShadow: "0 6px 22px rgba(0,0,0,0.45)",
+                // AGENTE 09 · v432: 44 tarjetas = 2.735 nodos y 11.339 px de columna en
+                // móvil. Fuera de pantalla el navegador ya no las maqueta ni pinta
+                // (la tarjeta sigue en el DOM, en el orden de tabulación y para el
+                // lector de pantalla); el tamaño intrínseco evita saltos de scroll.
+                contentVisibility: "auto",
+                containIntrinsicSize: "auto 252px",
               }}
               aria-label={`${t.title}: ${t.desc}`}
             >

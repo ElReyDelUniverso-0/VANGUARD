@@ -16,7 +16,11 @@ import { useEffect, useRef, useState } from "react";
 import { Cabecera, BarraMovil } from "./cabecera";
 import { moduloDe, portadaDe } from "./modulos";
 
-const SIN_CARCASA = ["/entrar", "/lectura", "/cuartel", "/clasico", "/vanguard2", "/vertigo", "/offline", "/api"];
+// v432.0 UN SOLO MUNDO: /cuartel sale de la lista — el juego deja de ser «otro
+// mundo» con su propia cabecera y entra bajo la misma carcasa, la misma piel y
+// la misma barra que el resto de la casa (src/app/un-solo-mundo.css acomoda su
+// cromo propio debajo, sin quitarle ninguna función).
+const SIN_CARCASA = ["/entrar", "/lectura", "/clasico", "/vanguard2", "/vertigo", "/offline", "/api"];
 
 export function conCarcasa(ruta: string | null): boolean {
   if (!ruta || ruta === "/" || ruta === "/index") return false;

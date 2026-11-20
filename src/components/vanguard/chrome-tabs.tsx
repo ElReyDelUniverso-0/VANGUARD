@@ -1277,7 +1277,7 @@ export function ChromeTabs({
   };
 
   return (
-    <nav className="sticky top-[126px] sm:top-[160px] z-20" aria-label={t("cromo.franga")}>
+    <nav className="sticky top-[126px] sm:top-[160px] z-20" aria-label={t("cromo.franga")} data-vx-pieza="pestanas">
       <div className="vg170-franja-pulida relative bg-[#07070b]/88 backdrop-blur-md border-b border-amber-hud/25 shadow-[0_8px_24px_-14px_rgba(0,0,0,0.9)]">
         {/* degradados + flechas: nada queda opacado en móvil (herencia v48) */}
         <div

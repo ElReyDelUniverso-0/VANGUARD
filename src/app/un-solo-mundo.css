@@ -1,0 +1,75 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v432.0 UN SOLO MUNDO
+   Orden del Dueño: «fusiona los dos mundos de Vanguard en un solo mundo, la
+   portada y el del juego; todos los módulos con un mismo estilo, cada uno con
+   su información». El Cuartel (el antiguo «mundo Juego») entra bajo la misma
+   carcasa (cabecera, pestañas del módulo, teletipo y barra móvil) y la misma
+   piel (piel.css). Aquí solo se ACOMODA su cromo propio para que no haya dos
+   cabeceras ni dos barras: ninguna función se borra.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── el ojo de la Zona Cero en la cabecera común ── */
+.vx-zc-ojo {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  color: #e8c56a;
+  border: 1px solid rgba(232, 197, 106, 0.35);
+  border-radius: 6px;
+  background: radial-gradient(circle, rgba(232, 197, 106, 0.16), transparent 70%);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.vx-zc-ojo:hover,
+.vx-zc-ojo:focus-visible,
+.vx-zc-ojo[data-on="1"] { background: rgba(232, 197, 106, 0.18); box-shadow: 0 0 18px -4px rgba(232, 197, 106, 0.7); outline: none; }
+.vx-zc-ojo svg { filter: drop-shadow(0 0 4px rgba(232, 197, 106, 0.6)); }
+@media (max-width: 420px) { .vx-zc-ojo { width: 34px; height: 34px; } }
+
+/* ── el Cuartel dentro de la carcasa ── */
+/* #vg-casa abría su propio contexto de apilado (z-10) para flotar sobre sus
+   fondos fijos; bajo la carcasa esos fondos se apagan y la casa no necesita
+   la burbuja: así sus menús y diálogos ya no quedan debajo de la cabecera. */
+body:has(.vx-carcasa) #vg-casa { z-index: auto; }
+
+/* fondos del viejo «mundo Juego» (auroras cian/magenta, horizonte, partículas,
+   chispas al frente): la piel común pone su retícula de oro en su lugar */
+body:has(.vx-carcasa) #vg-casa > .aurora-layer,
+body:has(.vx-carcasa) #vg-casa > .vignette-layer,
+body:has(.vx-carcasa) #vg-casa > .particles-layer,
+body:has(.vx-carcasa) #vg-casa > .vg170-aurora,
+body:has(.vx-carcasa) #vg-casa > .v138-mundo,
+body:has(.vx-carcasa) #vg-casa > .v139-frente { display: none !important; }
+
+/* la barra de estado del agente (rango, créditos, gemas, ajustes) se queda,
+   pero ya no es una segunda cabecera pegada: se desplaza con la página */
+body:has(.vx-carcasa) #vg-casa [data-vx-pieza="hud"] { position: relative; top: auto; z-index: 4; }
+
+/* la barra «Google» repetía marca + buscador + rejilla de apps: la cabecera
+   común ya trae marca y buscador, y las pestañas del Cuartel traen buscar y
+   menú (mismas acciones) */
+body:has(.vx-carcasa) #vg-casa [data-vx-pieza="google"] { display: none !important; }
+
+/* pestañas internas y riel: pegados bajo la cabecera común; cuando la
+   cabecera se esconde al bajar, suben a ocupar su sitio */
+body:has(.vx-carcasa) #vg-casa [data-vx-pieza="pestanas"] { top: 64px; transition: top 0.3s ease; }
+body:has(.vx-carcasa) #vg-casa [data-vg-riel="1"] { top: 103px; transition: top 0.3s ease; }
+body:has(.vx-cab[data-oculta="1"]) #vg-casa [data-vx-pieza="pestanas"] { top: 0; }
+body:has(.vx-cab[data-oculta="1"]) #vg-casa [data-vg-riel="1"] { top: 39px; }
+
+/* la barra de zonas del juego (Hoy · Análisis · Arena · Cuartel) duplicaba la
+   barra móvil común: la común manda (sus salas siguen en pestañas y riel) */
+body:has(.vx-carcasa) #vg-casa .vg140-nav { display: none !important; }
+
+/* la tipografía y el oro de la casa también en el cromo del Cuartel */
+body:has(.vx-carcasa) #vg-casa .hud-panel {
+  background: rgba(8, 10, 15, 0.9) !important;
+  border-color: rgba(232, 197, 106, 0.18) !important;
+  box-shadow: none !important;
+}
+body:has(.vx-carcasa) #vg-casa [data-vx-pieza="pestanas"] .vg170-franja-pulida {
+  background: rgba(6, 8, 12, 0.92) !important;
+  border-bottom-color: rgba(232, 197, 106, 0.18) !important;
+}
+body:has(.vx-carcasa) #vg-casa footer.hud-panel { font-family: var(--font-inter), system-ui, sans-serif; }

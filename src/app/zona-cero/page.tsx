@@ -17,6 +17,9 @@ import {
   idAcontecimiento,
 } from "@/lib/nucleo/acontecimientos";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v432.0 UN SOLO MUNDO · ZONA CERO — el ojo de Vanguard abre la sala: busca en
+// toda la casa y pega lo que encuentra. El Teatro Global sigue entero debajo.
+import { NucleoZonaCero } from "@/components/zona-cero/nucleo-zona-cero";
 
 // v230.0 EL ESPEJO — el conteo REAL por teatro (una sola query groupBy).
 // v256.0 LA ÚLTIMA SEÑAL — la MISMA query también trae el momento del último
@@ -87,14 +90,14 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "TEATRO GLOBAL 3D — mesa de guerra mundial con países, frentes y trincheras",
+  title: "ZONA CERO — el ojo de Vanguard: busca en toda la casa · Teatro Global 3D",
   description:
-    "Simulador de guerra en 3D: los 5 teatros reales de conflicto, aeronaves militares en vuelo, arcos de misiles y el frente táctico. Gratis, en español.",
+    "La Zona Cero de Vanguard: toca el ojo y busca noticias, países, conocimiento, armas, módulos e imágenes de toda la casa y pégalos en tu tablero. Debajo, el Teatro Global: la mesa de guerra mundial en 3D.",
   alternates: { canonical: "/zona-cero" },
   openGraph: {
-    title: "TEATRO GLOBAL 3D — la mesa de guerra mundial · VANGUARD",
+    title: "ZONA CERO — el ojo de Vanguard · VANGUARD",
     description:
-      "Mira el mundo entero en guerra: teatros reales pulsando, aviones militares en vivo sobre el mapa y el frente táctico con trincheras, tanques y paracaidistas.",
+      "Toca el ojo, busca en toda la casa y arma tu tablero con noticias, países, conocimiento, armas e imágenes. Debajo, el Teatro Global en 3D.",
     url: `${SITE_URL}/zona-cero`,
     images: ["/api/og"],
   },
@@ -132,7 +135,11 @@ export default async function ZonaCeroPage() {
   })();
   return (
     <>
+    <NucleoZonaCero />
+    <div id="teatro-global" style={{ scrollMarginTop: 72 }} />
     <PortadaSala
+      nivel="p"
+      prioritaria={false}
       imagen="/ilustraciones/crisis.jpg"
       alt="Sala de crisis con mapas colgados y mesas de operaciones"
       volanta="LA CASA · ZONA CERO"

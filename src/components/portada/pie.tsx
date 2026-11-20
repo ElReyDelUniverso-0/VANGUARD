@@ -11,7 +11,7 @@ export function Pie() {
           <div>
             <LogoVanguard />
             <p style={{ margin: "12px 0 0", maxWidth: 360 }}>
-              Dos mundos, una sola casa: el mundo de Noticias, en tiempo real y en español, y el mundo de Juego.
+              Un solo mundo: noticias en tiempo real y en español, mapas, conocimiento, simulación y juego, todo con el mismo estilo.
               Gratis y sin registro.
             </p>
             <div style={{ marginTop: 14 }}>

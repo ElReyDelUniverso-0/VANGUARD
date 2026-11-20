@@ -32,6 +32,8 @@ import "./animaciones-generadas.css";
 // rompía la resolución del módulo).
 import "./memoria/memoria.css";
 import "./movil.css";
+// v432.0 UN SOLO MUNDO: el Cuartel bajo la misma carcasa y piel (ver el archivo)
+import "./un-solo-mundo.css";
 // v421.9 VIDA — capa de identidad (color, letra, luz y movimiento). Va la última
 // a propósito: a igual especificidad, gana; no usa !important contra nadie.
 import "./vida.css";

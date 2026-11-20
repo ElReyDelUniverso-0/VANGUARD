@@ -21,6 +21,26 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v432.0",
+    nombre: "UN SOLO MUNDO · ZONA CERO",
+    tipo: "mundo",
+    hitos: [
+      "UN SOLO MUNDO: la portada y el juego dejan de ser dos mundos. El Cuartel entra bajo la misma carcasa (cabecera, pestañas del módulo Juego, teletipo, barra móvil) y la misma piel de oro que el resto de módulos; cada módulo conserva su información.",
+      "Sin cromo duplicado en el Cuartel: la segunda marca con buscador y la barra de zonas se apartan (sus acciones siguen en pestañas, riel y barra común); la barra del agente con rango y créditos se queda y deja de ser una segunda cabecera pegada.",
+      "La Puerta reescrita: la casa entera («Vanguard · un solo mundo») y su centro («Zona Cero · el ojo»), las dos en el mismo oro; el Cruce entre mundos se retira y «Elegir mundo» pasa a ser «Zona Cero».",
+      "ZONA CERO: zona oscura con estrellas y rayos de luz; en el centro el ojo de Vanguard (SVG propio con estrella de ocho puntas, anillos, parpadeo y el emblema en la pupila que sigue al puntero).",
+      "Tocar el ojo abre el buscador de toda la casa (/api/zona-cero): noticias, países, conocimiento, armas, módulos y salas, con imagen y crédito cuando existen; filtros y destacados del día.",
+      "Cada hallazgo se pega en la Zona Cero: sale disparado del ojo y busca solo el hueco más libre (cero solapes con 10 piezas en móvil y escritorio). Se arrastra con el dedo, el ratón o las flechas, sin re-render por píxel.",
+      "La ficha de cada pieza: imagen grande, fuente, crédito y fecha, una nota propia, sus enlaces y las acciones (abrir, buscar relacionado, enlazar, quitar).",
+      "Constelaciones: las piezas se unen entre sí con hilos de oro (un país, un arma y una noticia que cuentan la misma historia); al elegir una se encienden sus vecinas.",
+      "El tablero se copia como texto con enlaces y notas, se exporta y se importa (.json saneado); quitar, vaciar, ordenar e importar se pueden deshacer. Atajo «/», ↑ ↓ e Intro en el buscador, búsquedas recientes. Vive solo en el aparato.",
+      "El ojo también en la cabecera común, a un toque desde cualquier sala; el Teatro Global sigue entero bajo la Zona Cero.",
+      "AGENTE 09 · rendimiento medido: las escenas 3D de las tarjetas dejan de girar un bucle de animación perpetuo (en el Cuartel, 44 bucles; en reposo pasan de 176 a 0 fotogramas/s y de 352 a 0 escrituras de estilo/s en la medición sin pantalla, ~5.300/s en una pantalla de 60 Hz). El balanceo con el ratón es idéntico.",
+      "AGENTE 09: las 44 tarjetas de «Elige tu campo de batalla» ya no se maquetan fuera de pantalla (content-visibility): cada reflujo completo del Cuartel en móvil con CPU ×4 baja de ~1,2 s a ~0,6 s (−50 %).",
+      "AGENTE 09: los globos de /mundo, /mapas y el teatro 3D generan los países con casquete de 8°: −24 % de CPU en la geometría de los 177 países, sin cambio visible.",
+    ],
+  },
+  {
     version: "v431.5",
     nombre: "UNA CASA, UNA VOZ",
     hitos: [

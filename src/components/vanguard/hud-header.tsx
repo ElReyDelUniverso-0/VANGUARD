@@ -185,7 +185,7 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
   const esAlerta = cableHud?.tacticalTag === "ALERTA" || cableHud?.tacticalTag === "URGENTE";
 
   return (
-    <header className="sticky top-0 z-30 hud-panel border-b border-amber-hud">
+    <header className="sticky top-0 z-30 hud-panel border-b border-amber-hud" data-vx-pieza="hud">
       <div className="px-2 py-1.5 sm:px-4 sm:py-3">
         {/* Row 1: identity + currencies */}
         <div className="flex items-center gap-1.5 sm:gap-3">

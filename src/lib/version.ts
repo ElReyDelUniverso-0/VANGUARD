@@ -7002,8 +7002,39 @@
 // (lib/radio/usa-emision.ts) para el estudio y para la píldora que suena en
 // toda la casa; el guion se sirve desde /api/radio/programa; un interruptor de
 // tres caras (Hoy · Salas · Radio) sin duplicar la navegación.
-export const APP_VERSION = "v431.5";
-export const APP_CODENAME = "UNA CASA, UNA VOZ";
+// v432.0 UN SOLO MUNDO · ZONA CERO — orden del Dueño: «fusiona los dos mundos de
+// Vanguard en un solo mundo, la portada y el de juego; todos esos módulos con un
+// mismo estilo, cada uno con su información; y un lugar que se llame Zona Cero:
+// una zona oscura y en el medio el logo de Vanguard, un ojo gigante con
+// decoraciones de estrella radiando luz, donde si uno lo presiona puede buscar
+// los módulos, informaciones, elementos de otros módulos, imágenes… y pegarlas
+// a la Zona Cero; todo super interactivo».
+// ① UN SOLO MUNDO: el Cuartel (el antiguo «mundo Juego») entra bajo la misma
+//    carcasa — cabecera, pestañas del módulo Juego, teletipo y barra móvil — y
+//    la misma piel de oro. Su barra Google duplicada y su barra de zonas se
+//    retiran visualmente (sus acciones viven en las pestañas, el riel y la barra
+//    común); su barra de agente (rango, créditos, ajustes) se queda.
+// ② LA PUERTA, REESCRITA: ya no «Noticias o Juego» sino la casa entera y su
+//    centro; el Cruce entre mundos se retira; «⇄ Elegir mundo» → «◉ Zona Cero».
+// ③ ZONA CERO (/zona-cero): zona oscura, cielo de estrellas, rayos que giran y
+//    el OJO DE VANGUARD (SVG propio: estrella de ocho puntas, anillos, párpado
+//    que parpadea, pupila con el emblema de la casa que sigue al puntero).
+//    Tocarlo abre el buscador de toda la casa (/api/zona-cero = Núcleo +
+//    Arsenal + salas, con imagen y crédito); cada hallazgo se PEGA como carta
+//    que sale del ojo hacia el hueco más libre, unida a él por un hilo de luz;
+//    se arrastra (dedo, ratón o flechas), abre su FICHA (nota propia, enlaces,
+//    buscar relacionado) y se ENLAZA con otras en constelaciones de oro. Se
+//    copia, exporta e importa; todo se puede deshacer. Solo en el aparato.
+//    El Teatro Global sigue entero debajo.
+// ④ El ojo vive también en la cabecera común: a un toque desde cualquier sala.
+// ⑤ AGENTE 09 (rendimiento, medido): Escena3D sin rAF perpetuo (reposo 176→0
+//    fotogramas/s en el Cuartel), content-visibility en sus 44 tarjetas
+//    (reflujo móvil ×4: ~1,2 s → ~0,6 s) y casquete de 8° en los globos (−24 %
+//    de CPU de geometría).
+export const APP_VERSION = "v432.0";
+export const APP_CODENAME = "UN SOLO MUNDO";
+// (anterior) export const APP_VERSION = "v431.5";
+// (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";
@@ -7072,7 +7103,8 @@ export const APP_CODENAME = "UNA CASA, UNA VOZ";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v420.2";
+export const APP_VERSION_ANTERIOR = "v431.5";
+// (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v419.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del

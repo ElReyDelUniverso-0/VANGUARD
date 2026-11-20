@@ -141,6 +141,9 @@ export function FrentesGlobo3D({
 
     // Fronteras geopolíticas vectoriales sutiles sobre el globo satelital
     globe
+      // AGENTE 09 · v432: casquete de 8° (ver globe-map-3d): ~2,6× menos puntos
+      // interiores; la flecha (≈0,24 u) no supera la altitud de 0,4 u.
+      .polygonCapCurvatureResolution(8)
       .polygonsData(features)
       .polygonCapColor(() => "rgba(12, 24, 42, 0.08)")
       .polygonSideColor(() => "rgba(56, 189, 248, 0.04)")
