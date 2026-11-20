@@ -54,9 +54,27 @@ export const POR_CATEGORIA: Record<CategoriaInfra, Infraestructura[]> = {
   edificio: EDIFICIOS,
 };
 
-/** Busca una obra por su identificador único. */
+/**
+ * v421.2 — forma plana de un identificador: sin codificación de URL, sin
+ * acentos y en minúsculas. Sirve para que una URL vieja con acento
+ * («central-eólica-…»), su variante percent-encoded («%C3%B3») y la forma
+ * ASCII actual («central-eolica-…») lleven todas a la MISMA ficha. Medido
+ * el 2026-11-20: las tres formas acentuadas del catálogo respondían 404 y
+ * viajaban anunciadas en el sitemap.
+ */
+const plano = (s: string) => {
+  let t = s;
+  try {
+    t = decodeURIComponent(s);
+  } catch {
+    /* ya venía sin codificar */
+  }
+  return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+};
+
+/** Busca una obra por su identificador único (tolerante a acentos y %XX). */
 export function obraPorId(id: string): Infraestructura | undefined {
-  return CATALOGO_INFRA.find((o) => o.id === id);
+  return CATALOGO_INFRA.find((o) => o.id === id) ?? CATALOGO_INFRA.find((o) => plano(o.id) === plano(id));
 }
 
 /** Número total de obras del catálogo. */

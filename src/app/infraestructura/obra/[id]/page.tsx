@@ -13,7 +13,7 @@
 // ═══════════════════════════════════════════════════════════════════
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { SITE_URL } from "@/lib/site";
 import { MarcoInfra } from "@/components/infraestructura/marco-infra";
@@ -60,6 +60,10 @@ export default async function ObraPage({ params }: Props) {
   const { id } = await params;
   const obra = obraPorId(id);
   if (!obra) notFound();
+  // v421.2 — si la URL pedida no es la canónica (acento o %C3%B3 de una
+  // versión anterior), se responde 308 a la forma ASCII. Una sola URL por
+  // ficha: la que viaja en el sitemap.
+  if (obra.id !== id) permanentRedirect(`/infraestructura/obra/${obra.id}`);
 
   const paisGeo = nombrePais(obra.pais);
   const grupo = META_CATEGORIA[obra.categoria].explorador;

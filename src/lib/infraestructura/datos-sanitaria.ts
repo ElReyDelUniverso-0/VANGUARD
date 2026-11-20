@@ -58,7 +58,7 @@ export const SANITARIA: Infraestructura[] = [
       { clave: "antigüedad", valor: "1459, el hospital más antiguo de Valencia" },
     ],
     WIK("Hospital General de Valencia"), "documentado", [], true),
-  e("sanitaria-hospital-del-niño", "Hospital del Niño de Panamá", "sanitaria", "pa", { ciudad: "Ciudad de Panamá", lat: 8.98, lng: -79.5 },
+  e("sanitaria-hospital-del-nino", "Hospital del Niño de Panamá", "sanitaria", "pa", { ciudad: "Ciudad de Panamá", lat: 8.98, lng: -79.5 },
     "El hospital pediátrico más importante de Panamá. Atiende a la infancia del país y forma parte del sistema público de salud.",
     "1965",
     [

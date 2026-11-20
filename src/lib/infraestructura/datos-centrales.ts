@@ -59,7 +59,7 @@ export const CENTRALES: Infraestructura[] = [
       { clave: "tecnología", valor: "fotovoltaica, termosolar y almacenamiento" },
     ],
     WIK("Noor Ouarzazate Solar Complex"), "confirmado", [], true),
-  e("central-eólica-offshore-hornsea", "Parque eólico Hornsea", "central-energetica", "gb", { ciudad: "mar del Norte, Yorkshire", lat: 53.55, lng: 2.0 },
+  e("central-eolica-offshore-hornsea", "Parque eólico Hornsea", "central-energetica", "gb", { ciudad: "mar del Norte, Yorkshire", lat: 53.55, lng: 2.0 },
     "El parque eólico marino más grande del mundo, al este de Inglaterra. Suma dos fases y su energía se transmite a la costa por cables submarinos.",
     "2020",
     [
@@ -67,7 +67,7 @@ export const CENTRALES: Infraestructura[] = [
       { clave: "turbinas", valor: "hasta 200 aerogeneradores" },
     ],
     WIK("Hornsea Wind Farm"), "confirmado", [], true),
-  e("central-eólica-offshore-walney", "Parque eólico Walney", "central-energetica", "gb", { ciudad: "mar del Norte, Cumbria", lat: 54.0, lng: -3.6 },
+  e("central-eolica-offshore-walney", "Parque eólico Walney", "central-energetica", "gb", { ciudad: "mar del Norte, Cumbria", lat: 54.0, lng: -3.6 },
     "El parque eólico marino de Walney, en el mar del Norte. Sumando sus fases, fue el parque eólico marino más grande del mundo antes de Hornsea.",
     "2011",
     [
@@ -123,7 +123,7 @@ export const CENTRALES: Infraestructura[] = [
       { clave: "reactores", valor: "2 reactores EPR" },
     ],
     WIK("Taishan Nuclear Power Plant"), "confirmado", [], true),
-  e("central-eólica-offshore-wir", "Parque eólico de Rampion", "central-energetica", "gb", { ciudad: "mar del Norte, Sussex", lat: 50.2, lng: 0.5 },
+  e("central-eolica-offshore-wir", "Parque eólico de Rampion", "central-energetica", "gb", { ciudad: "mar del Norte, Sussex", lat: 50.2, lng: 0.5 },
     "El primer parque eólico marino de Inglaterra, frente a la costa de Sussex. Sus aerogeneradores generan electricidad para miles de hogares.",
     "2018",
     [

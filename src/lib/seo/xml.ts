@@ -17,7 +17,17 @@ export const esc = (s: string) =>
 
 /** Un <url> del protocolo sitemaps. Campos vacíos NO se escriben. */
 export function nodoUrl(e: MetadataRoute.Sitemap[number]): string {
-  const partes = [`<loc>${esc(e.url)}</loc>`];
+  // v421.2 — la ubicación se codifica SIEMPRE (espacios, acentos, ñ). El
+  // protocolo pide una URL, no un IRI: Google acepta UTF-8 crudo pero lo
+  // marca como URL no válida. Medido el 2026-11-20: 4 de las 3.987 locs
+  // viajaban con acento crudo (y además daban 404, ya corregido aparte).
+  let loc: string;
+  try {
+    loc = encodeURI(e.url);
+  } catch {
+    loc = e.url;
+  }
+  const partes = [`<loc>${esc(loc)}</loc>`];
   if (e.lastModified) {
     const d = new Date(e.lastModified);
     if (!Number.isNaN(d.getTime())) partes.push(`<lastmod>${d.toISOString()}</lastmod>`);
