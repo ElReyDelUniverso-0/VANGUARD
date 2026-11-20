@@ -35,6 +35,23 @@ export interface ProveedorIA {
 
 export const PROVEEDORES: ProveedorIA[] = [
   {
+    // v431.0 · HONESTIDAD CORREGIDA — este archivo decía «ningún cliente está
+    // implementado» mientras `lib/ia-gateway.ts` llevaba ocho versiones llamando
+    // de verdad a un modelo (el gateway de la casa, vía Z.ai, con respaldo
+    // público en `iaAlternativa`). Era el único punto de la casa que mentía
+    // sobre sí misma. Ahora se declara lo que hay.
+    id: "zai",
+    nombre: "Núcleo de la casa (gateway Z.ai + respaldo público)",
+    variable: "ZAI_TOKEN",
+    capacidades: [
+      "conversación (LA MENTE)",
+      "síntesis de investigación con hallazgos",
+      "redacción de borradores",
+      "clasificación de cables",
+    ],
+    implementado: true,
+  },
+  {
     id: "openai",
     nombre: "OpenAI",
     variable: "OPENAI_API_KEY",
@@ -88,14 +105,15 @@ export function estadoProveedores() {
     capacidades: p.capacidades,
   }));
   const conCredencial = lista.filter((p) => p.configurado).length;
+  const implementados = lista.filter((p) => p.implementado).length;
   return {
     proveedores: lista,
     conCredencial,
-    implementados: lista.filter((p) => p.implementado).length,
+    implementados,
     nota:
-      conCredencial === 0
-        ? "Ningún proveedor tiene credencial en este entorno. La casa NO llama a ningún modelo: todas sus capacidades de «IA» son deterministas y se declaran abajo."
-        : "Hay credencial de proveedor, pero ningún cliente está implementado todavía: la credencial sola no hace ninguna llamada. La casa sigue respondiendo con sus capacidades deterministas.",
+      implementados === 0
+        ? "Ningún proveedor tiene cliente implementado en este entorno: todas las capacidades de «IA» son deterministas y se declaran abajo."
+        : "El núcleo de la casa SÍ está implementado y se usa (lib/ia-gateway.ts). Los proveedores externos (OpenAI, Anthropic, Google, Groq, Mistral) siguen sin cliente: tener su clave no hace ninguna llamada. Cuando el núcleo no responde, la casa cae a sus capacidades deterministas y lo dice.",
   };
 }
 
@@ -179,8 +197,8 @@ export function resumirEstado(): string {
   const c = coberturaCatalogo();
   return `La casa declara ${c.modelos} modelos de datos: ${c.conProcedencia} con procedencia, ${c.conFechaDeCaptura} con fecha de captura y ${c.conLimites} con límites escritos. ` +
     `Hay ${c.relaciones} relaciones declaradas entre modelos. ` +
-    `${estadoProveedores().conCredencial === 0 ? "Ningún proveedor de IA tiene credencial configurada" : "Hay credencial de proveedor sin cliente implementado"}: ` +
-    `las respuestas se construyen con reglas, catálogo y datos reales.`;
+    `${estadoProveedores().implementados > 0 ? "El núcleo de lenguaje de la casa está implementado; si no responde, todo cae a reglas, catálogo y datos reales" : "Ningún proveedor de IA tiene cliente implementado"}: ` +
+    `las respuestas nunca se simulan.`;
 }
 
 /** Conveniencia: interpretar + explicar en una sola llamada (asistente básico). */

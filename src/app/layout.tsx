@@ -43,6 +43,10 @@ import { Carcasa } from "@/components/portada/carcasa";
 import { BarraAdaptativa } from "@/components/vanguard/navegacion/barra-adaptativa";
 // v406.0 LA TRAVESÍA — el rastro: cada página deja un paso (solo en el aparato)
 import { Registrador } from "@/components/travesia/registrador";
+// v431.0 · LA MENTE, EN TODAS PARTES — el panel global del cerebro de la casa.
+// Si el gateway de lenguaje está caído, la propia mente lo dice y pasa a modo
+// casa: no hay simulación de inteligencia en ningún punto.
+import { MenteGlobal } from "@/components/mente/mente-global";
 import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -952,6 +956,9 @@ try{
         {/* v405.10: el muelle contextual — se adapta a la sala en la que estás */}
         <BarraAdaptativa />
         <Registrador />
+        {/* v431.0: LA MENTE — habla desde cualquier sala y te lleva a los sitios.
+            Se monta fuera de /vanguard2 y de las salas inmersivas (canvas puro). */}
+        <MenteGlobal />
         {/* v403.1 LOS DOS MUNDOS: la Puerta (primera visita) y el Cruce entre mundos */}
         <PuertaMundos />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />

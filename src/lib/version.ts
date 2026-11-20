@@ -6934,10 +6934,22 @@
 // (nota de serie: v422.2 lo tomó «VIDA» mientras esta sala se construía; por la
 // regla de la casa —comprobar origin/main antes de fijar versión y subir el
 // último dígito— RADIO VANGUARD sale como v422.3, no como v422.2.)
+// ═══════════════════════════════════════════════════════════════════════════
+// v431.0 · LA MENTE CON MANOS — orden del Dueño, textual: «mejora la IA de
+// Vanguard totalmente, hazla súper inteligente, que pueda crear cosas, que uno
+// pueda hablar con ella cuando quiera y que nos dirija a lugares dentro».
+// Lo que cambia para el operador: LA MENTE vive en TODAS las páginas (⌘J), sabe
+// dónde está cada cosa de la casa (257 lugares con ruta real), te lleva a ellos
+// con enlaces de verdad, explica qué hay dentro y CREA artefactos que se copian
+// o se descargan. Si el núcleo de lenguaje no responde, lo dice y pasa a MODO
+// CASA en vez de callarse o fingir.
+// ═══════════════════════════════════════════════════════════════════════════
+// (anterior) export const APP_VERSION = "v422.3";
+// (anterior) export const APP_CODENAME = "VIDA 2";
 // (anterior) export const APP_VERSION = "v422.3";
 // (anterior) export const APP_CODENAME = "RADIO VANGUARD";
-export const APP_VERSION = "v422.3";
-export const APP_CODENAME = "VIDA 2";
+export const APP_VERSION = "v431.0";
+export const APP_CODENAME = "LA MENTE CON MANOS";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";

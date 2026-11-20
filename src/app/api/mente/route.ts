@@ -4,6 +4,8 @@ import { busquedaAlternativa } from "@/lib/investiga-rss";
 import { createZAI } from "@/lib/zai-server";
 import { evaluarNeuronal, predecir } from "@/lib/neurona-core";
 import { borradorCreador, dialogoMenteFallback, pensamientoMente, pulsoActual } from "@/lib/mente-data";
+// v431.0: el motor de LA MENTE (navega, busca y crea) — el mismo del panel global.
+import { hablarConMente } from "@/lib/mente/agente";
 
 // v99.0 MENTE VIVA — LA MENTE DE VANGUARD: el cerebro central de la plataforma.
 // Tres modos (todas las vías con respaldo determinista: la sala NUNCA calla):
@@ -226,6 +228,40 @@ export async function POST(req: Request) {
       if (mensaje.length < 2) {
         return NextResponse.json({ ok: false, error: "Escríbele algo a la MENTE" }, { status: 400 });
       }
+      // v431.0 · UNA SOLA MENTE — la sala del cuartel y el panel global hablan
+      // por el mismo motor. Antes, la sala usaba una única llamada sin ojos (no
+      // sabía dónde estaban las cosas ni podía llevarte a ellas). Ahora la sala
+      // prueba primero el motor nuevo y, si algo falla, sigue por el camino de
+      // siempre: el contrato de esta ruta no cambia (respuesta, ia, bucket) y
+      // solo se AÑADEN enlaces y artefactos.
+      try {
+        const motor = await hablarConMente({
+          mensaje,
+          historial: (Array.isArray(body.historial) ? body.historial : [])
+            .slice(-8)
+            .map((m) => {
+              const o = (m ?? {}) as Record<string, unknown>;
+              return {
+                rol: o.role === "assistant" ? ("mente" as const) : ("operador" as const),
+                texto: clean(o.content, 600),
+              };
+            })
+            .filter((m) => m.texto),
+          ruta: clean(body.ruta, 200) || "/cuartel?sala=mente",
+          presupuestoMs: 40_000,
+        });
+        if (motor.respuesta) {
+          return NextResponse.json({
+            ok: true,
+            ia: motor.ia,
+            bucket: pulsoActual(),
+            respuesta: clean(motor.respuesta, 1_600),
+            enlaces: motor.enlaces,
+            artefactos: motor.artefactos,
+            motor: motor.motor,
+          });
+        }
+      } catch { /* la vía nueva no respondió: sigue el camino de siempre */ }
       const bucket = pulsoActual();
       const historial = historialSeguro(body.historial);
       const contexto = `PULSO ACTUAL: ${bucket} (el mundo avanza cada 5 minutos). PENSAMIENTO DEL INSTANTE: "${pensamientoMente(bucket)}".\nMENSAJE DEL OPERADOR: ${mensaje}`;
