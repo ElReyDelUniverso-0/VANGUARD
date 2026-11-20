@@ -42,3 +42,13 @@
   - `.vx-worlds` y el escenario refuerzan `min-width: 0` para evitar overflow; rails de mundos colapsados por defecto en móvil (≤900px).
 - **Verificación**: tsc limpio en los archivos tocados; redeploy a Vercel (production con más memoria) y re-audito headless para confirmar que el flotante se ancla al escenario. **Resultado PASS**: en 1440×900 el flotante quedó en (x=975, y=796) — DENTRO del escenario (x 274–1106, y 783–1528); antes estaba en y=12 (viewport). En 390×844: flotante en (x=247, y=685), también dentro del escenario; rails colapsados (railZones 0×0); sin overflow horizontal en ambos. Deployment `dpl_9bawQAJ73xA6rAixGdG5xY4w91zG` — READY/PROMOTED, `vanguard-kq9r.vercel.app/worlds` → 200.
 
+### v422.3 · MISIÓN 05 — VIDA 2 (2026-11-19)
+- **Mandato**: «míralo, mejóralo, supera lo que hiciste, hazlo 100 veces mejor, púlalo».
+- **La órbita 2**: botón magnético con anillo cónico, VELO que desenfoca el resto, BUSCADOR en vivo («ma» → Mapa 3D, Mapas…), dos grupos (Módulos / Tu lado), flechas y Esc con foco devuelto, y **cada puerta anota su impresión** (el menú también enseña al algoritmo).
+- **El carril «Para ti» 2**: tarjetas con **inclinación 3D** y foco de luz que sigue al ratón, número fantasma, **ruleta «Sorpréndeme»** (sorpresa con memoria: nunca lo que ya ves, nunca lo abierto en la última hora, prefiere lo nuevo; 500 ms de nombres y aterriza con tarjeta dorada), **medidor vivo** (puertas y aperturas), «Ver doce», «Borrar lo aprendido».
+- **Aurora 2**: cinco orbes con **paralaje al puntero** (se escribe una variable CSS por frame) + grano fino de 220 bytes sin peticiones.
+- **Pulso de lectura**: línea de luz arriba con el avance, y aparición al desplazar SOLO si el script monta (sin JS todo se ve).
+- **Cortina 2**: tres tiempos (marca → lema → módulos reales parpadeando) + línea que se llena + «toca para entrar».
+- **Motor**: nuevas piezas puras `elegirSorprendente` y `resumenSenal`, y la memoria central `lib/vida/senal.ts` (una sola clave, tolerante a basura). Una prueba destapó que un valor negativo del almacén inflaba el contador de aperturas: se ignora la basura en el código.
+- **Pruebas**: \`node scripts/pruebas-vida.mjs\` → **28 pasan · 0 fallan**.
+- **Accesibilidad**: todo respeta \`data-vg-anim\` (completas/reducidas/desactivadas) y \`prefers-reduced-motion\`; inclinación y paralaje se apagan en táctil; la casa inmersiva \`/vanguard2\` sigue sin capas 2D.

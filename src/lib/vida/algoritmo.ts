@@ -196,3 +196,66 @@ export function inicialDe(nombre: string): string {
   if (!limpio) return "V";
   return [...limpio][0].toUpperCase();
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// v422.3 · LA RULETA Y EL RESUMEN — dos piezas nuevas del motor
+//
+// `elegirSorprendente` es la sorpresa CON MEMORIA: no repite nada de lo que
+// ya te está enseñando el carril ni lo que abriste hace un momento, y prefiere
+// lo que nunca tocaste. Determinista con la semilla que se le pase (para poder
+// probarla) y sin `Math.random` en el motor: el azar lo pone la pantalla.
+// ══════════════════════════════════════════════════════════════════════ */
+
+/** Cuántas impresiones distintas y cuántas aperturas hay en total (para la cabecera del carril). */
+export function resumenSenal(senal: Senal): { puertas: number; aperturas: number; recientes: number } {
+  const uso = senal.uso ?? {};
+  const vistos = senal.vistos ?? {};
+  // la basura del almacén no cuenta: ni negativos, ni NaN
+  const aperturas =
+    Object.values(uso).reduce((a, b) => a + (Number.isFinite(b) ? Math.max(0, b) : 0), 0) + Object.keys(vistos).length;
+  const ahora = senal.ahora ?? Date.now();
+  const recientes = Object.values(vistos).filter((t) => Number.isFinite(t) && ahora - t < VIDA_MEDIA_MS).length;
+  return { puertas: Object.keys(vistos).length, aperturas, recientes };
+}
+
+/**
+ * La ruleta: elige UNA puerta que sorprenda.
+ * Reglas, en orden: (1) nunca una de las que ya estás viendo, (2) nunca una
+ * abierta en la última hora, (3) primero las que nunca abriste, (4) desempate
+ * por hash con la semilla — así dos toques seguidos dan puertas distintas y la
+ * misma semilla da siempre la misma (prueba reproducible).
+ */
+export function elegirSorprendente(
+  candidatos: Candidato[],
+  senal: Senal = {},
+  excluir: string[] = [],
+  semilla = 0,
+): Recomendacion | null {
+  const ahora = senal.ahora ?? Date.now();
+  const vistos = senal.vistos ?? {};
+  const fuera = new Set(excluir);
+  const hace = (id: string, href: string) => vistos[id] ?? vistos[href];
+
+  const libres = candidatos.filter((c) => !fuera.has(c.id) && !fuera.has(c.href));
+  if (libres.length === 0) return null;
+
+  const UNA_HORA = 60 * 60 * 1000;
+  const frios = libres.filter((c) => {
+    const t = hace(c.id, c.href);
+    return t === undefined || ahora - t > UNA_HORA;
+  });
+  const base = frios.length > 0 ? frios : libres;
+
+  const nuevos = base.filter((c) => hace(c.id, c.href) === undefined);
+  const bolsa = nuevos.length > 0 ? nuevos : base;
+
+  const orden = [...bolsa].sort((a, b) => hash(a.id + ":" + semilla) - hash(b.id + ":" + semilla));
+  const elegido = orden[0];
+  const yaVisto = hace(elegido.id, elegido.href) !== undefined;
+  return {
+    ...elegido,
+    puntos: 0,
+    razon: yaVisto ? "la ruleta dice que vuelvas" : "la ruleta te enseña algo nuevo",
+    detalle: { favorito: 0, impresiones: 0, afinidad: 0, novedad: 0, repeticion: 0 },
+  };
+}

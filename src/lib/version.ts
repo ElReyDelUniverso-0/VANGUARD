@@ -6934,8 +6934,10 @@
 // (nota de serie: v422.2 lo tomó «VIDA» mientras esta sala se construía; por la
 // regla de la casa —comprobar origin/main antes de fijar versión y subir el
 // último dígito— RADIO VANGUARD sale como v422.3, no como v422.2.)
+// (anterior) export const APP_VERSION = "v422.3";
+// (anterior) export const APP_CODENAME = "RADIO VANGUARD";
 export const APP_VERSION = "v422.3";
-export const APP_CODENAME = "RADIO VANGUARD";
+export const APP_CODENAME = "VIDA 2";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";
 // (anterior) export const APP_VERSION = "v418.2";

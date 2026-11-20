@@ -217,6 +217,69 @@ prueba("escenario real: tres visitas a un frente lo ponen arriba y se explica", 
   afirmar(final.every((f) => f.razon.length > 4), "razón vacía");
 });
 
+// ─── v422.3: la ruleta y el resumen ──────────────────────────────
+prueba("la ruleta nunca repite lo que ya estás viendo", () => {
+  const enPantalla = ["conflictos", "mapa", "ciencia"];
+  for (let semilla = 0; semilla < 40; semilla++) {
+    const e = A.elegirSorprendente(PUERTAS, { ahora: AHORA }, enPantalla, semilla);
+    afirmar(e !== null, "devolvió null con puertas libres");
+    afirmar(!enPantalla.includes(e.id), `repitió ${e.id} con semilla ${semilla}`);
+  }
+});
+
+prueba("la ruleta evita lo abierto en la última hora", () => {
+  const calientes = { mapa: AHORA - 10 * 60 * 1000, ciencia: AHORA - 30 * 60 * 1000 };
+  for (let semilla = 0; semilla < 40; semilla++) {
+    const e = A.elegirSorprendente(PUERTAS, { vistos: calientes, ahora: AHORA }, [], semilla);
+    afirmar(e && !("mapa" === e.id) && e.id !== "ciencia", `salió caliente: ${e && e.id}`);
+  }
+});
+
+prueba("si todo está caliente, la ruleta sigue dando algo (nunca se queda vacía)", () => {
+  const todos = Object.fromEntries(PUERTAS.map((p) => [p.id, AHORA - 60_000]));
+  const e = A.elegirSorprendente(PUERTAS, { vistos: todos, ahora: AHORA }, [], 7);
+  afirmar(e !== null, "devolvió null");
+  afirmar(e.razon.includes("vuelvas"), "razón: " + e.razon);
+});
+
+prueba("si no queda nada libre, la ruleta devuelve null (no inventa)", () => {
+  const todos = PUERTAS.map((p) => p.id);
+  const e = A.elegirSorprendente(PUERTAS, { ahora: AHORA }, todos, 1);
+  afirmar(e === null, "devolvió " + (e && e.id));
+});
+
+prueba("la ruleta prefiere lo que nunca abriste", () => {
+  for (let semilla = 0; semilla < 25; semilla++) {
+    const e = A.elegirSorprendente(PUERTAS, { vistos: { mapa: AHORA - 5 * DIA }, ahora: AHORA }, [], semilla);
+    afirmar(e && e.id !== "mapa", "eligió la única ya abierta existiendo nuevas");
+  }
+});
+
+prueba("la ruleta es reproducible con la misma semilla y varía con otras", () => {
+  const uno = A.elegirSorprendente(PUERTAS, { ahora: AHORA }, [], 3);
+  const dos = A.elegirSorprendente(PUERTAS, { ahora: AHORA }, [], 3);
+  afirmar(uno.id === dos.id, "la misma semilla dio puertas distintas");
+  const vistos = new Set();
+  for (let s = 0; s < 25; s++) vistos.add(A.elegirSorprendente(PUERTAS, { ahora: AHORA }, [], s).id);
+  afirmar(vistos.size >= 3, "semillas distintas solo dieron " + vistos.size + " puerta(s)");
+});
+
+prueba("el resumen cuenta puertas, aperturas y recientes sin inflarse", () => {
+  const r = A.resumenSenal({
+    uso: { a: 3, b: 2, c: -1 },
+    vistos: { mapa: AHORA - 1000, ciencia: AHORA - 40 * DIA },
+    ahora: AHORA,
+  });
+  afirmar(r.puertas === 2, "puertas: " + r.puertas);
+  afirmar(r.aperturas === 7, "aperturas: " + r.aperturas);
+  afirmar(r.recientes === 1, "recientes: " + r.recientes);
+});
+
+prueba("el resumen de un aparato recién estrenado es cero, no NaN", () => {
+  const r = A.resumenSenal({});
+  afirmar(r.puertas === 0 && r.aperturas === 0 && r.recientes === 0, JSON.stringify(r));
+});
+
 console.log("─".repeat(62));
 console.log(`  ${pasan} pasan · ${fallan} fallan`);
 process.exit(fallan === 0 ? 0 : 1);
