@@ -401,3 +401,22 @@ es que ahora también se cuenta lo que ni siquiera llegó a publicarse.
 **Límite declarado:** los contadores son de la validación, no de la verdad. Una
 afirmación con cita válida puede seguir siendo falsa si la fuente lo es; lo que
 la Cámara garantiza es que la cita existe en el material y que se puede abrir.
+
+### 13.3 Medido en producción
+
+| Qué | Resultado |
+|---|---|
+| `/api/centro/buscar` (litografía EUV) | `poda`: 181 total · 181 examinadas · **25 hablan del asunto** · **14 devueltas** · 11 fuera por tope · 156 bajo umbral |
+| aviso servido | «Se usaron 14 de 25 fuentes que hablan del asunto; 11 quedaron fuera por puntuación, no por falta de datos; 156 no mencionan el asunto.» |
+| aviso en pantalla (390×844) | la misma frase bajo «2 · De dónde citar» |
+| `/api/centro/buscar` («zebras con sombrero de paja») | `poda` 0 devueltas, 181 bajo umbral; aviso «Se examinaron 181 fuentes de la casa y ninguna llega al umbral (0.15).» |
+| caso vacío en pantalla | «El corpus fijo de la casa no tiene nada con esas palabras; lo que hay abajo viene del feed vivo del núcleo, no de un dossier. · Se examinaron 181 fuentes de la casa y ninguna llega al umbral (0.15).» |
+| `/api/centro/investigar` con modelo | motor `llm`, 3 afirmaciones, `auditoriaCitas.nota`: «3 afirmaciones presentadas → 3 publicables · 2 citas disponibles en el material» |
+| sin modelo (`sinModelo:true`) | `auditoriaCitas.nota`: «3 afirmaciones extractivas (citas literales, sin redacción de modelo): no hay citas que validar · 1 cita disponible en el material» |
+| bloque en pantalla | «VALIDACIÓN DE CITAS — lo que el modelo presentó y lo que pasó el filtro»: «6 afirmaciones presentadas → 6 publicables · 3 citas disponibles en el material» |
+| consola | **0 `pageerror`** en todo el recorrido |
+| aro de calidad `/inteligencia` | 200 · CLS 0 · 0 tareas largas · 0 desbordes · 1 355 KB · MEDIA 1 (los dos textos <12 px heredados) |
+
+Los commits de esta entrega: `a02a2cd` (poda + auditoría), `60fea7f` (poda en el
+caso vacío y auditoría del extractivo), `9a05bf5` (plurales), `9c18e36` (avisos
+del caso vacío en pantalla) y `859472b` («0 de 0 fuentes» se escribe entero).
