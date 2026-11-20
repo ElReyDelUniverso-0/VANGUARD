@@ -1,13 +1,13 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-20",
-  "paginas": 179,
+  "paginas": 180,
   "rutasApi": 138,
-  "total": 317,
+  "total": 318,
   "bienConectadas": 161,
   "huerfanas": [],
-  "paginasConReferencias": 179,
-  "mediaReferencias": 13,
+  "paginasConReferencias": 180,
+  "mediaReferencias": 12.94,
   "rutas": [
     {
       "ruta": "/",
@@ -2678,7 +2678,7 @@
     {
       "ruta": "/motores",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
         "app/motores/censo/page.tsx",
         "app/motores/curva-rendimiento/page.tsx",
@@ -2723,6 +2723,14 @@
         "app/motores/page.tsx",
         "components/portada/foco-academia-motores.tsx",
         "components/portada/modulos.ts"
+      ]
+    },
+    {
+      "ruta": "/motores/escalada",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "app/motores/page.tsx"
       ]
     },
     {
