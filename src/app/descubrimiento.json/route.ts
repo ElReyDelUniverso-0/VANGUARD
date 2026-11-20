@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import sitemap from "@/app/sitemap";
+// v421.0 — el sitemap dejó de ser una ruta y es una función (el mapa se sirve
+// dividido). Esta llamada devuelve el mapa COMPLETO, igual que antes.
+import { construirMapa } from "@/lib/seo/mapa";
 import { SITE_URL } from "@/lib/site";
 import { LLAVE_INDEXNOW, HORAS_TANDA, TAMANO_TANDA, MOTORES, tandaDe, vueltaCompletaDias } from "@/lib/faro";
 import { CONSTELACIONES, TOTAL_SALAS } from "@/lib/vanguard/mapa-salas";
@@ -36,7 +38,7 @@ const CACHE_MS = 10 * 60_000;
 async function contarUrls(): Promise<Conteo> {
   if (conteo && Date.now() - conteo.cuando < CACHE_MS) return conteo;
   try {
-    const mapa = await sitemap();
+    const mapa = await construirMapa();
     conteo = { urls: mapa.length, cuando: Date.now() };
     return conteo;
   } catch {

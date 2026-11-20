@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import sitemap from "@/app/sitemap";
+// v421.0 — el sitemap dejó de ser una ruta y es una función (el mapa se sirve
+// dividido). Esta llamada devuelve el mapa COMPLETO, igual que antes.
+import { construirMapa } from "@/lib/seo/mapa";
 import { SITE_URL } from "@/lib/site";
 import { LLAVE_INDEXNOW, HORAS_TANDA, TAMANO_TANDA, MOTORES, tandaDe, vueltaCompletaDias } from "@/lib/faro";
 
@@ -27,7 +29,7 @@ export async function GET() {
   let urls: string[] = [];
   let mapaCaido = false;
   try {
-    const mapa = await sitemap();
+    const mapa = await construirMapa();
     urls = mapa.map((u) => u.url).filter((u): u is string => typeof u === "string");
   } catch {
     // el mapa del sitio es del núcleo y puede caerse con la base: se declara,
