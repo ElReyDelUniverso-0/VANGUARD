@@ -442,7 +442,7 @@ export const FAMILIAS_MODULO: FamiliaModulos[] = [
     motivo:
       "La casa también es un módulo: dónde está cada puerta (/orden), cómo se mide su salud (/estado, /torre, /calidad), qué guarda de ti (/privacidad, /mi-universo, /cuaderno) y cómo se ajusta a tu pantalla (/config). El cuartel ya no existe como destino: cada sala tiene su URL y el índice las declara todas.",
     cifra: "28 puertas · 156 salas · 1 buscador",
-  },,
+  },
   {
     id: "familia-lengua",
     pregunta: "¿Cómo habla el planeta?",
