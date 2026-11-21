@@ -1,153 +1,46 @@
 import type { Metadata } from "next";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
-import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
-import { MusicaSala } from "@/components/vanguard/musica-sala";
+import { MusicStudio } from "@/components/vanguard/music-studio";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
-import { PortadaSala } from "@/components/vanguard/portada-sala";
-import { cuentaMusicaReal } from "@/lib/musica/catalogo";
-import { cuentaVerificadas } from "@/lib/musica/radios";
-
-// ============================================================
-// v367.3 LA MÚSICA CON FORMA — /musica
-//
-// El Dueño, textual: «la música de Vanguard se deforma con el tiempo, es
-// fea, aburrida y no tiene ninguna relevancia; necesita música viral sin
-// copia, un himno nacional de Vanguard, radios de lugares en conflicto,
-// música militar y la radio de Vanguard — todo lo que tenga que ver con
-// sonidos o algo de guerra».
-//
-// Esta sala es la respuesta: forma de verdad (sello + A-B-A + cero deriva),
-// el himno, las piezas con pulso prestado y melodía propia, la radio de
-// conflicto con emisoras reales comprobadas y la radio de la casa como red
-// de seguridad, y los sonidos de guerra sintetizados.
-//
-// Todo el audio se fabrica en el aparato: cero archivos, cero descargas,
-// cero licencias.
-// ============================================================
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "La Música — música real, radio de conflicto y el taller",
-  description:
-    "Música real de dominio público y CC0 (bandas militares, orquestas de 1910, un tenor de los años treinta), radio de conflicto con emisoras comprobadas, la radio de la casa leída del archivo real y los sonidos de guerra. Cada pista con su licencia y su fuente.",
+  title: "Música y radios del mundo — VANGUARD",
+  description: "Elige música real, marchas, ambiente, emisoras de radio de países del mundo o tus propios archivos privados. Reproducción continua opcional.",
   alternates: { canonical: `${SITE_URL}/musica` },
 };
 
 const PUERTAS: EnlaceContextual[] = [
-  {
-    etiqueta: "LA CRÓNICA DEL DÍA ▸",
-    ruta: "/cronica",
-    motivo: "de aquí sale cada boletín de la radio de la casa, con fuente y fecha",
-    tipoRelacion: "pertenece_a",
-  },
-  {
-    etiqueta: "LA VOZ MAESTRA ▸",
-    ruta: "/voz",
-    motivo: "la boca que lee los boletines: cuatro personas y pausas reales",
-    tipoRelacion: "pertenece_a",
-  },
-  {
-    etiqueta: "EL PULSO · EN VIVO ▸",
-    ruta: "/en-vivo",
-    motivo: "las noticias que la radio de la casa no se inventa",
-    tipoRelacion: "pertenece_a",
-  },
-  {
-    etiqueta: "LA TORRE DE CONTROL ▸",
-    ruta: "/torre",
-    motivo: "el diagnóstico del motor: cuántas veces hubo que resincronizar",
-    tipoRelacion: "documenta",
-  },
+  { etiqueta: "LA CRÓNICA DEL DÍA ▸", ruta: "/cronica", motivo: "boletines reales, con fuente y fecha", tipoRelacion: "pertenece_a" },
+  { etiqueta: "EL PULSO · EN VIVO ▸", ruta: "/en-vivo", motivo: "noticias y fuentes en directo", tipoRelacion: "pertenece_a" },
+  { etiqueta: "RADIO ▸", ruta: "/radio", motivo: "más formas de seguir las voces del mundo", tipoRelacion: "pertenece_a" },
 ];
 
 export default function MusicaPage() {
   const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: "La Música con Forma — VANGUARD",
-    description:
-      "Himno de VANGUARD, piezas originales con forma A-B-A, música militar sintetizada y radio de conflicto con emisoras reales comprobadas y radio de la casa.",
-    url: `${SITE_URL}/musica`,
-    isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
-    inLanguage: "es",
+    "@context": "https://schema.org", "@type": "WebPage", name: "Música y radios del mundo — VANGUARD",
+    description: "Música real seleccionable, emisoras internacionales y reproducción de archivos de audio locales.",
+    url: `${SITE_URL}/musica`, isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL }, inLanguage: "es",
   };
-
-  // v402.2 — cifras de portada, calculadas de los catálogos de la sala
-  const musica = cuentaMusicaReal();
-  const radios = cuentaVerificadas();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
-      <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        {/* v402.2 — portada de sala: cifras del catálogo real y de las radios */}
-        <PortadaSala
-          imagen="/imagenes-reales/dubai.jpg"
-          alt="Sala de instrumentos con guitarras alineadas bajo la luna llena"
-          volanta="Inteligencia · Música y radio"
-          titulo="La Música con Forma"
-          sumario="Música de verdad, de dominio público y CC0, cada pista con su licencia y su fuente. Debajo, las radios de los frentes y los sonidos de guerra."
-          cifras={[
-            { valor: musica.total, etiqueta: "Pistas reales", nota: "dominio público y CC0" },
-            { valor: musica.categorias, etiqueta: "Categorías", nota: "marchas, orquesta, voz…" },
-            { valor: radios.verificadas, etiqueta: "Emisoras", nota: `comprobadas de ${radios.total}` },
-          ]}
-          acento="#e8c56a"
-        />
-
-        <article className="mx-auto max-w-3xl px-5 py-10">
-          <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-            Aquí está la <strong className="text-zinc-300">música de verdad</strong>: trece pistas de
-            dominio público y CC0 — bandas militares, orquestas de 1910, un tenor de los años treinta y
-            una grabación de campo — cada una con su licencia y su fuente a la vista. Debajo, la radio de
-            conflicto y los sonidos de guerra. Y al final, plegado, el taller de composición de la casa:
-            se queda como experimento, no como lo primero que suena.
-          </p>
-
-          <div className="mt-8">
-            <MusicaSala />
+      <main className="min-h-screen bg-[#07080c] text-zinc-100">
+        <header className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(ellipse_at_82%_0%,rgba(220,164,78,.16),transparent_48%),linear-gradient(130deg,#11131a,#07080c)]">
+          <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+            <p className="text-[11px] font-semibold uppercase tracking-[.24em] text-amber-200/65">VANGUARD · SONIDO Y CULTURA</p>
+            <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">Música, noticias y radios del mundo.</h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">Escoge una banda sonora, sintoniza emisoras de cualquier país o escucha tu propia música. Tú decides qué suena.</p>
           </div>
-
-          <section className="mt-8">
-            <h2 className="text-lg font-bold text-amber-300">Qué hay aquí y de quién es</h2>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-              Las trece pistas de arriba no son de la casa: las tocaron bandas y orquestas reales y son
-              de dominio público o CC0, así que se pueden escuchar sin pedir permiso a nadie. La casa
-              no aloja ni un byte de audio ajeno: se sirve desde archive.org, con la ficha original
-              enlazada en cada una. Lo que sí es de la casa es el taller de composición (plegado abajo),
-              la radio de la casa y los sonidos sintetizados.
-            </p>
-            <h2 className="mt-6 text-lg font-bold text-amber-300">Por qué el taller no se deforma</h2>
-            <ul className="mt-3 flex flex-col gap-2 text-sm leading-relaxed text-zinc-400">
-              <li>
-                <strong className="text-zinc-200">Tiempo absoluto.</strong> Cada golpe se agenda en
-                «ancla + paso × duración». Sumar retardos es lo que desafina una pieza larga: un
-                milisegundo por nota se convierte en segundos perdidos en dos minutos.
-              </li>
-              <li>
-                <strong className="text-zinc-200">Forma que se repite.</strong> Intro, A, B, A2 y final.
-                Lo que vuelve es lo que se recuerda; sin vuelta, la pieza se convierte en niebla.
-              </li>
-              <li>
-                <strong className="text-zinc-200">Resync honesto.</strong> Si el aparato se durmió, el
-                motor salta al compás limpio siguiente y no corre para alcanzarse.
-              </li>
-              <li>
-                <strong className="text-zinc-200">Sello de la casa.</strong> Cuatro notas que aparecen en
-                todas las piezas: es lo que hace que suenes a Vanguard al segundo.
-              </li>
-            </ul>
-          </section>
-
-          <FuenteYFecha
-            fuente="música real de dominio público y CC0 servida desde archive.org · emisoras comprobadas el 2026-11-12"
-            nota="Las emisoras reales son enlaces externos y se declaran con la fecha de comprobación y su código HTTP; las que no se pudieron comprobar van marcadas SIN VERIFICAR. La radio de la casa no enlaza a nadie: su ambiente se sintetiza y su boletín se lee del archivo real. Ningún archivo de audio viaja con la casa."
-          />
-
-          <section className="mt-10 pb-10">
-            <EnlacesNucleo enlaces={PUERTAS} titulo="CONECTA CON EL NÚCLEO" />
-          </section>
+        </header>
+        <article className="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-12">
+          <MusicStudio />
+          <aside className="mx-auto mt-5 max-w-4xl rounded-2xl border border-white/10 bg-white/[.025] p-4 text-xs leading-5 text-zinc-500">
+            <strong className="text-zinc-300">Sobre el inicio automático:</strong> el navegador no permite que una página recién abierta emita sonido sin un toque previo. Por eso Vanguard empieza cuando eliges y pulsas una pista; con «Continuar» activado, la siguiente suena automáticamente al terminar. Tus archivos personales se leen localmente y no se cargan a nuestros servidores.
+          </aside>
+          <section className="mx-auto mt-10 max-w-4xl pb-6"><EnlacesNucleo enlaces={PUERTAS} titulo="SIGUE EXPLORANDO" /></section>
         </article>
       </main>
     </>
