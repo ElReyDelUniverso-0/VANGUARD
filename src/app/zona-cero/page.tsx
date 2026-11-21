@@ -136,6 +136,43 @@ export default async function ZonaCeroPage() {
   return (
     <>
     <NucleoZonaCero />
+    {/* v434.2 · LA MESA DE ÓRDENES — la Zona Cero deja de ser solo el ojo y el
+        teatro: tiene su puesto de mando (órdenes numeradas, tablero para
+        señalar, capturas, correcciones con historial, predicciones y tu API
+        key). Se enlaza aquí, en la puerta, para no esconderla. */}
+    <nav
+      aria-label="La mesa de órdenes"
+      style={{
+        maxWidth: 1180,
+        margin: "14px auto 0",
+        padding: "0 14px",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 10,
+        alignItems: "center",
+        justifyContent: "space-between",
+        font: "600 12.5px/1.5 system-ui, sans-serif",
+        color: "#a9b4c6",
+      }}
+    >
+      <span>
+        El ojo busca y el teatro muestra. Lo que hay que <b style={{ color: "#e9eef7" }}>hacer</b> se escribe en la mesa:
+        órdenes numeradas, señales en el tablero, capturas pegadas y predicciones que dicen en qué se basan.
+      </span>
+      <a
+        href="/zona-cero/mesa"
+        style={{
+          color: "#0b0d12",
+          background: "#22d3ee",
+          borderRadius: 999,
+          padding: "9px 14px",
+          textDecoration: "none",
+          fontWeight: 800,
+        }}
+      >
+        Abrir LA MESA DE ÓRDENES — señalar, numerar, capturar, predecir →
+      </a>
+    </nav>
     {/* v431.6: el tablero se queda; lo que anotes vive ahora en su propia sala */}
     <nav
       aria-label="El cuaderno"

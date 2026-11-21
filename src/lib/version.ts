@@ -7057,8 +7057,15 @@
 // de tres pasos, pie de foto con la razón de cada imagen y animación con
 // propósito. Y la voz: fuera el orbe viejo (VG-ASSIST) y fuera el «modo voz»
 // del orbe — una sola voz en la casa.
-export const APP_VERSION = "v434.1";
-export const APP_CODENAME = "UNA SOLA VOZ";
+// v434.2 · LA MESA DE ÓRDENES — la Zona Cero deja de ser solo el ojo que busca
+// y el teatro que muestra: gana el papel donde se manda. Órdenes numeradas
+// (prioridad, estado, progreso, vencimiento, etiquetas y dependencias), tablero
+// para señalar con pines arrastrables, capturas pegadas con Ctrl+V, correcciones
+// con historial y deshacer, predicciones del motor de la casa que declaran sus
+// factores y su confianza, y una API key propia (OpenAI-compatible) para la
+// narración. Todo vive en el aparato del operador; nada se simula.
+export const APP_VERSION = "v434.2";
+export const APP_CODENAME = "LA MESA DE ÓRDENES";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
