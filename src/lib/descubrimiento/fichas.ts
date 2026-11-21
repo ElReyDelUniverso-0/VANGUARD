@@ -190,6 +190,18 @@ export const PUERTAS_EXTRA: { href: string; nombre: string; que: string; ejemplo
     divisionNombre: "La puerta",
   },
   {
+    href: "/mercado",
+    nombre: "El Mercado",
+    que: "Las diez familias, cada una en su puesto con su mercader: abre uno y te enseña lo que vende.",
+    ejemplos: [
+      "Abre el puesto de una familia y mira sus secciones, con su cifra",
+      "Pon la música de la plaza: una contradanza de ocho compases",
+      "Busca «mapa» y mira qué puestos lo venden",
+    ],
+    division: "D-0",
+    divisionNombre: "La puerta",
+  },
+  {
     href: "/orden",
     nombre: "Orden de batalla",
     que: "El índice completo: todas las divisiones, sus módulos y todas sus salas.",

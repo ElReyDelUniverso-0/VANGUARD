@@ -216,6 +216,47 @@ export const ACCIONES = {
       N({ tipo: "campana", f: 330, d: 0.5, g: 0.024, cuando: 0.4 }),
     ],
   },
+  // ── el mercado (v437.2) ─────────────────────────────────────────────────
+  "puesto-abrir": {
+    que: "abrir un puesto: madera que cede y una campana corta, como una lona que se sube",
+    familia: "mixta",
+    cada: 240,
+    notas: [
+      N({ tipo: "madera", f: 196, d: 0.1, g: 0.042 }),
+      N({ tipo: "ruido", d: 0.05, g: 0.016, cuando: 0.02 }),
+      N({ tipo: "campana", f: 659.25, d: 0.42, g: 0.026, cuando: 0.07 }),
+    ],
+  },
+  "puesto-cerrar": {
+    que: "cerrar un puesto: la misma madera, el aire que se recoge y una campana que baja",
+    familia: "mixta",
+    cada: 240,
+    notas: [
+      N({ tipo: "ruido", d: 0.06, g: 0.014 }),
+      N({ tipo: "madera", f: 146.83, d: 0.12, g: 0.04, cuando: 0.03 }),
+      N({ tipo: "campana", f: 440, d: 0.36, g: 0.022, cuando: 0.1 }),
+    ],
+  },
+  moneda: {
+    que: "una moneda que cambia de mano: dos campanas muy juntas y un cobre al final",
+    familia: "aire",
+    cada: 180,
+    notas: [
+      N({ tipo: "campana", f: 1046.5, d: 0.16, g: 0.02 }),
+      N({ tipo: "campana", f: 1318.51, d: 0.24, g: 0.016, cuando: 0.05 }),
+      N({ tipo: "madera", f: 261.63, d: 0.08, g: 0.022, cuando: 0.11 }),
+    ],
+  },
+  "mercado-musica": {
+    que: "la entrada de la contradanza de la plaza: campana en Do y el bajo que marca el pulso",
+    familia: "mixta",
+    cada: 500,
+    notas: [
+      N({ tipo: "campana", f: 523.25, d: 0.8, g: 0.018 }),
+      N({ tipo: "madera", f: 130.81, d: 0.5, g: 0.03, cuando: 0.02 }),
+      N({ tipo: "tono", f: 523.25, d: 0.55, g: 0.016, cuando: 0.02, onda: "triangle", verb: 0.12 }),
+    ],
+  },
   silencio: {
     que: "apagar el sonido: un toque que se queda sin aire",
     familia: "cuerpo",

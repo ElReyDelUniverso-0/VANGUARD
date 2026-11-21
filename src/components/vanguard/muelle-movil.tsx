@@ -49,6 +49,8 @@ const GRUPOS: { titulo: string; destinos: Destino[] }[] = [
       // «Salas» y «Orden» son la misma puerta desde que el Cuartel se disolvió
       // (v433): /cuartel redirige a /orden. Aquí va una sola vez, no dos.
       { href: "/orden", etiqueta: "Salas y orden", nota: "todas las salas y el tablero" },
+      // v437.2 · el mercado, en el muelle: las diez familias ya no van en el menú
+      { href: "/mercado", etiqueta: "El mercado", nota: "las diez familias, puesto a puesto" },
     ],
   },
   {

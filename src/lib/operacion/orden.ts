@@ -145,6 +145,8 @@ export function divisionDe(ruta: string): string | null {
  */
 export const NAV_PRIMARIO = [
   { href: "/orden", label: "Orden" },
+  // v437.2 · una sola puerta al mercado (no diez): las familias se presentan allí
+  { href: "/mercado", label: "Mercado" },
   { href: "/buscar", label: "Buscar" },
   { href: "/guerra-hoy", label: "Redacción" },
   { href: "/mundos", label: "Mundo" },

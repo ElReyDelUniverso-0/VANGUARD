@@ -8,7 +8,7 @@
 // Nada de esto suena solo: si nunca hubo un toque, no hay gesto y no suena.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { initSound, isMuted, setMuted, tocar } from "@/lib/sound";
+import { initSound, isMuted, setMuted, tocar, type NotaVoz } from "@/lib/sound";
 import { calmaActiva } from "@/lib/calma";
 import {
   ACCIONES, esAccion, marcarDisparo, puedeSonar, tocaAhora,
@@ -50,22 +50,48 @@ function oculto(): boolean {
   return document.visibilityState === "hidden";
 }
 
-/** La señal pública. Silenciosa cuando debe serlo. */
-export function suena(accion: Accion | string, opciones?: { forzar?: boolean }): boolean {
+/**
+ * El portero, en un solo sitio: sonido encendido, sin calma, con gesto previo,
+ * pestaña visible y sin repetir la misma acción más rápido de lo que su `cada`
+ * permite. Devuelve true solo si de verdad se puede sonar ahora.
+ */
+function permite(accion: Accion | string, opciones?: { forzar?: boolean }): accion is Accion {
   if (typeof window === "undefined") return false;
   if (!esAccion(accion)) return false;
   const p = leer();
-  const permitido = puedeSonar({
-    mudo: isMuted() || !p.sonido,
-    calma: calmaActiva(),
-    gesto: desbloqueado || opciones?.forzar === true,
-    oculto: oculto(),
-  });
-  if (!permitido) return false;
+  if (
+    !puedeSonar({
+      mudo: isMuted() || !p.sonido,
+      calma: calmaActiva(),
+      gesto: desbloqueado || opciones?.forzar === true,
+      oculto: oculto(),
+    })
+  ) {
+    return false;
+  }
   const ahora = Date.now();
   if (!tocaAhora(accion, ahora)) return false;
   marcarDisparo(accion, ahora);
+  return true;
+}
+
+/** La señal pública. Silenciosa cuando debe serlo. */
+export function suena(accion: Accion | string, opciones?: { forzar?: boolean }): boolean {
+  if (!permite(accion, opciones)) return false;
   tocar(ACCIONES[accion].notas);
+  return true;
+}
+
+/**
+ * v437.2 · LA MÚSICA QUE AVANZA — la misma ley, con las notas que traiga quien
+ * llama. La usa el mercado: su contradanza cambia de compás cada 2,4 s, así que
+ * una receta fija no sirve; lo que no cambia es el portero (silencio, calma,
+ * gesto y pestaña) ni el motor de audio (siempre `lib/sound.ts`).
+ */
+export function suenaNotas(accion: Accion | string, notas: NotaVoz[]): boolean {
+  if (!Array.isArray(notas) || notas.length === 0) return false;
+  if (!permite(accion)) return false;
+  tocar(notas);
   return true;
 }
 

@@ -47,7 +47,10 @@ import { ParaTi } from "@/components/vida/para-ti";
 // portada viva con cuatro registros reales elegidos por día.
 import "@/components/experiencia/experiencia.css";
 import { Entrada } from "@/components/experiencia/entrada";
-import { Ecosistema } from "@/components/experiencia/ecosistema";
+// v437.2 · EL MERCADO (orden del Dueño): las diez familias ya no ocupan la
+// portada. Queda una franja de una fila con los diez toldos y la puerta a
+// /mercado, donde cada familia tiene su puesto y su mercader.
+import { MercadoPortada } from "@/components/mercado/mercado-portada";
 import { PortadaViva } from "@/components/experiencia/portada-viva";
 import { FocoAcademiaMotores } from "@/components/portada/foco-academia-motores";
 // v432.0 EL TRÁILER
@@ -238,10 +241,10 @@ export default async function Portada() {
           <TrailerVanguard compacto />
         </section>
 
-        {/* v422.1 · EL ECOSISTEMA — las diez familias con sus puertas reales.
-            Sustituye a las «ocho áreas» escritas a mano: una sola lista,
-            `lib/experiencia/registro`, con cifras derivadas de los datos. */}
-        <Ecosistema />
+        {/* v437.2 · EL MERCADO — las diez familias ya no se despliegan aquí: viven
+            en /mercado, cada una en su puesto con su mercader. La portada solo
+            enseña la franja con los diez toldos (una fila) y la entrada. */}
+        <MercadoPortada />
 
         <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
           <TituloSeccion sello="Sección 07 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />

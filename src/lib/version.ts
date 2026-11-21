@@ -7154,8 +7154,37 @@
 // DECLARADAS como lo que aún se escribe en español (no se finge).
 // (anterior) export const APP_VERSION = "v437.0";
 // (anterior) export const APP_CODENAME = "LA CASA HABLA TU IDIOMA";
-export const APP_VERSION = "v437.1";
-export const APP_CODENAME = "EL ESTUDIO EN TU IDIOMA";
+// v437.2 · EL MERCADO DE VANGUARD — las diez familias dejan de ocupar la portada
+// y se mudan a un módulo propio con estética de plaza.
+// ① MÓDULO APARTE (/mercado): la entrada ya no monta el tráiler de las diez
+//    familias (fuera <Ecosistema />); en su lugar queda una franja de una fila
+//    con los diez toldos y la puerta. El menú principal gana UNA entrada
+//    («Mercado»), no diez; el muelle del móvil también la lleva.
+// ② DIEZ PUESTOS, DIEZ MERCADERES (lib/mercado/puestos.ts): datos puros que leen
+//    el registro —Nora la pregonera, Amílcar el cartógrafo, Elena la archivista,
+//    Teo el boticario, Rita la contable, Ibo el librero, Kilombo el titiritero,
+//    Vera la cuentacuentos, Sergio el detective, Aurelio el alfarero—. Ninguno
+//    repite nombre, oficio, pieza ni saludo.
+// ③ CADA PUESTO CON SUS SECCIONES: la puerta de la familia y todas sus
+//    experiencias reales —47 rutas— con su explicación y su cifra. La prueba
+//    recorre las rutas y comprueba una a una que existen en src/app.
+// ④ PERSONAJES DIBUJADOS AQUÍ (components/mercado/personaje.tsx): diez SVGs con
+//    el traje del color de su familia y la pieza de su oficio en las manos. Ni
+//    una imagen descargada, ni una petición a la red.
+// ⑤ LA MÚSICA DE LA PLAZA (lib/mercado/musica.ts): contradanza compuesta en la
+//    casa —Do mayor, 100 ppm, ocho compases, 19,2 s la vuelta, campana en las
+//    dos entradas y el giro Do5·Sol4·Mi4·Do4 que se queda—. Se toca compás a
+//    compás con el motor de la casa: cero mp3, cero contextos nuevos. No suena
+//    sola; se calla con su botón, al cambiar de pestaña y con el sonido apagado.
+// ⑥ ESTÉTICA DE MERCADO CON OFICIO (mercado.css): toldos de rayas con flecos,
+//    mostrador de madera, etiquetas de cartón, adoquín y farolillos. Colorido y
+//    feliz, pero el color vivo vive en el toldo y en el papel, nunca en un
+//    bloque plano detrás de un texto.
+// ⑦ CUATRO VOCES NUEVAS (puesto-abrir, puesto-cerrar, moneda, mercado-musica),
+//    el portero de la casa aprende a tocar música que avanza (`suenaNotas`) y el
+//    mercado entra en el descubrimiento con su ficha. 107 comprobaciones.
+export const APP_VERSION = "v437.2";
+export const APP_CODENAME = "EL MERCADO DE VANGUARD";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7227,7 +7256,8 @@ export const APP_CODENAME = "EL ESTUDIO EN TU IDIOMA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v437.0";
+export const APP_VERSION_ANTERIOR = "v437.1";
+// (anterior) export const APP_VERSION_ANTERIOR = "v437.0"; // EL ESTUDIO EN TU IDIOMA
 // (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";

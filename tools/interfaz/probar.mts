@@ -199,10 +199,18 @@ comprueba(hub.includes("<AjustesVivo"), "el hub ofrece los interruptores de soni
 comprueba(layout.includes("<Vivo />"), "la capa viva está montada en toda la casa");
 comprueba(layout.includes('import "./vivo.css"'), "la hoja del pulso entra en el layout");
 
+// v437.2 · el mercado también es un lugar donde suenan las voces de la casa
+const mercado = lee("src/components/mercado/mercado-cliente.tsx");
+const mercadoPortada = lee("src/components/mercado/mercado-portada.tsx");
+const vocesMercado: Accion[] = ["puesto-abrir", "puesto-cerrar", "moneda", "mercado-musica"];
+for (const x of vocesMercado) {
+  comprueba(mercado.includes(`"${x}"`) || mercadoPortada.includes(`"${x}"`), `el mercado usa su voz: ${x}`);
+}
+
 const sorpresa = hub.includes("const sorpresa") && hub.includes("Math.random");
 comprueba(sorpresa, "existe la sorpresa del mandato: «llévame a algo que no conozco»");
 
-const todoSuena = TODAS.every((x) => panel.includes(`"${x}"`) || hub.includes(`"${x}"`) || x === "entrar-casa" || x === "permiso-voz" || x === "silencio" || x === "logro" || x === "aviso" || x === "error" || x === "copiar" || x === "guardar" || x === "predecir" || x === "deshacer" || x === "paso-ir" || x === "guia-elegida" || x === "progreso-subir" || x === "buscar");
+const todoSuena = TODAS.every((x) => panel.includes(`"${x}"`) || hub.includes(`"${x}"`) || mercado.includes(`"${x}"`) || mercadoPortada.includes(`"${x}"`) || x === "entrar-casa" || x === "permiso-voz" || x === "silencio" || x === "logro" || x === "aviso" || x === "error" || x === "copiar" || x === "guardar" || x === "predecir" || x === "deshacer" || x === "paso-ir" || x === "guia-elegida" || x === "progreso-subir" || x === "buscar");
 comprueba(todoSuena, "cada voz del catálogo tiene un lugar donde suena (panel, hub o acción de la casa)");
 
 console.log(`\nRESULTADO: ${ok} comprobaciones, ${mal} fallos\n`);
