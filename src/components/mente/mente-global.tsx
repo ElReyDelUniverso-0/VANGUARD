@@ -11,11 +11,19 @@
 
 import { usePathname } from "next/navigation";
 import { PanelMente } from "./panel-mente";
+// v431.6 · EL ORBE — la voz de la casa, abajo en el centro. Sustituye al botón
+// de la esquina: un solo lanzador, y el menú de botones deja de hacer falta.
+import { OrbeMente } from "./orbe-mente";
 
 const SIN_MENTE = ["/vanguard2", "/vertigo", "/offline", "/entrar"];
 
 export function MenteGlobal() {
   const ruta = usePathname() ?? "/";
   if (SIN_MENTE.some((r) => ruta === r || ruta.startsWith(r + "/"))) return null;
-  return <PanelMente />;
+  return (
+    <>
+      <PanelMente />
+      <OrbeMente />
+    </>
+  );
 }

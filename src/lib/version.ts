@@ -7031,8 +7031,13 @@
 //    fotogramas/s en el Cuartel), content-visibility en sus 44 tarjetas
 //    (reflujo móvil ×4: ~1,2 s → ~0,6 s) y casquete de 8° en los globos (−24 %
 //    de CPU de geometría).
-export const APP_VERSION = "v432.0";
-export const APP_CODENAME = "UN SOLO MUNDO";
+// v432.1 · EL ORBE — la casa deja de tener menú de botones para hablarle.
+// Orden del Dueño: voz en español (Web Speech), orbe abajo en el centro con
+// estados reales (inactivo · escuchando · pensando · hablando), chips de
+// sugerencias según la sala, y respaldo de teclado siempre visible. La IA de la
+// casa decide: contesta, o ejecuta (te lleva / baja a la sección / resalta).
+export const APP_VERSION = "v432.1";
+export const APP_CODENAME = "EL ORBE";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
 // (anterior) export const APP_VERSION = "v422.1";

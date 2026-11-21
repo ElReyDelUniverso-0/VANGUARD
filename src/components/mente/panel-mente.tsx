@@ -316,25 +316,14 @@ export function PanelMente() {
   // Nada en el servidor: la casa no hidrata un panel que está cerrado.
   if (!montada) return null;
 
-  const lanzador = (
-    <button
-      type="button"
-      className="vg-mente-fab"
-      onClick={() => setAbierta(true)}
-      aria-label="Abrir LA MENTE"
-      title="Hablar con LA MENTE (⌘J)"
-    >
-      <span aria-hidden>◈</span> LA MENTE <kbd>⌘J</kbd>
-    </button>
-  );
-
-  if (!abierta) return lanzador;
+  // v431.6: el botón de la esquina se retira. Quien lanza ahora es el ORBE
+  // (abajo, en el centro): un solo punto de entrada, con voz y con teclado.
+  if (!abierta) return null;
 
   const ultima = [...lineas].reverse().find((l) => l.rol === "mente");
 
   return (
     <>
-      {lanzador}
       <div className="vg-mente-velo" onClick={() => setAbierta(false)} aria-hidden />
       <section className="vg-mente" role="dialog" aria-modal="true" aria-label="LA MENTE" data-motor={motor === "nube" ? "nube" : "casa"}>
         <header className="vg-mente-cab">

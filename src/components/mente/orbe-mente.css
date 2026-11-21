@@ -1,0 +1,393 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   v431.6 · EL ORBE — la piel de la voz
+   Reglas de la casa que respeta:
+     · un solo acento (el oro) y el rojo solo para «en vivo»;
+     · nada de cristal decorativo: fondo opaco donde hay texto;
+     · movimiento con propósito, apagado con prefers-reduced-motion;
+     · en móvil vive ARRIBA de la barra inferior (no la tapa).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.vg-orbe-zona {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  z-index: 62;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  pointer-events: none;
+}
+.vg-orbe-zona > * { pointer-events: auto; }
+
+/* ── el orbe ─────────────────────────────────────────────────────────── */
+
+.vg-orbe {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.5), transparent 42%),
+    radial-gradient(circle at 70% 74%, #1b6f80 0%, transparent 58%),
+    linear-gradient(160deg, #123043 0%, #0a1620 58%, #070d13 100%);
+  box-shadow:
+    0 0 0 1px rgba(232, 197, 106, 0.42),
+    0 10px 30px rgba(0, 0, 0, 0.62),
+    0 0 28px rgba(232, 197, 106, 0.16);
+  transition: transform 160ms ease, box-shadow 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.vg-orbe:hover { transform: translateY(-2px); }
+.vg-orbe:focus-visible { outline: 2px solid #e8c56a; outline-offset: 3px; }
+
+.vg-orbe-nucleo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 30px;
+  height: 24px;
+}
+.vg-orbe-nucleo i {
+  display: block;
+  width: 3px;
+  height: 8px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #ffe9a8, #e8c56a);
+  opacity: 0.85;
+  transform-origin: center;
+  animation: vg-orbe-late 3.6s ease-in-out infinite;
+}
+.vg-orbe-nucleo i:nth-child(1) { animation-delay: 0s; }
+.vg-orbe-nucleo i:nth-child(2) { animation-delay: 0.2s; }
+.vg-orbe-nucleo i:nth-child(3) { animation-delay: 0.4s; }
+.vg-orbe-nucleo i:nth-child(4) { animation-delay: 0.6s; }
+.vg-orbe-nucleo i:nth-child(5) { animation-delay: 0.8s; }
+
+/* anillos: solo aparecen cuando de verdad está escuchando */
+.vg-orbe-aro {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 197, 106, 0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+.vg-orbe[data-estado="escuchando"] .vg-orbe-aro-1 { animation: vg-orbe-onda 1.9s ease-out infinite; }
+.vg-orbe[data-estado="escuchando"] .vg-orbe-aro-2 { animation: vg-orbe-onda 1.9s ease-out 0.7s infinite; }
+
+/* ── los cuatro estados ─────────────────────────────────────────────── */
+
+.vg-orbe[data-estado="escuchando"] {
+  box-shadow: 0 0 0 1px rgba(232, 197, 106, 0.9), 0 10px 34px rgba(0, 0, 0, 0.6), 0 0 46px rgba(232, 197, 106, 0.34);
+}
+.vg-orbe[data-estado="escuchando"] .vg-orbe-nucleo i {
+  animation: vg-orbe-habla 0.62s ease-in-out infinite alternate;
+}
+.vg-orbe[data-estado="escuchando"] .vg-orbe-nucleo i:nth-child(2) { animation-duration: 0.44s; }
+.vg-orbe[data-estado="escuchando"] .vg-orbe-nucleo i:nth-child(3) { animation-duration: 0.78s; }
+.vg-orbe[data-estado="escuchando"] .vg-orbe-nucleo i:nth-child(4) { animation-duration: 0.52s; }
+.vg-orbe[data-estado="escuchando"] .vg-orbe-nucleo i:nth-child(5) { animation-duration: 0.68s; }
+
+.vg-orbe[data-estado="pensando"] {
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.55), 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 40px rgba(34, 211, 238, 0.22);
+}
+.vg-orbe[data-estado="pensando"] .vg-orbe-nucleo i {
+  animation: vg-orbe-piensa 1.15s ease-in-out infinite;
+  background: linear-gradient(180deg, #b9f2ff, #22d3ee);
+}
+.vg-orbe[data-estado="pensando"]::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(34, 211, 238, 0.85);
+  animation: vg-orbe-gira 1.1s linear infinite;
+}
+
+.vg-orbe[data-estado="hablando"] {
+  box-shadow: 0 0 0 1px rgba(232, 197, 106, 0.85), 0 10px 34px rgba(0, 0, 0, 0.62), 0 0 50px rgba(232, 197, 106, 0.3);
+}
+.vg-orbe[data-estado="hablando"] .vg-orbe-nucleo i {
+  animation: vg-orbe-habla 0.9s ease-in-out infinite alternate;
+}
+
+.vg-orbe[data-estado="sinvoz"] {
+  box-shadow: 0 0 0 1px rgba(147, 161, 184, 0.5), 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.vg-orbe[data-estado="sinvoz"] .vg-orbe-nucleo i { opacity: 0.4; }
+
+.vg-orbe-estado {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font: 600 9px/1 var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #93a1b8;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.vg-orbe:hover .vg-orbe-estado,
+.vg-orbe:focus-visible .vg-orbe-estado,
+.vg-orbe[data-estado="escuchando"] .vg-orbe-estado,
+.vg-orbe[data-estado="pensando"] .vg-orbe-estado,
+.vg-orbe[data-estado="hablando"] .vg-orbe-estado { opacity: 1; }
+
+/* ── chips de sugerencia ─────────────────────────────────────────────── */
+
+.vg-orbe-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: min(560px, calc(100vw - 28px));
+  animation: vg-orbe-entra 200ms ease-out;
+}
+.vg-orbe-chip {
+  background: rgba(7, 11, 16, 0.94);
+  border: 1px solid rgba(147, 161, 184, 0.28);
+  color: #cbd5e1;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+.vg-orbe-chip:hover {
+  color: #fff;
+  border-color: #e8c56a;
+  transform: translateY(-1px);
+}
+
+/* ── la tarjeta: lo que oye, lo que contesta y las puertas ───────────── */
+
+.vg-orbe-tarjeta {
+  width: min(430px, calc(100vw - 24px));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 12px 10px;
+  border: 1px solid rgba(232, 197, 106, 0.34);
+  border-radius: 4px;
+  background: #070b11;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.68);
+  animation: vg-orbe-entra 180ms ease-out;
+}
+
+.vg-orbe-tarjeta-cab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.vg-orbe-rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 700 9px/1 var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #e8c56a;
+}
+.vg-orbe-punto {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #e8c56a;
+  animation: vg-orbe-late 1.6s ease-in-out infinite;
+}
+.vg-orbe-tarjeta-cab .vg-orbe-mini { margin-left: auto; }
+
+.vg-orbe-dicho {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #9fb0c4;
+  font-style: italic;
+}
+.vg-orbe-dicho.vg-orbe-vacio { color: #64748b; font-style: normal; }
+
+.vg-orbe-respuesta {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #eaf2fb;
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.vg-orbe-puertas { display: flex; flex-direction: column; gap: 5px; }
+.vg-orbe-puerta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: 7px 9px;
+  border: 1px solid rgba(147, 161, 184, 0.24);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #e8eef6;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.vg-orbe-puerta:hover { border-color: #e8c56a; background: rgba(232, 197, 106, 0.07); }
+.vg-orbe-puerta b { font-size: 12.5px; font-weight: 600; }
+.vg-orbe-puerta span {
+  font: 9.5px/1 var(--font-mono, ui-monospace, monospace);
+  color: #7d8b9c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+.vg-orbe-puerta em {
+  font: normal 9px/1 var(--font-mono, ui-monospace, monospace);
+  color: #6b7a8c;
+  border: 1px solid rgba(147, 161, 184, 0.25);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+.vg-orbe-artes { display: flex; flex-direction: column; gap: 4px; }
+.vg-orbe-arte {
+  text-align: left;
+  background: rgba(232, 197, 106, 0.08);
+  border: 1px solid rgba(232, 197, 106, 0.4);
+  color: #f3e6c4;
+  border-radius: 2px;
+  padding: 5px 8px;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.vg-orbe-arte:hover { border-color: #e8c56a; }
+
+.vg-orbe-error {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #ffb4a8;
+}
+
+.vg-orbe-form { display: flex; gap: 6px; }
+.vg-orbe-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid rgba(147, 161, 184, 0.3);
+  background: #0a1017;
+  color: #eaf2fb;
+  border-radius: 2px;
+  padding: 7px 9px;
+  font-size: 12.5px;
+  outline: none;
+}
+.vg-orbe-form input:focus { border-color: #e8c56a; }
+.vg-orbe-form button {
+  border: 0;
+  background: #e8c56a;
+  color: #070b11;
+  border-radius: 2px;
+  width: 34px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.vg-orbe-pie {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-top: 1px solid rgba(147, 161, 184, 0.14);
+  padding-top: 7px;
+}
+.vg-orbe-mini {
+  background: none;
+  border: 0;
+  color: #8ea0b5;
+  font-size: 10.5px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+.vg-orbe-mini:hover { color: #e8c56a; }
+.vg-orbe-aviso {
+  font-size: 10px;
+  color: #7d8b9c;
+  margin-left: auto;
+}
+
+/* ── resalte cuando la mente baja a una sección ──────────────────────── */
+
+.vg-resalte {
+  animation: vg-resalte 2.2s ease-out;
+}
+@keyframes vg-resalte {
+  0% { box-shadow: 0 0 0 0 rgba(232, 197, 106, 0.9); }
+  40% { box-shadow: 0 0 0 6px rgba(232, 197, 106, 0.28); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 197, 106, 0); }
+}
+
+/* ── movimiento ──────────────────────────────────────────────────────── */
+
+@keyframes vg-orbe-late {
+  0%, 100% { transform: scaleY(0.55); opacity: 0.55; }
+  50% { transform: scaleY(1); opacity: 0.95; }
+}
+@keyframes vg-orbe-habla {
+  from { transform: scaleY(0.35); }
+  to { transform: scaleY(1.9); }
+}
+@keyframes vg-orbe-piensa {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.45; }
+  50% { transform: scaleY(1.15); opacity: 1; }
+}
+@keyframes vg-orbe-gira { to { transform: rotate(360deg); } }
+@keyframes vg-orbe-onda {
+  0% { opacity: 0.55; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.55); }
+}
+@keyframes vg-orbe-entra {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── móvil: arriba de la barra inferior, y el orbe un poco menor ─────── */
+
+@media (max-width: 979px) {
+  .vg-orbe-zona {
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    gap: 7px;
+  }
+  .vg-orbe { width: 58px; height: 58px; }
+  .vg-orbe-chips {
+    max-width: calc(100vw - 20px);
+    gap: 5px;
+  }
+  .vg-orbe-chip { font-size: 11px; padding: 5px 10px; }
+  .vg-orbe-tarjeta { width: calc(100vw - 20px); }
+  .vg-orbe-puerta span { max-width: 96px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vg-orbe-nucleo i,
+  .vg-orbe-aro,
+  .vg-orbe-punto,
+  .vg-orbe[data-estado="pensando"]::after,
+  .vg-orbe-chips,
+  .vg-orbe-tarjeta,
+  .vg-resalte {
+    animation: none !important;
+  }
+  .vg-orbe:hover { transform: none; }
+}
