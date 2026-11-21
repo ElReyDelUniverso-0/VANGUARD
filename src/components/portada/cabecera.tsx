@@ -18,6 +18,7 @@ import { IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
 import { BuscadorUniversal } from "@/components/vanguard/buscador-universal";
 import { BotonMenuAdictivo } from "./menu-adictivo";
 import { BotonCyberRadio } from "@/components/vanguard/cyber-radio-modal";
+import { BotonAjustes } from "@/components/config/panel-ajustes";
 import { BotonGuiaVisual } from "@/components/vanguard/guia/GuiaVisualTactivaModal";
 
 // v402.6 LOS NUEVE MÓDULOS — la cabecera lee los módulos de modulos.ts
@@ -80,6 +81,7 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
           ))}
         </nav>
         <div className="vx-cab-der">
+          <BotonAjustes />
           <BotonGuiaVisual />
           <BotonMenuAdictivo />
           <BotonCyberRadio />
@@ -110,7 +112,7 @@ const TABS = [
   // v406.0 LA TRAVESÍA: la pestaña de módulos lleva ahora a la entrada que los
   // recorre todos (el índice /modulos sigue vivo dentro de ella: «El mapa de la casa»)
   { href: "/entrar", label: "Explorar", Ico: IcoModulos },
-  { href: "/cuartel", label: "Juego", Ico: IcoJuego },
+  { href: "/orden", label: "Orden", Ico: IcoJuego },
 ];
 
 /** Barra inferior tipo app (solo móvil) */

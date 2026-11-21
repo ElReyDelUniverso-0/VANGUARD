@@ -40,6 +40,8 @@ import "./vida.css";
 // v431.2 OPERACIÓN — la última palabra estética: tokens de la casa, retícula de
 // sector, sellos de clasificación y terminal de mando. Va después de todo.
 import "./operacion.css";
+// v435.0 DOS MAQUETAS — la versión de pantalla pequeña manda la última palabra.
+import "./pantallas.css";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
@@ -81,6 +83,7 @@ import { Aurora } from "@/components/vida/aurora";
 import { Cortina } from "@/components/vida/cortina";
 import { Orbita } from "@/components/vida/orbita";
 import { Clasificacion } from "@/components/operacion/clasificacion";
+import { PanelAjustes } from "@/components/config/panel-ajustes";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
@@ -993,6 +996,8 @@ try{
         </FueraDePortada>
         {/* v421.9 VIDA: el fondo respira, el arranque se siente, el menú orbita */}
         <Clasificacion />
+        {/* v435.0: el panel de ajustes, en todas las salas */}
+        <PanelAjustes />
         <Progreso />
         <Aurora />
         <Cortina />

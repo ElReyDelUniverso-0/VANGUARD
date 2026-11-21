@@ -1,0 +1,294 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v435.0 · LA VERSiÓN DE PANTALLA PEQUEÑA (y la de pantalla grande)
+   
+   Mandato del Dueño: «Vanguard no funciona en celulares pequeños, da lag, todo
+   se agrupa y no tiene sentido: haz una versión para pantallas grandes y otra
+   para pantallas pequeñas, y añade un sistema de configuración».
+   
+   Esto NO es la misma casa encogida. En pantalla pequeña:
+     · la cabecera suelta sus seis enlaces (se quedan logo, buscar y ajustes);
+     · el segundo menú pasa a carril que se arrastra con el dedo;
+     · toda rejilla se vuelve una sola columna, con aire entre fichas;
+     · los campos suben a 16 px (por debajo, iOS hace zoom solo);
+     · los objetivos táctiles, a 44 px como mínimo;
+     · se apagan aurora, radar, barrido, teletipo, foco y desenfoques: eso era
+       lo que daba lag en un teléfono.
+   
+   El archivo se emite DOS veces a propósito, para que la versión pequeña
+   también se pueda FORZAR desde Ajustes en una pantalla grande (y verla):
+     1 · html[data-vx-pantalla="pequena"] …   ← modo forzado
+     2 · @media (max-width: 760px) html:not([data-vx-pantalla="grande"]) …  ← automático
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · PANTALLA PEQUEÑA, FORZADA DESDE AJUSTES ───────────────────── */
+html[data-vx-pantalla="pequena"] {
+  --vx-pad: 14px;
+  --vx-letra: 15px;
+}
+  html[data-vx-pantalla="pequena"] .vx-cab-in { height: 54px; gap: 8px; padding: 0 12px; }
+  html[data-vx-pantalla="pequena"] .vx-nav { display: none !important; }
+  html[data-vx-pantalla="pequena"] .vx-cab-der { gap: 6px; }
+  html[data-vx-pantalla="pequena"] .vx-zc-ojo { display: none !important; }
+  html[data-vx-pantalla="pequena"] .vx-vivo-t { display: none !important; }
+  html[data-vx-pantalla="pequena"] .vx-cab { background: #050607; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  html[data-vx-pantalla="pequena"] .vx-tabbar { height: calc(58px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html[data-vx-pantalla="pequena"] .vx-tabbar a { min-height: 52px; font-size: 11px; letter-spacing: .04em; }
+  html[data-vx-pantalla="pequena"] .vx-pest-in { gap: 6px; padding: 0 10px; height: 46px; }
+  html[data-vx-pantalla="pequena"] .vx-pest-lista { gap: 2px; -webkit-overflow-scrolling: touch; }
+  html[data-vx-pantalla="pequena"] .vx-pest-lista a { min-height: 38px; padding: 8px 11px; font-size: 11.5px; white-space: nowrap; }
+  html[data-vx-pantalla="pequena"] .vx-pest-mas { display: none !important; }
+  html[data-vx-pantalla="pequena"] .vx-pest-mod { max-width: 42vw; overflow: hidden; text-overflow: ellipsis; }
+  html[data-vx-pantalla="pequena"] .vx-wrap { padding-left: 14px !important; padding-right: 14px !important; }
+  html[data-vx-pantalla="pequena"] .vx-hub-rejilla, html[data-vx-pantalla="pequena"] .vx-sala-rejilla, html[data-vx-pantalla="pequena"] .vx-rejilla, html[data-vx-pantalla="pequena"] .op-div-cuerpo, html[data-vx-pantalla="pequena"] .op-cuartel-rejilla, html[data-vx-pantalla="pequena"] .op-rescatadas ul, html[data-vx-pantalla="pequena"] .vx-modulos-rejilla, html[data-vx-pantalla="pequena"] .vx-mosaico { display: block !important; }
+  html[data-vx-pantalla="pequena"] .vx-hub-sala, html[data-vx-pantalla="pequena"] .vx-sala, html[data-vx-pantalla="pequena"] .op-mod, html[data-vx-pantalla="pequena"] .op-cuartel-c, html[data-vx-pantalla="pequena"] .op-rescatadas li { margin: 0 0 10px !important; width: auto !important; }
+  html[data-vx-pantalla="pequena"] .op-orden-titulo, html[data-vx-pantalla="pequena"] .op-buscar-titulo { font-size: 25px !important; line-height: 1.05; }
+  html[data-vx-pantalla="pequena"] .op-orden-lema, html[data-vx-pantalla="pequena"] .op-buscar-lema, html[data-vx-pantalla="pequena"] .op-div-lema { font-size: 13px !important; }
+  html[data-vx-pantalla="pequena"] .op-orden-buscador, html[data-vx-pantalla="pequena"] .op-buscar-caja { gap: 8px; padding: 0 10px; }
+  html[data-vx-pantalla="pequena"] .op-orden-buscador input, html[data-vx-pantalla="pequena"] .op-buscar-caja input { font-size: 16px !important; padding: 12px 0; }
+  html[data-vx-pantalla="pequena"] .op-orden-cuenta, html[data-vx-pantalla="pequena"] .op-buscar-cuenta, html[data-vx-pantalla="pequena"] .op-orden-buscador label, html[data-vx-pantalla="pequena"] .op-buscar-caja label { display: none !important; }
+  html[data-vx-pantalla="pequena"] .op-mod-salas li a, html[data-vx-pantalla="pequena"] .op-cuartel-c li a { font-size: 11.5px; padding: 8px 9px; min-height: 34px; }
+  html[data-vx-pantalla="pequena"] .op-buscar-grupo li a { padding: 12px 0 12px 10px !important; }
+  html[data-vx-pantalla="pequena"] .op-sello { display: none !important; }
+  html[data-vx-pantalla="pequena"] .vida-orbita { right: 12px; bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+  html[data-vx-pantalla="pequena"] .vida-orbita-boton { width: 50px !important; height: 50px !important; }
+  html[data-vx-pantalla="pequena"] .vida-orbita-anillo { width: calc(100vw - 24px) !important; max-height: 62vh; }
+  html[data-vx-pantalla="pequena"] .vida-orbita-lista a { min-height: 44px; }
+  html[data-vx-pantalla="pequena"] table, html[data-vx-pantalla="pequena"] .vx-tabla, html[data-vx-pantalla="pequena"] pre { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  html[data-vx-pantalla="pequena"] .aurora-layer, html[data-vx-pantalla="pequena"] .vida-aurora, html[data-vx-pantalla="pequena"] .vida-foco, html[data-vx-pantalla="pequena"] .vida-barrido, html[data-vx-pantalla="pequena"] .op-radar, html[data-vx-pantalla="pequena"] .barrido, html[data-vx-pantalla="pequena"] .teletipo, html[data-vx-pantalla="pequena"] .vx-teletipo { display: none !important; }
+  html[data-vx-pantalla="pequena"] *, html[data-vx-pantalla="pequena"] *::before, html[data-vx-pantalla="pequena"] *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  html[data-vx-pantalla="pequena"] body::after { opacity: .6; }
+  html[data-vx-pantalla="pequena"] body::before { background-size: 48px 48px !important; }
+
+/* ── 2 · PANTALLA PEQUEÑA, AUTOMÁTICA (lo que ve un teléfono) ──────── */
+@media (max-width: 760px) {
+  html:not([data-vx-pantalla="grande"]) {
+    --vx-pad: 14px;
+    --vx-letra: 15px;
+  }
+  html:not([data-vx-pantalla="grande"]) .vx-cab-in { height: 54px; gap: 8px; padding: 0 12px; }
+  html:not([data-vx-pantalla="grande"]) .vx-nav { display: none !important; }
+  html:not([data-vx-pantalla="grande"]) .vx-cab-der { gap: 6px; }
+  html:not([data-vx-pantalla="grande"]) .vx-zc-ojo { display: none !important; }
+  html:not([data-vx-pantalla="grande"]) .vx-vivo-t { display: none !important; }
+  html:not([data-vx-pantalla="grande"]) .vx-cab { background: #050607; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  html:not([data-vx-pantalla="grande"]) .vx-tabbar { height: calc(58px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html:not([data-vx-pantalla="grande"]) .vx-tabbar a { min-height: 52px; font-size: 11px; letter-spacing: .04em; }
+  html:not([data-vx-pantalla="grande"]) .vx-pest-in { gap: 6px; padding: 0 10px; height: 46px; }
+  html:not([data-vx-pantalla="grande"]) .vx-pest-lista { gap: 2px; -webkit-overflow-scrolling: touch; }
+  html:not([data-vx-pantalla="grande"]) .vx-pest-lista a { min-height: 38px; padding: 8px 11px; font-size: 11.5px; white-space: nowrap; }
+  html:not([data-vx-pantalla="grande"]) .vx-pest-mas { display: none !important; }
+  html:not([data-vx-pantalla="grande"]) .vx-pest-mod { max-width: 42vw; overflow: hidden; text-overflow: ellipsis; }
+  html:not([data-vx-pantalla="grande"]) .vx-wrap { padding-left: 14px !important; padding-right: 14px !important; }
+  html:not([data-vx-pantalla="grande"]) .vx-hub-rejilla, html:not([data-vx-pantalla="grande"]) .vx-sala-rejilla, html:not([data-vx-pantalla="grande"]) .vx-rejilla, html:not([data-vx-pantalla="grande"]) .op-div-cuerpo, html:not([data-vx-pantalla="grande"]) .op-cuartel-rejilla, html:not([data-vx-pantalla="grande"]) .op-rescatadas ul, html:not([data-vx-pantalla="grande"]) .vx-modulos-rejilla, html:not([data-vx-pantalla="grande"]) .vx-mosaico { display: block !important; }
+  html:not([data-vx-pantalla="grande"]) .vx-hub-sala, html:not([data-vx-pantalla="grande"]) .vx-sala, html:not([data-vx-pantalla="grande"]) .op-mod, html:not([data-vx-pantalla="grande"]) .op-cuartel-c, html:not([data-vx-pantalla="grande"]) .op-rescatadas li { margin: 0 0 10px !important; width: auto !important; }
+  html:not([data-vx-pantalla="grande"]) .op-orden-titulo, html:not([data-vx-pantalla="grande"]) .op-buscar-titulo { font-size: 25px !important; line-height: 1.05; }
+  html:not([data-vx-pantalla="grande"]) .op-orden-lema, html:not([data-vx-pantalla="grande"]) .op-buscar-lema, html:not([data-vx-pantalla="grande"]) .op-div-lema { font-size: 13px !important; }
+  html:not([data-vx-pantalla="grande"]) .op-orden-buscador, html:not([data-vx-pantalla="grande"]) .op-buscar-caja { gap: 8px; padding: 0 10px; }
+  html:not([data-vx-pantalla="grande"]) .op-orden-buscador input, html:not([data-vx-pantalla="grande"]) .op-buscar-caja input { font-size: 16px !important; padding: 12px 0; }
+  html:not([data-vx-pantalla="grande"]) .op-orden-cuenta, html:not([data-vx-pantalla="grande"]) .op-buscar-cuenta, html:not([data-vx-pantalla="grande"]) .op-orden-buscador label, html:not([data-vx-pantalla="grande"]) .op-buscar-caja label { display: none !important; }
+  html:not([data-vx-pantalla="grande"]) .op-mod-salas li a, html:not([data-vx-pantalla="grande"]) .op-cuartel-c li a { font-size: 11.5px; padding: 8px 9px; min-height: 34px; }
+  html:not([data-vx-pantalla="grande"]) .op-buscar-grupo li a { padding: 12px 0 12px 10px !important; }
+  html:not([data-vx-pantalla="grande"]) .op-sello { display: none !important; }
+  html:not([data-vx-pantalla="grande"]) .vida-orbita { right: 12px; bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+  html:not([data-vx-pantalla="grande"]) .vida-orbita-boton { width: 50px !important; height: 50px !important; }
+  html:not([data-vx-pantalla="grande"]) .vida-orbita-anillo { width: calc(100vw - 24px) !important; max-height: 62vh; }
+  html:not([data-vx-pantalla="grande"]) .vida-orbita-lista a { min-height: 44px; }
+  html:not([data-vx-pantalla="grande"]) table, html:not([data-vx-pantalla="grande"]) .vx-tabla, html:not([data-vx-pantalla="grande"]) pre { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  html:not([data-vx-pantalla="grande"]) .aurora-layer, html:not([data-vx-pantalla="grande"]) .vida-aurora, html:not([data-vx-pantalla="grande"]) .vida-foco, html:not([data-vx-pantalla="grande"]) .vida-barrido, html:not([data-vx-pantalla="grande"]) .op-radar, html:not([data-vx-pantalla="grande"]) .barrido, html:not([data-vx-pantalla="grande"]) .teletipo, html:not([data-vx-pantalla="grande"]) .vx-teletipo { display: none !important; }
+  html:not([data-vx-pantalla="grande"]) *, html:not([data-vx-pantalla="grande"]) *::before, html:not([data-vx-pantalla="grande"]) *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  html:not([data-vx-pantalla="grande"]) body::after { opacity: .6; }
+  html:not([data-vx-pantalla="grande"]) body::before { background-size: 48px 48px !important; }
+}
+
+/* ── 3 · LA VERSIÓN GRANDE, FORZADA (para verla en un teléfono) ────── */
+html[data-vx-pantalla="grande"] {
+  --vx-pad: 18px;
+  --vx-letra: 16px;
+}
+
+/* ── 4 · MODO LIGERO: sin animaciones ni desenfoques, a mano o por aparato ── */
+html[data-vx-ligero="1"] *,
+html[data-vx-ligero="1"] *::before,
+html[data-vx-ligero="1"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+html[data-vx-ligero="1"] .aurora-layer,
+html[data-vx-ligero="1"] .vida-aurora,
+html[data-vx-ligero="1"] .vida-foco,
+html[data-vx-ligero="1"] .vida-barrido,
+html[data-vx-ligero="1"] .op-radar,
+html[data-vx-ligero="1"] .vx-teletipo {
+  display: none !important;
+}
+html[data-vx-ligero="1"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* ── 5 · AJUSTES DEL USUARIO: densidad, letra y fondo ──────────────── */
+html[data-vx-densidad="compacta"] {
+  --vx-pad: 10px;
+}
+html[data-vx-densidad="compacta"] .op-mod,
+html[data-vx-densidad="compacta"] .op-cuartel-c,
+html[data-vx-densidad="compacta"] .vx-hub-sala {
+  padding-top: 9px !important;
+  padding-bottom: 10px !important;
+}
+html[data-vx-letra="grande"] body {
+  font-size: 17.5px;
+  line-height: 1.7;
+}
+html[data-vx-letra="grande"] .op-mod-salas li a,
+html[data-vx-letra="grande"] .op-cuartel-c li a {
+  font-size: 12.5px !important;
+}
+html[data-vx-fondo="llano"] body::before,
+html[data-vx-fondo="llano"] body::after,
+html[data-vx-fondo="llano"] .aurora-layer,
+html[data-vx-fondo="llano"] .op-radar {
+  display: none !important;
+}
+
+/* ── 6 · EL PANEL DE AJUSTES ───────────────────────────────────────── */
+.op-ajustes-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--op-hair2);
+  background: transparent;
+  color: var(--op-steel);
+  cursor: pointer;
+  padding: 0;
+}
+.op-ajustes-boton:hover,
+.op-ajustes-boton:focus-visible {
+  border-color: var(--op-red);
+  color: #fff;
+}
+.op-ajustes-velo {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 5, 0.72);
+  z-index: 9998;
+}
+.op-ajustes {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100vw);
+  z-index: 9999;
+  background: #080a0c;
+  border-left: 1px solid var(--op-hair2);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 18px 18px calc(28px + env(safe-area-inset-bottom, 0px));
+  font-family: var(--op-mono);
+}
+.op-ajustes-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--op-hair2);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.op-ajustes-cab b {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--op-red);
+}
+.op-ajustes-cab button {
+  font: inherit;
+  background: transparent;
+  border: 1px solid var(--op-hair2);
+  color: var(--op-steel);
+  padding: 5px 9px;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.op-ajustes-grupo {
+  margin-bottom: 18px;
+}
+.op-ajustes-grupo > p {
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--op-muted);
+  margin: 0 0 8px;
+}
+.op-ajustes-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.op-ajustes-opciones button {
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 11px;
+  min-height: 40px;
+  background: #0b0f11;
+  border: 1px solid var(--op-hair2);
+  color: #9aa8ae;
+  cursor: pointer;
+}
+.op-ajustes-opciones button[data-on="1"] {
+  background: var(--op-red);
+  border-color: var(--op-red);
+  color: #fff;
+}
+.op-ajustes-pie {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--op-hair);
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--op-muted);
+}
+.op-ajustes-pie button {
+  font: inherit;
+  background: transparent;
+  border: 1px solid var(--op-hair2);
+  color: var(--op-steel);
+  padding: 9px 11px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+@media (prefers-reduced-motion: reduce) {
+  .op-ajustes-velo,
+  .op-ajustes {
+    animation: none !important;
+  }
+}
+
+/* la página /config usa el mismo lenguaje, en columna de lectura */
+.op-ajustes-pagina {
+  max-width: 720px;
+  padding: 8px 0 40px;
+  font-family: var(--op-mono);
+}
+.op-ajustes-pagina .op-ajustes-grupo {
+  border-bottom: 1px solid var(--op-hair);
+  padding-bottom: 14px;
+}
+.op-ajustes-pagina .op-ajustes-opciones button {
+  font-size: 12px;
+  min-height: 44px;
+}
