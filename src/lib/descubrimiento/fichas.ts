@@ -123,7 +123,7 @@ const CURADOS: Record<string, string[]> = {
     "Úsalo cuando sepas qué quieres pero no dónde está",
   ],
   "/orden": [
-    "Recorre las siete divisiones con sus módulos y sus salas",
+    "Recorre todas las divisiones con sus módulos y sus salas",
     "Abre cualquier sala desde el índice, sin menús que se tapen",
     "Vuelve aquí cuando te pierdas: es el mapa de la casa",
   ],
@@ -192,7 +192,7 @@ export const PUERTAS_EXTRA: { href: string; nombre: string; que: string; ejemplo
   {
     href: "/orden",
     nombre: "Orden de batalla",
-    que: "El índice completo: siete divisiones, sus módulos y todas sus salas.",
+    que: "El índice completo: todas las divisiones, sus módulos y todas sus salas.",
     ejemplos: CURADOS["/orden"] ?? [],
     division: "D-0",
     divisionNombre: "La puerta",
@@ -225,16 +225,22 @@ export function ejemplosDe(href: string, txt: string, nombre: string): string[] 
     const limpio = s.replace(/[.;]$/, "").trim();
     if (limpio.length >= 14 && !RELLENO.test(limpio)) trozos.push(limpio);
   }
-  // Si la frase tiene dos puntos, lo que viene detrás son capacidades sueltas
+  // Si la frase tiene dos puntos, lo que viene detrás son capacidades sueltas.
+  // v436.2: se descartan los fragmentos de una o dos palabras («población»,
+  // «economía»): un ejemplo que no dice qué HACER no es un ejemplo.
   const conDosPuntos = base.match(/:\s*(.+)$/);
   if (trozos.length < 2 && conDosPuntos) {
     for (const parte of conDosPuntos[1].split(/[,;·]/)) {
       const limpio = parte.replace(/\.$/, "").trim();
-      if (limpio.length >= 4) trozos.push(limpio);
+      if (limpio.length >= 14 && limpio.split(/\s+/).length >= 3) trozos.push(limpio);
     }
   }
-  const unicos = Array.from(new Set(trozos)).slice(0, 3);
-  if (unicos.length === 0) unicos.push(`Abrir ${nombre} y recorrerlo con calma`);
+  const unicos = Array.from(new Set(trozos)).filter((e) => e.split(/\s+/).length >= 3).slice(0, 3);
+  // si no quedó nada con cuerpo, la propia frase de la sala es el ejemplo
+  if (unicos.length === 0) {
+    const entero = base.replace(/[.;]$/, "").trim();
+    unicos.push(entero.length >= 14 ? entero : `Abrir ${nombre} y recorrerlo con calma`);
+  }
   return unicos;
 }
 
@@ -243,9 +249,16 @@ function nivelDe(href: string): "sin prisa" | "a fondo" {
   return ligero.includes(href) ? "sin prisa" : "a fondo";
 }
 
-function primerPasoDe(nombre: string, ejemplos: string[]): string {
-  const primero = ejemplos[0] ?? `Abrir ${nombre}`;
-  return primero.charAt(0).toUpperCase() + primero.slice(1);
+const ARRANCA_EN_ACCION =
+  /^(abre|abrir|busca|buscar|entra|entrar|elige|elegir|mira|mirar|pulsa|pulsar|escribe|escribir|lee|leer|escucha|escuchar|recorre|recorrer|toca|tocar|usa|usar|carga|cargar|filtra|filtrar|lanza|lanzar|prueba|probar|empieza|empezar|consulta|consultar|selecciona|seleccionar|arrastra|arrastrar|compara|comparar|explora|explorar|dibuja|dibujar|anota|anotar|pega|pegar|sigue|seguir|mueve|mover|gira|girar|pide|pedir|marca|marcar|sube|subir|baja|bajar|crea|crear|guarda|guardar|ejecuta|ejecutar|simula|simular|calibra|calibrar|conecta|conectar|responde|responder|pregunta|preguntar|ordena|ordenar|haz|hacer|ve|ver)\b/i;
+
+function primerPasoDe(nombre: string, ejemplos: string[], que?: string): string {
+  const primero = (ejemplos[0] ?? `Abrir ${nombre}`).trim();
+  const conMayuscula = primero.charAt(0).toUpperCase() + primero.slice(1);
+  if (ARRANCA_EN_ACCION.test(primero)) return conMayuscula;
+  // el ejemplo describe, no manda: se convierte en una orden honesta
+  const dentro = (que ?? primero).replace(/\s+/g, " ").trim().replace(/[.;]$/, "");
+  return `Entra en ${nombre}: ${dentro.charAt(0).toLowerCase()}${dentro.slice(1)}`;
 }
 
 /** TODAS las fichas: las del árbol de la casa + las puertas nuevas. */
@@ -269,7 +282,7 @@ export const FICHAS: Ficha[] = (() => {
           codigo: modulo.codigo,
           modulo: modulo.nombre,
           img: modulo.img,
-          primerPaso: primerPasoDe(modulo.nombre, ejemplos),
+          primerPaso: primerPasoDe(modulo.nombre, ejemplos, modulo.lema),
           nivel: nivelDe(modulo.nav),
         });
       }
@@ -290,7 +303,7 @@ export const FICHAS: Ficha[] = (() => {
           modulo: modulo.nombre,
           img: pestana?.img,
           vivo: pestana?.vivo,
-          primerPaso: primerPasoDe(sala.nombre, ejemplos),
+          primerPaso: primerPasoDe(sala.nombre, ejemplos, sala.txt),
           nivel: nivelDe(sala.href),
         });
       }
@@ -309,7 +322,7 @@ export const FICHAS: Ficha[] = (() => {
       divisionNombre: extra.divisionNombre,
       codigo: "P-00",
       modulo: "La puerta",
-      primerPaso: primerPasoDe(extra.nombre, extra.ejemplos),
+      primerPaso: primerPasoDe(extra.nombre, extra.ejemplos, extra.que),
       nivel: "sin prisa",
     });
   }

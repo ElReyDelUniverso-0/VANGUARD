@@ -2,7 +2,7 @@
 // v432.0 · /orden — la sección principal de VANGUARD
 //
 // El Dueño: «todos los módulos deben estar en la sección principal». Esta es
-// esa sección: un solo documento con las siete divisiones, los catorce módulos
+// esa sección: un solo documento con todas las divisiones, sus módulos
 // y las salas reales de cada uno, más lo que estaba enterrado en el cuartel.
 // Lee de modulos.ts a través de lib/operacion/orden.ts: no inventa rutas.
 // ═══════════════════════════════════════════════════════════════════

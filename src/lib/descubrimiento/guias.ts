@@ -159,7 +159,7 @@ export const GUIAS: Guia[] = [
       },
       {
         ruta: "/orden",
-        que: "El índice completo de las siete divisiones.",
+        que: "El índice completo de todas las divisiones.",
         haz: "Mira la división que menos conozcas y abre una sala que no hayas visto.",
         minutos: 2,
       },

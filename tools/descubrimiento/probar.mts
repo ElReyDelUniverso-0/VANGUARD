@@ -46,7 +46,7 @@ ok(fichaDe("/ruta-que-no-existe") === null, "una ruta que no existe no tiene fic
 
 const sinEjemplo = FICHAS.filter((f) => ejemplosDe(f.href, f.que, f.nombre).length === 0);
 ok(sinEjemplo.length === 0, "ejemplosDe nunca devuelve una lista vacía");
-ok(porDivision().length >= 7, `se agrupan en ${porDivision().length} divisiones`);
+ok(porDivision().length >= 4, `se agrupan en ${porDivision().length} divisiones (${porDivision().map((g) => g.codigo).join(" ")})`);
 ok(PUERTAS_DE_ENTRADA.every((r) => existePuerta(r)), "las puertas de entrada existen todas");
 ok(PUERTAS_EXTRA.every((p) => p.ejemplos.length > 0), "las puertas nuevas traen sus ejemplos");
 

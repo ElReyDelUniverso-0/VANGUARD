@@ -42,7 +42,7 @@ type Ficha = {
 - `fichaDe(ruta)`: exacta y, si no, el prefijo más largo que exista
   (`/mundos/do` → ficha de `/mundos`). Ruta inexistente → `null`, y la UI
   confiesa «esta sala no tiene ficha todavía» en vez de fingir.
-- `porDivision()`: **8 grupos**, de D-0 «La puerta» a D-VII.
+- `porDivision()`: un grupo por división, con D-0 «La puerta» delante (v436.0 fusionó módulos: hoy son **5**, y el hub ya no escribe el número a mano).
 - `PUERTAS_DE_ENTRADA`: las 8 puertas que sirven para entrar por primera vez.
 - `TOTAL_FICHAS` = **95**.
 
@@ -114,7 +114,7 @@ cuatro cifras reales) + `descubrir-cliente.tsx`, en cuatro bloques:
 1. **Empezar** — la guía sugerida en una tarjeta y las cuatro guías con sus
    pasos pulsables (marcar como hecho, retomar).
 2. **Todas las salas** — buscador (nombre, ruta, qué es, ejemplos) + filtros por
-   las ocho divisiones + fichas desplegables con sus ejemplos + puertas de
+   todas las divisiones + fichas desplegables con sus ejemplos + puertas de
    entrada + **sorpresa** («llévame a algo que no conozco»).
 3. **Lo nuevo** — los ocho destacados con su versión y su botón.
 4. **Tu progreso** — porcentaje, barra, modo libre, reiniciar, y una nota que
@@ -149,7 +149,7 @@ npx tsx tools/descubrimiento/probar.mts     # 47 comprobaciones, 0 fallos
 
 La prueba cubre: existencia de las 95 fichas y de cada ruta de cada guía y de
 cada destacado; la derivación de ejemplos; el prefijo más largo (`/mundos/do`);
-la ruta inexistente → `null`; las 8 divisiones; que la portada no cuente; que
+la ruta inexistente → `null`; el número de divisiones que haya; que la portada no cuente; que
 volver atrás no reste; el saneado del almacén sucio; `modoLibre` estricto; el
 orden de los destacados por versión (comparación numérica, no alfabética).
 

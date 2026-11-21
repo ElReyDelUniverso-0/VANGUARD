@@ -327,7 +327,7 @@ export function DescubrirCliente() {
 
         <div className="dsc-atajos">
           <Link href="/buscar" className="dsc-atajo"><Search className="w-4 h-4" /><b>Buscador único</b><em>cuando sabes qué quieres y no dónde está</em></Link>
-          <Link href="/orden" className="dsc-atajo"><MapIcon className="w-4 h-4" /><b>Orden de batalla</b><em>las siete divisiones y sus {TOTAL_FICHAS} puertas</em></Link>
+          <Link href="/orden" className="dsc-atajo"><MapIcon className="w-4 h-4" /><b>Orden de batalla</b><em>{grupos.length} divisiones y sus {TOTAL_FICHAS} puertas</em></Link>
           <Link href="/novedades" className="dsc-atajo"><Sparkles className="w-4 h-4" /><b>Lo nuevo</b><em>el archivo completo de novedades</em></Link>
         </div>
       </section>

@@ -48,9 +48,9 @@ export const DESTACADOS: Destacado[] = [
   {
     version: "v433.0",
     nombre: "Siete módulos, un universo",
-    que: "La casa entera en siete divisiones; fuera los menús que se tapaban.",
+    que: "La casa entera ordenada por divisiones; fuera los menús que se tapaban.",
     ruta: "/orden",
-    prueba: "Recorre las siete divisiones de arriba abajo.",
+    prueba: "Recorre las divisiones de arriba abajo.",
   },
   {
     version: "v431.6",
