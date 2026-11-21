@@ -886,6 +886,43 @@ body::after {
    código, salas en renglones. Nada compite con nada porque todo está en una
    sola columna de lectura.
    ═══════════════════════════════════════════════════════════════════ */
+/* v434.4 · banda que lleva a /descubrir desde el índice */
+.op-banda-guia {
+  max-width: 1180px;
+  margin: 14px auto 0;
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(34, 211, 238, 0.24);
+  border-left: 3px solid #22d3ee;
+  border-radius: 4px;
+  background: rgba(34, 211, 238, 0.05);
+}
+.op-banda-guia p {
+  margin: 0;
+  flex: 1 1 320px;
+  font: 500 12.5px/1.55 ui-sans-serif, system-ui, sans-serif;
+  color: #c6d4e2;
+}
+.op-banda-guia b { color: #e9eef7; }
+.op-banda-guia a {
+  font: 700 10px/1 ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #22d3ee;
+  text-decoration: none;
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  border-radius: 3px;
+  padding: 8px 11px;
+}
+.op-banda-guia a:hover { background: #22d3ee; color: #04060c; }
+@media (max-width: 720px) {
+  .op-banda-guia { margin: 10px 10px 0; padding: 9px 11px; }
+}
+
 .op-orden-pag {
   padding: 40px 0 90px;
 }

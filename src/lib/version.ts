@@ -7064,8 +7064,35 @@
 // con historial y deshacer, predicciones del motor de la casa que declaran sus
 // factores y su confianza, y una API key propia (OpenAI-compatible) para la
 // narración. Todo vive en el aparato del operador; nada se simula.
-export const APP_VERSION = "v434.2";
-export const APP_CODENAME = "LA MESA DE ÓRDENES";
+// v434.4 · VANGUARD DISCOVERY SYSTEM — el Dueño: «que el visitante nuevo no se
+// sienta perdido», y a la vez «sin quitarle la libertad de explorar». Las dos
+// cosas a la vez, y ninguna a medias.
+// ① LA GUÍA ES UN CAMINO, NO UN MURO (lib/descubrimiento/guias.ts): cuatro
+//    guías de pasos numerados —«los primeros 5 minutos» (7 min, 5 pasos),
+//    entender el mundo, jugar y subir, de vuelta— cada paso con su puerta real,
+//    su porqué y su minuto. Se puede saltar cuando sea y se retoma donde quedó:
+//    el paso vive en el aparato, no en la sesión.
+// ② CADA SALA SE EXPLICA EN SU SITIO, SIN REESCRIBIRLA (fichas.ts): 95 fichas
+//    —las 92 del árbol de orden.ts más /descubrir, /buscar, /orden y la mesa de
+//    la Zona Cero— con «qué es» en una línea, «primer paso», nivel (sin prisa /
+//    a fondo) y EJEMPLOS CONCRETOS sacados del catálogo real, no inventados.
+// ③ EL LANZADOR NO TAPA NADA (components/descubrimiento/): una burbuja de 42 px
+//    abajo a la izquierda —el orbe ya ocupa el centro y aprendió a moverse—
+//    con tres caras: esta sala, las guías, tu progreso. No se abre sola más que
+//    una vez, y solo a quien lleva menos del 30 % descubierto, y jamás en las
+//    salas de pantalla completa. Escape la cierra, «modo libre» la deja en una
+//    burbuja atenuada, «reiniciar» borra la memoria del aparato.
+// ④ DESCUBRIR DE VERDAD (/descubrir): buscador de las 95 salas por nombre,
+//    ruta, qué es y ejemplos; filtros por las ocho divisiones; sorpresa entre
+//    lo que aún no has pisado; puertas de entrada; fichas desplegables.
+// ⑤ LO ÚLTIMO, CON SU PUERTA (destacados.ts): ocho versiones reales de la casa
+//    —v434.4 → v405.12— con qué dan y qué probar, cada una enlazada a una sala
+//    que existe (comprobado).
+// ⑥ NADA SIMULADO: todo el progreso vive en localStorage (vg:descubrimiento:v1),
+//    se sanea si llega sucio y no cuenta como vista la portada. 47 comprobaciones
+//    en tools/descubrimiento/probar.mts.
+export const APP_VERSION = "v434.4";
+export const APP_CODENAME = "VANGUARD DISCOVERY SYSTEM";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7137,7 +7164,8 @@ export const APP_CODENAME = "LA MESA DE ÓRDENES";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v432.4";
+export const APP_VERSION_ANTERIOR = "v434.2";
+// (anterior) export const APP_VERSION_ANTERIOR = "v432.4";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v419.0";
