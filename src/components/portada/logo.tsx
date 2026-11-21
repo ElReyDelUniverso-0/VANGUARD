@@ -109,17 +109,17 @@ export function LogoVanguard({
       </span>
 
       {conTexto && (
-        <span className="flex flex-col text-left">
+        <span className="vx-logo-texto flex flex-col text-left">
           <span className="flex items-center gap-1.5">
-            <b className="font-sans text-base font-black tracking-[0.24em] text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-100 to-sky-300 drop-shadow-[0_0_12px_rgba(245,197,66,0.4)]">
+            <b className="vx-logo-nombre font-sans text-base font-black tracking-[0.24em] text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-100 to-sky-300 drop-shadow-[0_0_12px_rgba(245,197,66,0.4)]">
               VANGUARD
             </b>
-            <span className="rounded bg-sky-500/20 px-1 py-0.2 font-mono text-[8px] font-bold text-sky-300 tracking-wider uppercase border border-sky-500/40">
+            <span className="vx-logo-sello rounded bg-sky-500/20 px-1 py-0.2 font-mono text-[8px] font-bold text-sky-300 tracking-wider uppercase border border-sky-500/40">
               2100
             </span>
           </span>
           {lema && (
-            <small className="font-mono text-[8.5px] uppercase tracking-[0.18em] text-zinc-400 group-hover:text-amber-300/80 transition-colors">
+            <small className="vx-logo-lema font-mono text-[8.5px] uppercase tracking-[0.18em] text-zinc-400 group-hover:text-amber-300/80 transition-colors">
               {lema}
             </small>
           )}

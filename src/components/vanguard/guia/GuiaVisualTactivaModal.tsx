@@ -408,7 +408,7 @@ export function BotonGuiaVisual() {
         <aside
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-sky-400/60 bg-[#04101e]/95 p-3.5 shadow-[0_0_30px_rgba(56,189,248,0.35)] backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-300 max-w-sm"
+          className="vg-primera-vez fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-[#FFC94D]/45 bg-[#0B0906]/96 p-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.55)] animate-in fade-in slide-in-from-bottom-4 duration-300 max-w-sm"
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/40">
             <HelpCircle size={18} />

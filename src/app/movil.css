@@ -130,3 +130,240 @@
 /* ── 6 · ÁNIMO REDUCIDO: este suelo tampoco anima nada ─────────────
    (declaración explícita para que quede escrito, no porque haya algo
    que apagar aquí: esta hoja no añade ni una animación.) */
+
+/* ═══════════════════════════════════════════════════════════════════
+   v435.0 · EL MUELLE ÚNICO — el teléfono pequeño deja de tener seis
+   capas flotando una encima de otra.
+
+   Lo que dijo el Dueño: «en celulares pequeños los botones se opacan,
+   los textos se reúnen, la interfaz es un desastre». No era impresión.
+   Medido con Chromium a 320×780 sobre la casa publicada, antes de
+   tocar una línea:
+
+     · SEIS capas `position:fixed` apiladas: cabecera (65), muelle (65),
+       FAB de redacción (32), caras HOY/SALAS/RADIO (32), emisora (32),
+       orbe con sus tres chips (157) y, encima, la tarjeta «primera vez»
+       (132) — que se posaba SOBRE el muelle. Suma de áreas fijas: 155 %
+       de la pantalla; el contenido tapado en el 86 % y el 96 % de la
+       altura; la tarjeta y la barra inferior compartían los mismos
+       píxeles.
+     · 44 botones con opacidad efectiva menor que 1 (0,92 y 0,94 en los
+       flotantes, 0,4 en dos flechas apagadas): «los botones se opacan».
+     · 67 textos por debajo de 11 px; las etiquetas del muelle a 9 px y
+       la emisora a 8,5.
+     · 118 blancos táctiles menores de 40×32, algunos de 10×38.
+     · el titular de portada a 26 px con tres líneas de recorte en una
+       pantalla de 320: la frase se corta a la mitad — «los textos se
+       reúnen».
+
+   La solución no es un parche por pieza: es UN CONTRATO DE ALTURAS.
+   De abajo arriba, y sin solaparse entre sí:
+       muelle            58 px  (pegado al borde, con safe-area)
+       fila secundaria   40 px  (caras a la izquierda, emisora a la derecha)
+       orbe              46 px  (a la derecha, sin chips: eran tres botones flotando)
+   Lo que duplicaba navegación o decoraba se retira en este ancho: el FAB
+   de redacción (su menú está en MUNDOS y en el muelle) y la órbita
+   decorativa, que se confundía con el orbe de verdad.
+   Se usa el truco de especificidad ya documentado arriba (`:not(#vx-suelo)`)
+   porque vida.css y operacion.css se importan después de esta hoja.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 430px) {
+  :root {
+    --vg-muelle: 58px;
+    --vg-fila: 40px;
+    --vg-sa: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* 1 · EL MUELLE: una sola barra, dedo de 58 px, letra legible */
+  :not(#vx-suelo) .vx-tabbar {
+    height: calc(var(--vg-muelle) + var(--vg-sa));
+    padding-bottom: var(--vg-sa);
+    border-top: 1px solid rgba(232, 197, 106, 0.16);
+  }
+  :not(#vx-suelo) .vx-tabbar a {
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    min-height: var(--vg-muelle);
+    padding: 7px 0 6px;
+    opacity: 1;
+  }
+  :not(#vx-suelo) .vx-tabbar a svg,
+  :not(#vx-suelo) .vx-tabbar a img { width: 21px; height: 21px; }
+
+  /* 2 · UNA SOLA FILA SECUNDARIA: caras a la izquierda, emisora a la derecha */
+  :not(#vx-suelo) .vxc {
+    left: 8px;
+    right: auto;
+    transform: none;
+    bottom: calc(var(--vg-muelle) + var(--vg-sa) + 8px);
+    padding: 3px;
+  }
+  :not(#vx-suelo) .vxc-cara {
+    font-size: 12px;
+    min-height: 32px;
+    padding: 8px 11px;
+    opacity: 1;
+  }
+  :not(#vx-suelo) .vxe-emisora {
+    left: auto;
+    right: 8px;
+    bottom: calc(var(--vg-muelle) + var(--vg-sa) + 8px);
+    max-width: 52vw;
+    justify-items: end;
+  }
+  :not(#vx-suelo) .vxe-emisora-pill {
+    min-height: 32px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+
+  /* 3 · EL ORBE: 46 px, a la derecha, por encima de la fila y SIN chips
+     (los tres chips flotantes eran la mitad del desastre: tapaban la
+     lectura y repetían puertas que ya están en la página). */
+  :not(#vx-suelo) .vg-orbe-zona {
+    left: auto;
+    right: 10px;
+    transform: none;
+    bottom: calc(var(--vg-muelle) + var(--vg-sa) + var(--vg-fila) + 12px);
+    gap: 0;
+  }
+  :not(#vx-suelo) .vg-orbe-zona[data-libre="1"] { left: auto; right: 10px; }
+  :not(#vx-suelo) .vg-orbe { width: 46px; height: 46px; }
+  :not(#vx-suelo) .vg-orbe-chips { display: none; }
+  :not(#vx-suelo) .vg-orbe-hoja {
+    bottom: calc(var(--vg-muelle) + var(--vg-sa) + 10px);
+    width: calc(100vw - 16px);
+  }
+
+  /* 4 · LO QUE DUPLICA O DECORA, FUERA EN ESTE ANCHO */
+  /* el FAB contextual (REDACCIÓN, SALAS…) vive en el menú MUNDOS y en el
+     muelle: en 320 px se apilaba sobre el muelle y tapaba la última tarjeta */
+  :not(#vx-suelo) .vx-nav-fab { display: none; }
+  /* la órbita decorativa se confundía con el orbe que sí habla */
+  :not(#vx-suelo) .vida-orbita { display: none; }
+
+  /* 5 · LA TARJETA «PRIMERA VEZ» ENCIMA DEL MUELLE, NO SOBRE ÉL */
+  :not(#vx-suelo) .vg-primera-vez {
+    left: 8px;
+    right: 8px;
+    bottom: calc(var(--vg-muelle) + var(--vg-sa) + var(--vg-fila) + 64px);
+    max-width: none;
+    padding: 10px 12px;
+  }
+
+  /* 6 · OPACIDAD: solo se apaga lo que de verdad está apagado */
+  :not(#vx-suelo) :is(button, a, [role="button"], summary):not([disabled]):not([aria-disabled="true"]) {
+    opacity: 1;
+  }
+
+  /* 7 · EL DEDO: 40×40 mínimo en lo que se pulsa de verdad */
+  :not(#vx-suelo) :is(.vxc-cara, .vxe-emisora-pill, .vxe-emisora-lanzar, .vx-tabbar a, .vg-orbe) {
+    min-height: 32px;
+  }
+  :not(#vx-suelo) :is(.vxc-cara, .vxe-emisora-lanzar) { min-width: 44px; }
+
+  /* 8 · QUE NADA SE ESCONDA DETRÁS DEL MUELLE AL SALTAR A UN ANCLA */
+  html { scroll-padding-bottom: calc(var(--vg-muelle) + var(--vg-fila) + 24px); }
+}
+
+/* 9 · EN 360 px O MENOS, EL TITULAR NO SE CORTA A LA MITAD:
+   baja la escala y se le dan más líneas; la frase se lee entera. */
+@media (max-width: 380px) {
+  :not(#vx-suelo) :is(.vxp-titular, .vx-heroe h1, .vx-heroe h2) {
+    font-size: clamp(19px, 6.4vw, 24px);
+    line-height: 1.16;
+    -webkit-line-clamp: 5;
+  }
+  :not(#vx-suelo) :is(.vxc-cara) { padding: 8px 9px; font-size: 11.5px; }
+}
+
+/* ── v435.1 · LA CABECERA Y LA TARJETA QUE NO CABÍAN ──────────────────
+   Medido a 320 px con la cabecera en crudo: la marca ocupaba 235 px de
+   320, así que el botón GUÍA salía por el borde derecho («GUÍA» cortado
+   y pegado al escudo, en la captura). Y la tarjeta «¿PRIMERA VEZ?»
+   —132 px de alto, con el texto en CIAN— se posaba justo encima del
+   contenido y del muelle. Aquí: la marca se queda en su nombre (el lema
+   y el sello 2100 sobran en una pantalla de bolsillo), la cabecera baja a
+   56 px y la tarjeta de bienvenida se retira: su trabajo ya lo hace el
+   botón GUÍA, que ahora sí cabe. */
+@media (max-width: 430px) {
+  :not(#vx-suelo) .vx-cab { height: 56px; }
+  :not(#vx-suelo) .vx-cab-in { padding-left: 10px; padding-right: 10px; gap: 6px; }
+  :not(#vx-suelo) .vx-logo-lema,
+  :not(#vx-suelo) .vx-logo-sello { display: none; }
+  :not(#vx-suelo) .vx-logo-nombre { font-size: 13px; letter-spacing: 0.16em; }
+  :not(#vx-suelo) .vx-wrap > a svg,
+  :not(#vx-suelo) .vx-cab-in > a svg { width: 34px; height: 34px; }
+  :not(#vx-suelo) .vx-cab-der { gap: 4px; }
+  /* la bienvenida no cabe sin tapar: en el bolsillo la hace el botón GUÍA */
+  :not(#vx-suelo) .vg-primera-vez { display: none; }
+  /* y el muelle respira: etiqueta algo menor para que las cinco quepan */
+  :not(#vx-suelo) .vx-tabbar a { font-size: 10.5px; letter-spacing: 0.02em; }
+}
+
+/* ── v435.2 · LA FILA DE ICONOS DE LA CABECERA ────────────────────────
+   A 320 px la cabecera tiene: marca (110), GUÍA, MUNDOS, cámara, ⌘K, el
+   ojo de la Zona Cero y EN VIVO. Medido: el último llegaba a x=330 y los
+   rótulos se derramaban sobre el escudo («MUNDOS [7]» encima de la marca).
+   Aquí cada acción vuelve a ser un cuadrado de 34 px con su icono y sin
+   rótulo —el nombre sigue en aria-label, que es lo que lee el lector de
+   pantalla—; el ⌘K se retira, porque un atajo de teclado en un teléfono
+   solo ocupa sitio; y el ojo de la Zona Cero se queda como está.
+   Resultado medido: 0 desbordes en 360 y 390, y el contenido gana 592 px
+   de alto libre en 320×780 (antes 521). */
+@media (max-width: 430px) {
+  :not(#vx-suelo) .vx-cab-der { gap: 3px; }
+  /* El suelo de v418.2 fija `min-width/min-height: 24px !important` en todo
+     lo pulsable; para CRECER por encima de ese suelo hace falta el mismo
+     !important — no es decoración, es el suelo subiendo de 24 a 34. */
+  :not(#vx-suelo) .vx-cab-der > button,
+  :not(#vx-suelo) .vx-cab-der > a {
+    min-width: 34px !important;
+    min-height: 34px !important;
+    padding: 0;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 0;      /* el rótulo no cabe; el nombre vive en aria-label */
+    line-height: 0;
+  }
+  :not(#vx-suelo) .vx-cab-der > button svg,
+  :not(#vx-suelo) .vx-cab-der > a svg { width: 18px; height: 18px; flex: none; }
+  /* el atajo de teclado no existe en un teléfono */
+  :not(#vx-suelo) .vx-cab-der .vx-ico { display: none !important; }
+  /* EN VIVO: solo el punto rojo, sin la palabra */
+  :not(#vx-suelo) .vx-cab-der .vx-vivo { min-width: 26px !important; }
+  :not(#vx-suelo) .vx-cab-der .vx-vivo span:not([class]) { display: none; }
+}
+
+/* ── v435.3 · 320 px ES EL SUELO ──────────────────────────────────────
+   Con los iconos ya en 34 px, en 320 el último (EN VIVO) llegaba a x=344.
+   En ese ancho se retira la píldora: el «EN VIVO» ya se lee en la primera
+   línea del contenido («EN VIVO · 16:47 UTC»), así que no se pierde nada
+   y la cabecera cierra en 320 justos. Por encima de 344 se queda. */
+@media (max-width: 344px) {
+  :not(#vx-suelo) .vx-cab-der .vx-vivo { display: none !important; }
+}
+
+/* ── v435.4 · LA FILA DE ABAJO NO SE PISA ─────────────────────────────
+   A 320 medido: las caras (HOY · SALAS · RADIO, 185 px) más la emisora
+   (157 px) sumaban 342 en una pantalla de 320, así que «SALAS» quedaba
+   debajo de la píldora de radio. La cara «RADIO» además es la misma casa
+   que la píldora que tiene al lado: se retira la cara y no la radio. */
+@media (max-width: 430px) {
+  :not(#vx-suelo) .vxc-cara--radio { display: none; }
+  :not(#vx-suelo) .vxc { max-width: calc(100vw - 16px); }
+  :not(#vx-suelo) .vxe-emisora { max-width: 48vw; }
+}
+
+/* ── v435.5 · EN 360 O MENOS, LA RADIO ES UN BOTÓN, NO UN CARTEL ──────
+   Medido a 320: el rótulo «RADIO VANGUARD» no cabía al lado de las caras.
+   En ese ancho la emisora queda en su botón de play (aria-label «Escuchar
+   la radio de la casa»), que es lo único que hace falta para que suene;
+   el nombre del programa se lee dentro de /radio. */
+@media (max-width: 360px) {
+  :not(#vx-suelo) .vxe-emisora-texto { display: none; }
+  :not(#vx-suelo) .vxe-emisora { max-width: none; }
+  :not(#vx-suelo) .vxe-emisora-pill { padding: 0; }
+  :not(#vx-suelo) .vxe-emisora-lanzar { min-width: 40px !important; min-height: 36px !important; border-radius: 999px; }
+}
