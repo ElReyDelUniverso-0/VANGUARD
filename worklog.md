@@ -87,3 +87,33 @@
 - **Sello de clasificación**: franja de peligro de 3 px arriba + «CONFIDENCIAL · SECTOR 05 · hh:mm:ssZ» en la esquina (oculto en móvil y en `/vanguard2`).
 - **Nuevo**: `src/app/operacion.css`, `src/components/operacion/clasificacion.tsx`, `docs/OPERACION.md`.
 - **Pruebas**: sin cambios en el motor → `node scripts/pruebas-vida.mjs` sigue en **35 pasan · 0 fallan**.
+
+### v434.0 · NEGRO OSCURO + FOTOS REALES (2026-11-21)
+- **Mandato del Dueño**: «los colores de Vanguard deben ser negro oscuro, está muy pintado;
+  mejora las ilustraciones, agrega más 3D y más realismo; agregá fotos reales por todo;
+  hay mucho texto y no hay imágenes». Tras aclaración: **NO eliminar** las ilustraciones,
+  sino **mejorarlas + más realismo**; **fotos reales por todo** (cero IA); **paleta negro oscuro**;
+  consolidación de módulos ya hecha en v433.0 (sete módulos, un solo universo).
+- **Paleta negro oscuRO** (`src/app/globals.css`): `:root`/`.dark`/`@theme` tokens → fondo
+  `#050505`, superficies casi negras, bordes neutros casi invisibles. Los tonos HUD
+  (antes caviar/oro/marfil que lampaban) se desaturan a grises oscuros: bronce sobrio
+  `#6B5E3E`, rojo crisis atenuado `#8A3028`, y los accents cian/violeta/verde apagados.
+  Auroras coloridas → sombras oscuras (opacity 0.30, rgba desaturado); rejilla de oro
+  → casi invisible. Se quita el «pinto».
+- **Fotos reales por todo**: 334 refs a ilustraciones en 76 archivos → **544 refs a fotos
+  reales** (416 `imagenes-reales/` + 128 `assets/real/`); **0 refs a ilustraciones** en el
+  código. Mapeo temático (cada módulo/pestanía → foto real coherente: Frente→portaaviones,
+  Terreno→satélite, Inteligencia→radar/CIA, Conocimiento→sumeria/arco, etc.). `google-bar.tsx`
+  (mapeo dinámico `ILU_DE_SECCION`) y CSS `url(...)` también reconvertidos. El folder
+  `public/ilustraciones/` se **conserva** (no se borra, per el mandato).
+- **Más realismo**: las portadas y tiles de los 7 módulos ahora muestran fotos reales.
+  El set 3D existente (globe-3d, frente-3d, carta-3d, teatro3d/*) se mantiene.
+- **Commit**: `f054421` (rebase sobre `523f65c` v433.1; conflicto en `modulos.ts` resuelto
+  conservando la pestaña `mi-universo` nueva + fotos reales). Push exitoso.
+- **Deployment**: `dpl_A6wxuN21s6BLEjS1zy3tjuJU7cEh` — **READY/PROMOTED**, producción
+  `https://vanguard-kq9r.vercel.app`. Build: `prisma generate` + **`tsc --noEmit` PASS** +
+  `next build` Compiled successfully (1358 páginas estáticas).
+- **Audit headless PASS** (producción): `/` y `/worlds` → HTTP 200; body bg `rgb(6,8,12)`
+  (negro oscuro); **0 ilustraciones** (img/css/markup); **0 errores JS**; home renderiza
+  **19 background-images de fotos reales** + `/worlds` 1 `<img>` real cargado. Sin regreso
+  en MISIÓN 04 `/worlds`.
