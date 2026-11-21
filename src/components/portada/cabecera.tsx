@@ -18,6 +18,8 @@ import { IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
 import { BuscadorUniversal } from "@/components/vanguard/buscador-universal";
 import { BotonMenuAdictivo } from "./menu-adictivo";
 import { BotonCyberRadio } from "@/components/vanguard/cyber-radio-modal";
+// v436.0 · el muelle de una sola fila: lo que no cabe, en una hoja
+import { BotonMasMovil, BotonRadioMuelle } from "@/components/vanguard/muelle-movil";
 import { BotonAjustes } from "@/components/config/panel-ajustes";
 import { BotonGuiaVisual } from "@/components/vanguard/guia/GuiaVisualTactivaModal";
 
@@ -127,6 +129,11 @@ export function BarraMovil({ ruta: rutaFija }: { ruta?: string } = {}) {
           {label}
         </Link>
       ))}
+      {/* v436.0 · el quinto sitio del muelle: todo lo demás, en una hoja.
+          El ▶ de la radio se posa aquí al lado (lo pinta la emisora). */}
+      <BotonMasMovil />
+      {/* el ▶ de la radio: una sola voz, siempre a un toque */}
+      <BotonRadioMuelle />
     </nav>
   );
 }

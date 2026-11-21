@@ -90,6 +90,25 @@ export const ENDPOINTS_DOCUMENTADOS: EndpointVanguard[] = [
     version: "1",
   },
   {
+    ruta: "/api/zona-cero/predecir",
+    metodos: ["POST"],
+    grupo: "nucleo",
+    descripcion:
+      "La puerta de predecir de la Zona Cero (v434.2). Devuelve SIEMPRE las predicciones del motor de la casa —deterministas, con sus factores y su confianza— y, si se pide narración, la intenta explicar con un modelo: con la clave del operador (OpenAI-compatible) o con el núcleo de la casa. Si el modelo no contesta, responde sin narración y con el motivo: nunca se inventa un texto y se hace pasar por una predicción. No guarda nada.",
+    params: [
+      { nombre: "mesa", donde: "cuerpo", tipo: "texto", requerido: true, descripcion: "la mesa saneada (piezas, bandos, factores), como objeto JSON" },
+      { nombre: "usarIA", donde: "cuerpo", tipo: "booleano", requerido: false, descripcion: "pide narración además del cálculo" },
+      { nombre: "pregunta", donde: "cuerpo", tipo: "texto", requerido: false, descripcion: "qué se quiere explicar" },
+      { nombre: "clave", donde: "cuerpo", tipo: "texto", requerido: false, descripcion: "clave compatible con OpenAI; se usa en esta llamada y no se guarda" },
+    ],
+    respuesta: "{ok,api,version,datos:{predicciones[],narracion|null,motivo?}}",
+    muro: "sin muro propio: hereda el de la ruta del núcleo",
+    cache: "no-store",
+    auth: "ninguna",
+    documentado: true,
+    version: "1",
+  },
+  {
     ruta: "/api/zona-cero",
     metodos: ["GET"],
     grupo: "nucleo",

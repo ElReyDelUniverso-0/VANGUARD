@@ -34,7 +34,9 @@ const CARAS = [
     href: "/orden",
     nombre: "Salas",
     detalle: "El orden de batalla: las 156 salas, con su código",
-    activa: (r: string) => r === "/orden" || r.startsWith("/sala/"),
+    // v436.0 · la puerta vieja del Cuartel (/cuartel) redirige a /orden: la cara
+    // se enciende en las dos, para que no quede apagada entrando por el enlace antiguo.
+    activa: (r: string) => r === "/orden" || r.startsWith("/sala/") || r.startsWith("/cuartel"),
   },
 ];
 

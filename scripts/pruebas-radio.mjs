@@ -428,11 +428,25 @@ seccion("D · el estudio, la página y los registros");
   ok(/revalidate = 300/.test(api), "la API del programa no declara caché");
 
   const layout = leer("src/app/layout.tsx");
-  ok(layout.includes("<EmisoraGlobal"), "la voz no está montada en la casa entera (layout)");
+  // v436.0 · la ley cambió con v434.2: no hay píldora flotante de voz en la
+  // casa (una sola voz, sin botones sueltos). Lo que sí debe cumplirse es que
+  // la voz se encienda en UN toque desde el teléfono y viva en su sala:
+  const muelle = leer("src/components/vanguard/muelle-movil.tsx");
+  const cabecera = leer("src/components/portada/cabecera.tsx");
+  ok(
+    /<BotonRadioMuelle\s*\/>/.test(cabecera) && muelle.includes("usaEmision") && muelle.includes("/api/radio/programa"),
+    "la voz no se enciende en un toque desde el muelle del teléfono"
+  );
+  ok(
+    /rutas\.push|"\/radio"/.test(muelle) && layout.includes("<Caras"),
+    "la sala de la voz no está enlazada desde el muelle o falta el interruptor de cara"
+  );
   ok(layout.includes("<Caras"), "el interruptor de cara no está montado en la casa entera");
 
   const caras = leer("src/components/vanguard/caras.tsx");
-  ok(/href: "\/"|href="\/"/.test(caras) && /href: "\/cuartel"|href="\/cuartel"/.test(caras), "las dos caras no apuntan a la portada y al Cuartel");
+  // v436.0 · el Cuartel se disolvió y su puerta redirige a /orden: la cara «Salas»
+  // apunta a donde de verdad están las salas (lo fijó v435.2).
+  ok(/href: "\/"|href="\/"/.test(caras) && /href: "\/orden"|href="\/orden"/.test(caras), "las dos caras no apuntan a la portada y a Salas y orden (/orden)");
   ok(caras.includes('href="/radio"'), "el interruptor no lleva a la radio");
   ok(!/SECTIONS|ALL_TABS/.test(caras), "el interruptor duplica la navegación de salas (debe ser solo dos caras)");
 

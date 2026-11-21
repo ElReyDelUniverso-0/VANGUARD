@@ -7095,8 +7095,15 @@
 //    de los otros agentes (v434.3 las salas con su título, v435.0 el muelle
 //    único, v435.1 la última pestaña «Cuartel» fuera del índice). Nada de eso se
 //    tocó: la versión sube a v435.2 para no retroceder el contador de la casa.
-export const APP_VERSION = "v435.2";
-export const APP_CODENAME = "VANGUARD DISCOVERY SYSTEM";
+// (anterior) export const APP_VERSION = "v435.2";
+// (anterior) export const APP_CODENAME = "VANGUARD DISCOVERY SYSTEM";
+// v436.0 · EL MUELLE ÚNICO — mandato del Dueño: «en celulares pequeños los
+// botones se opacan, los textos se reúnen, la interfaz es un desastre… dame
+// ideas», y después: muelle de UNA fila SÍ, pero con la radio a un toque.
+// La barra del teléfono pasa a cuatro destinos + MÁS (hoja con lo que no cabe)
+// y el ▶ de la radio, que enciende la única voz de la casa. Ver movil.css.
+export const APP_VERSION = "v436.0";
+export const APP_CODENAME = "EL MUELLE ÚNICO";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7168,8 +7175,8 @@ export const APP_CODENAME = "VANGUARD DISCOVERY SYSTEM";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v434.2";
-// (anterior) export const APP_VERSION_ANTERIOR = "v432.4";
+export const APP_VERSION_ANTERIOR = "v435.2";
+// (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v419.0";

@@ -21,6 +21,28 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v436.0",
+    nombre: "EL MUELLE ÚNICO — el teléfono pequeño, arreglado de raíz",
+    tipo: "nav",
+    hitos: [
+      "EL DIAGNÓSTICO, MEDIDO ANTES DE TOCAR NADA (Chromium, 320×780): siete capas position:fixed apiladas —cabecera, muelle, FAB de redacción, caras, emisora, orbe con tres chips y la tarjeta de bienvenida ENCIMA del muelle—, el cromo ocupando el 54 % del alto, 118 blancos táctiles menores de 40×32, etiquetas del muelle a 9 px y la marca de la cabecera midiendo 235 de 320 px.",
+      "UN CONTRATO DE ALTURAS, NO SIETE PARCHES: muelle de 58 px con safe-area; una sola fila secundaria para caras y emisora; el orbe reducido y sin sus tres chips flotantes; fuera el FAB de redacción, la órbita decorativa y la tarjeta de bienvenida (su trabajo lo hace el botón GUÍA, que ahora sí cabe); opacidad 1 en todo lo pulsable; cabecera a 56 px con las acciones en cuadrados de 34 px y el ⌘K retirado.",
+      "EL MUELLE DE UNA SOLA FILA (lo que pidió el Dueño): cuatro sitios —Inicio · Mapa · En vivo · Más— y el ▶ de la radio en el extremo derecho de la misma barra. Lo que no cabe vive en la hoja de «Más» (Explorar, Salas y orden, Radio, La voz, El cuaderno, Buscar, Academia), con su nota de una línea y sin repetir lo que ya está en la barra. Se cierra con Escape, con el fondo y con el mismo botón.",
+      "UNA SOLA VOZ TAMBIÉN EN LA BARRA: el ▶ no inventa reproductor — usa `usaEmision` y la boca única `decir()` sobre `/api/radio/programa`, los mismos gustos de voz del operador, y se calla en las salas que tienen su propia boca (/radio, /voz, /vanguard2).",
+      "TITULARES QUE NO SE CORTAN: en ≤380 px baja la escala y gana líneas, en vez de partir la frase a la mitad.",
+      "MEDIDO DESPUÉS: capas fijas 7→5, cromo 54 %→12 % (320×780), alto libre para el contenido 521→690 px, botones opacos 2–5→0, desbordes de cabecera 3→0, solapes del muelle 0 en 320, 360 y 390.",
+      "DOS DEFECTOS DE PASO: la cara «Salas» no se encendía en ninguna sala porque su puerta (/cuartel) redirige a /orden — ahora la encienden las dos; y el enlace «Salas» de la hoja apuntaba a /salas, que no existe: Salas y Orden son una sola puerta desde que el Cuartel se disolvió, y así se enseña.",
+    ],
+  },
+  {
+    version: "v434.2",
+    nombre: "LA MESA DE ÓRDENES",
+    tipo: "nav",
+    hitos: [
+      "Entrada de registro que faltaba: la casa quedó en v434.2 «LA MESA DE ÓRDENES» sin su hito en la bitácora, y las suites de cuaderno y de voz única lo cantaban. Se anota aquí lo que la casa declara en su layout: se desmontan EmisoraGlobal y MenteGlobal —las dos voces flotantes— y la interfaz queda sin botones de voz; la boca de la casa vive en /radio y en /voz.",
+    ],
+  },
+  {
     version: "v434.1",
     nombre: "EL CUADERNO CON LA PIEL DE LA CASA · UNA SOLA VOZ",
     tipo: "nav",

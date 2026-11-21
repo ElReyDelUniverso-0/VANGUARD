@@ -367,3 +367,260 @@
   :not(#vx-suelo) .vxe-emisora-pill { padding: 0; }
   :not(#vx-suelo) .vxe-emisora-lanzar { min-width: 40px !important; min-height: 36px !important; border-radius: 999px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v436.0 · EL MUELLE DE UNA SOLA FILA (lo que el Dueño aprobó, con la
+   condición de que la radio quede a un toque).
+
+   Estado anterior medido en 320×780 (v435.0): muelle 58 + fila de caras
+   y emisora 40 + orbe 46 = 156 px de cromo, el 22 % del alto.
+   Ahora: UNA barra de 58 px con cuatro sitios —Inicio · Mapa · En vivo ·
+   Más— y el ▶ de la radio posado en el extremo derecho de esa misma
+   barra. Las caras HOY/SALAS/RADIO, Explorar, Orden, la voz, el cuaderno,
+   el buscador y la guía viven en la hoja de «Más».
+   Nada se duplica: lo que está en la barra no está en la hoja.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 430px) {
+  /* 1 · el muelle se queda con tres destinos + MÁS, y reserva su esquina
+     derecha para el ▶ de la radio (56 px) */
+  :not(#vx-suelo) .vx-tabbar {
+    display: flex;
+    align-items: stretch;
+    /* el ▶ de la radio es un hijo más de la barra (54 px), así que no hace
+       falta reservar hueco: los cinco sitios se reparten los 320 px */
+    padding-right: 0;
+  }
+  /* Explorar (4.º) y Orden (5.º) se van a la hoja: ni se duplican ni se apilan */
+  :not(#vx-suelo) .vx-tabbar > a:nth-child(4),
+  :not(#vx-suelo) .vx-tabbar > a:nth-child(5) { display: none !important; }
+  :not(#vx-suelo) .vx-tabbar > a { flex: 1 1 0; min-width: 0; }
+
+  /* 2 · el botón MÁS, con la misma piel que los destinos del muelle */
+  :not(#vx-suelo) .vx-mas-boton {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: var(--vg-muelle) !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 2px;
+    font-family: var(--vx-marca, system-ui, sans-serif);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--vx-mut, #8b93a3);
+    background: none;
+    border: 0;
+    opacity: 1;
+  }
+  :not(#vx-suelo) .vx-mas-boton svg { width: 21px; height: 21px; }
+  :not(#vx-suelo) .vx-mas-boton[data-on="1"] { color: #ffe4a3; }
+
+  /* 3 · el ▶ de la radio: en la barra, siempre, en su esquina */
+  :not(#vx-suelo) .vxe-emisora {
+    left: auto;
+    right: 6px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 9px);
+    max-width: none;
+    z-index: 64;
+  }
+  :not(#vx-suelo) .vxe-emisora-texto { display: none; }
+  :not(#vx-suelo) .vxe-emisora-pill { padding: 0; background: rgba(10, 12, 18, 0.92); }
+  :not(#vx-suelo) .vxe-emisora-lanzar {
+    min-width: 42px !important;
+    min-height: 40px !important;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+  /* con el panel abierto, la emisora sube y se queda por encima de la barra */
+  :not(#vx-suelo) .vxe-emisora--abierta {
+    right: 6px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 62px);
+    max-width: calc(100vw - 12px);
+  }
+
+  /* 4 · las caras HOY/SALAS/RADIO ya están en la hoja: no se repiten */
+  :not(#vx-suelo) .vxc { display: none !important; }
+
+  /* 5 · el orbe sigue flotando (es la voz de la casa) pero pegado a la barra */
+  :not(#vx-suelo) .vg-orbe-zona {
+    right: 10px;
+    bottom: calc(var(--vg-muelle) + var(--vg-sa) + 10px);
+  }
+
+  /* 6 · LA HOJA: opaca donde hay texto, entra desde abajo y se puede recorrer */
+  :not(#vx-suelo) .vx-mas-fondo {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: rgba(2, 3, 6, 0.72);
+    display: flex;
+    align-items: flex-end;
+  }
+  :not(#vx-suelo) .vx-mas-hoja {
+    width: 100%;
+    max-height: 74dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 14px 16px calc(var(--vg-muelle) + var(--vg-sa) + 20px);
+    background: #08090e;
+    border-top: 1px solid rgba(232, 197, 106, 0.34);
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.6);
+    color: #e9eef7;
+    animation: vx-mas-sube 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes vx-mas-sube { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
+  :not(#vx-suelo) .vx-mas-cab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  :not(#vx-suelo) .vx-mas-cab b { font-size: 15px; letter-spacing: 0.04em; color: #ffd77a; }
+  :not(#vx-suelo) .vx-mas-buscar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid rgba(232, 197, 106, 0.4);
+    border-radius: 999px;
+    font-size: 12px;
+    color: #ffe4a3;
+  }
+  :not(#vx-suelo) .vx-mas-buscar svg { width: 15px; height: 15px; }
+  :not(#vx-suelo) .vx-mas-grupo { margin-bottom: 14px; }
+  :not(#vx-suelo) .vx-mas-titulo {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #93a1b8;
+  }
+  :not(#vx-suelo) .vx-mas-grupo ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  :not(#vx-suelo) .vx-mas-grupo a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 46px;
+    justify-content: center;
+    padding: 9px 12px;
+    border: 1px solid rgba(147, 161, 184, 0.18);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+    text-decoration: none;
+  }
+  :not(#vx-suelo) .vx-mas-grupo a b { font-size: 14px; color: #f2f5fa; letter-spacing: 0.01em; }
+  :not(#vx-suelo) .vx-mas-grupo a small { font-size: 11.5px; color: #9aa6b8; }
+  :not(#vx-suelo) .vx-mas-grupo a[aria-current="page"] {
+    border-color: rgba(232, 197, 106, 0.55);
+    background: rgba(232, 197, 106, 0.08);
+  }
+  :not(#vx-suelo) .vx-mas-pie {
+    margin: 4px 0 0;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #93a1b8;
+  }
+  /* con ánimo reducido, la hoja aparece sin viaje */
+  @media (prefers-reduced-motion: reduce) {
+    :not(#vx-suelo) .vx-mas-hoja { animation: none; }
+  }
+}
+
+/* la barra con MÁS solo existe en el teléfono: en escritorio no se pinta */
+@media (min-width: 431px) {
+  .vx-mas-boton, .vx-mas-fondo { display: none !important; }
+}
+
+/* ── v436.1 · EL ▶ DE LA RADIO EN LA BARRA ────────────────────────────
+   La condición del Dueño: muelle de una fila, pero la radio a un toque.
+   El botón ocupa la esquina derecha de la barra (54 px reservados) y no
+   crea reproductor: enciende el mismo motor de siempre. Cuando suena, el
+   punto se pone en rojo y el icono pasa a pausa. */
+@media (max-width: 430px) {
+  :not(#vx-suelo) .vx-radio-muelle {
+    flex: 0 0 54px;
+    min-width: 54px !important;
+    min-height: var(--vg-muelle) !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px 0;
+    border: 0;
+    border-left: 1px solid rgba(232, 197, 106, 0.22);
+    background: rgba(12, 10, 6, 0.9);
+    color: #ffd77a;
+    font-size: 13px;
+    line-height: 1;
+    opacity: 1;
+  }
+  :not(#vx-suelo) .vx-radio-punto {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6b7280;
+  }
+  :not(#vx-suelo) .vx-radio-muelle[data-sonando="1"] .vx-radio-punto {
+    background: #ff3b30;
+    box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.22);
+  }
+  :not(#vx-suelo) .vx-radio-muelle[data-sonando="1"] { color: #ffb1a8; }
+  :not(#vx-suelo) .vx-radio-muelle[data-pidiendo="1"] { color: #93a1b8; }
+}
+@media (min-width: 431px) {
+  .vx-radio-muelle { display: none !important; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v436.1 · LA BURBUJA DE LA GUÍA NO TAPA EL MUELLE
+   Medido con Chromium a 320×780 (18-nov): la burbuja flotante «Abrir la guía
+   de la casa» (.vd-burbuja, de v435.2) caía en x8 y730..772, encima del muelle
+   (722..780), y en el punto central del botón INICIO el que recibía el toque era
+   ELLA, no el botón: el primer destino de la barra quedaba muerto en el teléfono.
+   En el teléfono la guía ya tiene su puerta, con nombre y nota, dentro de la
+   hoja de «MÁS» («Primeros pasos» → /descubrir): una puerta, un sitio.
+   ───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 430px) {
+  .vd-burbuja { display: none !important; }
+}
+
+/* v436.1 · texto solo para lectores de pantalla (el aviso del ▶ sin voz).
+   position:fixed y 1 px: no entra en el reparto de la barra ni mueve nada. */
+.vx-sr-solo {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v436.1 · EL MUELLE ES OPACO Y LA PÁGINA TERMINA ANTES DE ÉL
+   Dos cosas que se vieron en la captura a 320 (18-nov):
+   ① el muelle iba a rgba(5,6,7,0.97) y el texto de la portada se transparentaba
+      por debajo («jugar la misión…» leído a través de la barra): fondo opaco.
+   ② el contenido no reservaba el alto del muelle y la última línea de cada
+      página quedaba escondida detrás: se reserva el alto + la franja del sistema.
+   ───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 430px) {
+  :not(#vx-suelo) .vx-tabbar {
+    background: #05060a !important;
+    backdrop-filter: none !important;
+  }
+  #vx-suelo main,
+  main#vx-suelo,
+  :not(#vx-suelo) main {
+    padding-bottom: calc(var(--vg-muelle) + var(--vg-sa) + 14px);
+  }
+}
