@@ -1,4 +1,4 @@
-# VANGUARD DISCOVERY SYSTEM · v434.4
+# VANGUARD DISCOVERY SYSTEM · v435.2
 
 > Orden del Dueño, textual: *«crear una guía interactiva para nuevos visitantes;
 > incorporar explicaciones breves en los módulos; añadir ejemplos de lo que puede
@@ -77,7 +77,7 @@ de nivel «sin prisa». `avisosApagados` silencia el aviso automático.
 
 ### `src/lib/descubrimiento/destacados.ts` — lo último, con puerta
 
-Ocho versiones reales: **v434.4, v434.2, v434.1, v433.0, v431.6, v420.0,
+Ocho versiones reales: **v435.2, v434.2, v434.1, v433.0, v431.6, v420.0,
 v417.0, v405.12**, cada una con `que` (qué trajo), `ruta` (que **existe**,
 comprobado) y `prueba` (qué tocar). `ultimosDestacados(n)`.
 

@@ -886,7 +886,7 @@ body::after {
    código, salas en renglones. Nada compite con nada porque todo está en una
    sola columna de lectura.
    ═══════════════════════════════════════════════════════════════════ */
-/* v434.4 · banda que lleva a /descubrir desde el índice */
+/* v435.2 · banda que lleva a /descubrir desde el índice */
 .op-banda-guia {
   max-width: 1180px;
   margin: 14px auto 0;

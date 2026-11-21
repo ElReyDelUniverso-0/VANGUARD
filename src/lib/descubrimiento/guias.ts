@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · VANGUARD DISCOVERY SYSTEM — LAS GUÍAS
+// v435.2 · VANGUARD DISCOVERY SYSTEM — LAS GUÍAS
 //
 // Cuatro caminos para el que llega (y para el que vuelve y se perdió). Ninguno
 // encierra a nadie: cada paso se puede saltar, y en cualquier momento se sale a

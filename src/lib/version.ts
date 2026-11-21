@@ -7064,7 +7064,7 @@
 // con historial y deshacer, predicciones del motor de la casa que declaran sus
 // factores y su confianza, y una API key propia (OpenAI-compatible) para la
 // narración. Todo vive en el aparato del operador; nada se simula.
-// v434.4 · VANGUARD DISCOVERY SYSTEM — el Dueño: «que el visitante nuevo no se
+// v435.2 · VANGUARD DISCOVERY SYSTEM — el Dueño: «que el visitante nuevo no se
 // sienta perdido», y a la vez «sin quitarle la libertad de explorar». Las dos
 // cosas a la vez, y ninguna a medias.
 // ① LA GUÍA ES UN CAMINO, NO UN MURO (lib/descubrimiento/guias.ts): cuatro
@@ -7086,12 +7086,16 @@
 //    ruta, qué es y ejemplos; filtros por las ocho divisiones; sorpresa entre
 //    lo que aún no has pisado; puertas de entrada; fichas desplegables.
 // ⑤ LO ÚLTIMO, CON SU PUERTA (destacados.ts): ocho versiones reales de la casa
-//    —v434.4 → v405.12— con qué dan y qué probar, cada una enlazada a una sala
+//    —v435.2 → v405.12— con qué dan y qué probar, cada una enlazada a una sala
 //    que existe (comprobado).
 // ⑥ NADA SIMULADO: todo el progreso vive en localStorage (vg:descubrimiento:v1),
 //    se sanea si llega sucio y no cuenta como vista la portada. 47 comprobaciones
 //    en tools/descubrimiento/probar.mts.
-export const APP_VERSION = "v434.4";
+// ⑦ NUMERACIÓN: esta tanda se escribió como v434.4 y aterriza sobre el trabajo
+//    de los otros agentes (v434.3 las salas con su título, v435.0 el muelle
+//    único, v435.1 la última pestaña «Cuartel» fuera del índice). Nada de eso se
+//    tocó: la versión sube a v435.2 para no retroceder el contador de la casa.
+export const APP_VERSION = "v435.2";
 export const APP_CODENAME = "VANGUARD DISCOVERY SYSTEM";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";

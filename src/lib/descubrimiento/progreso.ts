@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · VANGUARD DISCOVERY SYSTEM — EL PROGRESO
+// v435.2 · VANGUARD DISCOVERY SYSTEM — EL PROGRESO
 //
 // Lo que la casa recuerda de ti para no repetirte lo que ya sabes: qué salas
 // has pisado, por qué paso de qué guía vas y si prefieres que no te guíe.

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · VANGUARD DISCOVERY SYSTEM — LO DESTACADO
+// v435.2 · VANGUARD DISCOVERY SYSTEM — LO DESTACADO
 //
 // La sección de novedades que pide el mandato, en su forma más corta: las
 // últimas versiones de la casa, cada una con UNA frase y UNA puerta para
@@ -25,7 +25,7 @@ export type Destacado = {
 
 export const DESTACADOS: Destacado[] = [
   {
-    version: "v434.4",
+    version: "v435.2",
     nombre: "Sistema de descubrimiento",
     que: "La casa se explica sola: guías, fichas por sala, ejemplos y tu progreso.",
     ruta: "/descubrir",

@@ -1,7 +1,7 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · /descubrir — EL MAPA PARA EL QUE LLEGA
+// v435.2 · /descubrir — EL MAPA PARA EL QUE LLEGA
 //
 // La casa entera explicada en un solo documento: cuatro caminos guiados, todas
 // las salas con su qué y sus ejemplos, lo último que llegó y tu progreso.

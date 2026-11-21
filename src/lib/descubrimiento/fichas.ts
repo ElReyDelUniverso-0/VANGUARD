@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · VANGUARD DISCOVERY SYSTEM — LAS FICHAS (qué es cada sala)
+// v435.2 · VANGUARD DISCOVERY SYSTEM — LAS FICHAS (qué es cada sala)
 //
 // Mandato del Dueño: «crear una guía interactiva para nuevos visitantes,
 // incorporar explicaciones breves en los módulos, añadir ejemplos de lo que

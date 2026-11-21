@@ -1,7 +1,7 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · VANGUARD DISCOVERY SYSTEM — la pieza que acompaña en toda la casa
+// v435.2 · VANGUARD DISCOVERY SYSTEM — la pieza que acompaña en toda la casa
 //
 // Un solo lanzador discreto (abajo a la izquierda) con tres caras:
 //   ① ESTA SALA — qué es lo que tienes delante y tres cosas que puedes hacer.

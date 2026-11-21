@@ -58,7 +58,7 @@ import { Registrador } from "@/components/travesia/registrador";
 // interruptor. La emisora y la mente se quitaron del layout por mandato.
 import { Caras } from "@/components/vanguard/caras";
 import { PuertaMundos } from "@/components/mundos/puerta-mundos";
-// v434.4 · VANGUARD DISCOVERY SYSTEM — la guía acompaña en toda la casa
+// v435.2 · VANGUARD DISCOVERY SYSTEM — la guía acompaña en toda la casa
 import { Descubrimiento } from "@/components/descubrimiento/descubrimiento";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -979,7 +979,7 @@ try{
             se montan; la interfaz queda sin botones de voz. */}
         {/* v403.1 LOS DOS MUNDOS: la Puerta (primera visita) y el Cruce entre mundos */}
         <PuertaMundos />
-        {/* v434.4: el descubrimiento — un lanzador discreto con la ficha de cada
+        {/* v435.2: el descubrimiento — un lanzador discreto con la ficha de cada
             sala, las guías y el progreso. No tapa: vive abajo a la izquierda. */}
         <Descubrimiento />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />

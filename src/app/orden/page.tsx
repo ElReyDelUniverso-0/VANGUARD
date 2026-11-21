@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function OrdenPage() {
   return (
     <main className="op-orden-pag">
-      {/* v434.4: quien llega aquí por primera vez no debería comerse 92 salas de
+      {/* v435.2: quien llega aquí por primera vez no debería comerse 92 salas de
           golpe. Esta banda lleva a la guía; no tapa nada, va en el flujo. */}
       <nav className="op-banda-guia" aria-label="Guía para quien llega">
         <p>

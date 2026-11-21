@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · PRUEBA DEL SISTEMA DE DESCUBRIMIENTO — contra el código real
+// v435.2 · PRUEBA DEL SISTEMA DE DESCUBRIMIENTO — contra el código real
 //
 //   npx tsx tools/descubrimiento/probar.mts
 //

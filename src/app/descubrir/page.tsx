@@ -8,7 +8,7 @@ import { DescubrirCliente } from "./descubrir-cliente";
 import "./descubrir.css";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// v434.4 · /descubrir — VANGUARD DISCOVERY SYSTEM
+// v435.2 · /descubrir — VANGUARD DISCOVERY SYSTEM
 //
 // El mandato del Dueño, entero y en una sala: guía interactiva para el que
 // llega, explicación breve de cada módulo, ejemplos de cada herramienta,
