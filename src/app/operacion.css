@@ -1439,3 +1439,63 @@ body::after {
   border-color: var(--op-red);
   background: rgba(216, 31, 38, 0.1);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   15 · SIN FOTOS DE IA (v434.0) — placas de sector en vez de ilustraciones
+   Mandato del Dueño: «elimina todas las fotos de IA de Vanguard».
+
+   Qué se hace aquí, exactamente:
+   · Toda <img> cuya ruta venga de las carpetas de imágenes generadas deja de
+     pintarse (display:none: ni icono roto ni hueco).
+   · Todo elemento que lleve una de esas rutas como fondo —tarjetas, héroes,
+     paneles— recibe en su lugar una PLACA DE SECTOR dibujada con gradientes
+     CSS: retícula, mira y viñeta. Cero imágenes, cero peticiones de red.
+   · Los archivos se borran del repositorio en el mismo cambio; esto es la red
+     de seguridad por si algún componente ajeno los sigue pidiendo.
+   ═══════════════════════════════════════════════════════════════════ */
+img[src*="ilustraciones"],
+img[src*="assets/tv"],
+img[src*="assets/osint"],
+img[src*="assets/cctv"],
+img[src*="assets/env"] {
+  display: none !important;
+}
+
+/* la placa: la misma retícula de sector de la casa, con mira al centro */
+[style*="ilustraciones"],
+[style*="assets/tv"],
+[style*="assets/osint"],
+[style*="assets/cctv"],
+[style*="assets/env"],
+.vx-sala-bg,
+.vx-hub-sala .vx-sala-bg {
+  background-image:
+    linear-gradient(to right, rgba(223, 231, 234, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(223, 231, 234, 0.07) 1px, transparent 1px),
+    radial-gradient(circle at 50% 46%, rgba(216, 31, 38, 0.16) 0 2px, transparent 2px),
+    radial-gradient(120% 120% at 50% 40%, #0e1417 0%, #080b0d 58%, #050607 100%) !important;
+  background-size: 34px 34px, 34px 34px, 100% 100%, 100% 100% !important;
+  background-position: center center, center center, center center, center !important;
+  background-repeat: repeat, repeat, no-repeat, no-repeat !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* el hero de la entrada: si pedía la imagen generada, se queda con la placa */
+.vxe-ent-tierra {
+  background-image:
+    linear-gradient(to right, rgba(223, 231, 234, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(223, 231, 234, 0.06) 1px, transparent 1px),
+    radial-gradient(120% 120% at 50% 40%, #0d1316 0%, #070a0b 60%, #040506 100%) !important;
+  background-size: 40px 40px, 40px 40px, 100% 100% !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  animation: none !important;
+}
+
+/* donde había una ilustración con su texto encima, el texto manda: más contraste */
+.vx-sala-bg ~ h3,
+.vx-sala-bg ~ p {
+  color: var(--vx-tx, #e9eef1);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+}
