@@ -7036,8 +7036,16 @@
 // estados reales (inactivo · escuchando · pensando · hablando), chips de
 // sugerencias según la sala, y respaldo de teclado siempre visible. La IA de la
 // casa decide: contesta, o ejecuta (te lleva / baja a la sección / resalta).
-export const APP_VERSION = "v432.1";
-export const APP_CODENAME = "EL ORBE";
+// v432.2 · EL ORBE A TU MANERA — el Dueño pidió tres cosas y se hicieron las
+// tres: que se pueda editar TODO de ella (tamaño, sitio, transparencia, voz,
+// persona, velocidad, idioma, chips), que se pueda MOVER y no tape botones
+// (arrastre con memoria, se pega a los bordes, se aparta de lo pulsable y se
+// difumina mientras lees), y que explique mejor: la respuesta ahora se pule
+// (sin markdown, sin rutas, sin muletillas, máximo cinco frases) y el respaldo
+// dice qué es, dónde está y qué hay dentro. La voz va por la boca de la casa y,
+// si hay clave de voz neuronal (/api/voz/tts), por la voz de estudio.
+export const APP_VERSION = "v432.2";
+export const APP_CODENAME = "EL ORBE A TU MANERA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
 // (anterior) export const APP_VERSION = "v422.1";

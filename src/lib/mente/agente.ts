@@ -96,7 +96,15 @@ Capacidades reales que tienes (no inventes otras):
 · CREAR cosas de verdad (acción "crear"): documentos, planes, tablas, código, listas, informes en markdown. Lo que creas se guarda y el operador puede descargarlo.
 · Recordar datos del operador entre conversaciones (acción "recordar").
 · Razonar con conocimiento general del mundo real, con honestidad: si un dato puede haber cambiado hoy, lo dices y propones investigar.
-Reglas: no inventes rutas (solo las que te doy o las que devuelva "buscar"). No inventes cifras exactas de hoy. Nada ilegal, nada de violencia gráfica, nada dañino.`;
+Reglas: no inventes rutas (solo las que te doy o las que devuelva "buscar"). No inventes cifras exactas de hoy. Nada ilegal, nada de violencia gráfica, nada dañino.
+
+CÓMO SE EXPLICA (esto es lo que el Dueño llama «dice cosas sin sentido»; no lo hagas):
+· La primera frase RESPONDE. Nada de preámbulos: prohibido «claro», «por supuesto», «¡buena pregunta!», «como inteligencia artificial», «estoy aquí para ayudarte».
+· Cuando hables de un lugar de la casa, di las tres cosas: QUÉ es, DÓNDE está (su área) y QUÉ se hace allí. Un ejemplo concreto vale más que tres adjetivos.
+· Si el operador ya sabe lo que ha pedido, no se lo repitas: añade lo que no sabía (qué hay dentro, qué puede hacer después) y ofrece la siguiente puerta.
+· Nada de relleno, nada de moralejas, nada de listas con guiones: esto se lee EN VOZ ALTA. Máximo cinco frases.
+· Si no sabes algo de la casa, dilo en una frase y ofrece buscar. Si es un dato del mundo que puede haber cambiado, dilo y ofrece investigar. Nunca rellenes el hueco con algo inventado.
+· Prohibido escribir rutas con barras (/mapas) dentro de la respuesta: la interfaz pinta las puertas; tú las nombras.`;
 
 const PROTOCOLO = `RESPONDE SOLO CON UN OBJETO JSON VÁLIDO, sin texto fuera del JSON:
 {
@@ -325,14 +333,53 @@ function tituloDeTema(texto: string): string {
   return `${base.charAt(0).toUpperCase()}${base.slice(1)}`;
 }
 
+/**
+ * v432.2 · PULIR LO QUE SE DICE — quita el ruido que hace que la mente suene a
+ * relleno: markdown, negritas, enlaces, rutas sueltas, muletillas de chatbot y
+ * frases de más. Es determinista y no cambia el sentido: solo la forma.
+ */
+export function pulirRespuesta(texto: string): string {
+  let t = (texto ?? "").replace(/\r/g, " ").trim();
+  if (!t) return "";
+  // fuera bloques de código y markdown
+  t = t.replace(/```[\s\S]*?```/g, " ");
+  t = t.replace(/`([^`]+)`/g, "$1");
+  t = t.replace(/!?\[[^\]]*\]\([^)]*\)/g, " ");
+  t = t.replace(/[*_#>]+/g, " ");
+  t = t.replace(/^\s*[-•·]\s+/gm, "");
+  // fuera muletillas de asistente
+  t = t.replace(/\s+([,.;:!?])/g, "$1").trim();
+  t = t.replace(/^(claro|por supuesto|desde luego|entendido|perfecto|vale|de acuerdo)\b[^.]{0,14}[,.:;]\s*/i, "");
+  t = t.replace(/\bcomo (?:un |una )?(?:modelo de lenguaje|inteligencia artificial|ia|asistente)\b[^.]*\.?/gi, "");
+  t = t.replace(/\b(stoy|estoy aquí) para ayudarte\.?/gi, "");
+  t = t.replace(/\b(buena|gran|excelente) pregunta[!?.]?/gi, "");
+  // signos que quedaron huérfanos al quitar muletillas
+  t = t.replace(/¡(?=[\s.,;:]|$)/g, "").replace(/¿(?=[\s.,;:]|$)/g, "");
+  t = t.replace(/\(\s*\)/g, " ");
+  t = t.replace(/\s+([,.;:!?])/g, "$1").replace(/\s+/g, " ").trim();
+  // fuera rutas sueltas entre paréntesis: la interfaz ya pinta las puertas
+  t = t.replace(/\(\s*\/[^)\s]*\s*\)/g, "");
+  t = t.replace(/\s*\/[a-z][a-z0-9-]*(\/[a-z0-9?=&-]+)*/g, "");
+  // espacios y frases de más
+  t = t.replace(/\s+/g, " ").trim();
+  const frases = t.split(/(?<=[.!?…])\s+/).filter(Boolean);
+  if (frases.length > 5) t = frases.slice(0, 5).join(" ");
+  return t.trim();
+}
+
 function respuestaCasa(p: PeticionMente, enlaces: Enlace[], hallazgos: Hallazgo[], artefactos: Artefacto[]): string {
   const trozos: string[] = [];
   if (enlaces.length) {
     const primero = enlaces[0];
-    trozos.push(`Lo tienes en ${primero.nombre} (${primero.ruta}). Te lo dejo abajo para entrar de un toque.`);
+    const area = areaDeRuta(primero.ruta);
+    // qué es · dónde está · qué hay dentro. Sin rutas: la interfaz pinta puertas.
+    trozos.push(
+      `${primero.nombre} es la puerta que buscas${area && area.nombre ? `, en el área ${area.nombre}` : ""}. ` +
+        `${primero.porque ? `Ahí ${primero.porque.replace(/^es el lugar que pediste$/i, "tienes lo que pediste").replace(/\.$/, "")}.` : "Ahí está lo que pides."}`
+    );
   }
   if (hallazgos.length > 1) {
-    trozos.push(`También encaja: ${hallazgos.slice(1, 4).map((h) => h.n).join(", ")}.`);
+    trozos.push(`Si no era eso, también encaja: ${hallazgos.slice(1, 4).map((h) => h.n).join(", ")}.`);
   }
   if (artefactos.length) {
     trozos.push(`Te he dejado «${artefactos[0].titulo}» como esqueleto editable: el contenido lo cierras tú o me lo pides por partes.`);
@@ -455,8 +502,11 @@ export async function hablarConMente(p: PeticionMente): Promise<RespuestaMente> 
     }
   }
 
-  if (!respuesta) {
-    respuesta = respuestaCasa(p, producto.enlaces, candidatos, producto.artefactos);
+  respuesta = pulirRespuesta(respuesta);
+  // Si el modelo contestó pero quedó vacío o inservible tras el pulido, se usa
+  // el respaldo determinista: mejor poco y verdadero que mucho y hueco.
+  if (!respuesta || respuesta.length < 24) {
+    respuesta = pulirRespuesta(respuestaCasa(p, producto.enlaces, candidatos, producto.artefactos));
     ia = false;
   }
 

@@ -10,7 +10,8 @@
 // No necesita base de datos, ni red, ni credenciales.
 // ═══════════════════════════════════════════════════════════════════════════
 import { LUGARES, TOTAL_LUGARES, buscarEnCasa, resolverDestino, areaDeRuta, mapaParaElModelo } from "@/lib/mente/mapa-casa";
-import { hablarConMente, pideCrear, pideIr } from "@/lib/mente/agente";
+import { hablarConMente, pideCrear, pideIr, pulirRespuesta } from "@/lib/mente/agente";
+import { sanear, AJUSTES_DEFECTO } from "@/lib/mente/ajustes-orbe";
 
 let fallos = 0;
 const ok = (cond: boolean, nombre: string, extra = "") => {
@@ -66,10 +67,28 @@ ok(creado.artefactos[0]?.contenido.includes("#"), "el artefacto es markdown edit
 ok(creado.artefactos[0]?.tipo === "plan", `tipo del artefacto: ${creado.artefactos[0]?.tipo}`);
 ok(!/plan tres pasos seguir/i.test(creado.artefactos[0]?.titulo ?? ""), `título legible: «${creado.artefactos[0]?.titulo}»`);
 
+console.log("\n── LO QUE DICE (pulido, sin relleno) ──");
+const sucio = pulirRespuesta("**Claro**, ve a /mapas (allí está todo). Como modelo de lenguaje, no puedo. ¡Buena pregunta!");
+ok(!sucio.includes("**"), "quita el markdown");
+ok(!sucio.includes("/mapas"), "quita las rutas escritas (la interfaz pinta puertas)");
+ok(!/Claro|Como modelo|Buena pregunta|^¡|^¿/i.test(sucio), `quita las muletillas: «${sucio}»`);
+const largo = pulirRespuesta("Uno. Dos. Tres. Cuatro. Cinco. Seis. Siete.");
+ok(largo.split(/(?<=[.!?])\s+/).length <= 5, "no pasa de cinco frases (se lee en voz alta)");
+
+console.log("\n── LOS AJUSTES DEL ORBE (nada puede dejarlo roto) ──");
+const sucios = sanear({ tamano: 999, opacidad: 0, x: Number.NaN, voz: "inventada", persona: "otra", velocidad: 9, idioma: "fr-FR" });
+ok(sucios.tamano === 96, `tamaño acotado: ${sucios.tamano}`);
+ok(sucios.opacidad === 0.3, `opacidad acotada: ${sucios.opacidad}`);
+ok(sucios.x === null, "posición inválida vuelve al centro");
+ok(sucios.voz === "casa" && sucios.persona === "locutora" && sucios.idioma === "es-ES", "voz/persona/idioma caen a lo válido");
+ok(sucios.velocidad === 1.4, `velocidad acotada: ${sucios.velocidad}`);
+ok(AJUSTES_DEFECTO.visible === true && AJUSTES_DEFECTO.chips === true, "los de fábrica: visible y con sugerencias");
+ok(sanear({}).tamano === AJUSTES_DEFECTO.tamano, "sin nada guardado se usan los de fábrica");
+
 console.log("\n── EL MAPA QUE VE EL MODELO ──");
 const m = mapaParaElModelo();
 ok(m.includes("ÁREAS") && m.length < 6000, `prompt del mapa: ${m.length} caracteres (cabe en el contexto)`);
 ok((m.match(/·/g) || []).length >= 10, "enumera las áreas con sus puertas");
 
-console.log(fallos ? `\nRESULTADO: ${fallos} fallo(s)` : "\nRESULTADO: 29 comprobaciones, 0 fallos");
+console.log(fallos ? `\nRESULTADO: ${fallos} fallo(s)` : "\nRESULTADO: 41 comprobaciones, 0 fallos");
 process.exit(fallos ? 1 : 0);

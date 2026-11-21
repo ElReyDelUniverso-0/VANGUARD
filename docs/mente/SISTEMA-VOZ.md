@@ -195,3 +195,27 @@ curl -s -X POST 'https://vanguard-kq9r.vercel.app/api/mente/chat?json=1' \
 ```
 
 En pantalla: toca el orbe → si el navegador no deja micrófono, aparece «teclado»; escribe `llévame al mapa` y verás la tarjeta con la respuesta y la puerta, y el salto a `/mapas`.
+
+---
+
+## 5 · v432.2 — se edita, se mueve y no tapa (lo que pidió el Dueño)
+
+**Todo lo del orbe se toca** desde su hoja de ajustes (rueda ⚙ al lado del orbe, o clic derecho sobre él): tamaño (40–96 px), transparencia (30–100 %), sugerencias sí/no, «apartarse al leer», **modo discreto** (un punto que crece al tocarlo), «llevarme sola», voz (estudio / aparato / callada), persona (locutora, analista, general, cronista), velocidad (0,6–1,4), idioma de escucha (España, Latinoamérica, México) y volver a centrar. Se guarda en `vg:mente:orbe:v1`, **solo en el aparato**, y todo valor pasa por `sanear()`: un almacén manipulado no puede dejarlo gigante ni invisible (`src/lib/mente/ajustes-orbe.ts`).
+
+**Se mueve y no tapa.** Se arrastra con dedo o ratón (un toque sin arrastrar sigue siendo «hablar»); al soltarlo se pega a los bordes y se queda ahí. En cuanto cae encima de algo pulsable (`a, button, input, [role=button]`…) se aparta. Mientras haces scroll baja al 42 % de opacidad y vuelve al pasar por encima.
+
+**Habla mejor.** Usa la **boca de la casa** (`lib/voz/decir`): elige la mejor voz neuronal instalada, respeta las pausas entre frases y no se pisa. Antes de eso intenta `/api/voz/tts`, que da la **voz de estudio** si el proyecto tiene clave:
+
+```bash
+curl -s https://vanguard-kq9r.vercel.app/api/voz/tts        # ¿hay clave?
+# → {"ok":false,"proveedor":null,"nota":"No hay clave de voz neuronal…"}
+```
+
+Hoy **no hay clave** en el proyecto (solo existen `DATABASE_URL` y `NEXT_PUBLIC_REALTIME_URL`), así que el orbe suena con la mejor voz del aparato. Para la voz de ChatGPT de verdad hay que crear **una** variable:
+
+- `OPENAI_API_KEY` → modelo `gpt-4o-mini-tts`, voz `nova`, español neutro con pausas. Es la que más se parece a la voz de ChatGPT.
+- …o `ELEVENLABS_API_KEY` (opcional `ELEVENLABS_VOZ`) → `eleven_multilingual_v2`.
+
+En cuanto la clave exista, **no hay que tocar código**: el orbe pregunta primero a esa puerta.
+
+**Explica mejor.** La respuesta pasa por `pulirRespuesta()`: fuera markdown, negritas, enlaces, **rutas sueltas**, muletillas («claro», «como modelo de lenguaje», «buena pregunta») y más de cinco frases. Y el respaldo determinista ya no dice «lo tienes en X»: dice **qué es, en qué área está y qué hay dentro**. Si tras el pulido la respuesta queda vacía o floja, gana el respaldo: mejor poco y verdadero que mucho y hueco.
