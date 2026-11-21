@@ -523,10 +523,17 @@ export default async function NucleoPage({
             LAS FAMILIAS — {FAMILIAS_MODULO.length} preguntas, {rutasDeFamilias().length} puertas
           </p>
           <p className="mt-2 max-w-3xl text-xs leading-relaxed text-zinc-400">
-            La casa tiene más de setenta puertas y muchas responden a la misma pregunta desde
-            ángulos distintos: seis miran al planeta, cinco a la redacción, cinco a la simulación.
-            Aquí se declara cuál es la puerta canónica de cada familia, qué papel cumple cada una
-            de las demás y por qué no sobran. No se cierra ninguna: se ordena el mapa.
+            La casa tiene 146 rutas con página propia y casi todas responden a la misma pregunta
+            desde ángulos distintos: siete miran al planeta, ocho sirven los cables del día y las
+            lenguas del mundo tienen dieciséis puertas. Aquí se declara cuál es la puerta canónica
+            de cada familia, qué papel cumple cada una de las demás y por qué no sobra. No se cierra
+            ninguna: se ordena el mapa. Las dos únicas rutas que no aparecen —<code className="font-mono text-[10px]">/cuartel</code> y{" "}
+            <code className="font-mono text-[10px]">/modulos</code>— es porque ya no son puertas:
+            redirigen. Cada una de las 156 salas se abre por su propia dirección, en{" "}
+            <a href="/orden" className="text-zinc-200 underline decoration-zinc-700 hover:text-amber">
+              el orden de batalla
+            </a>
+            .
           </p>
           <div className="mt-4 space-y-4">
             {FAMILIAS_MODULO.map((fam) => (
