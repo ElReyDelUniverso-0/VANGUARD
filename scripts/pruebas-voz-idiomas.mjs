@@ -127,7 +127,16 @@ for (const id of ORDEN_IDIOMAS) {
   ok(t.pausaFrase >= 180 && t.pausaParrafo > t.pausaFrase, `las pausas de ${id} no respiran`);
   ok(t.simbolos.length >= 8, `a ${id} le faltan símbolos que decir`);
   ok(
-    t.textos && Object.values(t.textos).every((v) => typeof v === "string" && v.trim().length > 0),
+    t.textos &&
+      Object.entries(t.textos).every(([k, v]) =>
+        // v437.0 · las cuatro personas son una lista de objetos, no una cadena:
+        // se valida aparte y con la misma dureza que los demás textos.
+        k === "vocesDeCasa"
+          ? Array.isArray(v) &&
+            v.length === 4 &&
+            v.every((x) => ["nombre", "lema", "intro"].every((c) => typeof x[c] === "string" && x[c].trim().length > 0))
+          : typeof v === "string" && v.trim().length > 0
+      ),
     `a ${id} le falta algún texto de la sala de voz`
   );
   ok(t.sinVoces.length > 20 && t.mejorEsMala.includes("{voz}"), `los avisos de ${id} no explican nada`);
@@ -359,6 +368,32 @@ for (const rel of [
   "src/lib/radio/usa-emision.ts",
 ]) {
   ok(!/"es-ES"/.test(leer(rel)), `${rel} todavía escribe «es-ES» a mano`);
+}
+
+// ═══ G · LA SALA NO DEJA NADA EN ESPAÑOL ════════════════════════════════════
+seccion("G · la sala de la voz se lee entera en el idioma elegido");
+{
+  const es = IDIOMAS_VOZ.es.textos;
+  const llavesPantalla = ["pausaSigue", "callar", "micro", "microEscuchando", "sitio", "preguntar", "empezar", "pista", "fuentes", "nota"];
+  for (const id of ORDEN_IDIOMAS) {
+    if (id === "es") continue;
+    const t = IDIOMAS_VOZ[id].textos;
+    // ningún texto de pantalla puede ser el español copiado
+    const iguales = llavesPantalla.filter((k) => t[k] === es[k]);
+    ok(iguales.length === 0, `${id} deja textos en español: ${iguales.join(", ")}`);
+    // y las cuatro personas también se dicen en su idioma
+    ok(
+      t.vocesDeCasa.every((v, i) => v.lema !== es.vocesDeCasa[i].lema && v.intro !== es.vocesDeCasa[i].intro),
+      `${id} deja las personas de la casa en español`
+    );
+  }
+  // la sala no puede llevar los textos escritos dentro del componente
+  const vz = leer("src/components/vanguard/voz-sala.tsx");
+  for (const literal of ["Pausa / sigue", "Escríbele o háblale", "FUENTES DE ESTA RESPUESTA", "empezar de cero", "El maestro no inventa"]) {
+    ok(!vz.includes(literal), `voz-sala todavía escribe a mano «${literal}»`);
+  }
+  ok(vz.includes("tabla.textos.vocesDeCasa"), "la sala no usa los nombres y lemas del idioma");
+  ok(vz.includes("dicho?.intro"), "elegir una persona no la presenta en el idioma de la casa");
 }
 
 // ── resultado ──

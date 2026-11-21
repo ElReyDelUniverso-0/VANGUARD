@@ -7145,8 +7145,17 @@
 // en una tabla sola (lib/voz/idiomas.ts), la boca lee el idioma de la casa,
 // cada idioma guarda su voz y su ritmo, y la radio traduce sus fórmulas sin
 // tocar un solo cable. Ver movil.css, limpiar.ts, decir.ts y marcos.ts.
-export const APP_VERSION = "v437.0";
-export const APP_CODENAME = "LA CASA HABLA TU IDIOMA";
+// v437.1 · EL ESTUDIO EN TU IDIOMA — lo que faltaba de v437.0. La voz ya
+// hablaba ocho idiomas, pero el cromo del estudio (/radio) seguía escrito en
+// español: botones, etiquetas, presets y sugerencias. Ahora salen de una tabla
+// (lib/radio/textos-ui.ts) con la misma ley que la voz: los ocho idiomas
+// existen o el tipo no compila, los huecos se rellenan con %a %b %t para no
+// romper el orden de la frase, y las respuestas de la conversación quedan
+// DECLARADAS como lo que aún se escribe en español (no se finge).
+// (anterior) export const APP_VERSION = "v437.0";
+// (anterior) export const APP_CODENAME = "LA CASA HABLA TU IDIOMA";
+export const APP_VERSION = "v437.1";
+export const APP_CODENAME = "EL ESTUDIO EN TU IDIOMA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7218,7 +7227,7 @@ export const APP_CODENAME = "LA CASA HABLA TU IDIOMA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v436.2";
+export const APP_VERSION_ANTERIOR = "v437.0";
 // (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";

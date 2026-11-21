@@ -491,6 +491,49 @@ seccion("D · el estudio, la página y los registros");
   ok(css.includes(".vxr-reglas"), "el CSS no viste las reglas de edición");
 }
 
+// ── H · el cromo del estudio habla el idioma de la casa (v437.1) ────
+{
+  const ruta = "src/lib/radio/textos-ui.ts";
+  ok(existsSync(join(RAIZ, ruta)), "no existe la tabla de textos del estudio (textos-ui.ts)");
+  const ui = leer(ruta);
+  for (const id of ["es", "en", "pt", "fr", "de", "it", "ru", "zh"]) {
+    ok(new RegExp(`\\n  ${id}: \\{`).test(ui), `la tabla del estudio no tiene ${id}`);
+  }
+  // ninguna lengua puede ser el español copiado
+  const trozos = ui.split(/\n  (es|en|pt|fr|de|it|ru|zh): \{/).slice(1);
+  const porIdioma = {};
+  for (let i = 0; i < trozos.length; i += 2) porIdioma[trozos[i]] = trozos[i + 1];
+  const claves = ["onAir", "offAir", "cableNota", "parte", "frase", "silencio", "resumen", "detener", "continuar", "escuchar", "pausa", "anterior", "siguiente", "quedan", "total", "copiarGuion", "copiarRadio", "copiado", "ariaPrograma", "ariaBloques", "irAlBloque", "ariaGuion", "ariaCharla", "charlaTitulo", "charlaSub", "escribirPregunta", "sitioPregunta", "hablar", "escucho", "preguntar", "puedesSeguir", "vacio", "tu", "ariaAjustes", "tituloAjustes", "estilo", "duracion", "persona", "vozAparato", "mejorDisponible", "velocidad", "tono", "pausas", "conResumen", "conFuentes", "nota"];
+  const valor = (cuerpo, k) => {
+    const m = cuerpo.match(new RegExp(`\\n    ${k}:\\s*"([^"]*)"`));
+    return m ? m[1] : null;
+  };
+  for (const [id, cuerpo] of Object.entries(porIdioma)) {
+    const faltan = claves.filter((k) => valor(cuerpo, k) === null);
+    ok(faltan.length === 0, `a la tabla del estudio (${id}) le faltan textos: ${faltan.join(", ")}`);
+    for (const lista of ["estilos", "duraciones", "presets", "sugerencias"]) {
+      ok(cuerpo.includes(`    ${lista}: [`), `a la tabla del estudio (${id}) le falta ${lista}`);
+    }
+    if (id !== "es") {
+      // Se comparan las frases: una etiqueta de una sola palabra puede ser la
+      // misma en dos lenguas («pausa» es pausa en español y en portugués) y eso
+      // no es una fuga. Lo que no puede quedar igual es lo que se explica.
+      const copiados = claves.filter((k) => {
+        const v = valor(cuerpo, k);
+        const e = valor(porIdioma.es, k);
+        return v === e && v.length > 12;
+      });
+      ok(copiados.length === 0, `${id} deja textos del estudio en español: ${copiados.join(", ")}`);
+    }
+  }
+  // y el estudio no puede llevar los literales dentro
+  const estudio = leer("src/components/radio/radio-vanguard.tsx");
+  const literales = ["EN EL AIRE", "EN SILENCIO", "Copiar el guion", "Copiar mi radio", "Pregúntale a la radio", "Tu radio", "La mejor disponible", "Pausas naturales", "los cables llegan en el idioma"];
+  for (const l of literales) ok(!estudio.includes(l), `el estudio todavía escribe a mano «${l}»`);
+  ok(estudio.includes("TEXTOS_RADIO[idioma]"), "el estudio no lee su tabla de textos por idioma");
+  ok(estudio.includes("tx.sugerencias.map"), "las sugerencias del estudio no cambian de idioma");
+}
+
 // ── resultado ──────────────────────────────────────────────────────
 if (fallos.length) {
   console.error(`\n✖ ${fallos.length} fallos de ${pasadas + fallos.length} comprobaciones`);

@@ -43,10 +43,11 @@ import {
   avisosDelAparato,
 } from "@/lib/voz/decir";
 import { type BloqueGuion, type EstiloRadio, construirPrograma, programaAGuion } from "@/lib/radio/guion";
-import { SUGERENCIAS, type Memoria, MEMORIA_VACIA, responder } from "@/lib/radio/conversar";
+import { type Memoria, MEMORIA_VACIA, responder } from "@/lib/radio/conversar";
 import { usaEmision } from "@/lib/radio/usa-emision";
 import { useT } from "@/lib/i18n";
 import { comoIdiomaVoz, idiomaVoz } from "@/lib/voz/idiomas";
+import { TEXTOS_RADIO, rellena } from "@/lib/radio/textos-ui";
 import "./radio.css";
 
 const LS = "vanguard:radio:v2";
@@ -68,11 +69,12 @@ const AJUSTES_DEFECTO: Ajustes = {
   gustos: { persona: "locutora", vozURI: null, rate: 1, pitch: 1, volumen: 0.95, pausas: true },
 };
 
-const PRESETS: { id: string; nombre: string; detalle: string; ajustes: Partial<Ajustes> }[] = [
-  { id: "manana", nombre: "Mañana serena", detalle: "5 min · informativa · pausada", ajustes: { estilo: "serena", duracionMin: 5, conResumen: true, conFuentes: true } },
-  { id: "frente", nombre: "Frente abierto", detalle: "10 min · directa · sin adornos", ajustes: { estilo: "filosa", duracionMin: 10, conResumen: true, conFuentes: true } },
-  { id: "paseo", nombre: "Paseo largo", detalle: "15 min · cercana · con fuentes", ajustes: { estilo: "cercana", duracionMin: 15, conResumen: true, conFuentes: true } },
-  { id: "corto", nombre: "Solo lo esencial", detalle: "2 min · titulares y cierre", ajustes: { estilo: "filosa", duracionMin: 2, conResumen: false, conFuentes: false } },
+/** Los cuatro presets: el ajuste vive aquí, el nombre y el detalle en TEXTOS_RADIO. */
+const PRESETS: { id: string; ajustes: Partial<Ajustes> }[] = [
+  { id: "manana", ajustes: { estilo: "serena", duracionMin: 5, conResumen: true, conFuentes: true } },
+  { id: "frente", ajustes: { estilo: "filosa", duracionMin: 10, conResumen: true, conFuentes: true } },
+  { id: "paseo", ajustes: { estilo: "cercana", duracionMin: 15, conResumen: true, conFuentes: true } },
+  { id: "corto", ajustes: { estilo: "filosa", duracionMin: 2, conResumen: false, conFuentes: false } },
 ];
 
 function leerAjustes(): Ajustes {
@@ -132,6 +134,11 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
   // v437.0 · el idioma de la casa manda: el programa se escribe y se dice en él
   const { lang } = useT();
   const idioma = comoIdiomaVoz(lang);
+  // v437.1 · el cromo del estudio habla el idioma de la casa: botones, etiquetas,
+  // presets y sugerencias salen de TEXTOS_RADIO, no de literales en español.
+  const tx = TEXTOS_RADIO[idioma];
+  const personasTx = idiomaVoz(idioma).textos.vocesDeCasa;
+  const r = (patron: string, v: Record<string, string | number>) => rellena(patron, v);
   const [ajustes, setAjustes] = useState<Ajustes>(AJUSTES_DEFECTO);
   const [reloj, setReloj] = useState<{ hora?: number; ahora: number }>({ ahora: ahoraServidor });
   const [voces, setVoces] = useState<VozDisponible[]>([]);
@@ -376,10 +383,10 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
       }}
     >
       {/* ── el estudio ── */}
-      <section className="vxr-estudio" aria-label="El programa">
+      <section className="vxr-estudio" aria-label={tx.ariaPrograma}>
         <div className={sonando ? "vxr-aire vxr-aire--on" : "vxr-aire"}>
           <span className="vxr-punto" aria-hidden />
-          <span>{sonando ? "EN EL AIRE" : "EN SILENCIO"}</span>
+          <span>{sonando ? tx.onAir : tx.offAir}</span>
           <span className="vxr-ecualizador" aria-hidden>
             <i /><i /><i /><i /><i />
           </span>
@@ -389,7 +396,7 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
           {programa.titulo}
           {/* v437.0 · lo que la casa dice va en tu idioma; los cables, como se publicaron */}
           <span className="vxr-idioma-nota">
-            {idiomaVoz(idioma).nativo} · los cables llegan en el idioma en que se publicaron
+            {idiomaVoz(idioma).nativo} {tx.cableNota}
           </span>
           <span className="vxr-dur"> · {mmss(programa.duracionMs)}</span>
         </h2>
@@ -401,41 +408,41 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
           </p>
           <p className="vxr-caption-pie">
             {sonando && subtitulo
-              ? `bloque ${bloqueActual + 1} de ${programa.bloques.length} · frase ${subtitulo.i + 1} de ${subtitulo.total}`
+              ? `${r(tx.parte, { a: bloqueActual + 1, b: programa.bloques.length })} · ${r(tx.frase, { a: subtitulo.i + 1, b: subtitulo.total })}`
               : sonando
-                ? `bloque ${bloqueActual + 1} de ${programa.bloques.length} · silencio`
+                ? `${r(tx.parte, { a: bloqueActual + 1, b: programa.bloques.length })} · ${tx.silencio}`
                 : bloque
-                ? `bloque ${bloqueActual + 1} de ${programa.bloques.length}`
-                : `${programa.bloques.length} bloques · ${programa.asuntos} asuntos`}
+                ? r(tx.parte, { a: bloqueActual + 1, b: programa.bloques.length })
+                : r(tx.resumen, { a: programa.bloques.length, b: programa.asuntos })}
           </p>
         </div>
 
         <div className="vxr-controles">
           <button type="button" className="vxr-btn vxr-btn--play" onClick={() => emitir(continuarEn ?? 0)} aria-pressed={sonando}>
-            {sonando ? "◼ Detener" : continuarEn !== null ? `▶ Continuar (bloque ${continuarEn + 1})` : "▶ Escuchar el programa"}
+            {sonando ? tx.detener : continuarEn !== null ? r(tx.continuar, { a: continuarEn + 1 }) : tx.escuchar}
           </button>
           <button type="button" className="vxr-btn" onClick={pausar} disabled={!sonando}>
-            <span aria-hidden="true">❙❙</span> Pausa
+            <span aria-hidden="true">❙❙</span> {tx.pausa}
           </button>
-          <button type="button" className="vxr-btn vxr-btn--salto" onClick={() => saltar(-1)} disabled={bloqueActual <= 0} aria-label="Bloque anterior" title="Bloque anterior (←)">
+          <button type="button" className="vxr-btn vxr-btn--salto" onClick={() => saltar(-1)} disabled={bloqueActual <= 0} aria-label={tx.anterior} title={tx.anteriorTitle}>
             <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" focusable="false"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
-          <button type="button" className="vxr-btn vxr-btn--salto" onClick={() => saltar(1)} disabled={bloqueActual < 0 || bloqueActual >= programa.bloques.length - 1} aria-label="Bloque siguiente" title="Bloque siguiente (→)">
+          <button type="button" className="vxr-btn vxr-btn--salto" onClick={() => saltar(1)} disabled={bloqueActual < 0 || bloqueActual >= programa.bloques.length - 1} aria-label={tx.siguiente} title={tx.siguienteTitle}>
             <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
-          <span className="vxr-restante">{bloqueActual >= 0 ? `quedan ${mmss(restante)}` : `${mmss(total)} en total`}</span>
+          <span className="vxr-restante">{bloqueActual >= 0 ? r(tx.quedan, { t: mmss(restante) }) : r(tx.total, { t: mmss(total) })}</span>
           <button type="button" className="vxr-btn vxr-btn--fantasma" onClick={() => copiar("guion")}>
-            {copiado === "guion" ? "✓ Copiado" : "Copiar el guion"}
+            {copiado === "guion" ? tx.copiado : tx.copiarGuion}
           </button>
           <button type="button" className="vxr-btn vxr-btn--fantasma" onClick={() => copiar("enlace")}>
-            {copiado === "enlace" ? "✓ Copiado" : "Copiar mi radio"}
+            {copiado === "enlace" ? tx.copiado : tx.copiarRadio}
           </button>
         </div>
 
         {avisoPrincipal ? <p className="vxr-aviso">{avisoPrincipal}</p> : null}
 
         {/* RAIL: cuánto ocupa cada bloque; se salta con un clic */}
-        <div className="vxr-rail" role="group" aria-label="Bloques del programa">
+        <div className="vxr-rail" role="group" aria-label={tx.ariaBloques}>
           {programa.bloques.map((b, i) => {
             const ms = msDe(b);
             return (
@@ -446,13 +453,13 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
                 style={{ flexGrow: Math.max(1, Math.round(ms / 1000)) }}
                 onClick={() => emision.empezar(i)}
                 title={`${b.tipo} · ${mmss(ms)}`}
-                aria-label={`Ir al bloque ${i + 1}: ${b.tipo}`}
+                aria-label={r(tx.irAlBloque, { a: i + 1, b: b.tipo })}
               />
             );
           })}
         </div>
 
-        <ol className="vxr-guion" aria-label="Guion del programa">
+        <ol className="vxr-guion" aria-label={tx.ariaGuion}>
           {programa.bloques.map((b, i) => (
             <li
               key={b.id}
@@ -475,14 +482,13 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
       </section>
 
       {/* ── la conversación ── */}
-      <section className="vxr-charla" aria-label="Habla con la radio">
-        <h3>Pregúntale a la radio</h3>
+      <section className="vxr-charla" aria-label={tx.ariaCharla}>
+        <h3>{tx.charlaTitulo}</h3>
         <p className="vxr-charla-sub">
-          Entiende seguimientos («cuéntame más», «la segunda») y cifras del archivo. Responde con los cables de la casa
-          y cita la fuente. Si no hay nada sobre lo que preguntas, lo dice.
+          {tx.charlaSub}
         </p>
         <div className="vxr-sugerencias">
-          {SUGERENCIAS.map((s) => (
+          {tx.sugerencias.map((s) => (
             <button key={s} type="button" className="vxr-chip" onClick={() => preguntar(s)}>
               {s}
             </button>
@@ -495,13 +501,13 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
             preguntar(pregunta);
           }}
         >
-          <label className="vxr-oculto" htmlFor="vxr-pregunta">Escribe tu pregunta</label>
+          <label className="vxr-oculto" htmlFor="vxr-pregunta">{tx.escribirPregunta}</label>
           <input
             id="vxr-pregunta"
             className="vxr-input"
             value={pregunta}
             onChange={(e) => setPregunta(e.target.value)}
-            placeholder="¿Qué pasa en Ucrania? · resumen · cuéntame más"
+            placeholder={tx.sitioPregunta}
             autoComplete="off"
           />
           {micro ? (
@@ -510,20 +516,20 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
               className={escuchando ? "vxr-btn vxr-btn--micro vxr-btn--escuchando" : "vxr-btn vxr-btn--micro"}
               onClick={hablar}
               aria-pressed={escuchando}
-              title="Preguntar hablando (micrófono del aparato)"
+              title={tx.hablar}
             >
               <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
                 <path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z" fill="currentColor" />
                 <path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
-              {escuchando ? "Escucho…" : "Hablar"}
+              {escuchando ? tx.escucho : tx.hablar}
             </button>
           ) : null}
-          <button type="submit" className="vxr-btn vxr-btn--play">Preguntar</button>
+          <button type="submit" className="vxr-btn vxr-btn--play">{tx.preguntar}</button>
         </form>
         {siguientes.length > 0 ? (
           <div className="vxr-siguientes">
-            <span>Puedes seguir con:</span>
+            <span>{tx.puedesSeguir}</span>
             {siguientes.map((s) => (
               <button key={s} type="button" className="vxr-chip vxr-chip--seguir" onClick={() => preguntar(s)}>
                 {s}
@@ -533,11 +539,11 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
         ) : null}
         <div className="vxr-hilo" aria-live="polite">
           {charla.length === 0 ? (
-            <p className="vxr-vacio">Aún no le has preguntado nada.</p>
+            <p className="vxr-vacio">{tx.vacio}</p>
           ) : (
             charla.map((m, i) => (
               <div key={i} className={m.quien === "tu" ? "vxr-msg vxr-msg--tu" : "vxr-msg vxr-msg--radio"}>
-                <span className="vxr-quien">{m.quien === "tu" ? "Tú" : "Radio Vanguard"}</span>
+                <span className="vxr-quien">{m.quien === "tu" ? tx.tu : "Radio Vanguard"}</span>
                 <p>{m.texto}</p>
                 {m.rotulos && m.rotulos.length > 0 ? (
                   <ul className="vxr-fuentes">
@@ -555,8 +561,8 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
       </section>
 
       {/* ── personalización ── */}
-      <section className="vxr-ajustes" aria-label="Personalización">
-        <h3>Tu radio</h3>
+      <section className="vxr-ajustes" aria-label={tx.ariaAjustes}>
+        <h3>{tx.tituloAjustes}</h3>
         <div className="vxr-presets">
           {PRESETS.map((p) => (
             <button
@@ -568,52 +574,55 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
                   : "vxr-preset"
               }
               onClick={() => guardar({ ...ajustes, ...p.ajustes })}
-              title={p.detalle}
+              title={tx.presets[PRESETS.indexOf(p)].detalle}
             >
-              <strong>{p.nombre}</strong>
-              <small>{p.detalle}</small>
+              <strong>{tx.presets[PRESETS.indexOf(p)].nombre}</strong>
+              <small>{tx.presets[PRESETS.indexOf(p)].detalle}</small>
             </button>
           ))}
         </div>
         <div className="vxr-grid">
           <label className="vxr-campo">
-            <span>Estilo</span>
+            <span>{tx.estilo}</span>
             <select value={ajustes.estilo} onChange={(e) => guardar({ ...ajustes, estilo: e.target.value as EstiloRadio })}>
-              <option value="serena">Serena · informativa</option>
-              <option value="cercana">Cercana · conversacional</option>
-              <option value="filosa">Filosa · directa</option>
+              <option value="serena">{tx.estilos[0]}</option>
+              <option value="cercana">{tx.estilos[1]}</option>
+              <option value="filosa">{tx.estilos[2]}</option>
             </select>
           </label>
 
           <label className="vxr-campo">
-            <span>Duración · {ajustes.duracionMin} min</span>
+            <span>{r(tx.duracion, { a: ajustes.duracionMin })}</span>
             <select value={ajustes.duracionMin} onChange={(e) => guardar({ ...ajustes, duracionMin: Number(e.target.value) })}>
-              <option value={2}>2 minutos · lo esencial</option>
-              <option value={5}>5 minutos · el día</option>
-              <option value={10}>10 minutos · con detalle</option>
-              <option value={15}>15 minutos · programa largo</option>
+              <option value={2}>{tx.duraciones[0]}</option>
+              <option value={5}>{tx.duraciones[1]}</option>
+              <option value={10}>{tx.duraciones[2]}</option>
+              <option value={15}>{tx.duraciones[3]}</option>
             </select>
           </label>
 
           <label className="vxr-campo">
-            <span>Persona</span>
+            <span>{tx.persona}</span>
             <select
               value={ajustes.gustos.persona}
               onChange={(e) => guardar({ ...ajustes, gustos: { ...ajustes.gustos, persona: e.target.value as PersonaId } })}
             >
-              {Object.keys(PERSONAS).map((p) => (
-                <option key={p} value={p}>{PERSONAS[p as PersonaId].nombre} — {PERSONAS[p as PersonaId].lema}</option>
+              {Object.keys(PERSONAS).map((p, i) => (
+                <option key={p} value={p}>
+                  {personasTx[i]?.nombre ?? PERSONAS[p as PersonaId].nombre} —{" "}
+                  {personasTx[i]?.lema ?? PERSONAS[p as PersonaId].lema}
+                </option>
               ))}
             </select>
           </label>
 
           <label className="vxr-campo">
-            <span>Voz del aparato ({voces.length})</span>
+            <span>{r(tx.vozAparato, { a: voces.length })}</span>
             <select
               value={ajustes.gustos.vozURI ?? ""}
               onChange={(e) => guardar({ ...ajustes, gustos: { ...ajustes.gustos, vozURI: e.target.value || null } })}
             >
-              <option value="">La mejor disponible (automático)</option>
+              <option value="">{tx.mejorDisponible}</option>
               {voces.map((v) => (
                 <option key={v.uri} value={v.uri}>
                   {v.nombre} · {v.idioma} · {v.calidad}/100
@@ -623,13 +632,13 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
           </label>
 
           <label className="vxr-campo">
-            <span>Velocidad · {ajustes.gustos.rate.toFixed(2)}×</span>
+            <span>{r(tx.velocidad, { a: ajustes.gustos.rate.toFixed(2) })}</span>
             <input type="range" min={0.7} max={1.3} step={0.05} value={ajustes.gustos.rate}
               onChange={(e) => guardar({ ...ajustes, gustos: { ...ajustes.gustos, rate: Number(e.target.value) } })} />
           </label>
 
           <label className="vxr-campo">
-            <span>Tono · {ajustes.gustos.pitch.toFixed(2)}</span>
+            <span>{r(tx.tono, { a: ajustes.gustos.pitch.toFixed(2) })}</span>
             <input type="range" min={0.7} max={1.3} step={0.05} value={ajustes.gustos.pitch}
               onChange={(e) => guardar({ ...ajustes, gustos: { ...ajustes.gustos, pitch: Number(e.target.value) } })} />
           </label>
@@ -637,23 +646,21 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
           <label className="vxr-switch">
             <input type="checkbox" checked={ajustes.gustos.pausas}
               onChange={(e) => guardar({ ...ajustes, gustos: { ...ajustes.gustos, pausas: e.target.checked } })} />
-            <span>Pausas naturales (respiración entre frases)</span>
+            <span>{tx.pausas}</span>
           </label>
 
           <label className="vxr-switch">
             <input type="checkbox" checked={ajustes.conResumen} onChange={(e) => guardar({ ...ajustes, conResumen: e.target.checked })} />
-            <span>Leer también el resumen, no solo el titular</span>
+            <span>{tx.conResumen}</span>
           </label>
 
           <label className="vxr-switch">
             <input type="checkbox" checked={ajustes.conFuentes} onChange={(e) => guardar({ ...ajustes, conFuentes: e.target.checked })} />
-            <span>Decir cuántos medios firman cada asunto</span>
+            <span>{tx.conFuentes}</span>
           </label>
         </div>
         <p className="vxr-nota">
-          Todo se guarda en tu aparato; «Copiar mi radio» te da un enlace con estos ajustes. La voz la pone el sistema:
-          si suena metálica, elige otra en la lista — la calidad de cada una está medida, no prometida. Atajos:
-          espacio reproduce o para, ← → cambian de bloque, Esc detiene.
+          {tx.nota}
         </p>
       </section>
     </div>

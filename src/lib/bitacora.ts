@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v437.1",
+    nombre: "EL ESTUDIO EN TU IDIOMA — el cromo de la radio habla lo que habla la casa",
+    tipo: "ia",
+    hitos: [
+      "LO QUE FALTABA DE v437.0: la voz ya hablaba ocho idiomas, pero el estudio (/radio) seguía escrito en español — «EN EL AIRE», «Copiar el guion», «Tu radio», las etiquetas de los mandos, los cuatro presets y las seis sugerencias. Con la casa en inglés, media pantalla seguía en español.",
+      "UNA TABLA, OCHO IDIOMAS (src/lib/radio/textos-ui.ts): cuarenta y seis textos del cromo en español, inglés, portugués, francés, alemán, italiano, ruso y chino, más los tres estilos, las cuatro duraciones, los cuatro presets y las seis sugerencias de la conversación. El tipo TextsRadio obliga a los ocho: un idioma sin texto no compila.",
+      "LOS HUECOS SE RELLENAN, NO SE CONCATENAN: «bloque %a de %b», «quedan %t», «Ir al bloque %a: %b». El orden de la frase lo decide cada idioma, no la plantilla — en alemán es «Block 3 von 12» y en chino «第 3 段，共 12 段».",
+      "LAS CUATRO PERSONAS TAMBIÉN SE DICEN: el selector de persona del estudio y la sala /voz usan los nombres y lemas del idioma (vocesDeCasa en idiomas.ts) y la frase que suena al elegirlas está escrita en ese idioma: elegir «THE ANCHOR» en inglés ya no contesta en español.",
+      "LA SALA /voz, ENTERA: los nueve literales que quedaban (los títulos de los botones, la caja de escribir, la pista de la conversación vacía, «FUENTES DE ESTA RESPUESTA» y la nota honesta del pie) pasan a los textos del idioma.",
+      "LO QUE AÚN NO: las respuestas de la conversación con la radio (lib/radio/conversar.ts) siguen armándose con plantillas en español. Se declara aquí en vez de disimularlo: es lo siguiente.",
+      "MEDIDO: pruebas-radio 393 comprobaciones (67 nuevas: la tabla tiene los ocho idiomas, ninguna lengua copia las frases del español y el estudio no guarda literales dentro), pruebas-voz-idiomas 216 (21 nuevas para la sala), y cero literales en español en los dos componentes.",
+    ],
+  },
+  {
     version: "v437.0",
     nombre: "LA CASA HABLA TU IDIOMA — la voz, la personalización y los idiomas, pulidos",
     tipo: "ia",

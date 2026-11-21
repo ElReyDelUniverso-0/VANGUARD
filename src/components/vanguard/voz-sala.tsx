@@ -296,7 +296,7 @@ export function VozSala() {
               onClick={() => (boca === "pausada" ? reanudarBoca() : pausarBoca())}
               disabled={boca === "quieta"}
               className="rounded-sm border border-zinc-700 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-zinc-300 disabled:opacity-30"
-              title="Pausa / sigue"
+              title={tabla.textos.pausaSigue}
             >
               {boca === "pausada" ? <Play size={12} /> : <Pause size={12} />}
             </button>
@@ -305,7 +305,7 @@ export function VozSala() {
               onClick={() => pararBoca()}
               disabled={boca === "quieta"}
               className="rounded-sm border border-zinc-700 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-zinc-300 disabled:opacity-30"
-              title="Calla"
+              title={tabla.textos.callar}
             >
               <Square size={12} />
             </button>
@@ -321,7 +321,7 @@ export function VozSala() {
                 ? "border-red-400/70 bg-red-500/20 text-red-300"
                 : "border-amber-500/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
             }`}
-            title={escuchando ? "Escuchando… pulsa para cortar" : "Habla"}
+            title={escuchando ? tabla.textos.microEscuchando : tabla.textos.micro}
           >
             <Mic size={22} />
             {escuchando ? (
@@ -336,7 +336,7 @@ export function VozSala() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") void preguntar(entrada);
                 }}
-                placeholder="Escríbele o háblale: «explícame el mar Rojo», «qué es la disuasión», «llévame a la crónica»…"
+                placeholder={tabla.textos.sitio}
                 className="min-w-0 flex-1 rounded-sm border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-[12px] text-zinc-200 outline-none focus:border-amber-hud"
               />
               <button
@@ -344,7 +344,7 @@ export function VozSala() {
                 onClick={() => void preguntar(entrada)}
                 disabled={cargando || !entrada.trim()}
                 className="rounded-sm border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-amber-300 disabled:opacity-30"
-                title="Preguntar"
+                title={tabla.textos.preguntar}
               >
                 <Send size={14} />
               </button>
@@ -421,8 +421,13 @@ export function VozSala() {
           {tabla.textos.personas}
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {(Object.keys(PERSONAS) as PersonaId[]).map((id) => {
+          {(Object.keys(PERSONAS) as PersonaId[]).map((id, idx) => {
             const p = PERSONAS[id];
+            /* v437.0 · la tarjeta se lee en el idioma de la casa; el ritmo y el
+               tono (números) son los mismos en cualquier idioma. */
+            const dicho = tabla.textos.vocesDeCasa?.[idx];
+            const nombre = dicho?.nombre ?? p.nombre;
+            const lema = dicho?.lema ?? p.lema;
             const activa = persona === id;
             return (
               <button
@@ -432,7 +437,7 @@ export function VozSala() {
                   setPersona(id);
                   guardar({ ...gustos, persona: id });
                   pararBoca();
-                  decir(`Soy ${p.nombre.toLowerCase()}. ${p.lema}.`, {
+                  decir(dicho?.intro ?? `${p.nombre.toLowerCase()}. ${p.lema}.`, {
                     persona: id,
                     gustos: { ...gustos, persona: id },
                   });
@@ -444,10 +449,11 @@ export function VozSala() {
                 }`}
               >
                 <p className="font-mono text-[11px] uppercase tracking-widest text-zinc-100">
-                  {p.nombre}
+                  {nombre}
                 </p>
                 <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-500">
-                  {p.lema} · velocidad {p.rate.toFixed(2)} · tono {p.pitch.toFixed(2)}
+                  {lema} · {tabla.textos.velocidad} {p.rate.toFixed(2)} · {tabla.textos.tono}{" "}
+                  {p.pitch.toFixed(2)}
                 </p>
               </button>
             );
@@ -553,16 +559,14 @@ export function VozSala() {
               }}
               className="font-mono text-[9px] uppercase tracking-widest text-zinc-500 hover:text-red-300"
             >
-              empezar de cero
+              {tabla.textos.empezar}
             </button>
           ) : null}
         </div>
 
         {historial.length === 0 ? (
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Pregúntale lo que quieras de geopolítica: un teatro, un concepto, el parte del día. Y
-            síguela — «dame un ejemplo», «¿por qué?», «sigue» — que la memoria aguanta la
-            conversación.
+            {tabla.textos.pista}
           </p>
         ) : (
           <div className="mt-3 flex max-h-[420px] flex-col gap-3 overflow-y-auto pr-1">
@@ -621,7 +625,7 @@ export function VozSala() {
         {fuentes && fuentes.length > 0 ? (
           <div className="mt-3 border-t border-zinc-800 pt-2">
             <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-zinc-500">
-              FUENTES DE ESTA RESPUESTA
+              {tabla.textos.fuentes}
             </p>
             <ul className="mt-1 flex flex-col gap-0.5">
               {fuentes.map((f, i) => (
@@ -635,8 +639,7 @@ export function VozSala() {
       </section>
 
       <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-600">
-        El maestro no inventa: si el archivo no trae señal, lo dice. Las cifras salen del archivo
-        real de la casa y la memoria de la conversación no sale de tu aparato.
+        {tabla.textos.nota}
       </p>
     </div>
   );

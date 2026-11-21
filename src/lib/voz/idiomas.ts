@@ -54,8 +54,36 @@ export interface TextosVoz {
   oir: string;
   /** «Las cuatro voces de la casa · elige con quién hablas» */
   personas: string;
+  /**
+   * v437.0 · LAS CUATRO PERSONAS, DICHAS EN ESTE IDIOMA. En el orden de
+   * PERSONAS (locutora · analista · general · cronista). El nombre es el de la
+   * casa traducido, el lema es lo que se lee en la tarjeta y la intro es la
+   * frase que la boca dice al elegirla: si esto quedara en español, elegir una
+   * voz en inglés hablaría español, que es justo lo que el Dueño no quiere.
+   */
+  vocesDeCasa: { nombre: string; lema: string; intro: string }[];
   /** «Conversación · memoria del aparato» */
   conversacion: string;
+  /** «Pausa / sigue» (el botón que calla a medias) */
+  pausaSigue: string;
+  /** «Calla» */
+  callar: string;
+  /** «Habla» (el micrófono en reposo) */
+  micro: string;
+  /** «Escuchando… pulsa para cortar» */
+  microEscuchando: string;
+  /** lo que se lee dentro de la caja de escribir */
+  sitio: string;
+  /** «Preguntar» */
+  preguntar: string;
+  /** «empezar de cero» */
+  empezar: string;
+  /** la pista de la conversación vacía */
+  pista: string;
+  /** «Fuentes de esta respuesta» */
+  fuentes: string;
+  /** la nota honesta del pie de la sala */
+  nota: string;
 }
 
 export interface IdiomaVoz {
@@ -136,6 +164,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "Oír en este idioma",
       personas: "LAS CUATRO VOCES DE LA CASA · elige con quién hablas",
       conversacion: "CONVERSACIÓN",
+      pausaSigue: "Pausa / sigue",
+      callar: "Calla",
+      micro: "Habla",
+      microEscuchando: "Escuchando… pulsa para cortar",
+      sitio: "Escríbele o háblale: «explícame el mar Rojo», «qué es la disuasión», «llévame a la crónica»…",
+      preguntar: "Preguntar",
+      empezar: "empezar de cero",
+      pista: "Pregúntale lo que quieras de geopolítica: un teatro, un concepto, el parte del día. Y síguela — «dame un ejemplo», «¿por qué?», «sigue» — que la memoria aguanta la conversación.",
+      fuentes: "FUENTES DE ESTA RESPUESTA",
+      nota: "El maestro no inventa: si el archivo no trae señal, lo dice. Las cifras salen del archivo real de la casa y la memoria de la conversación no sale de tu aparato.",
+      vocesDeCasa: [
+        {
+          nombre: "LA LOCUTORA",
+          lema: "Voz de la casa: clara, media, sin prisa",
+          intro: "Soy la locutora. Cuento la casa con voz clara, sin prisa, y digo siempre de dónde sale cada dato.",
+        },
+        {
+          nombre: "EL ANALISTA",
+          lema: "Geopolítica explicada: frío, seguro, con ejemplo",
+          intro: "Soy el analista. Explico la geopolítica sin adornos: qué pasa, quién gana y con qué ejemplo se comprueba.",
+        },
+        {
+          nombre: "EL GENERAL",
+          lema: "Parte de guerra: grave, lento, sin adorno",
+          intro: "Soy el general. Doy el parte grave y lento, sin adorno: así se dicen las cosas que cuestan vidas.",
+        },
+        {
+          nombre: "EL CRONISTA",
+          lema: "Cuenta lo que pasó, con fechas, sin dramatismo",
+          intro: "Soy el cronista. Cuento lo que pasó con sus fechas, sin dramatismo y sin inventar lo que no está en el archivo.",
+        },
+      ],
     },
   },
 
@@ -184,6 +244,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "Hear it in this language",
       personas: "THE FOUR VOICES OF THE HOUSE · choose who you talk to",
       conversacion: "CONVERSATION",
+      pausaSigue: "Pause / resume",
+      callar: "Hush",
+      micro: "Speak",
+      microEscuchando: "Listening… tap to stop",
+      sitio: "Type or speak: “explain the Red Sea”, “what is deterrence”, “take me to the chronicle”…",
+      preguntar: "Ask",
+      empezar: "start over",
+      pista: "Ask anything about geopolitics: a theatre, a concept, today's report. And keep going — “give me an example”, “why?”, “continue” — the memory holds the conversation.",
+      fuentes: "SOURCES FOR THIS ANSWER",
+      nota: "The master does not invent: if the archive carries no signal, it says so. The figures come from the house's real archive, and the conversation memory never leaves your device.",
+      vocesDeCasa: [
+        {
+          nombre: "THE ANCHOR",
+          lema: "The house's voice: clear, mid-range, unhurried",
+          intro: "I am the anchor. I tell the house's story in a clear voice, unhurried, and I always say where every figure comes from.",
+        },
+        {
+          nombre: "THE ANALYST",
+          lema: "Geopolitics explained: cool, certain, with an example",
+          intro: "I am the analyst. I explain geopolitics without ornament: what happens, who wins, and which example proves it.",
+        },
+        {
+          nombre: "THE GENERAL",
+          lema: "Situation report: grave, slow, no ornament",
+          intro: "I am the general. I give the report grave and slow, with no ornament: that is how you say the things that cost lives.",
+        },
+        {
+          nombre: "THE CHRONICLER",
+          lema: "Tells what happened, with dates, without drama",
+          intro: "I am the chronicler. I tell what happened with its dates, without drama and without inventing what is not in the archive.",
+        },
+      ],
     },
   },
 
@@ -232,6 +324,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "Ouvir neste idioma",
       personas: "AS QUATRO VOZES DA CASA · escolhe com quem falas",
       conversacion: "CONVERSA",
+      pausaSigue: "Pausa / continua",
+      callar: "Silencia",
+      micro: "Fala",
+      microEscuchando: "A ouvir… toca para cortar",
+      sitio: "Escreve-lhe ou fala: «explica-me o mar Vermelho», «o que é a dissuasão», «leva-me à crónica»…",
+      preguntar: "Perguntar",
+      empezar: "começar de zero",
+      pista: "Pergunta-lhe o que quiseres de geopolítica: um teatro, um conceito, o parte do dia. E continua — «dá-me um exemplo», «porquê?», «segue» — que a memória aguenta a conversa.",
+      fuentes: "FONTES DESTA RESPOSTA",
+      nota: "O mestre não inventa: se o arquivo não traz sinal, di-lo. As cifras saem do arquivo real da casa e a memória da conversa não sai do teu aparelho.",
+      vocesDeCasa: [
+        {
+          nombre: "A LOCUTORA",
+          lema: "Voz da casa: clara, média, sem pressa",
+          intro: "Sou a locutora. Conto a casa com voz clara, sem pressa, e digo sempre de onde sai cada dado.",
+        },
+        {
+          nombre: "O ANALISTA",
+          lema: "Geopolítica explicada: frio, seguro, com exemplo",
+          intro: "Sou o analista. Explico a geopolítica sem enfeites: o que acontece, quem ganha e com que exemplo se comprova.",
+        },
+        {
+          nombre: "O GENERAL",
+          lema: "Parte de guerra: grave, lento, sem adorno",
+          intro: "Sou o general. Dou o parte grave e lento, sem adorno: é assim que se dizem as coisas que custam vidas.",
+        },
+        {
+          nombre: "O CRONISTA",
+          lema: "Conta o que aconteceu, com datas, sem dramatismo",
+          intro: "Sou o cronista. Conto o que aconteceu com as suas datas, sem dramatismo e sem inventar o que não está no arquivo.",
+        },
+      ],
     },
   },
 
@@ -280,6 +404,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "Écouter dans cette langue",
       personas: "LES QUATRE VOIX DE LA MAISON · choisissez à qui parler",
       conversacion: "CONVERSATION",
+      pausaSigue: "Pause / reprends",
+      callar: "Tais-toi",
+      micro: "Parle",
+      microEscuchando: "J'écoute… touche pour couper",
+      sitio: "Écris-lui ou parle : «explique-moi la mer Rouge», «qu'est-ce que la dissuasion», «emmène-moi à la chronique»…",
+      preguntar: "Demander",
+      empezar: "repartir de zéro",
+      pista: "Demande-lui ce que tu veux en géopolitique : un théâtre, un concept, le communiqué du jour. Et poursuis — « donne un exemple », « pourquoi ? », « continue » — la mémoire tient la conversation.",
+      fuentes: "SOURCES DE CETTE RÉPONSE",
+      nota: "Le maître n'invente pas : si les archives n'apportent aucun signal, il le dit. Les chiffres viennent des archives réelles de la maison et la mémoire de la conversation ne quitte pas ton appareil.",
+      vocesDeCasa: [
+        {
+          nombre: "LA PRÉSENTATRICE",
+          lema: "La voix de la maison : claire, médium, sans hâte",
+          intro: "Je suis la présentatrice. Je raconte la maison d'une voix claire, sans hâte, et je dis toujours d'où vient chaque chiffre.",
+        },
+        {
+          nombre: "L'ANALYSTE",
+          lema: "Géopolitique expliquée : froid, sûr, avec un exemple",
+          intro: "Je suis l'analyste. J'explique la géopolitique sans ornement : ce qui se passe, qui gagne, et par quel exemple on le vérifie.",
+        },
+        {
+          nombre: "LE GÉNÉRAL",
+          lema: "Communiqué de guerre : grave, lent, sans ornement",
+          intro: "Je suis le général. Je donne le communiqué, grave et lent, sans ornement : c'est ainsi qu'on dit ce qui coûte des vies.",
+        },
+        {
+          nombre: "LE CHRONIQUEUR",
+          lema: "Raconte ce qui s'est passé, avec des dates, sans drame",
+          intro: "Je suis le chroniqueur. Je raconte ce qui s'est passé avec ses dates, sans drame et sans inventer ce qui n'est pas aux archives.",
+        },
+      ],
     },
   },
 
@@ -328,6 +484,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "In dieser Sprache hören",
       personas: "DIE VIER STIMMEN DES HAUSES · wähle, mit wem du sprichst",
       conversacion: "GESPRÄCH",
+      pausaSigue: "Pause / weiter",
+      callar: "Still",
+      micro: "Sprich",
+      microEscuchando: "Ich höre… tippen zum Beenden",
+      sitio: "Schreib oder sprich: „erklär mir das Rote Meer“, „was ist Abschreckung“, „bring mich zur Chronik“…",
+      preguntar: "Fragen",
+      empezar: "von vorn beginnen",
+      pista: "Frag, was du über Geopolitik wissen willst: ein Schauplatz, ein Begriff, der Bericht des Tages. Und bleib dran — „gib mir ein Beispiel“, „warum?“, „weiter“ — das Gedächtnis hält das Gespräch.",
+      fuentes: "QUELLEN DIESER ANTWORT",
+      nota: "Der Meister erfindet nichts: bringt das Archiv kein Signal, sagt er es. Die Zahlen kommen aus dem echten Archiv des Hauses, und das Gesprächsgedächtnis verlässt dein Gerät nicht.",
+      vocesDeCasa: [
+        {
+          nombre: "DIE SPRECHERIN",
+          lema: "Die Stimme des Hauses: klar, mittlere Lage, ohne Eile",
+          intro: "Ich bin die Sprecherin. Ich erzähle das Haus mit klarer Stimme, ohne Eile, und sage immer, woher jede Zahl kommt.",
+        },
+        {
+          nombre: "DER ANALYST",
+          lema: "Geopolitik erklärt: kühl, sicher, mit Beispiel",
+          intro: "Ich bin der Analyst. Ich erkläre Geopolitik ohne Schmuck: was geschieht, wer gewinnt und mit welchem Beispiel man es prüft.",
+        },
+        {
+          nombre: "DER GENERAL",
+          lema: "Lagebericht: ernst, langsam, ohne Schmuck",
+          intro: "Ich bin der General. Ich gebe den Bericht ernst und langsam, ohne Schmuck: so sagt man, was Leben kostet.",
+        },
+        {
+          nombre: "DER CHRONIST",
+          lema: "Erzählt, was geschah, mit Daten, ohne Dramatik",
+          intro: "Ich bin der Chronist. Ich erzähle, was geschah, mit seinen Daten, ohne Dramatik und ohne zu erfinden, was nicht im Archiv steht.",
+        },
+      ],
     },
   },
 
@@ -376,6 +564,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "Ascolta in questa lingua",
       personas: "LE QUATTRO VOCI DELLA CASA · scegli con chi parlare",
       conversacion: "CONVERSAZIONE",
+      pausaSigue: "Pausa / riprendi",
+      callar: "Taci",
+      micro: "Parla",
+      microEscuchando: "Sto ascoltando… tocca per fermare",
+      sitio: "Scrivigli o parlagli: «spiegami il Mar Rosso», «che cos'è la deterrenza», «portami alla cronaca»…",
+      preguntar: "Chiedere",
+      empezar: "ricominciare da zero",
+      pista: "Chiedigli quello che vuoi di geopolitica: un teatro, un concetto, il rapporto del giorno. E continua — «fammi un esempio», «perché?», «vai avanti» — che la memoria regge la conversazione.",
+      fuentes: "FONTI DI QUESTA RISPOSTA",
+      nota: "Il maestro non inventa: se l'archivio non porta segnale, lo dice. Le cifre vengono dall'archivio reale della casa e la memoria della conversazione non esce dal tuo apparecchio.",
+      vocesDeCasa: [
+        {
+          nombre: "LA VOCE",
+          lema: "La voce della casa: chiara, media, senza fretta",
+          intro: "Sono la voce della casa. Racconto la casa con voce chiara, senza fretta, e dico sempre da dove viene ogni dato.",
+        },
+        {
+          nombre: "L'ANALISTA",
+          lema: "Geopolitica spiegata: freddo, sicuro, con un esempio",
+          intro: "Sono l'analista. Spiego la geopolitica senza ornamenti: cosa accade, chi vince e con quale esempio si verifica.",
+        },
+        {
+          nombre: "IL GENERALE",
+          lema: "Rapporto di guerra: grave, lento, senza ornamento",
+          intro: "Sono il generale. Do il rapporto grave e lento, senza ornamento: così si dicono le cose che costano vite.",
+        },
+        {
+          nombre: "IL CRONISTA",
+          lema: "Racconta ciò che è accaduto, con le date, senza dramma",
+          intro: "Sono il cronista. Racconto ciò che è accaduto con le sue date, senza dramma e senza inventare ciò che non è nell'archivio.",
+        },
+      ],
     },
   },
 
@@ -424,6 +644,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "Слушать на этом языке",
       personas: "ЧЕТЫРЕ ГОЛОСА ДОМА · выбери, с кем говорить",
       conversacion: "РАЗГОВОР",
+      pausaSigue: "Пауза / дальше",
+      callar: "Тишина",
+      micro: "Говори",
+      microEscuchando: "Слушаю… нажми, чтобы прервать",
+      sitio: "Напиши или скажи: «объясни Красное море», «что такое сдерживание», «веди меня в хронику»…",
+      preguntar: "Спросить",
+      empezar: "начать заново",
+      pista: "Спрашивай что угодно о геополитике: театр, понятие, сводка дня. И продолжай — «дай пример», «почему?», «дальше» — память держит разговор.",
+      fuentes: "ИСТОЧНИКИ ЭТОГО ОТВЕТА",
+      nota: "Мастер не выдумывает: если в архиве нет сигнала, он так и говорит. Цифры берутся из настоящего архива дома, а память разговора не покидает твой аппарат.",
+      vocesDeCasa: [
+        {
+          nombre: "ДИКТОР",
+          lema: "Голос дома: ясный, средний, без спешки",
+          intro: "Я диктор. Рассказываю о доме ясным голосом, без спешки, и всегда говорю, откуда взята каждая цифра.",
+        },
+        {
+          nombre: "АНАЛИТИК",
+          lema: "Геополитика без украшений: холодно, уверенно, с примером",
+          intro: "Я аналитик. Объясняю геополитику без украшений: что происходит, кто выигрывает и каким примером это проверяется.",
+        },
+        {
+          nombre: "ГЕНЕРАЛ",
+          lema: "Сводка: сурово, медленно, без украшений",
+          intro: "Я генерал. Даю сводку сурово и медленно, без украшений: так говорят о том, что стоит жизней.",
+        },
+        {
+          nombre: "ХРОНИКЁР",
+          lema: "Рассказывает, что было, с датами, без драмы",
+          intro: "Я хроникёр. Рассказываю, что было, с датами, без драмы и не выдумываю то, чего нет в архиве.",
+        },
+      ],
     },
   },
 
@@ -470,6 +722,38 @@ export const IDIOMAS_VOZ: Record<IdiomaVozId, IdiomaVoz> = {
       oir: "用这个语言听",
       personas: "本宅的四个声音 · 选择跟谁说话",
       conversacion: "对话",
+      pausaSigue: "暂停／继续",
+      callar: "安静",
+      micro: "说话",
+      microEscuchando: "正在听……点按中断",
+      sitio: "写字或说话：「讲讲红海」「什么是威慑」「带我去纪事」……",
+      preguntar: "提问",
+      empezar: "从头开始",
+      pista: "地缘政治的事都可以问：一个战区、一个概念、今天的通报。接着往下问——「举个例子」「为什么？」「继续说」——记忆撑得住这场对话。",
+      fuentes: "这条回答的来源",
+      nota: "主人不编造：档案里没有信号，他就说没有。数字取自本宅的真实档案，对话记忆不离开你的设备。",
+      vocesDeCasa: [
+        {
+          nombre: "播音员",
+          lema: "本宅之声：清楚、中速、不急",
+          intro: "我是本宅的播音员。我用清楚、不急的声音讲这座宅子，并且总说每个数字从哪里来。",
+        },
+        {
+          nombre: "分析员",
+          lema: "地缘政治解说：冷静、确定、带例子",
+          intro: "我是分析员。我讲地缘政治不加修饰：发生了什么、谁占了上风、用什么例子可以验证。",
+        },
+        {
+          nombre: "将军",
+          lema: "战况通报：庄重、缓慢、不加修饰",
+          intro: "我是将军。我用庄重而缓慢的声音通报，不加修饰：耗人性命的事就该这样讲。",
+        },
+        {
+          nombre: "记录者",
+          lema: "讲清发生过的事，带日期，不煽情",
+          intro: "我是记录者。我带着日期讲发生过的事，不煽情，也不编造档案里没有的东西。",
+        },
+      ],
     },
   },
 };
