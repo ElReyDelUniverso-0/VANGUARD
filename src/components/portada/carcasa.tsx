@@ -103,15 +103,14 @@ function Pestanas({ ruta }: { ruta: string }) {
           <span className="vx-pest-corto">{m.corto}</span>
         </Link>
         <div className="vx-pest-lista">
-          {/* v432.0 EL SEGUNDO MENÚ, ORDENADO — el Dueño: «en el segundo menú
-              hay botones que opacan a otros». Había módulos con seis pestañas
-              apuntando al MISMO href (Información Perfecta: las seis a
-              /informacion), así que se encendían seis a la vez y además
-              compartían key de React. Se quitan los destinos repetidos: queda
-              una pestaña por sala real. Ninguna sala se pierde. */}
-          {m.pestanas
-            .filter((p, i, todas) => todas.findIndex((x) => x.href === p.href) === i)
-            .map((p) => {
+          {/* v433.0 SEIS, NO CATORCE — el Dueño: «en el segundo menú hay botones
+              que opacan a otros». La barra pinta SOLO las salas destacadas de su
+              módulo (seis como mucho) y al final dice cuántas más hay: todas
+              siguen a un toque en el índice /orden. Se acabaron las carreras de
+              trece pestañas y las pestañas repetidas que se encendían juntas. */}
+          {m.destacadas.map((destino) => {
+            const p = m.pestanas.find((x) => x.href === destino);
+            if (!p) return null;
             const on = activa(p.href) || (p.href === "/conflictos" && ruta.startsWith("/conflicto/"));
             return (
               <Link
@@ -125,7 +124,12 @@ function Pestanas({ ruta }: { ruta: string }) {
                 {p.label}
               </Link>
             );
-            })}
+          })}
+          {m.pestanas.length > m.destacadas.length && (
+            <Link href="/orden" className="vx-pest-mas" title={`Las ${m.pestanas.length} salas de ${m.nombre} en el índice`}>
+              +{m.pestanas.length - m.destacadas.length} salas
+            </Link>
+          )}
         </div>
       </div>
     </nav>

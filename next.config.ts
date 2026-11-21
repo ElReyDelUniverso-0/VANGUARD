@@ -158,11 +158,11 @@ const nextConfig: NextConfig = {
         { source: `/infraestructura/obra/${viejo}`, destination: `/infraestructura/obra/${nuevo}`, permanent: true },
         { source: `/infraestructura/obra/${encodeURIComponent(viejo)}`, destination: `/infraestructura/obra/${nuevo}`, permanent: true },
       ]),
-      { source: "/clasico", destination: "/cuartel", permanent: true },
+      { source: "/clasico", destination: "/orden", permanent: true },
       // v402.4 — salas que vivieron sueltas y hoy son pestañas del Cuartel:
       // el enlace viejo (y el botón del Teatro Total) aterriza en su sala.
-      { source: "/maquina-del-tiempo", destination: "/cuartel?sala=maquina", permanent: true },
-      { source: "/detonacion", destination: "/cuartel?sala=simulador", permanent: true },
+      { source: "/maquina-del-tiempo", destination: "/teatro-3d?modo=tiempo", permanent: true },
+      { source: "/detonacion", destination: "/escenarios", permanent: true },
       // /lectura solo existe como /lectura/<clave>: la raíz lleva a la Crónica.
       { source: "/lectura", destination: "/cronica", permanent: false },
       // v418.2 · LA PUERTA QUE SE LLAMABA DE OTRA FORMA (departamento 10).
@@ -171,6 +171,29 @@ const nextConfig: NextConfig = {
       // los navegadores para «ajustes»). Los ajustes de verdad viven en /modo
       // (MODO Y CUENTA: tema, nivel de animaciones, sonido, mundo). Las tres
       // variantes aterrizan ahí en vez de morir en «esta sala no existe».
+            // v433.0 SIETE MÓDULOS, UN SOLO UNIVERSO — las catorce puertas viejas de los módulos apuntan a la
+      // puerta nueva de su división (301: los enlaces viejos y Google aprenden
+      // dónde vive ahora cada cosa). Nada se rompe: se muda.
+      { source: "/modulo/informacion", destination: "/modulo/inteligencia", permanent: true },
+      { source: "/modulo/secretos", destination: "/modulo/inteligencia", permanent: true },
+      { source: "/modulo/arsenal", destination: "/modulo/inteligencia", permanent: true },
+      { source: "/modulo/conflictos", destination: "/modulo/frente", permanent: true },
+      { source: "/modulo/datos", destination: "/modulo/frente", permanent: true },
+      { source: "/modulo/mapa", destination: "/modulo/terreno", permanent: true },
+      { source: "/modulo/planeta", destination: "/modulo/terreno", permanent: true },
+      { source: "/modulo/ciencia", destination: "/modulo/conocimiento", permanent: true },
+      { source: "/modulo/academia", destination: "/modulo/conocimiento", permanent: true },
+      { source: "/modulo/motores", destination: "/modulo/metodo", permanent: true },
+      { source: "/modulo/medios", destination: "/modulo/archivo", permanent: true },
+      { source: "/modulo/juego", destination: "/modulo/casa", permanent: true },
+      { source: "/modulo/estado", destination: "/modulo/casa", permanent: true },
+      // el cuartel deja de ser un destino (sus 155 salas viven en /orden) y las
+      // tres búsquedas sueltas se funden en el buscador único
+      { source: "/juego", destination: "/orden", permanent: true },
+      { source: "/modulos", destination: "/orden", permanent: true },
+      { source: "/ciencia/buscar", destination: "/buscar", permanent: true },
+      { source: "/memoria/buscar", destination: "/buscar", permanent: true },
+      { source: "/conocimiento/enciclopedia/buscar", destination: "/buscar", permanent: true },
       { source: "/ajustes", destination: "/modo", permanent: false },
       { source: "/configuracion", destination: "/modo", permanent: false },
       { source: "/settings", destination: "/modo", permanent: false },

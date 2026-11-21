@@ -1221,3 +1221,221 @@ body::after {
     order: 0;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   13 · EL BUSCADOR ÚNICO (v433.0) — /buscar
+   ═══════════════════════════════════════════════════════════════════ */
+.op-buscar-pag {
+  padding: 40px 0 90px;
+}
+.op-buscar {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 clamp(14px, 3vw, 28px);
+}
+.op-buscar-cab {
+  border-bottom: 1px solid var(--op-hair2);
+  padding-bottom: 20px;
+}
+.op-buscar-sello {
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--op-red);
+  margin: 0 0 10px;
+}
+.op-buscar-titulo {
+  font-size: clamp(24px, 3.6vw, 38px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+  color: var(--vx-tx, #e9eef1);
+}
+.op-buscar-lema {
+  max-width: 68ch;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--vx-tx2, #b6c1c6);
+  margin: 0 0 18px;
+}
+.op-buscar-caja {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--op-hair2);
+  background: var(--op-panel);
+  padding: 0 12px;
+}
+.op-buscar-caja:focus-within {
+  border-color: var(--op-red);
+}
+.op-buscar-caja label {
+  font-family: var(--op-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--op-muted);
+}
+.op-buscar-caja input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--vx-tx, #e9eef1);
+  font-family: var(--op-mono);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding: 13px 0;
+}
+.op-buscar-cuenta {
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--op-steel);
+  white-space: nowrap;
+}
+.op-buscar-grupo {
+  margin-top: 26px;
+}
+.op-buscar-grupo h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--op-steel);
+  border-bottom: 1px solid var(--op-hair);
+  padding-bottom: 7px;
+  margin: 0 0 2px;
+}
+.op-buscar-grupo h2 span {
+  font-family: var(--op-mono);
+  font-size: 10px;
+  color: var(--op-muted);
+  letter-spacing: 0.1em;
+}
+.op-buscar-grupo ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.op-buscar-grupo li a {
+  display: block;
+  padding: 9px 0 9px 1px;
+  border-bottom: 1px solid var(--op-hair);
+  border-left: 2px solid transparent;
+  padding-left: 10px;
+  text-decoration: none;
+  transition: border-color 90ms steps(2), background 90ms steps(2);
+}
+.op-buscar-grupo li a:hover,
+.op-buscar-grupo li a:focus-visible {
+  border-left-color: var(--op-red);
+  background: rgba(216, 31, 38, 0.05);
+}
+.op-buscar-grupo b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--vx-tx, #e9eef1);
+  letter-spacing: 0.01em;
+}
+.op-buscar-grupo span {
+  display: block;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--op-muted);
+  margin-top: 2px;
+}
+.op-buscar-vacio {
+  margin: 26px 0;
+  font-family: var(--op-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--op-muted);
+}
+
+/* el enlace «+N salas» al final de la barra de pestañas */
+.vx-pest-mas {
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--op-steel) !important;
+  border: 1px solid var(--op-hair2);
+  padding: 3px 7px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.vx-pest-mas:hover,
+.vx-pest-mas:focus-visible {
+  border-color: var(--op-red);
+  color: #fff !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   14 · EL CUARTEL, DISUELTO (v433.0) — dentro de /orden
+   ═══════════════════════════════════════════════════════════════════ */
+.op-cuartel {
+  max-width: var(--vx-max, 1180px);
+  margin: 40px auto 0;
+  padding: 0 clamp(14px, 3vw, 28px);
+  border-top: 1px solid var(--op-hair2);
+  padding-top: 22px;
+  scroll-margin-top: 84px;
+}
+.op-cuartel-rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--op-hair);
+  margin-top: 14px;
+}
+.op-cuartel-c {
+  background: #070a0b;
+  padding: 14px 16px 16px;
+}
+.op-cuartel-c h3 {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--op-steel);
+}
+.op-cuartel-c p {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--op-muted);
+  margin: 0 0 10px;
+}
+.op-cuartel-c ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+.op-cuartel-c li a {
+  display: inline-block;
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #98a6ac;
+  border: 1px solid var(--op-hair2);
+  padding: 4px 7px;
+  text-decoration: none;
+}
+.op-cuartel-c li a:hover,
+.op-cuartel-c li a:focus-visible {
+  color: #fff;
+  border-color: var(--op-red);
+  background: rgba(216, 31, 38, 0.1);
+}

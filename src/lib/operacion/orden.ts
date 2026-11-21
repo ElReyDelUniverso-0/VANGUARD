@@ -37,49 +37,49 @@ export const DIVISIONES: Division[] = [
     codigo: "D-I",
     nombre: "Frente",
     lema: "Qué está pasando ahora mismo, con la hora y la fuente de cada cable",
-    modulos: ["conflictos", "datos"],
+    modulos: ["frente"],
   },
   {
     id: "terreno",
     codigo: "D-II",
     nombre: "Terreno",
     lema: "Dónde pasa: el planeta, sus países y sus rostros",
-    modulos: ["mapa", "planeta"],
+    modulos: ["terreno"],
   },
   {
     id: "inteligencia",
     codigo: "D-III",
     nombre: "Inteligencia",
     lema: "Quién manda y con qué: potencias, servicios y arsenales",
-    modulos: ["informacion", "secretos", "arsenal"],
+    modulos: ["inteligencia"],
   },
   {
     id: "conocimiento",
     codigo: "D-IV",
     nombre: "Conocimiento",
     lema: "Por qué pasa: historia, lenguas, ciencia y escuela",
-    modulos: ["conocimiento", "ciencia", "academia"],
+    modulos: ["conocimiento"],
   },
   {
     id: "metodo",
     codigo: "D-V",
     nombre: "Método",
     lema: "Cómo se mide: los motores y algoritmos con los que la casa calcula",
-    modulos: ["motores"],
+    modulos: ["metodo"],
   },
   {
     id: "archivo",
     codigo: "D-VI",
     nombre: "Archivo y voz",
     lema: "Lo que la casa ya contó: fototeca, radio, música y voz",
-    modulos: ["medios"],
+    modulos: ["archivo"],
   },
   {
     id: "casa",
     codigo: "D-VII",
     nombre: "La casa",
-    lema: "El juego, tu expediente y el estado del sistema",
-    modulos: ["juego", "estado"],
+    lema: "Tu expediente y el estado del sistema",
+    modulos: ["casa"],
   },
 ];
 
@@ -92,12 +92,12 @@ export const DIVISIONES: Division[] = [
 export type Rescatada = { href: string; nombre: string; nota: string; division: string };
 
 export const RESCATADAS: Rescatada[] = [
-  { href: "/teatro-3d", nombre: "Teatro 3D", nota: "Escuadrones, uniformes y armas en volumen", division: "inteligencia" },
+  { href: "/teatro-3d", nombre: "Teatro 3D", nota: "Ahora dentro de Inteligencia: escuadrones, uniformes y armas en volumen", division: "inteligencia" },
   { href: "/teatro-3d?modo=libre", nombre: "Teatro 3D · modo libre", nota: "Países y nuclear, sin guion", division: "inteligencia" },
-  { href: "/teatro-3d?modo=tiempo", nombre: "Máquina del tiempo 3D", nota: "La guerra contada en el mapa que cambia", division: "conocimiento" },
-  { href: "/zona-cero", nombre: "Zona Cero", nota: "El ojo de la casa: busca en todo y pégale a lo que encuentres", division: "terreno" },
-  { href: "/vertigo", nombre: "El Vértigo", nota: "El archivo en vivo, una pieza por deslizamiento", division: "frente" },
-  { href: "/mision", nombre: "Misión 100", nota: "Cien objetivos que te enseñan la casa jugando", division: "casa" },
+  { href: "/teatro-3d?modo=tiempo", nombre: "Máquina del tiempo 3D", nota: "La guerra contada en el mapa que cambia", division: "inteligencia" },
+  { href: "/zona-cero", nombre: "Zona Cero", nota: "El ojo de la casa, dentro de Terreno", division: "terreno" },
+  { href: "/vertigo", nombre: "El Vértigo", nota: "El archivo en vivo, dentro de Frente", division: "frente" },
+  { href: "/mision", nombre: "Misión 100", nota: "Cien objetivos que enseñan la casa jugando, dentro de La casa", division: "casa" },
   { href: "/objetivos", nombre: "Objetivos", nota: "Lo que llevas hecho, medido", division: "casa" },
   { href: "/universo", nombre: "Colecciones", nota: "Las piezas que has ido reuniendo", division: "casa" },
   { href: "/creadores", nombre: "La Forja", nota: "Publica lo tuyo dentro de la casa", division: "casa" },
@@ -166,9 +166,9 @@ export function divisionDe(ruta: string): string | null {
  */
 export const NAV_PRIMARIO = [
   { href: "/orden", label: "Orden" },
+  { href: "/buscar", label: "Buscar" },
   { href: "/guerra-hoy", label: "Frente" },
   { href: "/mundo", label: "Terreno" },
   { href: "/informacion", label: "Inteligencia" },
   { href: "/atlas", label: "Conocimiento" },
-  { href: "/cuartel", label: "La casa" },
 ];

@@ -8,6 +8,7 @@
 // ═══════════════════════════════════════════════════════════════════
 import type { Metadata } from "next";
 import { OrdenDeBatalla } from "@/components/operacion/orden-de-batalla";
+import { SalasDelCuartel } from "@/components/operacion/salas-del-cuartel";
 import { TOTAL_MODULOS, TOTAL_SALAS, ARBOL } from "@/lib/operacion/orden";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function OrdenPage() {
   return (
     <main className="op-orden-pag">
       <OrdenDeBatalla />
+      <SalasDelCuartel />
     </main>
   );
 }
