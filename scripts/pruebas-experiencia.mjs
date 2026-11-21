@@ -70,7 +70,12 @@ ok(todas.length >= 40, `se esperaban al menos 40 puertas distintas y hay ${todas
 for (const href of todas) {
   ok(href.startsWith("/"), `la ruta «${href}» no es interna de la casa`);
   const limpia = href.split("?")[0].replace(/\/+$/, "") || "/";
-  ok(rutasReales.has(limpia), `ruta rota en el registro: ${href} (no existe ${limpia}/page.tsx)`);
+  // v436.1 · rutas dinámicas: /modulo/<id> se sirve desde /modulo/[id]/page.tsx
+  const comoDinamica = /^\/modulo\/[^/]+$/.test(limpia) ? "/modulo/[id]" : limpia;
+  ok(
+    rutasReales.has(limpia) || rutasReales.has(comoDinamica),
+    `ruta rota en el registro: ${href} (no existe ${comoDinamica === limpia ? limpia : `${limpia} → ${comoDinamica}`}/page.tsx)`
+  );
 }
 
 // ── ③ ni una experiencia repetida ───────────────────────────────────
@@ -81,7 +86,7 @@ ok(repetidas.length === 0, `experiencias repetidas: ${repetidas.map(([h, n]) => 
 
 // ── ④ las ilustraciones existen ─────────────────────────────────────
 const imgs = [...registro.matchAll(/img: "([^"]+)"/g)].map((m) => m[1]);
-ok(imgs.length === 10, `se esperaban 10 ilustraciones de eje y hay ${imgs.length}`);
+ok(imgs.length >= 10, `se esperaban al menos 10 ilustraciones (una por familia) y hay ${imgs.length}`);
 for (const img of imgs) ok(existsSync(join(RAIZ, "public", img)), `ilustración inexistente: ${img}`);
 
 // ── ⑤ las cifras son derivadas y cuadran ────────────────────────────

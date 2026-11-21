@@ -53,6 +53,8 @@ export type ExperienciaEje = {
   detalle: string;
   /** cifra REAL derivada de la fuente de esa sala (o "" si no hay cifra) */
   cifra?: string;
+  /** portada REAL del módulo (imagen de la casa) cuando la experiencia es un módulo */
+  img?: string;
 };
 
 export type Eje = {
@@ -102,6 +104,10 @@ export const EJES: Eje[] = [
       { nombre: "Frentes abiertos", href: "/guerra-hoy", detalle: "Cada conflicto con sus cables y su hora." },
       { nombre: "Vértigo", href: "/vertigo", detalle: "Las noticias en deslizamiento continuo." },
       { nombre: "El mapa vivo", href: "/mundo", detalle: "El planeta con la guerra encendida." },
+      // v436.1 · EL MÓDULO EN LA FAMILIA — los módulos de la casa entran en
+      // su familia con su portada real: el módulo Frente es la puerta de
+      // la actualidad (frentes, cables, la hora).
+      { nombre: "Frente", href: "/modulo/frente", detalle: "El módulo: frentes, cables y la hora, con su portada.", img: "/imagenes-reales/portaaviones.jpg" },
     ],
   },
   {
@@ -121,6 +127,9 @@ export const EJES: Eje[] = [
       { nombre: "Explorador mundial", href: "/tierra", detalle: "Globo 3D y atlas 2D con capas físicas." },
       { nombre: "Mapas", href: "/mapas", detalle: "Ocho capas sobre el globo de la casa." },
       { nombre: "Atlas", href: "/atlas", detalle: "El archivo de naciones y sus fichas." },
+      // v436.1 · EL MÓDULO EN LA FAMILIA — el módulo Terreno (globo, mapas,
+      // mundos, países) entra en la familia de la geografía con su portada.
+      { nombre: "Terreno", href: "/modulo/terreno", detalle: "El módulo: el planeta, sus países y sus rostros, con su portada.", img: "/imagenes-reales/satelite.jpg" },
     ],
   },
   {
@@ -181,6 +190,9 @@ export const EJES: Eje[] = [
       { nombre: "Laboratorios", href: "/labs", detalle: "Quince modelos con parámetros propios." },
       { nombre: "Divisas", href: "/divisas", detalle: "Tipos de cambio con su serie." },
       { nombre: "Rankings", href: "/rankings", detalle: "Clasificaciones con su método." },
+      // v436.1 · EL MÓDULO EN LA FAMILIA — el módulo Método (los motores con
+      // los que la casa calcula) entra en la familia de la economía y los datos.
+      { nombre: "Método", href: "/modulo/metodo", detalle: "El módulo: censo, Lanchester, DBSCAN y la curva, con su portada.", img: "/assets/real/radar-1.jpg" },
     ],
   },
   {
@@ -203,6 +215,9 @@ export const EJES: Eje[] = [
       { nombre: "Ejercicios", href: "/academia/ejercicios", detalle: "Práctica con respuesta explicada." },
       { nombre: "Glosario", href: "/academia/glosario", detalle: "Los términos de la casa." },
       { nombre: "Conocimiento global", href: "/conocimiento", detalle: "Treinta áreas con fuentes." },
+      // v436.1 · EL MÓDULO EN LA FAMILIA — el módulo Conocimiento (enciclopedia,
+      // lingua, ciencia, academia) entra en la familia de la educación.
+      { nombre: "Conocimiento", href: "/modulo/conocimiento", detalle: "El módulo: historia, lenguas, ciencia y escuela, con su portada.", img: "/imagenes-reales/satelite.jpg" },
     ],
   },
   {
@@ -241,6 +256,9 @@ export const EJES: Eje[] = [
       { nombre: "Galería", href: "/galeria", detalle: "Imágenes reales con su procedencia." },
       { nombre: "Audios", href: "/audios", detalle: "Piezas sonoras de la casa." },
       { nombre: "La voz", href: "/voz", detalle: "Cuatro personas que leen la casa." },
+      // v436.1 · EL MÓDULO EN LA FAMILIA — el módulo Archivo y voz (fototeca,
+      // radio, música y voz) entra en la familia de la narrativa.
+      { nombre: "Archivo y voz", href: "/modulo/archivo", detalle: "El módulo: fototeca, radio, música y voz, con su portada.", img: "/imagenes-reales/arco.jpg" },
     ],
   },
   {
@@ -260,6 +278,9 @@ export const EJES: Eje[] = [
       { nombre: "El Núcleo", href: "/nucleo", detalle: "El motor de búsqueda de toda la casa." },
       { nombre: "Investigación", href: "/investigacion", detalle: "Los diez dossieres sistémicos." },
       { nombre: "Directorio", href: "/directorio", detalle: "Todo lo que existe, en un índice." },
+      // v436.1 · EL MÓDULO EN LA FAMILIA — el módulo Inteligencia (consola,
+      // servicios, armería, poder) entra en la familia de la investigación.
+      { nombre: "Inteligencia", href: "/modulo/inteligencia", detalle: "El módulo: quién manda y con qué, con su portada.", img: "/assets/real/radar-1.jpg" },
     ],
   },
   {
@@ -279,6 +300,9 @@ export const EJES: Eje[] = [
       { nombre: "Colecciones", href: "/colecciones", detalle: "Selecciones de la casa y de sus lectores." },
       { nombre: "Travesía", href: "/navegacion", detalle: "Tu recorrido por la casa." },
       { nombre: "Tu perfil", href: "/perfil", detalle: "Lo tuyo, en tu aparato." },
+      // v436.1 · EL MÓDULO EN LA FAMILIA — el módulo La casa (mi universo,
+      // objetivos, perfil, estado) entra en la familia de los nuevos mundos.
+      { nombre: "La casa", href: "/modulo/casa", detalle: "El módulo: tu expediente y el estado del sistema, con su portada.", img: "/imagenes-reales/kremlin.jpg" },
     ],
   },
 ];

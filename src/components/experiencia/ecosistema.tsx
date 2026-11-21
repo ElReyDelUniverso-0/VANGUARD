@@ -1,89 +1,104 @@
-// ═══════════════════════════════════════════════════════════════════
-// v422.1 REBIRTH · EL ECOSISTEMA — las diez familias de la casa, en una
-// sola composición y con sus puertas reales.
-//
-// SUSTITUYE a tres front doors que competían en la portada:
-//   · «AreasRejilla» (8 áreas) — escribía sus enlaces a mano,
-//   · la rejilla de módulos (9 módulos) — solo cubría lo que ya era módulo,
-//   · y el directorio — verdad, pero a dos clics de distancia.
-// Las tres siguen existiendo como componentes (no se borra nada); lo que
-// cambia es que la PORTADA lee ahora una sola lista: `lib/experiencia/registro`.
-//
-// CÓMO SE LEE: cada eje es una fila —número, nombre, promesa y sus cuatro
-// experiencias reales. La ilustración es la de verdad (`public/ilustraciones`),
-// atenuada, para dar profundidad sin tapar el texto. Nada de tarjetas
-// flotantes ni de cristal: un filete, un número y una imagen.
-// ═══════════════════════════════════════════════════════════════════
+import type { CSSProperties } from "react";
+import "./experiencia.css";
+import { EJES, type Eje, cifrasEcosistema } from "@/lib/experiencia/registro";
 
-import Link from "next/link";
-import { EJES } from "@/lib/experiencia/registro";
+/**
+ * v436.1 · EL TRÁILER DE FAMILIAS
+ * ────────────────────────────────────────────────────────────────────
+ * Las diez familias de VANGUARD, presentadas como un tráiler: cada una es
+ * una tarjeta con su PORTADA REAL en movimiento, su número y su lema, y
+ * sobre todo el tráiler completo de la familia —todas sus experiencias y,
+ * para cada módulo que le pertenece, su PORTADA REAL, étiquetada como
+ * «módulo»— para que el Dueña vea, en una sola tarjeta, todo lo que hay
+ * dentro de cada familia.
+ */
 
-export function Ecosistema({ cabecera = true }: { cabecera?: boolean } = {}) {
+const ejeDeFondo = (img: string) =>
+  `linear-gradient(180deg, rgba(4, 6, 12, .35) 0%, rgba(4, 6, 12, .78) 100%), url("${img}")`;
+
+export function Ecosistema() {
+  const cifras = cifrasEcosistema();
+
   return (
-    <section id="ecosistema" className="vxe-eco vxp-ancla" aria-labelledby="vxe-eco-titulo">
-      {cabecera && (
-      <header className="vxe-eco-cab">
-        <p className="vxe-eco-sello">Sección 01 · El ecosistema</p>
-        <h2 id="vxe-eco-titulo" className="vxe-eco-titulo">
-          Diez familias, una sola casa
+    <section id="ecosistema" className="vxe-eco" aria-labelledby="vxe-eco-h">
+      <div className="vxe-eco-cab">
+        <p className="vxe-eco-sello">{cifras.ejes} familias · {cifras.portales} puertas · un solo universo</p>
+        <h2 id="vxe-eco-h" className="vxe-eco-titulo">
+          Las diez familias, en un tráiler
         </h2>
         <p className="vxe-eco-sub">
-          Cada familia tiene su puerta, sus salas y sus cifras. Ninguna es un menú: todas se abren
-          con la barra de la casa arriba y tu recorrido guardado en el aparato.
+          Diez puertas que iluminan el mismo universo. Cada tarjeta es el tráiler de
+          una familia: su portada en movimiento y, dentro, todo lo que hay —sus
+          experiencias y sus módulos, cada módulo con la cara que le pertenece. Entra
+          por donde quieras; todas las rutas terminan en la misma casa.
         </p>
-      </header>
-      )}
+      </div>
 
-      <ol className="vxe-ejes">
-        {EJES.map((eje) => (
-          <li key={eje.id} className="vxe-eje" style={{ ["--eje" as string]: eje.color }}>
-            <Link href={eje.puerta} className="vxe-eje-puerta">
-              <span className="vxe-eje-fondo" style={{ backgroundImage: `url(${eje.img})` }} aria-hidden />
-              <span className="vxe-eje-num" aria-hidden>
-                {eje.numero}
-              </span>
+      <ul className="vxe-ejes">
+        {EJES.map((e: Eje) => (
+          <li
+            key={e.id}
+            className="vxe-eje"
+            style={{ ["--eje" as string]: e.color } as unknown as CSSProperties}
+          >
+            {/* la portada, en movimiento */}
+            <div
+              className="vxe-eje-portada"
+              role="img"
+              aria-label={`Portada de ${e.nombre}`}
+              style={{ backgroundImage: ejeDeFondo(e.img) }}
+            >
+              <span className="vxe-eje-num">{e.numero}</span>
+              <p className="vxe-eje-lema">{e.lema}</p>
+            </div>
 
-              <span className="vxe-eje-texto">
-                <span className="vxe-eje-nombre">{eje.nombre}</span>
-                <span className="vxe-eje-lema">{eje.lema}</span>
-                <span className="vxe-eje-promesa">{eje.promesa}</span>
-                {eje.cifras.length > 0 && (
-                  <span className="vxe-eje-cifras">
-                    {eje.cifras.map((c) => (
-                      <span key={c.etiqueta} className="vxe-eje-cifra">
-                        <b>{c.valor}</b> {c.etiqueta}
+            {/* el cuerpo del tráiler */}
+            <div className="vxe-eje-corpo">
+              <div className="vxe-eje-texto">
+                <h3 className="vxe-eje-nombre">{e.nombre}</h3>
+                <p className="vxe-eje-promesa">{e.promesa}</p>
+                <div className="vxe-eje-cifras">
+                  {e.cifras.map((c) => (
+                    <span key={c.v} className="vxe-eje-cifra">
+                      <b>{c.v}</b> {c.k}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* el tráiler completo de la familia */}
+              <ul className="vxe-eje-exp">
+                {e.experiencias.map((x) => (
+                  <li key={x.href}>
+                    <a href={x.href}>
+                      <span className="vxe-eje-exp-nombre">
+                        {x.img && (
+                          <img
+                            className="vxe-eje-exp-img"
+                            src={x.img}
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                          />
+                        )}
+                        {x.img && <span className="vxe-eje-mod">Módulo</span>}
+                        <b>{x.nombre}</b>
                       </span>
-                    ))}
-                  </span>
-                )}
-              </span>
-
-              <span className="vxe-eje-entrar" aria-hidden>
-                Entrar <i>→</i>
-              </span>
-            </Link>
-
-            <ul className="vxe-eje-exp" aria-label={`Experiencias de ${eje.nombre}`}>
-              {eje.experiencias.map((x) => (
-                <li key={x.href}>
-                  <Link href={x.href}>
-                    <b>{x.nombre}</b>
-                    <span>{x.detalle}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                      <span className="vxe-eje-exp-det">{x.detalle}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </li>
         ))}
-      </ol>
+      </ul>
 
-      <footer className="vxe-eco-pie">
-        <p>
-          ¿Buscas una sala concreta y no sabes en qué familia cae?{" "}
-          <Link href="/directorio">El directorio</Link> tiene el índice completo, y{" "}
-          <Link href="/nucleo">el Núcleo</Link> busca dentro de todas a la vez.
-        </p>
-      </footer>
+      <p className="vxe-eco-pie">
+        Todas las familias comparten una sola casa: el{" "}
+        <a href="/modulos">cuartel de módulos</a> y su{" "}
+        <a href="/ecosistema">mapa del sistema</a>.
+      </p>
     </section>
   );
 }

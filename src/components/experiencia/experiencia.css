@@ -468,108 +468,141 @@
   color: var(--vxe-tenue);
 }
 
+/* v436.1 · EL TRÁILER DE FAMILIAS — cada familia es una tarjeta-tráiler:
+   portada real en movimiento (ken-burns), número, lema y, sobre todo,
+   el tráiler completo de la familia: sus experiencias y sus módulos,
+   cada uno con su portada. */
+
 .vxe-ejes {
   display: grid;
-  gap: 1px;
+  gap: clamp(16px, 2.2vw, 26px);
   max-width: 1080px;
   margin: 0 auto;
   padding: 0;
   list-style: none;
-  border: 1px solid var(--vxe-filete);
-  background: var(--vxe-filete);
 }
 
 .vxe-eje {
-  display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-  gap: 1px;
-  background: var(--vxe-filete);
-}
-
-.vxe-eje-puerta {
   position: relative;
   display: grid;
-  grid-template-columns: 46px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 16px;
-  padding: 20px 22px;
+  grid-template-rows: minmax(0, auto) minmax(0, auto);
   overflow: hidden;
+  border: 1px solid var(--vxe-filete);
+  border-radius: 14px;
   background: #05070e;
-  text-decoration: none;
-  color: inherit;
-  transition: background 180ms ease;
+  animation: vxe-revela 520ms cubic-bezier(.22, .61, .36, 1) both;
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
 }
 
-.vxe-eje-puerta::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--eje, var(--vxe-cian));
-  opacity: 0.85;
+@keyframes vxe-revela {
+  from { opacity: 0; transform: translateY(18px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.vxe-eje-fondo {
-  position: absolute;
-  inset: 0;
+.vxe-eje:hover {
+  border-color: color-mix(in srgb, var(--eje, var(--vxe-cian)) 45%, var(--vxe-filete));
+  box-shadow: 0 18px 44px -22px color-mix(in srgb, var(--eje, var(--vxe-cian)) 60%, transparent), 0 0 0 1px rgba(255, 255, 255, .02) inset;
+  transform: translateY(-3px);
+}
+
+/* ── la portada, en movimiento ── */
+
+.vxe-eje-portada {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 21 / 9;
+  min-height: 132px;
   background-size: cover;
   background-position: center;
-  opacity: 0.09;
-  filter: grayscale(0.5);
-  transition: opacity 200ms ease, transform 600ms ease;
-  z-index: 0;
+  background-color: #04060c;
+  animation: vxe-deriva 18s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
-.vxe-eje-puerta:hover { background: #070b14; }
-.vxe-eje-puerta:hover .vxe-eje-fondo { opacity: 0.16; transform: scale(1.03); }
-.vxe-eje-puerta:focus-visible {
-  outline: 2px solid var(--vxe-foco);
-  outline-offset: -2px;
+.vxe-eje-portada::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 6, 12, 0.18) 0%, rgba(4, 6, 12, 0.34) 42%, rgba(4, 6, 12, 0.92) 100%),
+    linear-gradient(90deg, color-mix(in srgb, var(--eje, var(--vxe-cian)) 30%, transparent), transparent 55%);
+  z-index: 1;
 }
 
-.vxe-eje-num,
-.vxe-eje-texto,
-.vxe-eje-entrar { position: relative; z-index: 1; }
+.vxe-eje-portada::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(80% 120% at 88% 0%, color-mix(in srgb, var(--eje, var(--vxe-cian)) 26%, transparent), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, .045) 0 1px, transparent 1px 4px);
+  z-index: 2;
+  mix-blend-mode: screen;
+  opacity: .55;
+  animation: vxe-respira 6s ease-in-out infinite;
+}
+
+/* número y nombre sobre la portada */
 
 .vxe-eje-num {
-  font-size: 13px;
-  font-weight: 700;
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 3;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 800;
   letter-spacing: 0.04em;
+  line-height: 1;
   color: var(--eje, var(--vxe-cian));
   font-variant-numeric: tabular-nums;
-  border-right: 1px solid var(--vxe-filete);
-  padding-right: 12px;
-  align-self: start;
-  padding-top: 3px;
-}
-
-.vxe-eje-texto { display: flex; flex-direction: column; gap: 5px; }
-
-.vxe-eje-nombre {
-  font-size: clamp(17px, 2vw, 21px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .6);
 }
 
 .vxe-eje-lema {
-  font-size: 12.5px;
-  letter-spacing: 0.14em;
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  z-index: 3;
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--eje, var(--vxe-cian));
+  color: color-mix(in srgb, var(--eje, var(--vxe-cian)) 80%, #e6e6e4);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, .7);
+}
+
+/* ── el cuerpo del tráiler: promesa, cifras y todo lo que hay en la familia ── */
+
+.vxe-eje-corpo {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 18px 26px;
+  padding: clamp(16px, 2vw, 22px) 22px 20px;
+}
+
+.vxe-eje-texto { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+.vxe-eje-nombre {
+  margin: 0;
+  font-size: clamp(18px, 2.1vw, 23px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }
 
 .vxe-eje-promesa {
+  margin: 0;
   font-size: 13.5px;
   line-height: 1.55;
   color: #b9c6d8;
   max-width: 62ch;
 }
 
-.vxe-eje-cifras { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
+.vxe-eje-cifras { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 2px; }
 
 .vxe-eje-cifra {
   font-size: 11.5px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--vxe-tenue);
 }
 .vxe-eje-cifra b {
@@ -577,61 +610,94 @@
   font-variant-numeric: tabular-nums;
 }
 
-.vxe-eje-entrar {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--vxe-tenue);
-  white-space: nowrap;
-}
-.vxe-eje-puerta:hover .vxe-eje-entrar { color: var(--eje, var(--vxe-cian)); }
-.vxe-eje-entrar i { font-style: normal; transition: transform 180ms ease; }
-.vxe-eje-puerta:hover .vxe-eje-entrar i { transform: translateX(3px); }
+/* la lista del tráiler */
 
 .vxe-eje-exp {
-  display: grid;
-  grid-template-rows: repeat(4, minmax(0, 1fr));
   margin: 0;
   padding: 0;
   list-style: none;
-  background: #04060c;
-}
-
-.vxe-eje-exp li { border-top: 1px solid rgba(147, 161, 184, 0.09); }
-.vxe-eje-exp li:first-child { border-top: 0; }
-
-.vxe-eje-exp a {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  height: 100%;
-  padding: 11px 16px;
+  gap: 1px;
+  border: 1px solid var(--vxe-filete);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--vxe-filete);
+  min-width: 0;
+}
+
+.vxe-eje-exp li { background: #04060c; }
+
+.vxe-eje-exp a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
   text-decoration: none;
   color: inherit;
-  border-left: 1px solid transparent;
+  border-left: 2px solid transparent;
   transition: background 160ms ease, border-color 160ms ease;
 }
 
 .vxe-eje-exp a:hover,
 .vxe-eje-exp a:focus-visible {
-  background: rgba(34, 211, 238, 0.05);
+  background: rgba(255, 255, 255, 0.035);
   border-left-color: var(--eje, var(--vxe-cian));
   outline: none;
 }
 
+.vxe-eje-exp-nombre { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
 .vxe-eje-exp b {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .vxe-eje-exp span {
   font-size: 11.5px;
-  line-height: 1.45;
+  line-height: 1.4;
   color: var(--vxe-tenue);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* el módulo en la familia: badge + su portada de verdad */
+
+.vxe-eje-mod {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #05070e;
+  background: color-mix(in srgb, var(--eje, var(--vxe-cian)) 88%, #e6e6e4);
+}
+
+.vxe-eje-exp-img {
+  width: 42px;
+  height: 30px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid var(--vxe-filete);
+  display: block;
+}
+
+.vxe-eje-exp-det {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--vxe-tenue);
+  flex: none;
 }
 
 .vxe-eco-pie {
@@ -642,6 +708,11 @@
 }
 .vxe-eco-pie a { color: var(--vxe-cian); text-decoration: none; border-bottom: 1px solid rgba(34, 211, 238, 0.35); }
 .vxe-eco-pie a:hover { border-bottom-color: var(--vxe-cian); }
+
+@media (max-width: 760px) {
+  .vxe-eje-corpo { grid-template-columns: minmax(0, 1fr); }
+  .vxe-eje-exp { order: 2; }
+}
 
 /* ─────────────────────────── 3 · PORTADA VIVA ───────────────────── */
 
