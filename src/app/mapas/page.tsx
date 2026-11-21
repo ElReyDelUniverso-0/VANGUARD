@@ -35,6 +35,23 @@ export const metadata: Metadata = {
 
 const PUERTAS: EnlaceContextual[] = [
   {
+    // v436.5 — EL TALLER: la orden del Dueño de poder CREAR mapas dentro de la
+    // casa. No es un mapa más: es el sitio donde un mapa se hace (punto, ficha,
+    // fuente) y sale de aquí en GeoJSON, JSON o HTML autónomo.
+    etiqueta: "EL TALLER DE MAPAS ▸",
+    ruta: "/mapas/taller",
+    motivo: "crear un mapa 2D o 3D con fichas y fuentes, verlo en plano o en globo y exportarlo",
+    tipoRelacion: "pertenece_a",
+  },
+  {
+    // v436.5 — EL ÍNDICE: todos los mapas de la casa en una lista, cada línea
+    // con su ruta, su motor y su fuente. Sin mapas de relleno.
+    etiqueta: "EL ÍNDICE DE MAPAS ▸",
+    ruta: "/mapas/indice",
+    motivo: "todas las superficies de mapa de la casa, una por una, y las que faltan por hacer",
+    tipoRelacion: "pertenece_a",
+  },
+  {
     // v405.12 — EL MAPA DE LOS MUNDOS: el índice de países de la casa. Esta
     // sala pinta el planeta en 3D por capas; /mundos es su tabla de países
     // (ficha unificada, fronteras y puentes) en 2D sobre Natural Earth.
