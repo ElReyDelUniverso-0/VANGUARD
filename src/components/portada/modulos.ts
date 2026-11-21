@@ -214,6 +214,7 @@ export const MODULOS: Modulo[] = [
     // fusión de: juego, estado
     destacadas: ["/mi-universo", "/perfil", "/mision", "/objetivos", "/universo", "/estado"],
     pestanas: [
+      { href: "/mi-universo", label: "Mi universo", img: "/ilustraciones/planeta.jpg", txt: "Tus puertas repartidas en grupos, con tu memoria de aparato: lo que ya viste, lo que marcaste y lo que aprendió de ti." },
       { href: "/cuartel", label: "Cuartel", img: "/ilustraciones/salas.jpg", txt: "El centro de mando del juego." },
       { href: "/objetivos", label: "Objetivos", img: "/ilustraciones/logros.jpg", txt: "Misiones, retos y torneos: lo que hay que hacer hoy." },
       { href: "/universo", label: "Colecciones", img: "/ilustraciones/recompensas.jpg", txt: "Créditos, colecciones y tu base personal." },
