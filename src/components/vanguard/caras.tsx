@@ -31,10 +31,10 @@ const CARAS = [
   },
   {
     id: "salas",
-    href: "/cuartel",
+    href: "/orden",
     nombre: "Salas",
-    detalle: "El Cuartel: todos los mundos de la casa",
-    activa: (r: string) => r.startsWith("/cuartel"),
+    detalle: "El orden de batalla: las 156 salas, con su código",
+    activa: (r: string) => r === "/orden" || r.startsWith("/sala/"),
   },
 ];
 
