@@ -78,7 +78,7 @@ export default function EscudoPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         {/* v402.2 — portada de sala (Estado de Vanguard) */}
         <PortadaSala
-          imagen="/ilustraciones/espectro.jpg"
+          imagen="/imagenes-reales/gps.jpg"
           alt="Radar circular verde frente al mar nocturno con antenas de escucha"
           volanta="Estado de Vanguard · El Escudo"
           titulo="El Buscador de Llaves"

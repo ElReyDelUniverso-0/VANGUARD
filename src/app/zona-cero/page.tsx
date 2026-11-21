@@ -173,7 +173,7 @@ export default async function ZonaCeroPage() {
     <PortadaSala
       nivel="p"
       prioritaria={false}
-      imagen="/ilustraciones/crisis.jpg"
+      imagen="/imagenes-reales/nuclear.jpg"
       alt="Sala de crisis con mapas colgados y mesas de operaciones"
       volanta="LA CASA · ZONA CERO"
       titulo="EL TEATRO GLOBAL"

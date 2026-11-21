@@ -92,7 +92,7 @@ export default function OscuraPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <PortadaSala
-        imagen="/ilustraciones/oscura.jpg"
+        imagen="/imagenes-reales/area51.jpg"
         alt="Pasillo de archivo en penumbra con estanterías que se pierden en la oscuridad"
         volanta="LA CASA · ARCHIVO OSCURO"
         titulo="LO OSCURO, EN 60 SEGUNDOS"

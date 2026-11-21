@@ -1566,7 +1566,7 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
     radial-gradient(60% 90% at 92% 10%, rgba(56,189,248,.16), transparent 60%),
     radial-gradient(50% 80% at 70% 110%, rgba(232,197,106,.14), transparent 60%),
     linear-gradient(90deg, rgba(6,8,12,.96) 0%, rgba(6,8,12,.78) 48%, rgba(6,8,12,.45) 100%),
-    url(/ilustraciones/mapa.jpg) right center / cover no-repeat;
+    url(/imagenes-reales/satelite.jpg) right center / cover no-repeat;
 }
 .vxp-heroe-fondo::after {
   content: ""; position: absolute; inset: 0;

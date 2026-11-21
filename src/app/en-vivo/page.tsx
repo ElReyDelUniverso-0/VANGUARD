@@ -134,7 +134,7 @@ export default async function EnVivoPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <PortadaSala
-        imagen="/ilustraciones/envivo.jpg"
+        imagen="/imagenes-reales/satelite.jpg"
         alt="Estudio de directo con pantallas encendidas y mesa de control"
         volanta="LA CASA · EL PULSO"
         titulo="EL MUNDO, MINUTO A MINUTO"

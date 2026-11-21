@@ -144,7 +144,7 @@ export default function PrivacidadPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         {/* v402.2 — portada de sala (Estado de Vanguard) */}
         <PortadaSala
-          imagen="/ilustraciones/osint.jpg"
+          imagen="/imagenes-reales/estambul.jpg"
           alt="Cúpula de radar blanca bajo la luna llena al atardecer"
           volanta="Estado de Vanguard · Privacidad"
           titulo="Tu privacidad"

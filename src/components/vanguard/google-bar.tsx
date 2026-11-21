@@ -73,28 +73,28 @@ const APP_HEX: Record<string, string> = {
 // sin layout shift, aria-hidden, con velo de legibilidad para que el nombre
 // siempre se lea. La pieza de cada sección es SU lugar de la casa.
 const ILU_DE_SECCION: Record<string, string> = {
-  teatro3d: "simulador.jpg",
-  novedades: "noticias.jpg",
-  universo: "arcade.jpg",
-  hangar: "hangar.jpg",
-  inteligencia: "espionaje.jpg",
-  inicio: "noticias.jpg",
-  juego: "arcade.jpg",
-  mercado: "mercados.jpg",
-  archivo: "historia.jpg",
-  comando: "gobierno.jpg",
-  observatorio: "cielos.jpg",
-  estrategia: "mapa.jpg",
-  emisora: "canales.jpg",
-  oscsuro: "verdades.jpg",
-  creadores: "creador.jpg",
-  social: "foros.jpg",
-  sistema: "centinela.jpg",
-  experimental: "simulador.jpg",
+  teatro3d: "nuclear.jpg",
+  novedades: "suez.jpg",
+  universo: "tokio.jpg",
+  hangar: "portaaviones.jpg",
+  inteligencia: "cia.jpg",
+  inicio: "suez.jpg",
+  juego: "tokio.jpg",
+  mercado: "shanghai.jpg",
+  archivo: "muroberlin.jpg",
+  comando: "kremlin.jpg",
+  observatorio: "satelite.jpg",
+  estrategia: "satelite.jpg",
+  emisora: "control.jpg",
+  oscsuro: "area51.jpg",
+  creadores: "control.jpg",
+  social: "control.jpg",
+  sistema: "satelite.jpg",
+  experimental: "nuclear.jpg",
   arquitecto: "constructor.jpg",
 };
-const ILU_INV = "expedientes.jpg";   // INVESTIGAR — el dossier de la agencia
-const ILU_CINE = "salas.jpg";         // MENÚ DE CINE — la ciudad viva de salas
+const ILU_INV = "area51.jpg";   // INVESTIGAR — el dossier de la agencia
+const ILU_CINE = "control.jpg";  // MENÚ DE CINE — la ciudad viva de salas
 
 /** el fondo ilustrado del tile: la pieza de la casa + el velo que la hace legible */
 function FondoIlustrado({ pieza }: { pieza: string }) {
@@ -103,7 +103,7 @@ function FondoIlustrado({ pieza }: { pieza: string }) {
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0"
-        style={{ backgroundImage: `url(/ilustraciones/${pieza})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.38 }}
+        style={{ backgroundImage: `url(/imagenes-reales/${pieza})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.38 }}
       />
       <span
         aria-hidden

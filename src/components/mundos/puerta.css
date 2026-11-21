@@ -12,7 +12,7 @@ html[data-vp-abierta="1"] { overflow: hidden; }
   -webkit-tap-highlight-color: transparent; outline: none;
 }
 .vp-fondo {
-  position: absolute; inset: -6%; z-index: -3; background: url(/ilustraciones/planeta.jpg) center 60% / cover no-repeat;
+  position: absolute; inset: -6%; z-index: -3; background: url(/imagenes-reales/satelite.jpg) center 60% / cover no-repeat;
   opacity: 0; transform: scale(1.18); animation: vpFondo 3.2s cubic-bezier(.2,.7,.2,1) .2s forwards;
 }
 @keyframes vpFondo { to { opacity: .42; transform: scale(1); } }

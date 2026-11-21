@@ -7616,7 +7616,7 @@ async function parteB() {
     // (4) LA CASA ILUSTRADA: la biblioteca propia entra como baño de luz en las cabeceras server
     afirmar(comp.includes("ilu-cabecera") && comp.includes("aria-hidden"), "el componente de ilustración no decora con honestidad");
     afirmar(css.includes(".ilu-cabecera") && css.includes("mask-image"), "al baño de luz le falta su máscara (estorbaría la lectura)");
-    afirmar(guerra.includes("/ilustraciones/frente.jpg") && espia.includes("/ilustraciones/espionaje.jpg") && mundo.includes("/ilustraciones/planeta.jpg") && pulso.includes("/ilustraciones/pulso.jpg") && noticia.includes("/ilustraciones/noticias.jpg"), "faltan cabeceras ilustradas en las cinco puertas server");
+    afirmar(guerra.includes("/imagenes-reales/portaaviones.jpg") && espia.includes("/imagenes-reales/cia.jpg") && mundo.includes("/imagenes-reales/satelite.jpg") && pulso.includes("/imagenes-reales/satelite.jpg") && noticia.includes("/imagenes-reales/suez.jpg"), "faltan cabeceras con fotos reales en las cinco puertas server");
     // la cirugía sin cicatriz: cero directivas en los archivos tocados (ley v335)
     afirmar(!lib.includes("eslint-disable") && !panel.includes("eslint-disable") && !comp.includes("eslint-disable"), "hay cicatriz de directiva en LA VOZ QUE ENTIENDE (ley v335)");
     // la versión camina con la casa (doble aserción)
@@ -7757,7 +7757,7 @@ async function parteB() {
     afirmar(mundo.includes("useColeccionVanguard") && mundo.includes('"mesa"'), "la máquina del tiempo no descubre líderes al visitar la mesa");
     afirmar(atlas.includes("useColeccionVanguard") && atlas.includes('"atlas"'), "el atlas no descubre la carta al abrir la ficha");
     // (6) el menú ilustrado: biblioteca propia en los tiles, la ruta QA intacta
-    afirmar(barra.includes("ILU_DE_SECCION") && barra.includes("/ilustraciones/"), "el lanzador no viste la biblioteca propia de la casa");
+    afirmar(barra.includes("ILU_DE_SECCION") && barra.includes("/imagenes-reales/"), "el lanzador no viste la biblioteca propia de la casa");
     afirmar(barra.includes("app-tile") && barra.includes('aria-label={t("gbar.apps")}'), "la ruta QA del arnés (launcher→tile) se rompió");
     afirmar(barra.includes("FondoIlustrado") && barra.includes("aria-hidden"), "el fondo ilustrado no es honesto (sin aria-hidden)");
     // la cirugía sin cicatriz (ley v335) en las fuentes tocadas

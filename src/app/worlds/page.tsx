@@ -92,7 +92,7 @@ export default function WorldsPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <PortadaSala
-        imagen="/ilustraciones/planeta.jpg"
+        imagen="/imagenes-reales/satelite.jpg"
         alt="El planeta visto desde el espacio, con la luz del amanecer sobre el horizonte"
         volanta="AGENTE 04 · VANGUARD WORLDS"
         titulo="El mundo vivo"

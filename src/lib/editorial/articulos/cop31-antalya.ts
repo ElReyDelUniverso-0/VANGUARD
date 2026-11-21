@@ -11,7 +11,7 @@ export const cop31: Articulo = {
   revisado: "2026-11-17",
   revisarCada: 4,
   hito: { fecha: "2026-11-20", que: "cierre previsto de la COP31 (suele prorrogarse uno o dos días)" },
-  imagen: "/ilustraciones/consejo.jpg",
+  imagen: "/imagenes-reales/kremlin.jpg",
   claves: [
     "La COP31 se celebra del 9 al 20 de noviembre de 2026 en Antalya, con Turquía en la presidencia y Australia al frente de las negociaciones.",
     "La cumbre de líderes (11 y 12 de noviembre) cerró sin dinero nuevo; EE. UU. no envió delegación oficial.",

@@ -124,7 +124,7 @@ export default async function EscenariosPage() {
   return (
     <>
     <PortadaSala
-      imagen="/ilustraciones/simulador.jpg"
+      imagen="/assets/real/jet-1.jpg"
       alt="Sala de simulación con pantallas que muestran escenarios y variables"
       volanta="LA CASA · EL ESTRATEGA"
       titulo="QUÉ PASARÍA SI…"
@@ -207,7 +207,7 @@ export default async function EscenariosPage() {
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
             CÓMO SE CALCULA — las piezas separadas
           </p>
-          <BannerIlustracion src="/ilustraciones/simulador.jpg" sello="Datos → modelo → escenario" />
+          <BannerIlustracion src="/assets/real/jet-1.jpg" sello="Datos → modelo → escenario" />
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
@@ -240,7 +240,7 @@ export default async function EscenariosPage() {
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
             LAS VARIABLES — explicadas una a una
           </p>
-          <BannerIlustracion src="/ilustraciones/warsim.jpg" sello="Tú mueves los pesos" />
+          <BannerIlustracion src="/imagenes-reales/portaaviones.jpg" sello="Tú mueves los pesos" />
           <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">
             Los 4 pesos son lo ÚNICO que mueve el usuario. Cada uno multiplica un factor del desglose:
             esto es lo que mueve, de dónde sale su dato, contra qué ancla satura y qué significan sus extremos.
@@ -282,7 +282,7 @@ export default async function EscenariosPage() {
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
             LAS ANCLAS — las decisiones editoriales del modelo
           </p>
-          <BannerIlustracion src="/ilustraciones/predicciones.jpg" sello="Las decisiones, a la vista" />
+          <BannerIlustracion src="/imagenes-reales/suez.jpg" sello="Las decisiones, a la vista" />
           <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">
             Los techos donde cada factor satura a 100. NO son datos: son decisiones editoriales de la casa,
             visibles en el desglose de cada teatro y discutibles — cambiarlas cambia el resultado, por eso
@@ -304,7 +304,7 @@ export default async function EscenariosPage() {
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
             LOS SUPUESTOS — declarados, no escondidos
           </p>
-          <BannerIlustracion src="/ilustraciones/geopolitica.jpg" sello="Nada escondido" />
+          <BannerIlustracion src="/imagenes-reales/kremlin.jpg" sello="Nada escondido" />
           <div className="mt-3 space-y-3">
             {cat.supuestos.map((s) => (
               <article key={s.id} className="rounded-md border border-zinc-800 bg-zinc-900/50 p-4">

@@ -11,7 +11,7 @@ export const tierrasRaras: Articulo = {
   revisado: "2026-11-18",
   revisarCada: 30,
   hito: { fecha: "2027-01-10", que: "fin de la suspensión china de controles a la exportación (Anuncio 58/2026)" },
-  imagen: "/ilustraciones/planeta.jpg",
+  imagen: "/imagenes-reales/satelite.jpg",
   claves: [
     "Son 17 elementos: los 15 lantánidos más el escandio y el itrio. No son escasos; lo difícil es separarlos y refinarlos.",
     "China extrajo 270.000 de las 390.000 toneladas mundiales de 2024 (USGS) y, según la AIE, concentra en torno al 91 % del refinado.",

@@ -216,7 +216,7 @@ export default async function VerGuerraPage() {
   return (
     <>
     <PortadaSala
-      imagen="/ilustraciones/combate.jpg"
+      imagen="/imagenes-reales/portaaviones.jpg"
       alt="Columna de vehículos blindados envuelta en polvo al atardecer"
       volanta="LA CASA · EL FRENTE"
       titulo="EL FRENTE, EN DIRECTO"

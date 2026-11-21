@@ -176,7 +176,7 @@ export default function GaleriaPage() {
         </div>
         <Videoteca
           clips={CLIPS_VIDEOTECA}
-          poster="/ilustraciones/galeria.jpg"
+          poster="/imagenes-reales/tokio.jpg"
           volanta="LA FOTOTECA · VÍDEO"
           titulo="LA VIDEOTECA DE LA CASA"
           nota="Los clips viajan en el propio VANGUARD (/videos/), servidos por él: no hay enlaces remotos. Ninguno baja un byte hasta que se pulsa play. La casa todavía no tiene ficha editorial de cada clip, así que cada tarjeta se llama por su archivo real en vez de inventarle un título."

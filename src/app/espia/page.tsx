@@ -155,7 +155,7 @@ export default async function EspiaPage() {
         <BarraMundo activa="espia" />
         {/* v402.2 — portada de sala: cifras del radar (escuchas, movimientos, teatros) */}
         <PortadaSala
-          imagen="/ilustraciones/espionaje.jpg"
+          imagen="/imagenes-reales/cia.jpg"
           alt="Figura con gabardina y maletín bajo una farola, con la ciudad en llamas al fondo"
           volanta="Inteligencia · Modo espía"
           titulo="El radar de los gobiernos"

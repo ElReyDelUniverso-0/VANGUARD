@@ -34,7 +34,7 @@ export default async function NovedadesPage({
     <main className="min-h-screen bg-[#05060b] text-foreground">
       {/* v402.2 — portada de sala (Estado de Vanguard). Fuera la cabecera propia. */}
       <PortadaSala
-        imagen="/ilustraciones/notificaciones.jpg"
+        imagen="/imagenes-reales/control.jpg"
         alt="Centralita antigua con luces rojas y notas sobre la mesa"
         volanta="Estado de Vanguard · Novedades"
         titulo="Lo nuevo de Vanguard"

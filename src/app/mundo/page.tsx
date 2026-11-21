@@ -147,7 +147,7 @@ export default async function MundoPage({ searchParams }: Props) {
 
         {/* cabecera del planeta — v360 LA CASA ILUSTRADA: baño de luz lateral */}
         <header className="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-5 pt-6 pb-4">
-          <IlustracionCabecera src="/ilustraciones/planeta.jpg" />
+          <IlustracionCabecera src="/imagenes-reales/satelite.jpg" />
           <div className="flex items-center gap-2.5 flex-wrap">
             <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-amber-300 border border-amber-500/50 bg-amber-500/10 rounded px-2 py-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block" />

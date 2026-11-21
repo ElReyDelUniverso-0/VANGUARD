@@ -48,10 +48,10 @@ export function diaUtc(d = new Date()): string {
 
 // ilustraciones del mundo Vanguard por ambiente (todas originales del juego)
 const IMG = {
-  guerra: ["/ilustraciones/camaras.jpg", "/ilustraciones/frente.jpg", "/ilustraciones/warsim.jpg", "/ilustraciones/combate.jpg", "/ilustraciones/dronguerra.jpg", "/ilustraciones/crisis.jpg"],
-  analisis: ["/ilustraciones/osint.jpg", "/ilustraciones/centinela.jpg", "/ilustraciones/radar.jpg", "/ilustraciones/mapa.jpg", "/ilustraciones/ojo-dios.jpg", "/ilustraciones/planeta.jpg"],
-  archivo: ["/ilustraciones/biblioteca.jpg", "/ilustraciones/historia.jpg", "/ilustraciones/epocas.jpg", "/ilustraciones/muertes.jpg", "/ilustraciones/tribunal.jpg", "/ilustraciones/oscura.jpg"],
-  mundo: ["/ilustraciones/cielos.jpg", "/ilustraciones/sismo.jpg", "/ilustraciones/planeta.jpg", "/ilustraciones/mundial.jpg", "/ilustraciones/canales.jpg", "/ilustraciones/estudio.jpg"],
+  guerra: ["/imagenes-reales/control.jpg", "/imagenes-reales/portaaviones.jpg", "/imagenes-reales/portaaviones.jpg", "/imagenes-reales/portaaviones.jpg", "/imagenes-reales/nuclear.jpg", "/imagenes-reales/nuclear.jpg"],
+  analisis: ["/imagenes-reales/estambul.jpg", "/imagenes-reales/satelite.jpg", "/assets/real/radar-1.jpg", "/imagenes-reales/satelite.jpg", "/imagenes-reales/area51.jpg", "/imagenes-reales/satelite.jpg"],
+  archivo: ["/imagenes-reales/arco.jpg", "/imagenes-reales/muroberlin.jpg", "/imagenes-reales/muroberlin.jpg", "/imagenes-reales/chernobyl.jpg", "/imagenes-reales/pentagono.jpg", "/imagenes-reales/area51.jpg"],
+  mundo: ["/imagenes-reales/satelite.jpg", "/imagenes-reales/suez.jpg", "/imagenes-reales/satelite.jpg", "/imagenes-reales/satelite.jpg", "/imagenes-reales/control.jpg", "/imagenes-reales/control.jpg"],
 };
 function imgDe(pool: string[], seed: string): string {
   return pool[hashStr(seed) % pool.length];

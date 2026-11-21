@@ -105,7 +105,7 @@ export default async function DivisasPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <PortadaSala
-        imagen="/ilustraciones/divisas.jpg"
+        imagen="/imagenes-reales/shanghai.jpg"
         alt="Billetes y monedas de varios países extendidos sobre una mesa oscura"
         volanta="LA CASA · DINERO"
         titulo="EL DINERO DEL MUNDO"

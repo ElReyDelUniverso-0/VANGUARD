@@ -49,7 +49,7 @@ export default function ModoPage() {
       <main className="min-h-screen bg-[#070604] text-foreground">
         {/* v402.2 — portada de sala (módulo Juego · Modo y cuenta) */}
         <PortadaSala
-          imagen="/ilustraciones/consejo.jpg"
+          imagen="/imagenes-reales/kremlin.jpg"
           alt="Mesa holográfica con un globo terráqueo rodeado de figuras de mando"
           volanta="Juego · Modo y cuenta"
           titulo="¿Qué quieres hacer en Vanguard?"

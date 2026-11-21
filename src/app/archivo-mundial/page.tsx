@@ -86,7 +86,7 @@ export default function ArchivoMundialPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <PortadaSala
-        imagen="/ilustraciones/expedientes.jpg"
+        imagen="/imagenes-reales/area51.jpg"
         alt="Cajas de archivo numeradas en un depósito con luz cenital"
         volanta="LA CASA · ARCHIVO"
         titulo="EL ARCHIVO DEL PLANETA"

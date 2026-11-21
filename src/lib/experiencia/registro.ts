@@ -93,7 +93,7 @@ export const EJES: Eje[] = [
     promesa:
       "Cables con fuente y hora, sin relleno: la última hora de cada frente y el mapa donde se mueve.",
     puerta: "/en-vivo",
-    img: "/ilustraciones/noticias.jpg",
+    img: "/imagenes-reales/suez.jpg",
     color: "#ff5a5f",
     espacio: "leer",
     cifras: [{ valor: `${MODULOS_PUBLICOS.length}`, etiqueta: "módulos con puerta propia" }],
@@ -112,7 +112,7 @@ export const EJES: Eje[] = [
     promesa:
       "Cada país con su geografía real, sus cifras y su historia; el mundo en 3D y el atlas en 2D sobre los mismos polígonos.",
     puerta: "/mundos",
-    img: "/ilustraciones/mapa.jpg",
+    img: "/imagenes-reales/satelite.jpg",
     color: "#3ddcff",
     espacio: "geo",
     cifras: [{ valor: `${PAISES_GEO.length}`, etiqueta: "países con ficha" }],
@@ -131,7 +131,7 @@ export const EJES: Eje[] = [
     promesa:
       "Documentos y acontecimientos con su institución, su licencia y lo que el expediente NO tiene.",
     puerta: "/memoria",
-    img: "/ilustraciones/historia.jpg",
+    img: "/imagenes-reales/muroberlin.jpg",
     color: "#e8c56a",
     espacio: "archivo",
     cifras: [{ valor: `${ACONTECIMIENTOS.length}`, etiqueta: "expedientes históricos" }],
@@ -150,7 +150,7 @@ export const EJES: Eje[] = [
     promesa:
       "Publicaciones reales con DOI o arXiv, tipo editorial y nivel de evidencia separados; una hipótesis nunca se presenta como hallazgo.",
     puerta: "/ciencia",
-    img: "/ilustraciones/estudio.jpg",
+    img: "/imagenes-reales/control.jpg",
     color: "#22d3ee",
     espacio: "investigar",
     cifras: [
@@ -172,7 +172,7 @@ export const EJES: Eje[] = [
     promesa:
       "Indicadores con año, unidad, método y fuente; comparadores de países y series reales, nunca cifras huérfanas.",
     puerta: "/datos-mundiales",
-    img: "/ilustraciones/estadisticas.jpg",
+    img: "/imagenes-reales/losangeles.jpg",
     color: "#5eead4",
     espacio: "mercado",
     cifras: [{ valor: `${OBRAS_INFRA}`, etiqueta: "obras de infraestructura documentadas" }],
@@ -191,7 +191,7 @@ export const EJES: Eje[] = [
     promesa:
       "Cursos con capítulos y lecciones, ejercicios con respuesta explicada y glosario; progreso local y borrable.",
     puerta: "/academia",
-    img: "/ilustraciones/quiz.jpg",
+    img: "/imagenes-reales/tokio.jpg",
     color: "#a78bfa",
     espacio: "leer",
     cifras: [
@@ -213,7 +213,7 @@ export const EJES: Eje[] = [
     promesa:
       "Escenarios y teatros con reglas escritas; el resultado es un modelo, y la casa lo dice.",
     puerta: "/escenarios",
-    img: "/ilustraciones/simulador.jpg",
+    img: "/assets/real/jet-1.jpg",
     color: "#fb923c",
     espacio: "simular",
     cifras: [{ valor: `${MODELOS.length}`, etiqueta: "modelos de laboratorio" }],
@@ -232,7 +232,7 @@ export const EJES: Eje[] = [
     promesa:
       "Crónicas, galerías y audio con su autor y su licencia: la casa también cuenta, y lo dice cuando cuenta.",
     puerta: "/cronica",
-    img: "/ilustraciones/galeria.jpg",
+    img: "/imagenes-reales/tokio.jpg",
     color: "#f472b6",
     espacio: "archivo",
     cifras: [],
@@ -251,7 +251,7 @@ export const EJES: Eje[] = [
     promesa:
       "Un lugar donde la pregunta se convierte en dossier con citas comprobadas, y donde se ve qué quedó sin confirmar.",
     puerta: "/inteligencia",
-    img: "/ilustraciones/expedientes.jpg",
+    img: "/imagenes-reales/area51.jpg",
     color: "#38bdf8",
     espacio: "investigar",
     cifras: [],
@@ -270,7 +270,7 @@ export const EJES: Eje[] = [
     promesa:
       "Obras, colecciones y perfiles con moderación y licencia; el visitante deja de ser solo visitante.",
     puerta: "/creadores",
-    img: "/ilustraciones/constructor.jpg",
+    img: "/imagenes-reales/panama.jpg",
     color: "#c084fc",
     espacio: "crear",
     cifras: [],

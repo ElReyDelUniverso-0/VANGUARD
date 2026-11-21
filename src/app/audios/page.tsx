@@ -100,7 +100,7 @@ export default async function AudiosPage() {
     <main className="min-h-screen bg-[#040407] text-[#f5f3ee]">
       {/* v402.2 — portada de sala: cifras del parte (cables vivos) y del muro de voces */}
       <PortadaSala
-        imagen="/ilustraciones/directos.jpg"
+        imagen="/imagenes-reales/satelite.jpg"
         alt="Estudio de radio en penumbra con el letrero ON AIR encendido"
         volanta="Conflictos · Radio de guerra"
         titulo="La guerra, en voz alta"

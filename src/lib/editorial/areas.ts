@@ -28,7 +28,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Poder, territorio y rutas",
     descripcion: "Cómo la geografía decide la política: estrechos, fronteras, alianzas y zonas de influencia.",
     color: "#e8c56a",
-    imagen: "/ilustraciones/geopolitica.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     moderno: [
       { href: "/mapas", label: "Centro de mapas" },
       { href: "/poder", label: "Poder militar" },
@@ -42,7 +42,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Los 249 del mapa",
     descripcion: "Estados, territorios y reconocimientos: quién es quién en el mapa y por qué.",
     color: "#38bdf8",
-    imagen: "/ilustraciones/mundo.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     moderno: [
       { href: "/mundos", label: "Los mundos (249 fichas)" },
       { href: "/atlas", label: "Atlas" },
@@ -56,7 +56,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Dinero, comercio y crecimiento",
     descripcion: "Las cifras que mueven al mundo, explicadas con su fuente y su año.",
     color: "#3ddc97",
-    imagen: "/ilustraciones/mercados.jpg",
+    imagen: "/imagenes-reales/shanghai.jpg",
     moderno: [
       { href: "/divisas", label: "Divisas" },
       { href: "/mundos", label: "PIB por país" },
@@ -70,7 +70,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Lo que explica el presente",
     descripcion: "Tratados, guerras y épocas que dejaron reglas que seguimos usando.",
     color: "#f59e0b",
-    imagen: "/ilustraciones/historia.jpg",
+    imagen: "/imagenes-reales/muroberlin.jpg",
     moderno: [
       { href: "/historia", label: "Archivo de guerras" },
       { href: "/archivo-mundial#epocas", label: "Las eras" },
@@ -83,7 +83,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Guerras con método",
     descripcion: "Los conflictos abiertos y las herramientas para entenderlos sin propaganda.",
     color: "#ff3b30",
-    imagen: "/ilustraciones/frentes.jpg",
+    imagen: "/imagenes-reales/portaaviones.jpg",
     moderno: [
       { href: "/conflictos", label: "Conflictos" },
       { href: "/guerra-hoy", label: "Guerra hoy" },
@@ -97,7 +97,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "La tecnología que decide",
     descripcion: "Chips, drones, satélites e inteligencia artificial: la ciencia como factor de poder.",
     color: "#a78bfa",
-    imagen: "/ilustraciones/ciber.jpg",
+    imagen: "/imagenes-reales/gps.jpg",
     moderno: [
       { href: "/armeria", label: "Armería" },
       { href: "/herramientas", label: "Herramientas" },
@@ -110,7 +110,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Gente, lenguas y costumbres",
     descripcion: "Las personas detrás de los mapas: lenguas, migraciones, ciudades y cultura.",
     color: "#f472b6",
-    imagen: "/ilustraciones/embajadores.jpg",
+    imagen: "/imagenes-reales/onu.jpg",
     moderno: [
       { href: "/traductor", label: "Traductor" },
       { href: "/audios", label: "Emisora" },
@@ -123,7 +123,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Aprender a leer el mundo",
     descripcion: "Guías prácticas: verificar, leer mapas, entender cifras y estudiar con fuentes.",
     color: "#22d3ee",
-    imagen: "/ilustraciones/biblioteca.jpg",
+    imagen: "/imagenes-reales/arco.jpg",
     moderno: [
       { href: "/sala/biblioteca", label: "La Gran Biblioteca" },
       { href: "/archivo-mundial#curiosidades", label: "Curiosidades" },
@@ -137,7 +137,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Energía, minerales y agua",
     descripcion: "Petróleo, gas, minerales críticos y agua: lo que hay bajo el mapa y quién lo controla.",
     color: "#84cc16",
-    imagen: "/ilustraciones/planeta.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     moderno: [
       { href: "/pulso-mundial", label: "Pulso mundial" },
       { href: "/mapas", label: "Capas del planeta" },
@@ -150,7 +150,7 @@ export const AREAS_EDITORIALES: AreaEditorial[] = [
     lema: "Diplomacia, cumbres y tratados",
     descripcion: "Las mesas donde se negocia el mundo: ONU, cumbres, alianzas y acuerdos.",
     color: "#60a5fa",
-    imagen: "/ilustraciones/consejo.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     moderno: [
       { href: "/servicios", label: "Inteligencia mundial" },
       { href: "/rostros", label: "Rostros del poder" },

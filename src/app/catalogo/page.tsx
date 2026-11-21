@@ -83,7 +83,7 @@ export default function CatalogoPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <PortadaSala
-        imagen="/ilustraciones/salas.jpg"
+        imagen="/imagenes-reales/control.jpg"
         alt="Galería de salas de una casa antigua con puertas numeradas"
         volanta="LA CASA · EL CATÁLOGO"
         titulo="TODO LO QUE YA EXISTE"

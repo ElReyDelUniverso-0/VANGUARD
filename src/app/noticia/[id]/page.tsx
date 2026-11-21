@@ -386,7 +386,7 @@ export default async function NoticiaPage({
 
       {/* v360 LA CASA ILUSTRADA — la noticia se lee con luz, no con negro plano */}
       <article className="relative overflow-hidden max-w-3xl mx-auto px-5 py-8">
-        <IlustracionCabecera src="/ilustraciones/noticias.jpg" />
+        <IlustracionCabecera src="/imagenes-reales/suez.jpg" />
         <div className="flex items-center gap-2 flex-wrap">
           <span
             className={`font-mono text-[10px] uppercase tracking-widest border rounded px-1.5 py-0.5 ${TAG_COLOR[tag] || TAG_COLOR.INFO}`}

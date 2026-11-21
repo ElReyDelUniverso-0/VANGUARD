@@ -310,7 +310,7 @@ export default function ObjetivosPage() {
   return (
     <>
     <PortadaSala
-      imagen="/ilustraciones/misiones.jpg"
+      imagen="/imagenes-reales/pentagono.jpg"
       alt="Pizarra de operaciones con objetivos marcados y chinchetas de colores"
       volanta="LA CASA · LA JORNADA"
       titulo="LO QUE HAY QUE HACER HOY"

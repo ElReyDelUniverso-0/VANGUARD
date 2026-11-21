@@ -26,7 +26,7 @@ export default async function UniversoPage({
       {/* v402.2 — portada de sala (módulo Juego). Fuera la cabecera propia en inglés
           y su barra de botones: la carcasa ya da cabecera y pestañas. */}
       <PortadaSala
-        imagen="/ilustraciones/recompensas.jpg"
+        imagen="/imagenes-reales/dubai.jpg"
         alt="Cofre del tesoro con monedas y un catalejo sobre un mapa antiguo"
         volanta="Juego · Colecciones"
         titulo="El universo diario"

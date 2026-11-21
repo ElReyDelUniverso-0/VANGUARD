@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "VANGUARD · La Travesía",
     description: "Recorre el mundo espacio a espacio y continúa donde lo dejaste.",
-    images: ["/ilustraciones/planeta.jpg"],
+    images: ["/imagenes-reales/satelite.jpg"],
   },
 };
 

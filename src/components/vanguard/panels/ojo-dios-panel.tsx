@@ -417,7 +417,7 @@ export function OjoDiosPanel() {
       <TituloEpico
         titulo="EL OJO DE DIOS"
         volanta="TODA la información del planeta Tierra en este lugar"
-        imagen="/ilustraciones/ojo-dios.jpg"
+        imagen="/imagenes-reales/area51.jpg"
         escena="orbita"
         semilla={210}
         texto="Todo lo que pasa en el mundo, visto desde arriba: el globo 3D en vivo con unidades militares reales, cámaras públicas de cada país, clima, divisas, sismos, eventos naturales de la NASA, la ISS y el escáner de conflictos. Nada escapa al Ojo."

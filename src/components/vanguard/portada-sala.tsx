@@ -34,7 +34,7 @@ export type PuntoPortada = { titulo: string; texto: string };
 export type AnclaPortada = { etiqueta: string; href: string };
 
 export interface PortadaSalaProps {
-  /** ruta REAL de una imagen que ya vive en public/ (p. ej. /ilustraciones/mapa.jpg) */
+  /** ruta REAL de una imagen que ya vive en public/ (p. ej. /imagenes-reales/satelite.jpg) */
   imagen: string;
   /** descripción de la imagen para quien no la ve (obligatoria, honestidad v239) */
   alt: string;

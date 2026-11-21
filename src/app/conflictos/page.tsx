@@ -137,7 +137,7 @@ export default async function ConflictosPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <PortadaSala
-        imagen="/ilustraciones/frentes.jpg"
+        imagen="/imagenes-reales/portaaviones.jpg"
         alt="Manos sobre un mapa de operaciones con líneas de frente dibujadas a lápiz"
         volanta="LA CASA · EL TABLERO"
         titulo="DÓNDE SE ROMPE EL MUNDO"

@@ -192,7 +192,7 @@ export default async function GuerraHoyPage() {
           (enlace dentro de enlace = error #418 de hidratación).
           ════════════════════════════════════════════════════════════════ */}
       <PortadaSala
-        imagen="/ilustraciones/frentes.jpg"
+        imagen="/imagenes-reales/portaaviones.jpg"
         alt="Mesa de mando con un mapa de frentes iluminado en la penumbra"
         volanta="Módulo · Conflictos"
         titulo="Las guerras del planeta, hoy"

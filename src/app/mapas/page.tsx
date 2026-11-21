@@ -91,7 +91,7 @@ export default function MapasPage() {
     <>
       <main className="mx-auto max-w-[1408px] px-4 pb-16 pt-6 sm:px-6">
         <PortadaSala
-          imagen="/ilustraciones/planeta.jpg"
+          imagen="/imagenes-reales/satelite.jpg"
           alt="El planeta visto desde el espacio, con la luz del amanecer sobre el horizonte"
           volanta="LA CASA · GEOGRAFÍA"
           titulo="EL CENTRO DE MAPAS"

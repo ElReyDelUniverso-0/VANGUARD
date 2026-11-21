@@ -194,7 +194,7 @@ export const rankingPoblacion: Articulo = {
   area: "paises",
   tipo: "datos",
   revisado: "2026-11-18",
-  imagen: "/ilustraciones/estadisticas.jpg",
+  imagen: "/imagenes-reales/losangeles.jpg",
   claves: [
     "Las tablas se calculan en cada visita desde las 249 fichas de /mundos.",
     "Fuentes: atlas de la casa y Banco Mundial, con el año de cada dato en la ficha del país.",
@@ -221,7 +221,7 @@ export const rankingEconomia: Articulo = {
   area: "economia",
   tipo: "datos",
   revisado: "2026-11-18",
-  imagen: "/ilustraciones/mercados.jpg",
+  imagen: "/imagenes-reales/shanghai.jpg",
   claves: [
     "PIB y PIB por habitante del Banco Mundial, en dólares corrientes.",
     "Gasto militar en dólares y en porcentaje del PIB.",

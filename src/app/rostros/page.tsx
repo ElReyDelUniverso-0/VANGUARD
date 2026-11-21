@@ -167,7 +167,7 @@ export default async function RostrosPage() {
       />
 
       <PortadaSala
-        imagen="/ilustraciones/perfil.jpg"
+        imagen="/imagenes-reales/control.jpg"
         alt="Retrato en penumbra de un rostro iluminado de lado"
         volanta="LA CASA · ROSTROS"
         titulo="LAS CARAS DEL MANDO"

@@ -99,7 +99,7 @@ export default function TraductorPage() {
         <BarraMundo activa="traductor" />
         {/* v402.2 — portada de sala: cifras de los idiomas y del glosario */}
         <PortadaSala
-          imagen="/ilustraciones/ciber.jpg"
+          imagen="/imagenes-reales/gps.jpg"
           alt="Mapa del mundo con rutas de datos iluminadas sobre servidores en la noche"
           volanta="Inteligencia · Traductor"
           titulo="Modo traductor"

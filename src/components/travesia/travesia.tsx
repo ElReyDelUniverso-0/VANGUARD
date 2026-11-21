@@ -488,7 +488,7 @@ export function Travesia({ cables, total24 }: { cables: CableTravesia[]; total24
         {/* ── 0 · TU HILO */}
         <section className="tv-esp tv-hilo" id="hilo" aria-label="Tu hilo">
           <div className="tv-fondo" ref={(el) => { fondos.current[0] = el; }} aria-hidden>
-            <img src="/ilustraciones/planeta.jpg" alt="" decoding="async" />
+            <img src="/imagenes-reales/satelite.jpg" alt="" decoding="async" />
           </div>
           <div className="tv-velo" aria-hidden />
           <div className="tv-esp-in">
@@ -613,7 +613,7 @@ export function Travesia({ cables, total24 }: { cables: CableTravesia[]; total24
         {/* ── 9 · LO DESCONOCIDO */}
         <section className="tv-esp tv-desc" id="desconocido" aria-label="Lo desconocido">
           <div className="tv-fondo" ref={(el) => { fondos.current[paradas.length - 1] = el; }} aria-hidden>
-            <img src="/ilustraciones/epocas.jpg" alt="" loading="lazy" decoding="async" />
+            <img src="/imagenes-reales/muroberlin.jpg" alt="" loading="lazy" decoding="async" />
           </div>
           <div className="tv-velo" aria-hidden />
           <div className="tv-esp-in">

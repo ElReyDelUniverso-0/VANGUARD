@@ -116,7 +116,7 @@ export default function AtlasPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <PortadaSala
-        imagen="/ilustraciones/mapa.jpg"
+        imagen="/imagenes-reales/satelite.jpg"
         alt="Mapa antiguo desplegado sobre una mesa con una lámpara encendida"
         volanta="LA CASA · GEOGRAFÍA"
         titulo="EL ATLAS DEL PLANETA"

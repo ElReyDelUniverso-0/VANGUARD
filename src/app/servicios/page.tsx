@@ -342,7 +342,7 @@ export default async function ServiciosPage() {
       />
 
       <PortadaSala
-        imagen="/ilustraciones/espionaje.jpg"
+        imagen="/imagenes-reales/cia.jpg"
         alt="Dos manos sobre un mapa de operaciones iluminado por una lámpara de escritorio"
         volanta="LA CASA · SERVICIOS"
         titulo="EL MAPA DE LOS SERVICIOS"

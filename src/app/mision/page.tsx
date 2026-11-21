@@ -20,7 +20,7 @@ export default function MisionPage() {
     <main className="min-h-screen bg-background text-foreground">
       {/* v402.0 — portada de sala del módulo Juego (la tira de noticias ya la da el teletipo) */}
       <PortadaSala
-        imagen="/ilustraciones/recluta.jpg"
+        imagen="/imagenes-reales/pentagono.jpg"
         alt="Oficina de reclutamiento en penumbra con un cartel de llamada a filas"
         volanta="Juego · Misión 100"
         titulo="Misión 100"

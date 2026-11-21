@@ -149,7 +149,7 @@ export default function MundosPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
 
       <PortadaSala
-        imagen="/ilustraciones/mundo.jpg"
+        imagen="/imagenes-reales/satelite.jpg"
         alt="El planeta visto desde la órbita, con las luces de las costas encendidas"
         volanta="Geografía · Los mundos"
         titulo="El mapa de los mundos"

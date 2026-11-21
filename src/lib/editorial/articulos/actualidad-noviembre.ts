@@ -11,7 +11,7 @@ export const midterms: Articulo = {
   revisado: "2026-11-18",
   revisarCada: 7,
   hito: { fecha: "2027-01-03", que: "toma de posesión del 120.º Congreso de EE. UU." },
-  imagen: "/ilustraciones/gobierno.jpg",
+  imagen: "/imagenes-reales/kremlin.jpg",
   claves: [
     "Los demócratas suman al menos 55 escaños del Senado; Alaska seguía sin proclamar el 17 de noviembre.",
     "En la Cámara de Representantes, las proyecciones de NBC News les dan una mayoría amplia, muy por encima de los 218 escaños necesarios.",
@@ -101,7 +101,7 @@ export const cumbres: Articulo = {
   revisado: "2026-11-18",
   revisarCada: 5,
   hito: { fecha: "2026-12-15", que: "cierre de la cumbre del G20 en Miami" },
-  imagen: "/ilustraciones/alianzas.jpg",
+  imagen: "/imagenes-reales/onu.jpg",
   claves: [
     "APEC: 33.ª reunión de líderes, 18 y 19 de noviembre en Shenzhen, con 21 economías y la primera cumbre a tres entre Xi Jinping, Donald Trump y Vladímir Putin.",
     "G20: 14 y 15 de diciembre en el Trump National Doral, cerca de Miami, bajo presidencia estadounidense y sin Sudáfrica.",
@@ -193,7 +193,7 @@ export const espanol: Articulo = {
   publicado: "2026-11-18",
   revisado: "2026-11-18",
   revisarCada: 120,
-  imagen: "/ilustraciones/embajadores.jpg",
+  imagen: "/imagenes-reales/onu.jpg",
   claves: [
     "Más de 640 millones de usuarios potenciales, un 1,5 % más que en 2025.",
     "Más de 520 millones con dominio nativo: es la tercera lengua materna del mundo, tras el chino mandarín y el hindi.",

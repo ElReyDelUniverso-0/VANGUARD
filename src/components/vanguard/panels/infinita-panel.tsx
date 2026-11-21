@@ -246,7 +246,7 @@ export function InfinitaPanel() {
       <TituloEpico
         titulo="INFINITA VERDADES"
         volanta="El mayor centro de noticias del mundo"
-        imagen="/ilustraciones/verdades.jpg"
+        imagen="/imagenes-reales/chernobyl.jpg"
         escena="noticias"
         semilla={72}
         prioritaria

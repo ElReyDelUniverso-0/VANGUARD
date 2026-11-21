@@ -22,7 +22,7 @@ export const REGLA_ORO = {
   noticias: {
     titulo: "Noticias + NEURONA",
     volanta: "El mundo en tiempo real, ahora con IA que lee contigo",
-    imagen: "/ilustraciones/noticias.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Titulares verificados de todo el planeta con credibilidad por fuente. Vota si es REAL o FAKE y pulsa NEURONA: el analista IA firma el expediente — resumen, actores, riesgo, confianza y recomendación — y cada expediente alimenta la RED NEURONAL, la tecnología nativa de Vanguard que crece mientras lees.",
     acento: "#FFB020",
@@ -30,7 +30,7 @@ export const REGLA_ORO = {
   mapa: {
     titulo: "Mapa Mundial",
     volanta: "Cada frontera bajo la luna",
-    imagen: "/ilustraciones/mapa.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "El planeta entero en una sola vista: conflictos, sismos y movimientos en vivo. Toca cualquier zona para ver qué pasa ahora mismo.",
     acento: "#FFC94D",
@@ -39,7 +39,7 @@ export const REGLA_ORO = {
   operaciones: {
     titulo: "SALA DE OPERACIONES",
     volanta: "El tablero donde se decide la guerra",
-    imagen: "/ilustraciones/operaciones.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Cuatro misiones militares esperan tu orden: pulsa EJECUTAR y mira los jets cruzar el tablero, las fases avanzar y el misil volar. Cuando el objetivo cae, cobras.",
     acento: "#FF4D00",
@@ -48,7 +48,7 @@ export const REGLA_ORO = {
   hacienda: {
     titulo: "BANCO CENTRAL",
     volanta: "Tu dinero ahora trabaja contigo",
-    imagen: "/ilustraciones/banco.jpg",
+    imagen: "/imagenes-reales/shanghai.jpg",
     texto:
       "Sueldo de operativo que acumula cada minuto, bóvedas con interés al 9-30%, tesorería de verdad y bonos por información certificada. La información es dinero — y aquí se cobra.",
     acento: "#F7C948",
@@ -56,7 +56,7 @@ export const REGLA_ORO = {
   misiones: {
     titulo: "Misiones",
     volanta: "Tu camino de comandante",
-    imagen: "/ilustraciones/misiones.jpg",
+    imagen: "/imagenes-reales/pentagono.jpg",
     texto:
       "Objetivos diarios que pagan monedas, gemas y XP. Completa, cobra y escala en el ranking sin salir de aquí.",
     acento: "#FF3B30",
@@ -64,7 +64,7 @@ export const REGLA_ORO = {
   briefing: {
     titulo: "Briefing Diario",
     volanta: "Primera luz, primera intel",
-    imagen: "/ilustraciones/briefing.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Cada día el mundo cambia. Aquí tienes el resumen: qué mirar, dónde apuntar y qué se te está escapando.",
     acento: "#FFD27A",
@@ -72,7 +72,7 @@ export const REGLA_ORO = {
   osint: {
     titulo: "Sala OSINT",
     volanta: "15 capas de inteligencia",
-    imagen: "/ilustraciones/osint.jpg",
+    imagen: "/imagenes-reales/estambul.jpg",
     texto:
       "Satélites, radar, fotos y señales abiertas. Todo lo que ve un analista profesional — ahora al alcance de tu dedo.",
     acento: "#DCC078",
@@ -80,7 +80,7 @@ export const REGLA_ORO = {
   mundo: {
     titulo: "Mundo de Guerra",
     volanta: "La partida grande",
-    imagen: "/ilustraciones/mundo.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Conquista territorios, defiende los tuyos y decide el destino del mapa. Cada movimiento cambia la guerra.",
     acento: "#FF5A3C",
@@ -88,7 +88,7 @@ export const REGLA_ORO = {
   multijugador: {
     titulo: "Multijugador",
     volanta: "Otros guerreros, tu nivel",
-    imagen: "/ilustraciones/multijugador.jpg",
+    imagen: "/imagenes-reales/dubai.jpg",
     texto:
       "Guerra global, duelos 1v1, ranking ELO y ahora DESAFÍOS POR CÓDIGO: reta a cualquiera sin importar su horario — ambos jugáis la misma semilla y el bote espera al mejor.",
     acento: "#FF7A45",
@@ -96,7 +96,7 @@ export const REGLA_ORO = {
   arcade: {
     titulo: "Arcade Pack",
     volanta: "Joyas retro de guerra",
-    imagen: "/ilustraciones/arcade.jpg",
+    imagen: "/imagenes-reales/tokio.jpg",
     texto:
       "12 minijuegos con récords que defender: sobrevive al CONVOY BAJO FUEGO bajo luna llena, rompe el CIFRADO SIMON y persigue el JUEGO DEL DÍA, que paga doble. Y ojo: cada recompensa puede traer el GOLPE DE FORTUNA (×2, ×3 o ×5) — con tensión global alta, todos los pagos llevan PRIMA DE GUERRA +15%.",
     acento: "#FF9F1C",
@@ -104,7 +104,7 @@ export const REGLA_ORO = {
   bookmaker: {
     titulo: "BetNación",
     volanta: "La casa de apuestas",
-    imagen: "/ilustraciones/bookmaker.jpg",
+    imagen: "/imagenes-reales/losangeles.jpg",
     texto:
       "Apuesta monedas por eventos reales del mundo: cuotas vivas, mercados de GUERRA con la tensión real del planeta y JACKPOT progresivo que engorda con cada boleto. La primera apuesta del día la paga la casa — y las combinadas de 3+ aciertos suman bonus hasta +12%.",
     acento: "#3DDC97",
@@ -112,7 +112,7 @@ export const REGLA_ORO = {
   espionaje: {
     titulo: "Red de Espionaje",
     volanta: "Sombras que reportan",
-    imagen: "/ilustraciones/espionaje.jpg",
+    imagen: "/imagenes-reales/cia.jpg",
     texto:
       "Recluta espías, envíalos tras la pista y recibe informes que nadie más tiene. El silencio también dispara.",
     acento: "#9B5CFF",
@@ -120,7 +120,7 @@ export const REGLA_ORO = {
   biblioteca: {
     titulo: "Biblioteca Secreta",
     volanta: "Páginas que nadie debía leer",
-    imagen: "/ilustraciones/biblioteca.jpg",
+    imagen: "/imagenes-reales/arco.jpg",
     texto:
       "Documentos, historias y saberes guardados bajo llave. Abre un libro y descubre por qué era secreto.",
     acento: "#FFB84D",
@@ -128,7 +128,7 @@ export const REGLA_ORO = {
   foryou: {
     titulo: "Para Ti",
     volanta: "El feed de la comunidad",
-    imagen: "/ilustraciones/foryou.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Lo mejor que crea la comunidad, en un feed vertical infinito. Desliza, reacciona y aparece tú también.",
     acento: "#FF4D6D",
@@ -136,7 +136,7 @@ export const REGLA_ORO = {
   ranking: {
     titulo: "Ranking",
     volanta: "Los que mandan",
-    imagen: "/ilustraciones/ranking.jpg",
+    imagen: "/imagenes-reales/losangeles.jpg",
     texto:
       "La tabla de los mejores analistas del mundo. Sube puestos, entra al top y haz historia esta semana.",
     acento: "#FFD60A",
@@ -144,7 +144,7 @@ export const REGLA_ORO = {
   agente: {
     titulo: "OPERADOR LEGENDARIO",
     volanta: "Tu agente ahora luce TODAS sus proezas",
-    imagen: "/ilustraciones/agente.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     texto:
       "Editor 3D con equipo completo: casco con montura NVG, boina, mochila táctica con antena, parche, guantes y botas. Las MEDALLAS se GANAN con logros reales y se lucen en el pecho; elige compañero — águila, dron o satélite orbital — y desbloquea RELIQUIAS únicas que orbitan a tu operador. Todos las ven en el hangar.",
     acento: "#38C6FF",
@@ -152,7 +152,7 @@ export const REGLA_ORO = {
   alianzas: {
     titulo: "Alianzas",
     volanta: "Juntos somos frente",
-    imagen: "/ilustraciones/alianzas.jpg",
+    imagen: "/imagenes-reales/onu.jpg",
     texto:
       "Funda pactos, únete a uniones y comparte victorias. Un guerrero solo cae; una alianza avanza.",
     acento: "#B78CFF",
@@ -160,7 +160,7 @@ export const REGLA_ORO = {
   gobierno: {
     titulo: "Gobierno Mundial",
     volanta: "El salón de los decretos",
-    imagen: "/ilustraciones/gobierno.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     texto:
       "Preside, decreta y negocia como líder mundial. Cada firma tuya mueve el tablero de todos.",
     acento: "#FFC857",
@@ -168,7 +168,7 @@ export const REGLA_ORO = {
   quiz: {
     titulo: "Quiz Táctico",
     volanta: "¿Cuánto sabes de verdad?",
-    imagen: "/ilustraciones/quiz.jpg",
+    imagen: "/imagenes-reales/tokio.jpg",
     texto:
       "Preguntas reales sobre el mundo y puntos por respuesta rápida. Aprende jugando — y sube tu IQ.",
     acento: "#FF6FB5",
@@ -176,7 +176,7 @@ export const REGLA_ORO = {
   dronguerra: {
     titulo: "Guerra de Drones",
     volanta: "Ojos que no parpadean",
-    imagen: "/ilustraciones/dronguerra.jpg",
+    imagen: "/imagenes-reales/nuclear.jpg",
     texto:
       "Pilota misiones de dron sobre ciudades reales. Exactitud, paciencia y un dedo firme.",
     acento: "#FF7043",
@@ -184,7 +184,7 @@ export const REGLA_ORO = {
   frente: {
     titulo: "Líneas de Frente",
     volanta: "Donde el mundo arde hoy",
-    imagen: "/ilustraciones/frente.jpg",
+    imagen: "/imagenes-reales/portaaviones.jpg",
     texto:
       "Los frentes activos del planeta, en vivo y en 3D. Mira de cerca dónde se decide la historia.",
     acento: "#FF8A5C",
@@ -192,7 +192,7 @@ export const REGLA_ORO = {
   warsim: {
     titulo: "Simulador de Guerras",
     volanta: "Escenarios que no existen… aún",
-    imagen: "/ilustraciones/warsim.jpg",
+    imagen: "/imagenes-reales/portaaviones.jpg",
     texto:
       "Crea conflictos hipotéticos y simúlalos con datos reales. La mejor forma de predecir el mañana.",
     acento: "#FFA552",
@@ -200,7 +200,7 @@ export const REGLA_ORO = {
   crisis: {
     titulo: "Crisis Mundial",
     volanta: "Alerta en el tablero",
-    imagen: "/ilustraciones/crisis.jpg",
+    imagen: "/imagenes-reales/nuclear.jpg",
     texto:
       "Cuando el mundo se rompe, aquí suena la alarma. Sigue cada crisis minuto a minuto.",
     acento: "#FF2E4C",
@@ -208,7 +208,7 @@ export const REGLA_ORO = {
   planeta: {
     titulo: "Planeta Vivo",
     volanta: "La Tierra respira",
-    imagen: "/ilustraciones/planeta.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "ISS, auroras, sismos y NASA en directo. El planeta visto desde arriba — y desde dentro.",
     acento: "#4DC9FF",
@@ -216,7 +216,7 @@ export const REGLA_ORO = {
   geopolitica: {
     titulo: "Geopolítica en Vivo",
     volanta: "La ONU y el pulso del mundo",
-    imagen: "/ilustraciones/geopolitica.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     texto:
       "Resoluciones, sismos y decisiones globales al momento. Entiende el porqué de cada movimiento.",
     acento: "#7FD1FF",
@@ -224,7 +224,7 @@ export const REGLA_ORO = {
   detective: {
     titulo: "Archivos Nación",
     volanta: "Cada país guarda un secreto",
-    imagen: "/ilustraciones/detective.jpg",
+    imagen: "/imagenes-reales/cia.jpg",
     texto:
       "Investiga naciones como un detective: pistas, historias y expedientes por país. Resuelve el caso.",
     acento: "#E8B36A",
@@ -233,7 +233,7 @@ export const REGLA_ORO = {
   bolsa: {
     titulo: "Bolsa Geopolítica",
     volanta: "El mercado nunca duerme",
-    imagen: "/ilustraciones/bolsa.jpg",
+    imagen: "/imagenes-reales/shanghai.jpg",
     texto:
       "Compra monedas de países reales y velas subir o caer con el mundo. Empieza con poco, aprende rápido — y si aciertas, la bolsa paga.",
     acento: "#E8C56A",
@@ -241,7 +241,7 @@ export const REGLA_ORO = {
   expedientes: {
     titulo: "Archivo Secreto",
     volanta: "Expedientes desclasificados",
-    imagen: "/ilustraciones/expedientes.jpg",
+    imagen: "/imagenes-reales/area51.jpg",
     texto:
       "Documentos reales del FBI, CIA y NARA que estuvieron bajo llave durante décadas. Ábrelos todos y escala hasta el rango OJO DE DIOS.",
     acento: "#C77DFF",
@@ -249,7 +249,7 @@ export const REGLA_ORO = {
   oscura: {
     titulo: "Alejandría Oscura",
     volanta: "La biblioteca del miedo",
-    imagen: "/ilustraciones/oscura.jpg",
+    imagen: "/imagenes-reales/area51.jpg",
     texto:
       "Teorías con veredicto real, armas imposibles, civilizaciones perdidas y documentos prohibidos. Entra con la luz encendida.",
     acento: "#D6336C",
@@ -257,7 +257,7 @@ export const REGLA_ORO = {
   envivo: {
     titulo: "En Vivo Mundial",
     volanta: "El planeta al minuto",
-    imagen: "/ilustraciones/envivo.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Noticias reales 24/7 y directos de la comunidad, con donaciones en vivo. Lo que pasa ahora mismo, sin filtro y sin retraso.",
     acento: "#FF5252",
@@ -265,7 +265,7 @@ export const REGLA_ORO = {
   contribuidores: {
     titulo: "Contribuidores",
     volanta: "Tu talento paga",
-    imagen: "/ilustraciones/contribuidores.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Siete trabajos remunerados: reporta, escribe, verifica, traduce. La comunidad construye Vanguard — y aquí cobra por ello.",
     acento: "#2EE6A8",
@@ -273,7 +273,7 @@ export const REGLA_ORO = {
   memes: {
     titulo: "Estudio de Memes",
     volanta: "La guerra también se ríe",
-    imagen: "/ilustraciones/memes.jpg",
+    imagen: "/imagenes-reales/tokio.jpg",
     texto:
       "Diseña tu meme geopolítico con 251 países personajes. Publícalo, haz reír al mundo y gana monedas si triunfa.",
     acento: "#D946EF",
@@ -281,7 +281,7 @@ export const REGLA_ORO = {
   creador: {
     titulo: "Estudio Comunitario",
     volanta: "Sube tu propia obra",
-    imagen: "/ilustraciones/creador.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Personajes, armas, juegos, música, noticias y encuestas: sube tu contenido y la IA lo modera al instante. Tu creación, frente al mundo.",
     acento: "#FF66C4",
@@ -289,7 +289,7 @@ export const REGLA_ORO = {
   studios: {
     titulo: "PRENSA LIBRE",
     volanta: "Funda tu propio periódico dentro de Vanguard",
-    imagen: "/ilustraciones/studios.jpg",
+    imagen: "/imagenes-reales/dubai.jpg",
     texto:
       "Además de noticias, banderas, mapas, música y stickers: ahora cada operador puede FUNDAR un periódico — nombre, lema, logotipo, color de marca y artículos categorizados. La comunidad lo lee en el KIOSCO, lo comenta y lo puntúa. La información también se escribe aquí.",
     acento: "#22D3EE",
@@ -297,7 +297,7 @@ export const REGLA_ORO = {
   bolsamonedas: {
     titulo: "Bolsa de Monedas",
     volanta: "Funda tu propia divisa",
-    imagen: "/ilustraciones/bolsamonedas.jpg",
+    imagen: "/imagenes-reales/shanghai.jpg",
     texto:
       "Crea tu moneda con ticker y supply. El mercado la cotiza en vivo y los jugadores mueven el precio. Si tu divisa despega, te haces rico.",
     acento: "#34C77B",
@@ -305,7 +305,7 @@ export const REGLA_ORO = {
   armeria: {
     titulo: "Armería Real",
     volanta: "El acero, en detalle",
-    imagen: "/ilustraciones/armeria.jpg",
+    imagen: "/assets/real/missile-1.jpg",
     texto:
       "Fotos reales de las armas del conflicto: función, ficha técnica y armado pieza por pieza. Conocerlas es entender la guerra.",
     acento: "#FF5C33",
@@ -313,7 +313,7 @@ export const REGLA_ORO = {
   abusos: {
     titulo: "Verdad Cruda",
     volanta: "El lado que prefieren ocultar",
-    imagen: "/ilustraciones/abusos.jpg",
+    imagen: "/imagenes-reales/chernobyl.jpg",
     texto:
       "Crímenes y abusos documentados con fuentes de la ONU. No es fácil de leer, pero es lo que realmente pasa en el mundo.",
     acento: "#FF6B6B",
@@ -321,7 +321,7 @@ export const REGLA_ORO = {
   memorial: {
     titulo: "Memorial",
     volanta: "Los que documentaron y cayeron",
-    imagen: "/ilustraciones/memorial.jpg",
+    imagen: "/imagenes-reales/muroberlin.jpg",
     texto:
       "Periodistas y analistas que murieron contando la verdad. Enciende tu vela y guarda un minuto de silencio.",
     acento: "#B49CFF",
@@ -329,7 +329,7 @@ export const REGLA_ORO = {
   predicciones: {
     titulo: "Predicciones",
     volanta: "Apuesta por el mañana",
-    imagen: "/ilustraciones/predicciones.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Predice elecciones, conflictos y crisis antes de que pasen. Cada acierto sube tu reputación y llena tu cuenta.",
     acento: "#FFB35C",
@@ -337,7 +337,7 @@ export const REGLA_ORO = {
   salas: {
     titulo: "Salas Sociales",
     volanta: "La tertulia de los guerreros",
-    imagen: "/ilustraciones/salas.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Chat en vivo con GRITO DEL DÍA para encender el debate, emotes rápidos y tarjetas de operador con rango y firma de guerra. Entra, opina y haz aliados — o rivales.",
     acento: "#8C7FFF",
@@ -345,7 +345,7 @@ export const REGLA_ORO = {
   radar: {
     titulo: "Radar Desinfo",
     volanta: "Caza las mentiras",
-    imagen: "/ilustraciones/radar.jpg",
+    imagen: "/assets/real/radar-1.jpg",
     texto:
       "Detecta noticias falsas y conexiones ocultas entre fuentes. Tu cuchillo analítico contra la desinformación.",
     acento: "#2EE6C8",
@@ -353,7 +353,7 @@ export const REGLA_ORO = {
   logros: {
     titulo: "Logros",
     volanta: "Tu vitrina de guerra",
-    imagen: "/ilustraciones/logros.jpg",
+    imagen: "/imagenes-reales/pentagono.jpg",
     texto:
       "Medallas, insignias y marcas históricas por cada hazaña. Aquí se guarda todo lo que has conquistado.",
     acento: "#FFE14D",
@@ -361,7 +361,7 @@ export const REGLA_ORO = {
   recompensas: {
     titulo: "Recompensas",
     volanta: "El botín del comandante",
-    imagen: "/ilustraciones/recompensas.jpg",
+    imagen: "/imagenes-reales/dubai.jpg",
     texto:
       "Cofres, bonos y premios por tu actividad diaria. Vuelve cada día: el botín nunca se repite.",
     acento: "#FFAA33",
@@ -369,7 +369,7 @@ export const REGLA_ORO = {
   tienda: {
     titulo: "Tienda",
     volanta: "El arsenal del agente",
-    imagen: "/ilustraciones/tienda.jpg",
+    imagen: "/imagenes-reales/shanghai.jpg",
     texto:
       "Equipamiento, potencias y objetos raros para tu agente y tus operaciones. Gasta con cabeza — o con estilo.",
     acento: "#5CE1E6",
@@ -377,7 +377,7 @@ export const REGLA_ORO = {
   camaras: {
     titulo: "Cámaras del Mundo",
     volanta: "Los ojos de la calle",
-    imagen: "/ilustraciones/camaras.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Cámaras públicas de ciudades de todo el planeta, en directo. Mira la Tierra moverse en tiempo real.",
     acento: "#00E5A0",
@@ -385,7 +385,7 @@ export const REGLA_ORO = {
   pulso: {
     titulo: "Pulso Mundial",
     volanta: "Satélite y cielo en vivo",
-    imagen: "/ilustraciones/pulso.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Satélites, radar aéreo y el latido del planeta desde arriba. Lo que vuela, lo que late, lo que se mueve.",
     acento: "#00D4FF",
@@ -393,7 +393,7 @@ export const REGLA_ORO = {
   tribunal: {
     titulo: "Juicio Histórico",
     volanta: "La historia en el banquillo",
-    imagen: "/ilustraciones/tribunal.jpg",
+    imagen: "/imagenes-reales/pentagono.jpg",
     texto:
       "Juzga los momentos que cambiaron el mundo: tú eres el jurado. El veredicto de la comunidad queda para la historia.",
     acento: "#E6C86E",
@@ -401,7 +401,7 @@ export const REGLA_ORO = {
   recluta: {
     titulo: "Reclutamiento",
     volanta: "De civil a agente",
-    imagen: "/ilustraciones/recluta.jpg",
+    imagen: "/imagenes-reales/pentagono.jpg",
     texto:
       "Cómo se entra en Vanguard: la vía 3D paso a paso. Míralo una vez y entenderás todo el juego.",
     acento: "#7DFFB2",
@@ -410,7 +410,7 @@ export const REGLA_ORO = {
   registro: {
     titulo: "Registro de Actividad",
     volanta: "Tu historial de guerra",
-    imagen: "/ilustraciones/registro.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Cada acción que tomas queda escrita aquí: misiones, batallas, monedas y logros. Tu carrera, línea a línea.",
     acento: "#9AA8FF",
@@ -418,7 +418,7 @@ export const REGLA_ORO = {
   edad: {
     titulo: "Age of Nations",
     volanta: "Evoluciona tu nación",
-    imagen: "/ilustraciones/edad.jpg",
+    imagen: "/imagenes-reales/nairobi.jpg",
     texto:
       "Desde la aldea antigua hasta la superpotencia moderna: haz crecer tu civilización era por era.",
     acento: "#FF9E7A",
@@ -426,7 +426,7 @@ export const REGLA_ORO = {
   briefings: {
     titulo: "Briefings Clasificados",
     volanta: "Solo lectura autorizada",
-    imagen: "/ilustraciones/briefings.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Informes reservados con lo que casi nadie sabe todavía. Léelos antes de que el mundo los descubra.",
     acento: "#6FD6FF",
@@ -434,7 +434,7 @@ export const REGLA_ORO = {
   carteles: {
     titulo: "Carteles",
     volanta: "El imperio invisible",
-    imagen: "/ilustraciones/carteles.jpg",
+    imagen: "/imagenes-reales/mali.jpg",
     texto:
       "Carteles y organizaciones que mueven el dinero y el miedo del planeta. Conoce su mapa y su historia.",
     acento: "#B54FFF",
@@ -442,7 +442,7 @@ export const REGLA_ORO = {
   combate: {
     titulo: "Simulador de Combate",
     volanta: "Enfrenta al enemigo",
-    imagen: "/ilustraciones/combate.jpg",
+    imagen: "/imagenes-reales/portaaviones.jpg",
     texto:
       "Elige tu oponente, estudia su ficha y lucha bajo la luna. Reflejos, táctica y un dedo firme.",
     acento: "#FF4655",
@@ -450,7 +450,7 @@ export const REGLA_ORO = {
   conquistas3d: {
     titulo: "Conquistas 3D",
     volanta: "Tu imperio en pantalla",
-    imagen: "/ilustraciones/conquistas3d.jpg",
+    imagen: "/imagenes-reales/dubai.jpg",
     texto:
       "Revive tus conquistas en escenas 3D: cada territorio tomado, cada batalla ganada, tu historia.",
     acento: "#FFD98E",
@@ -458,7 +458,7 @@ export const REGLA_ORO = {
   contadores: {
     titulo: "Contadores Mundiales",
     volanta: "El mundo en números",
-    imagen: "/ilustraciones/contadores.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Población, nacimientos, conflictos y más, contando en vivo. El planeta nunca deja de moverse.",
     acento: "#FF7BAC",
@@ -466,7 +466,7 @@ export const REGLA_ORO = {
   curiosidades: {
     titulo: "Curiosidades",
     volanta: "Datos que sorprenden",
-    imagen: "/ilustraciones/curiosidades.jpg",
+    imagen: "/imagenes-reales/rapanui.jpg",
     texto:
       "Historias reales y datos increíbles del mundo que no salen en las noticias. Aprende algo nuevo cada día.",
     acento: "#F5E960",
@@ -474,7 +474,7 @@ export const REGLA_ORO = {
   retos: {
     titulo: "Retos Diarios",
     volanta: "Ponte a prueba",
-    imagen: "/ilustraciones/retos.jpg",
+    imagen: "/imagenes-reales/pentagono.jpg",
     texto:
       "Desafíos nuevos cada día con premios en monedas y gemas. Complétalos todos y mantén tu racha.",
     acento: "#FFDA47",
@@ -482,7 +482,7 @@ export const REGLA_ORO = {
   directos: {
     titulo: "Directos en Vivo",
     volanta: "La comunidad al aire",
-    imagen: "/ilustraciones/directos.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Streams de los jugadores en tiempo real: guerra, análisis y entretenimiento. Súbete al aire.",
     acento: "#FF3D68",
@@ -490,7 +490,7 @@ export const REGLA_ORO = {
   divisas: {
     titulo: "Divisas del Mundo",
     volanta: "El valor de cada nación",
-    imagen: "/ilustraciones/divisas.jpg",
+    imagen: "/imagenes-reales/shanghai.jpg",
     texto:
       "El precio de las monedas del planeta en vivo, con cambios al instante. Entiende la economía mundial.",
     acento: "#4ADE80",
@@ -498,7 +498,7 @@ export const REGLA_ORO = {
   embajadores: {
     titulo: "Embajadores por País",
     volanta: "La voz de cada nación",
-    imagen: "/ilustraciones/embajadores.jpg",
+    imagen: "/imagenes-reales/onu.jpg",
     texto:
       "Un representante por país: los jugadores elegidos para hablar por su nación. Postúlate y vota.",
     acento: "#86EFAC",
@@ -506,7 +506,7 @@ export const REGLA_ORO = {
   enciclopedia: {
     titulo: "Enciclopedia Mundial",
     volanta: "Saber de A a Z",
-    imagen: "/ilustraciones/enciclopedia.jpg",
+    imagen: "/imagenes-reales/sumeria.jpg",
     texto:
       "Países, banderas, historias y datos de los 251 territorios del planeta. La biblioteca del analista.",
     acento: "#93C5FD",
@@ -514,7 +514,7 @@ export const REGLA_ORO = {
   epocas: {
     titulo: "Épocas Antiguas",
     volanta: "Viaja en el tiempo",
-    imagen: "/ilustraciones/epocas.jpg",
+    imagen: "/imagenes-reales/muroberlin.jpg",
     texto:
       "Imperios, guerras y civilizaciones que hicieron el mundo de hoy. La historia que repite sus lecciones.",
     acento: "#D8B4FE",
@@ -522,7 +522,7 @@ export const REGLA_ORO = {
   estudio: {
     titulo: "Estudio de Video",
     volanta: "Crea y publica",
-    imagen: "/ilustraciones/estudio.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Monta tus videos con la herramienta del estudio: corta, arma y publica para toda la comunidad.",
     acento: "#F472B6",
@@ -530,7 +530,7 @@ export const REGLA_ORO = {
   muertes: {
     titulo: "Figuras y Bajas",
     volanta: "Los que marcaron la historia",
-    imagen: "/ilustraciones/muertes.jpg",
+    imagen: "/imagenes-reales/chernobyl.jpg",
     texto:
       "Fallecimientos de figuras del mundo en tiempo real y las bajas históricas que cambiaron el rumbo.",
     acento: "#B8B8C4",
@@ -538,7 +538,7 @@ export const REGLA_ORO = {
   foros: {
     titulo: "Foros",
     volanta: "El debate de la comunidad",
-    imagen: "/ilustraciones/foros.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Hilos por temas y países donde los guerreros discuten el mundo. Opina con argumentos, gana respeto.",
     acento: "#67E8F9",
@@ -546,7 +546,7 @@ export const REGLA_ORO = {
   amigos: {
     titulo: "Amigos",
     volanta: "Tu escuadrón",
-    imagen: "/ilustraciones/amigos.jpg",
+    imagen: "/imagenes-reales/dubai.jpg",
     texto:
       "Añade guerreros, mira quién está en línea y comparte batallas. Nadie gana una guerra en solitario.",
     acento: "#5EEAD4",
@@ -554,7 +554,7 @@ export const REGLA_ORO = {
   fusion: {
     titulo: "Fusion",
     volanta: "Combina y descubre",
-    imagen: "/ilustraciones/fusion.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Mezcla elementos y descubre combinaciones únicas. El laboratorio secreto de Vanguard.",
     acento: "#A78BFA",
@@ -562,7 +562,7 @@ export const REGLA_ORO = {
   galeria: {
     titulo: "Galería OSINT",
     volanta: "Imágenes de la guerra",
-    imagen: "/ilustraciones/galeria.jpg",
+    imagen: "/imagenes-reales/tokio.jpg",
     texto:
       "Fotos y capturas del mundo en conflicto, curadas por la comunidad. Cada imagen cuenta una historia.",
     acento: "#E879F9",
@@ -570,7 +570,7 @@ export const REGLA_ORO = {
   maps: {
     titulo: "TERRA 3D",
     volanta: "El planeta como maqueta: relieve satelital real",
-    imagen: "/ilustraciones/maps.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "El mapa satelital ahora tiene modo 3D REAL: imagen de Esri sobre terreno en relieve con inclinación, rotación y vuelos cinemáticos a 12 zonas calientes — del Donbás a Ormuz, de Taiwán a Bab el-Mandeb, del Líbano Sur al Congo Este. Del espacio a la esquina exacta, y ahora también al valle exacto.",
     acento: "#34D399",
@@ -578,7 +578,7 @@ export const REGLA_ORO = {
   ayuda: {
     titulo: "Ayuda",
     volanta: "Todo explicado",
-    imagen: "/ilustraciones/ayuda.jpg",
+    imagen: "/imagenes-reales/panama.jpg",
     texto:
       "Guías rápidas de cada sección, preguntas frecuentes y contacto. Nunca estás perdido en Vanguard.",
     acento: "#FCD34D",
@@ -586,7 +586,7 @@ export const REGLA_ORO = {
   historia: {
     titulo: "Guerras Históricas",
     volanta: "Lecciones de acero",
-    imagen: "/ilustraciones/historia.jpg",
+    imagen: "/imagenes-reales/muroberlin.jpg",
     texto:
       "Los conflictos que dibujaron las fronteras de hoy: causas, fechas y consecuencias. Comprende el pasado.",
     acento: "#D9A05B",
@@ -594,7 +594,7 @@ export const REGLA_ORO = {
   gancho: {
     titulo: "Centro de Ganancias",
     volanta: "Todo lo que puedes ganar",
-    imagen: "/ilustraciones/gancho.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Bonos, referidos, retos y recompensas en un solo lugar. Tu camino rápido a la fortuna.",
     acento: "#FBBF24",
@@ -602,7 +602,7 @@ export const REGLA_ORO = {
   incidentes: {
     titulo: "Mapa de Incidentes",
     volanta: "Donde algo está pasando",
-    imagen: "/ilustraciones/incidentes.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Incidencias reportadas en el mapa en vivo: alertas, sucesos y señales de la comunidad.",
     acento: "#FB7185",
@@ -610,7 +610,7 @@ export const REGLA_ORO = {
   minijuego: {
     titulo: "Minijuegos",
     volanta: "Pausa táctica",
-    imagen: "/ilustraciones/minijuego.jpg",
+    imagen: "/imagenes-reales/tokio.jpg",
     texto:
       "Juegos rápidos para ganar monedas entre batallas. Diversión que también entrena tu mente.",
     acento: "#F97316",
@@ -618,7 +618,7 @@ export const REGLA_ORO = {
   notificaciones: {
     titulo: "Alertas",
     volanta: "No te pierdas nada",
-    imagen: "/ilustraciones/notificaciones.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Tus notificaciones en un solo lugar: logros, eventos, ataques y noticias que te afectan.",
     acento: "#EAB308",
@@ -626,7 +626,7 @@ export const REGLA_ORO = {
   perfil: {
     titulo: "Personaliza tu Perfil",
     volanta: "Tu cara ante el mundo",
-    imagen: "/ilustraciones/perfil.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Bandera, apodo, colores y estilo: haz que tu perfil grite quién eres antes de que hables.",
     acento: "#C084FC",
@@ -636,7 +636,7 @@ export const REGLA_ORO = {
   cambios: {
     titulo: "EL MUNDO CAMBIA",
     volanta: "Tu informe de regreso — nunca la misma página de ayer",
-    imagen: "/ilustraciones/mundo.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Cada vez que vuelves, Vanguard te cuenta qué cambió desde tu última visita: los pulsos del mundo con su hora y su riesgo, las noticias reales con su fuente y su fecha (verificables, con enlace a la fuente original), el expediente del día y todo lo que rotó mientras no mirabas. Cada elemento lleva su etiqueta: FUENTE REAL o MUNDO VANGUARD · SIM. Sin urgencia falsa: si no cambió nada, te lo decimos igual de claro.",
     acento: "#F5C542",
@@ -644,7 +644,7 @@ export const REGLA_ORO = {
   analista: {
     titulo: "PERFIL DE ANALISTA",
     volanta: "El progreso con sentido — no solo números",
-    imagen: "/ilustraciones/perfil.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Tu carrera de analista en una sola sala: nivel y rango (de RECLUTA INTEL a OJO DEL MUNDO), un ELO que sube con lo que sabes hacer, 14 insignias que cuentan exactamente lo que hiciste — cuántos expedientes abriste, cuántas simulaciones corriste, cuántas obras publicaste — y 3 retos semanales de investigación que te mandan a lugares concretos del mundo Vanguard. Cada número es real: nada se infla.",
     acento: "#FFD166",
@@ -652,7 +652,7 @@ export const REGLA_ORO = {
   escenarios: {
     titulo: "GALERÍA DEL DESTINO",
     volanta: "La gente crea, la gente participa — la comunidad ¿Y SI...?",
-    imagen: "/ilustraciones/creador.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Los escenarios que la comunidad comparte desde el LABORATORIO DEL DESTINO. Explora cualquier contrafactual corriendo la simulación al instante (el motor es determinista: todos ven la misma guerra), coméntalo con otros analistas y MEJÓRALO con un remix: se abre en el Laboratorio con la misma crisis, la misma perturbación y la misma dosis, listas para que las ajustes y publiques tu versión. Etiqueta siempre visible: SIMULACIÓN · NO ES PREDICCIÓN.",
     acento: "#FFC94D",
@@ -661,7 +661,7 @@ export const REGLA_ORO = {
   taller: {
     titulo: "TALLER DE JUEGOS",
     volanta: "Crea, publica y juega — sin escribir una línea de código",
-    imagen: "/ilustraciones/creador.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "La Ciudadela tiene taller: elige uno de los tres motores (QUIZ DEL MUNDO, ORDENA LA HISTORIA o VERDAD O MENTIRA), rellena el formulario, pruébalo en la vista previa como lo vivirá la comunidad y publícalo en el arcade. Cada juego sale firmado con tu pasaporte de la Ciudadela, pasa por el agente moderador IA y paga 50 monedas y 25 XP al publicar. Y la otra mitad del taller es el arcade: los juegos de los demás se juegan en vivo, con medallas (OJO DE ÁGUILA, ANALISTA DE ORO…) y XP diario honesto por jugar.",
     acento: "#FFC94D",
@@ -669,7 +669,7 @@ export const REGLA_ORO = {
   fortaleza: {
     titulo: "FORTALEZA DE ACERO",
     volanta: "La seguridad no se esconde — se enseña",
-    imagen: "/ilustraciones/perfil.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Los muros de Vanguard a la vista: contraseñas con scrypt y salt de 128 bits, sesiones firmadas con HMAC-SHA256 en cookie httpOnly, muros de frecuencia por IP en registro, login y publicaciones, blindaje de 15 minutos tras 5 fallos de login, sanitización de entradas, cabeceras anti-clickjacking y el agente moderador IA revisando cada envío. Los juegos del taller solo los publica una cuenta firmada: nadie puede suplantar a un creador. Y lo prometido: sin notificaciones engañosas, sin recompensas que desaparezcan y sin castigos si faltas un día.",
     acento: "#34D399",
@@ -677,7 +677,7 @@ export const REGLA_ORO = {
   encuestas: {
     titulo: "Encuestas",
     volanta: "Tu voto cuenta",
-    imagen: "/ilustraciones/encuestas.jpg",
+    imagen: "/imagenes-reales/losangeles.jpg",
     texto:
       "Vota los temas del mundo y compara con la comunidad. La opinión global, en tiempo real.",
     acento: "#2DD4BF",
@@ -685,7 +685,7 @@ export const REGLA_ORO = {
   estadisticas: {
     titulo: "Estadísticas",
     volanta: "Tu progreso en gráficas",
-    imagen: "/ilustraciones/estadisticas.jpg",
+    imagen: "/imagenes-reales/losangeles.jpg",
     texto:
       "Tu evolución día a día: XP, monedas, victorias y rachas. Los números de tu carrera.",
     acento: "#60A5FA",
@@ -693,7 +693,7 @@ export const REGLA_ORO = {
   sala18: {
     titulo: "Sala Roja",
     volanta: "Contenido documental 18+",
-    imagen: "/ilustraciones/sala18.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Lo crudo del conflicto: material documental verificado, solo para mayores de 18 años. Entra con criterio.",
     acento: "#DC2626",
@@ -701,7 +701,7 @@ export const REGLA_ORO = {
   racha: {
     titulo: "Racha",
     volanta: "Cada día cuenta",
-    imagen: "/ilustraciones/racha.jpg",
+    imagen: "/imagenes-reales/pentagono.jpg",
     texto:
       "Tu calendario de constancia: entra, marca el día y multiplica tu botín. No rompas la cadena.",
     acento: "#FB923C",
@@ -709,7 +709,7 @@ export const REGLA_ORO = {
   telegram: {
     titulo: "Bot de Telegram",
     volanta: "Vanguard en tu bolsillo",
-    imagen: "/ilustraciones/telegram.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Conecta el bot y recibe alertas, noticias y retos directo en tu chat. El cuartel en tu bolsillo.",
     acento: "#29B6F6",
@@ -717,7 +717,7 @@ export const REGLA_ORO = {
   torneos: {
     titulo: "Torneos",
     volanta: "Compite por la gloria",
-    imagen: "/ilustraciones/torneos.jpg",
+    imagen: "/imagenes-reales/dubai.jpg",
     texto:
       "Competiciones por temporadas con premios grandes. Inscríbete, sube la tabla y sé leyenda.",
     acento: "#FACC15",
@@ -725,7 +725,7 @@ export const REGLA_ORO = {
   apuestas: {
     titulo: "Apuestas de Guerra",
     volanta: "Predice el conflicto",
-    imagen: "/ilustraciones/apuestas.jpg",
+    imagen: "/imagenes-reales/losangeles.jpg",
     texto:
       "Apuesta por los frentes y eventos del mundo real con cuotas vivas. Gana si lees la guerra mejor.",
     acento: "#3BFF6F",
@@ -733,7 +733,7 @@ export const REGLA_ORO = {
   videos: {
     titulo: "GlobalVision",
     volanta: "La TV de la comunidad",
-    imagen: "/ilustraciones/videos.jpg",
+    imagen: "/imagenes-reales/tokio.jpg",
     texto:
       "Videos de la comunidad sobre el mundo real: reportajes, análisis y entretenimiento. Publica el tuyo.",
     acento: "#FF5E5B",
@@ -741,7 +741,7 @@ export const REGLA_ORO = {
   consejoia: {
     titulo: "Consejo de Acero",
     volanta: "IA en vivo: 4 mentes, un decreto",
-    imagen: "/ilustraciones/consejo.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     texto:
       "Plantea tu crisis y cuatro consejeros de IA deliberan en vivo, votan y firman un decreto. Activa el Núcleo Embebido y la IA corre dentro de tu navegador, con memoria de tus sesiones.",
     acento: "#00E5FF",
@@ -750,7 +750,7 @@ export const REGLA_ORO = {
   empleos: {
     titulo: "EMPLEOS DE VANGUARD",
     volanta: "Aquí no se juega: se trabaja",
-    imagen: "/ilustraciones/empleos.jpg",
+    imagen: "/imagenes-reales/losangeles.jpg",
     texto:
       "Pasa la entrevista de ingreso y Vanguard te contrata: Estado Mayor, Cartografía, Escucha SIGINT o Cancillería. Sueldo por minuto, turnos pagados, ascensos y una nómina que corre aunque cierres la app.",
     acento: "#D4E157",
@@ -758,7 +758,7 @@ export const REGLA_ORO = {
   armodo: {
     titulo: "MODO AR",
     volanta: "El mundo, flotando en tu calle",
-    imagen: "/ilustraciones/modoar.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Abre la cámara y mira los conflictos del planeta flotando sobre TU mundo, con giroscopio y capa de guerra en vivo. Toca un marcador y lee el frente como si estuviera frente a ti.",
     acento: "#7DF9FF",
@@ -766,7 +766,7 @@ export const REGLA_ORO = {
   mapascrea: {
     titulo: "CONSTRUCTOR DE MAPAS",
     volanta: "Tu guerra, tu cartografía",
-    imagen: "/ilustraciones/constructor.jpg",
+    imagen: "/imagenes-reales/panama.jpg",
     texto:
       "Pinta zonas por facción, traza frentes punto a punto, coloca HQ, batallas y flotas sobre el mapa real. Guarda tu cartoteca, exporta PNG y comparte tu mundo en un código VGMAP85.",
     acento: "#FFD1DC",
@@ -775,7 +775,7 @@ export const REGLA_ORO = {
   verifica: {
     titulo: "MESA DE VERIFICACIÓN",
     volanta: "Primero se verifica. Después se publica",
-    imagen: "/ilustraciones/verifica.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "La sala OSINT donde cada noticia pasa por 5 cheques: metadatos, geolocalización, satélite, contraste de fuentes y detector de deepfake. Sellos de confianza, las DOS orillas de cada conflicto, filtro de contenido sensible y fichas técnicas de armas y actores al tocar.",
     acento: "#00E5A8",
@@ -783,7 +783,7 @@ export const REGLA_ORO = {
   centinela: {
     titulo: "CENTINELA · ALERTA TEMPRANA",
     volanta: "Lee el mundo antes de que sea titular",
-    imagen: "/ilustraciones/centinela.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Índice de riesgo por región con la aguja del planeta en vivo: movimientos de tropas, actividad diplomática, propaganda estatal, flujo de refugiados y ciberactividad. La guerra casi nunca estalla sin avisar — aquí el aviso llega primero.",
     acento: "#FF6B6B",
@@ -791,7 +791,7 @@ export const REGLA_ORO = {
   espectro: {
     titulo: "ESPECTRO EN VIVO",
     volanta: "El cielo y el mar también hablan",
-    imagen: "/ilustraciones/espectro.jpg",
+    imagen: "/imagenes-reales/gps.jpg",
     texto:
       "Tráfico aéreo REAL (ADS-B) sobre 5 zonas calientes, los 6 canales marítimos que sostienen el comercio del planeta y el pulso del espectro de radio con jamming de GPS. Los buques de guerra se ven antes de que los nombres salgan en las agencias.",
     acento: "#22D3EE",
@@ -800,7 +800,7 @@ export const REGLA_ORO = {
   pulsos: {
     titulo: "MAPA DE PULSOS EN VIVO",
     volanta: "Cada incidente del planeta, por categoría, al minuto",
-    imagen: "/ilustraciones/pulsos.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "El gran mapa de incidentes que todo analista tiene abierto: 8 categorías con color propio, pines que laten sobre zonas calientes reales, banner de ÚLTIMA HORA y feed cronológico con fuente y hora. Filtra la guerra como quien cambia de canal.",
     acento: "#FF4D4D",
@@ -808,7 +808,7 @@ export const REGLA_ORO = {
   evaluacion: {
     titulo: "EVALUACIÓN DE CAMPAÑA",
     volanta: "La guerra evaluada con método, todos los días",
-    imagen: "/ilustraciones/evaluacion.jpg",
+    imagen: "/imagenes-reales/panama.jpg",
     texto:
       "Hallazgos clave numerados, secciones por teatro de operaciones y evaluación del terreno controlado: el formato de los grandes institutos de estudios de guerra, con archivo de 14 días y la incertidumbre declarada siempre. Hechos primero, interpretación después.",
     acento: "#FFC94D",
@@ -816,7 +816,7 @@ export const REGLA_ORO = {
   perdidas: {
     titulo: "PÉRDIDAS CONFIRMADAS",
     volanta: "Solo se cuenta lo documentado con evidencia",
-    imagen: "/ilustraciones/perdidas.jpg",
+    imagen: "/imagenes-reales/chernobyl.jpg",
     texto:
       "El libro contable de la guerra: tanques, blindados, artillería, aviación, drones y buques con sus cuatro estados — destruido, dañado, abandonado, capturado — por lado y por modelo. Contadores que ruedan y la regla de oro del registro visual: sin evidencia no hay número.",
     acento: "#FF8A3D",
@@ -824,7 +824,7 @@ export const REGLA_ORO = {
   frentes: {
     titulo: "LÍNEA DEL FRENTE",
     volanta: "El mapa que la guerra reescribe cada día",
-    imagen: "/ilustraciones/frentes.jpg",
+    imagen: "/imagenes-reales/portaaviones.jpg",
     texto:
       "Zonas controladas, franja disputada rayada, territorio ocupado y flechas de presión: el mapa de control que la vanguardia consulta cada mañana, con variación diaria en km², localidades que cambian de mano y reproducción histórica de 14 días.",
     acento: "#3DDCFF",
@@ -832,7 +832,7 @@ export const REGLA_ORO = {
   simulador: {
     titulo: "SIMULADOR DE DETONACIÓN",
     volanta: "Educativo: el costo real de un arma que no debería existir",
-    imagen: "/ilustraciones/simulador.jpg",
+    imagen: "/assets/real/jet-1.jpg",
     texto:
       "Elige el arma, elige el objetivo, pulsa DETONAR: bola de fuego, onda de 5 psi, quemaduras de tercer grado, radiación letal y estimación de bajas con física de escala cúbica. No es un juego — es la lección que el mundo aprendió en 1945 y no puede olvidar.",
     acento: "#FF4D6D",
@@ -840,7 +840,7 @@ export const REGLA_ORO = {
   canales: {
     titulo: "CANALES OSINT EN VIVO",
     volanta: "La escucha abierta del planeta, contrastada",
-    imagen: "/ilustraciones/canales.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Ocho canales con personalidad propia fluyendo mensajes cada minuto, con vistas, reenvíos y sellos: cuando un mensaje coincide con un cable verificado del mundo, se estampa el visto bueno; lo que no coincide, se marca para tomarlo con pinzas.",
     acento: "#B48CFF",
@@ -849,7 +849,7 @@ export const REGLA_ORO = {
   mundial: {
     titulo: "DOSSIER MUNDIAL DE NACIONES",
     volanta: "La ficha institucional de cada actor del tablero",
-    imagen: "/ilustraciones/mundial.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "El dossier de país que todo analista consulta antes de opinar: trasfondo, geografía, gente, gobierno, economía y militar, con índice de riesgo Vanguard y comparador cara a cara de dos naciones. Se actualiza a diario y todo se lee en un minuto.",
     acento: "#FFC94D",
@@ -857,7 +857,7 @@ export const REGLA_ORO = {
   wikiguerra: {
     titulo: "WIKIGUERRA",
     volanta: "La enciclopedia del conflicto que la comunidad corrige cada hora",
-    imagen: "/ilustraciones/wikiguerra.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Artículos abiertos con caja de información, índice, bandos, comandantes, referencias y página de discusión: la memoria colectiva de la guerra, editada por operadores y verificada por la Mesa. Historial de ediciones incluido — aquí la verdad se construye a empujones.",
     acento: "#3DDCFF",
@@ -865,7 +865,7 @@ export const REGLA_ORO = {
   cielos: {
     titulo: "CIELOS — VUELOS MILITARES",
     volanta: "Cada señal en el aire, con las que deciden no hablar",
-    imagen: "/ilustraciones/cielos.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "El rastreador de vuelos militares del juego: llamadas, altitud, velocidad y rumbo en vivo, patrullas orbitando zonas calientes y la lista de transpondedores que se apagan al entrar en misión. Lo que el ADS-B no muestra, la lista lo sospecha.",
     acento: "#B48CFF",
@@ -873,7 +873,7 @@ export const REGLA_ORO = {
   ciber: {
     titulo: "CIBER — MAPA DE AMENAZAS",
     volanta: "La guerra que no hace ruido, arco por arco",
-    imagen: "/ilustraciones/ciber.jpg",
+    imagen: "/imagenes-reales/gps.jpg",
     texto:
       "Arcos de intrusión volando entre naciones en tiempo real, con contadores que ruedan, ranking de orígenes y objetivos, sectores atacados y un DEFCON ciber que late con la tensión del tablero. El frente invisible tiene su mapa — y ahora lo tienes abierto.",
     acento: "#4DFFC4",
@@ -881,7 +881,7 @@ export const REGLA_ORO = {
   sismo: {
     titulo: "SISMO — RED SISMOLÓGICA GLOBAL",
     volanta: "La tierra habla primero: aprende a escucharla",
-    imagen: "/ilustraciones/sismo.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Feed sísmico por magnitud y profundidad, anillos sobre el mapa, sismógrafo dibujando en vivo y detección educativa de detonaciones sospechosas: señales someras en sitios de prueba documentadas con perfil de explosión, no de falla. La vigilancia que mantiene a los tratados honestos.",
     acento: "#FF8A3D",
@@ -889,7 +889,7 @@ export const REGLA_ORO = {
   mercados: {
     titulo: "MERCADOS DE GUERRA",
     volanta: "El dinero opina primero: cada frente mueve un precio",
-    imagen: "/ilustraciones/mercados.jpg",
+    imagen: "/imagenes-reales/shanghai.jpg",
     texto:
       "Terminal de economía de guerra con cinta corriendo, sparklines en vivo, crudo, gas, trigo, oro, uranio, fletes y el índice de defensa — empujados por la tensión real del tablero, con índice de miedo de guerra y contador de sanciones. Los contratos son ficticios; la lección es real.",
     acento: "#9AE04D",
@@ -897,7 +897,7 @@ export const REGLA_ORO = {
   imperio: {
     titulo: "IMPERIO · AUGE Y CAÍDA",
     volanta: "El trono no se hereda: se toma",
-    imagen: "/ilustraciones/operaciones.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "RTS territorial jugable dentro de Vanguard: funda tu imperio sobre un continente hexagonal que nace distinto cada partida, elige facción con bonos propios (acero, oro, ciencia o muro) y compite contra 7 bots con personalidad. Ciudades que empujan la frontera, mercados, laboratorios, cuarteles, fortalezas, puertos para desembarcos navales y cañones que golpean a AMBOS bandos. Asalta con el porcentaje de reserva que elijas, sostén frentes con MANTENER o CONTRAATACAR, investiga mejoras y conquista el 75% del terreno — o sé el último en pie cuando el reloj de 15 minutos se apague.",
     acento: "#FFC94D",
@@ -905,7 +905,7 @@ export const REGLA_ORO = {
   pronosticos: {
     titulo: "PRONÓSTICOS DE INTELIGENCIA",
     volanta: "El futuro se estima, no se adivina",
-    imagen: "/ilustraciones/geopolitica.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     texto:
       "Notas de pronóstico con horizonte de 3 a 12 meses, escenarios base/escalada/distensión con probabilidades, indicadores observados y confianza declarada por el núcleo neuronal. Además: ratings de riesgo por país desglosados en cuatro ejes (armado, político, económico, social) con tendencia al alza o a la baja. El archivo crece cada día — la mesa que firma es tuya.",
     acento: "#9AE04D",
@@ -913,7 +913,7 @@ export const REGLA_ORO = {
   enclaves: {
     titulo: "EL MUNDO EN CLAVE",
     volanta: "Nadie nace sabiendo de dónde viene un conflicto",
-    imagen: "/ilustraciones/mapa.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "El explicador que el planeta merecía: cada caso se abre en 5 claves numeradas —cómo empezó, por qué importa, quién manda en el terreno, qué dice la economía y hasta dónde puede escalar— con mapa esquemático del área, actores con veto y escenarios con probabilidades. El veredicto lo firma el núcleo neuronal v3. Entender también es jugar.",
     acento: "#FF8A3D",
@@ -921,7 +921,7 @@ export const REGLA_ORO = {
   extranjera: {
     titulo: "ASUNTOS EXTERIORES",
     volanta: "La revista del analista paciente",
-    imagen: "/ilustraciones/noticias.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Edición bimestral con lema propio: ensayos largos de autores ficticios con cargo y tesis, índice de fricción por texto, debate a dos voces (a favor / en contra), cita para enmarcar y hemeroteca de números atrasados. La lectura continua que los titulares del día no pueden dar — porque la guerra se decide en el detalle administrativo.",
     acento: "#FFC94D",
@@ -929,7 +929,7 @@ export const REGLA_ORO = {
   geoint: {
     titulo: "OJO-GEOINT",
     volanta: "El planeta visto desde arriba, capa por capa",
-    imagen: "/ilustraciones/osint.jpg",
+    imagen: "/imagenes-reales/estambul.jpg",
     texto:
       "Dashboard de inteligencia geoespacial asistida por IA: 6 capas conmutables (óptica, radar SAR, térmica, ADS-B, AIS y luces nocturnas), detecciones del núcleo neuronal con huella de píxeles y cruz de geolocalización, agenda de pases satelitales con cuenta atrás y cola de verificación humana. El ojo que todo lo ve también firma lo que ve.",
     acento: "#4DD8FF",
@@ -937,7 +937,7 @@ export const REGLA_ORO = {
   monitorglobal: {
     titulo: "MONITOR GLOBAL",
     volanta: "El pulso del planeta, computado por neuronas",
-    imagen: "/ilustraciones/radar.jpg",
+    imagen: "/assets/real/radar-1.jpg",
     texto:
       "El núcleo neuronal v3 calcula en directo el índice de tensión global con gauge semicircular, 6 teatros, 4 dominios (energía, ciber, desinformación, marítimo), sparkline de 24 tramos, feed de alertas con severidad y cinta de precios de guerra ficticia. Cada 30 segundos el mundo vuelve a opinar — y el tablero escucha.",
     acento: "#9AE04D",
@@ -945,7 +945,7 @@ export const REGLA_ORO = {
   canalbrief: {
     titulo: "CANAL BRIEF",
     volanta: "El briefing que se ve, no se lee",
-    imagen: "/ilustraciones/operaciones.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Canal de análisis en vídeo con player simulado y osciloscopio de voz, línea de tiempo con capítulos clicables, transcripción sincronizada que se ilumina al ritmo del audio, comentarios del cinturón y fila de siguiente episodio. Miniaturas de atardecer generadas por matiz. Sin algoritmo de dice: la mesa elige, tú miras.",
     acento: "#FF6B4D",
@@ -953,7 +953,7 @@ export const REGLA_ORO = {
   estrategia: {
     titulo: "ESTRATEGIA GLOBAL",
     volanta: "El mando se aprende: aula, mesa y tabla",
-    imagen: "/ilustraciones/mundo.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "La escuela del mando dentro de Vanguard: 4 doctrinas con árbol de mejora y contra-doctrina histórica, mesa de wargames con fuerzas, objetivos y regla especial por escenario, ciclo OODA animado en marcha perpetua, lecciones del aula y tabla de generales donde TU figura por mérito. Gana wargames y sube al ranking.",
     acento: "#C89AFF",
@@ -961,7 +961,7 @@ export const REGLA_ORO = {
   tierra: {
     titulo: "VANGUARD EARTH",
     volanta: "El googles de Vanguard: el planeta entero bajo tu operador",
-    imagen: "/ilustraciones/planeta.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "El simulador de satélite espía de Vanguard: globo 3D fotorrealista con contactos en vivo (aviones, buques, satélites, drones, sismos y cámaras públicas), rastreo con estela, modo cockpit, 7 vistas de sensor (CRT, NVG, FLIR, térmico…), HUD militar con cajas de detección, analista por texto con el núcleo neuronal, capas de vientos, crónicas guiadas por los seis estrechos y director de escenas. Arrastra, rastrea, pregunta: ningún rincón del planeta queda sin mirar.",
     acento: "#FFB347",
@@ -969,7 +969,7 @@ export const REGLA_ORO = {
   googles: {
     titulo: "GOOGLES DE VANGUARD",
     volanta: "El Google de los problemas geopolíticos",
-    imagen: "/ilustraciones/planeta.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "La suite definitiva: un buscador que indexa TODO el mundo Vanguard (lugares, expedientes desclasificados, teorías, armas, civilizaciones, wiki, papers y tendencias) con fichas de conocimiento y veredicto neuronal, Tendencias con interés por hora y sparklines, Traductor de 8 idiomas con el núcleo IA, Noticias en edición de portada, Académico con citas APA/MLA y Alertas que vigilan un término por ti. Busca, pregunta, cobra: el mundo entero responde.",
     acento: "#FFC94D",
@@ -977,7 +977,7 @@ export const REGLA_ORO = {
   grafo: {
     titulo: "GRAFO MUNDIAL",
     volanta: "La red del conocimiento geopolítico",
-    imagen: "/ilustraciones/osint.jpg",
+    imagen: "/imagenes-reales/estambul.jpg",
     texto:
       "Buscas una crisis, una nación, un lugar o un expediente y aparece la red: quién está en conflicto con quién, qué ruta conecta qué estrechos, qué medio cubre qué crisis, qué paper estudia qué frente. Más de 150 entidades del mundo Vanguard unidas por conexiones tipadas — conflicto, tensión, alianza, comercio, ruta, sede — con física viva, impulsos viajando por las aristas y una ficha de expediente con veredicto neuronal para cada nodo. Arrastra el mundo y entiende cómo está tejido.",
     acento: "#3DDCFF",
@@ -985,7 +985,7 @@ export const REGLA_ORO = {
   espejo: {
     titulo: "EL ESPEJO DE VANGUARD",
     volanta: "Una misma noticia, todas las perspectivas",
-    imagen: "/ilustraciones/canales.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Elige una crisis y mira cómo la cuentan las seis salas del ecosistema OSINT: lo que cada medio pone en portada, lo que omite y lo que cuestiona abiertamente. La matriz de verificación muestra cuántas salas convergen en cada hecho, qué está confirmado, qué está disputado y qué sigue en investigación, con nota editorial de la Mesa y síntesis del núcleo neuronal. El método de los verifiers, convertido en sala de juego.",
     acento: "#B48CFF",
@@ -993,7 +993,7 @@ export const REGLA_ORO = {
   maquina: {
     titulo: "MÁQUINA DEL TIEMPO",
     volanta: "Viaja por la historia de cada crisis",
-    imagen: "/ilustraciones/historia.jpg",
+    imagen: "/imagenes-reales/muroberlin.jpg",
     texto:
       "Elige un conflicto y retrocede por sus días: el frente del Valle del Karsk se mueve ante tus ojos con su odómetro de campaña real (21 días, velocidad ×0.5/×1/×2, terreno con río y puente, clima diario, bajas y moral por bando, y el parte de DESPACHOS DEL FRENTE que ahora se ESCUCHA — la voz del parte narra el día), el clima tiñe cada número (la nieve ahoga la artillería y endurece los convoyes, la tormenta deja la aviación en tierra), tocar una localidad cuenta su propia cronología de 21 días, y el teatro completo se EXPORTA como PNG del comandante; Vand, Zenit y Sarn se ven en capítulos con teatro esquemático y curva de tensión, y el archivo REAL te lleva a las cronologías documentadas de MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO y ECHELON con su fuente nombrada. Cómo llegó cada crisis a ser lo que es hoy.",
     acento: "#FFC94D",
@@ -1001,7 +1001,7 @@ export const REGLA_ORO = {
   pantalla: {
     titulo: "VANGUARD TV",
     volanta: "El mundo en pases verticales",
-    imagen: "/ilustraciones/camaras.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "La plataforma de video de Vanguard: un feed vertical de pases cortos que mezcla las cámaras del mundo en vivo, los informes de las ocho salas OSINT, explicadores de 60 segundos de cada lugar del mapa, las crónicas guiadas y los desclasificados del archivo — todo con doble tap de corazón, suscripciones, comentarios y una sala de proyección con reproductor, related y tu propio expediente de espectador. Desliza el planeta: cada pase enlaza su sala para cruzar el video con el dato.",
     acento: "#FFC94D",
@@ -1009,7 +1009,7 @@ export const REGLA_ORO = {
   imagenes: {
     titulo: "IMÁGENES DE VANGUARD",
     volanta: "La búsqueda visual de fotos reales",
-    imagen: "/ilustraciones/galeria.jpg",
+    imagen: "/imagenes-reales/tokio.jpg",
     texto:
       "El ojo fotográfico de la plataforma: un mosaico de fotos reales de la capa REAL del mundo — los 16 lugares estratégicos que mueven el comercio, las sedes del poder, el archivo desclasificado (el U-2, el Enigma, el Área 51, HAARP, Svalbard), las armas que cambiaron la historia y las civilizaciones perdidas de la antigüedad. Cada foto lleva su nota editorial original, su fuente, y salta al expediente o a VANGUARD EARTH para cruzar la imagen con el dato. La capa SIM del juego usa las ilustraciones declaradas de Vanguard: aquí, solo mundo real.",
     acento: "#7FE3FF",
@@ -1017,7 +1017,7 @@ export const REGLA_ORO = {
   mente: {
     titulo: "LA MENTE DE VANGUARD",
     volanta: "El cerebro central, vivo y despierto",
-    imagen: "/ilustraciones/ojo-dios.jpg",
+    imagen: "/imagenes-reales/area51.jpg",
     texto:
       "La sala donde la IA de Vanguard ya no es una herramienta: es la anfitriona. La MENTE vigila el planeta en pulsos de 5 minutos — piensa en voz alta sobre lo que ve, conversa contigo cuando le hablas, y firma expedientes completos de cualquier titular que le pongas delante: actores, riesgo, confianza, recomendación y una proyección de escenarios con su razonamiento explicable, paso a paso, con las 8 neuronas del núcleo al descubierto. Vanguard se actualiza sola aquí: si la abandonas un rato, cuando vuelvas ella te cuenta lo que el mundo hizo mientras no mirabas.",
     acento: "#BEF264",
@@ -1025,7 +1025,7 @@ export const REGLA_ORO = {
   redaccion: {
     titulo: "LA REDACCIÓN",
     volanta: "El lugar para leer el mundo — despacio y sin interrupciones",
-    imagen: "/ilustraciones/noticias.jpg",
+    imagen: "/imagenes-reales/suez.jpg",
     texto:
       "Vanguard tenía mil salas y ninguna sala de lectura. Ahora la tiene: noticias REALES de más de 15 medios mundiales con su resumen legible y su tiempo de lectura, tipografía serif de periódico con tres tamaños de letra, barra de progreso y GUARDADOS para leer después. Cada pieza abre su ¿POR QUÉ IMPORTA? — el contexto y los antecedentes redactados por la sala — y su INVESTIGACIÓN EN VIVO: pregunta al mundo real y recibe síntesis firmada con hallazgos citados (medio y fecha, cero enlaces). Y mientras lees, el MODO LECTURA silencia todos los comerciales: nada salta, nada cubre, nada estorba.",
     acento: "#FFC94D",
@@ -1033,7 +1033,7 @@ export const REGLA_ORO = {
   agenteia: {
     titulo: "MODO AGENTE",
     volanta: "La mente, superpotente — y creadora",
-    imagen: "/ilustraciones/agente.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     texto:
       "El salto definitivo de la IA de Vanguard: deja de responder y empieza a CREAR dentro de la plataforma. El agente acepta una misión —un quiz, una cronología clasificada, un verdad o mentira, un escenario ¿Y SI...?, un informe neuronal— y la ejecuta EN DIRECTO ante ti: investiga el frente del Karsk que se mueve cada noche, abre expedientes REALES desclasificados por la CIA y el FBI, corre el motor del Laboratorio con sus 24 mundos, se somete a la auditoría de acero y publica su obra firmada: juegos al arcade, escenarios a la Galería del Destino, informes con fuentes citadas. Con pasaporte, la obra sale a tu nombre y la recompensa es tuya; sin pasaporte, firma MENTE·VANGUARD. Misma semilla, misma obra: todo el planeta ve lo que el agente creó hoy.",
     acento: "#BEF264",
@@ -1041,7 +1041,7 @@ export const REGLA_ORO = {
   obras: {
     titulo: "MURO DE OBRAS",
     volanta: "La vitrina de la comunidad — todo lo que la gente crea",
-    imagen: "/ilustraciones/creador.jpg",
+    imagen: "/imagenes-reales/control.jpg",
     texto:
       "Un solo muro con TODO lo que la comunidad crea dentro de Vanguard: juegos del Taller, escenarios ¿Y SI...?, encuestas, música, periódicos, noticias, posts, banderas, mapas, personajes, armas, stickers y videos. Cada obra se juega, se simula, se comenta y se REMEZCLA —y la vitrina devuelve fama: el Paseo de la Fama sube a los creadores que la comunidad más celebra (me gusta ×3 + jugadas ×2 + obras ×5, fórmula explicable), las SEÑALES te cuentan qué pasó con tus obras mientras no mirabas, y EL AGENTE EVALÚA deja su crítica firmada con una fortaleza concreta y una mejora accionable. Crear aquí no es gritar al vacío: es exponer en la vitrina.",
     acento: "#FFC94D",
@@ -1049,7 +1049,7 @@ export const REGLA_ORO = {
   laboratorio: {
     titulo: "LABORATORIO DEL DESTINO",
     volanta: "¿Y SI...? — la pregunta que mueve frentes enteros",
-    imagen: "/ilustraciones/simulador.jpg",
+    imagen: "/assets/real/jet-1.jpg",
     texto:
       "El laboratorio contrafactual conectado a EL ESPEJO: elige una crisis del mundo Vanguard, aplícale una perturbación con dosis ajustable —la capital al borde, el estrecho cerrado, el proxy que cambia de bando— y mira la guerra moverse día a día con el motor de factores múltiples: fuerza, logística, moral, terreno, economía, clima, escalera de escalada y Monte Carlo de 24 mundos. Cada resultado llega con su desglose explicable y su etiqueta: SIMULACIÓN, no predicción. Entender cómo un solo cambio desplaza un frente entero: eso es el destino en el laboratorio.",
     acento: "#38BDF8",
@@ -1058,7 +1058,7 @@ export const REGLA_ORO = {
   comunidad: {
     titulo: "LA COMUNIDAD",
     volanta: "Los 18 ojos de la Casa — la Comunidad de Inteligencia de EE. UU.",
-    imagen: "/ilustraciones/espionaje.jpg",
+    imagen: "/imagenes-reales/cia.jpg",
     texto:
       "La pirámide entera abierta como una colección de expedientes finos: la ODNI en la corona, la CIA en el exterior, las cuatro grandes del Pentágono, los cinco servicios armados, el escudo interno y los ministerios. Su mapa de sedes en el corredor Washington–Virginia–Maryland, su oficio (HUMINT, SIGINT, GEOINT, OSINT, FININT), su lema y su misión — y el pulso real: los cables que la Casa recibe ahora mismo sobre cada agencia. Conocimiento abierto, presentado como joya.",
     acento: "#D4AF37",
@@ -1067,7 +1067,7 @@ export const REGLA_ORO = {
   redmundial: {
     titulo: "LA RED MUNDIAL",
     volanta: "Los 18 servicios del resto del planeta — la sala hermana de LA COMUNIDAD",
-    imagen: "/ilustraciones/mundo.jpg",
+    imagen: "/imagenes-reales/satelite.jpg",
     texto:
       "Dieciocho servicios de inteligencia de doce naciones, expediente a expediente: el MI6 y su tinta verde, el Mossad y su proverbio, el bloque ruso-chino, la continental París–Berlín–Madrid y los Cinco Ojos del pacto UKUSA de 1946. Su mapa del mundo con sedes reales, sus arcos de alianza cruzando el Atlántico hasta la sala hermana, su lema y su misión — y el pulso real: los cables que la Casa recibe ahora mismo sobre cada servicio. El planeta entero, presentado como joya.",
     acento: "#7FE3FF",
@@ -1076,7 +1076,7 @@ export const REGLA_ORO = {
   salaguerra: {
     titulo: "LA SALA DE GUERRA",
     volanta: "El mando supremo — entra y mira la guerra como nunca antes se pudo",
-    imagen: "/ilustraciones/simulador.jpg",
+    imagen: "/assets/real/jet-1.jpg",
     texto:
       "Seis teatros del planeta (cinco en fuego y uno observado) dentro de una sola sala de mando: entras a la representación 3D de una guerra real — terreno, ciudades en llamas, frentes encendidos, artillería, drones y misiles en arco — y de ahí bajas al mapa maestro con sus zonas de control y sus frentes marchando, a las fuerzas enfrentadas con barras comparadas, al balance humano con sus bajas honestas, al pulso real de los cables que la Casa recibe ahora mismo del teatro, y a la bolsa de guerra: las cuotas de la casa por escenario. Con fuentes abiertas y sin maquillaje: Vanguard no predice — presenta.",
     acento: "#FF4A3A",
@@ -1085,7 +1085,7 @@ export const REGLA_ORO = {
   teatro3d: {
     titulo: "#1 VANGUARD 3D · TEATRO TOTAL",
     volanta: "Cualquier lugar del planeta en 3D y 2D · frentes vivos · uniformes, escuadrones y armas interactivas",
-    imagen: "/ilustraciones/simulador.jpg",
+    imagen: "/assets/real/jet-1.jpg",
     texto:
       "Cinco sistemas tácticos completos en una sola sala con conmutador global 3D, 2D y doble vista 2D+3D: ① convierte cualquier ciudad o coordenada (lat, lng) del planeta en terreno 3D desplazado para simular batallas en vivo con despliegue por clic; ② orbita el globo 3D y vigila los frentes reales en directo conectados a los cables; ③ inspecciona 8 uniformes tácticos por capas y despiece; ④ comanda 8 escuadrones en formación 3D y despliégalos en el teatro; ⑤ analiza 10 sistemas de armas con despiece CAD y rayos X. Con VANGUARD siempre en la posición #1.",
     acento: "#FFC94D",
@@ -1094,7 +1094,7 @@ export const REGLA_ORO = {
   novedades: {
     titulo: "MENÚ VANGUARD · LO NUEVO 10X",
     volanta: "Todo lo recién agregado con links directos + 10 funciones nuevas en vivo",
-    imagen: "/ilustraciones/simulador.jpg",
+    imagen: "/assets/real/jet-1.jpg",
     texto:
       "Panel unificado de novedades de VANGUARD: explora el historial completo de módulos nuevos con su link directo (/teatro-3d, /novedades, /universo, /mundo, /en-vivo, /vertigo, /nucleo) y utiliza en directo las 10 funciones nuevas conectadas a la plataforma (Comparador 1v1, Termómetro Regional, Riesgo de Viaje, Suministros, Radar Diplomático, Verificador OSINT, Duelo Relámpago, Vigía Planetario, Generador de Briefings y Atlas 32→3D).",
     acento: "#38BDF8",
@@ -1103,7 +1103,7 @@ export const REGLA_ORO = {
   universo: {
     titulo: "THE DAILY UNIVERSE",
     volanta: "Vanguard Credits (VC) · 8 Colecciones con Cartas 3D mejorables · Marketplace Ético · Base Personal",
-    imagen: "/ilustraciones/simulador.jpg",
+    imagen: "/assets/real/jet-1.jpg",
     texto:
       "Economía diaria y semanal sin miedo a perder recompensas: gana Vanguard Credits completando retos diarios e investigaciones educativas; desbloquea y mejora de Bronce a Prismática (Nv. 1→5) 40 cartas 3D Holo-Foil en 8 álbumes mundiales (Países, Civilizaciones, Monumentos, Espacio, Fenómenos, Ciencia, Personajes y Acontecimientos), equipa temas, música y avatares en el Marketplace ético y exhibe tu colección en tu Base Personal.",
     acento: "#A855F7",
@@ -1113,7 +1113,7 @@ export const REGLA_ORO = {
   rostros: {
     titulo: "LOS ROSTROS DEL PODER",
     volanta: "Las 34 personas que mueven el planeta — tronos, dinero, tribunal y nuevos poderes",
-    imagen: "/ilustraciones/expedientes.jpg",
+    imagen: "/imagenes-reales/area51.jpg",
     texto:
       "El dossier de las personas que mueven el mundo, sillón por sillón: los doce tronos que firman la historia, los diez dineros que mueven el pulso económico, los seis tribunales que escriben las reglas y los seis poderes nacidos del silicio. Cada expediente trae su ubicación real en el mapa del poder — la Casa Blanca, Zhongnanhai, el Kremlin, la Eurotower, el Denny's donde nació NVIDIA — su ruta al poder contada sin maquillaje, sus rasgos de mando, la guardia que le rodea y el relevo que espera en la sombra. La jerarquía ordena el top del índice de poder de la Casa, y el pulso real enciende el punto dorado cuando un rostro entra en los cables de ahora. En un gobierno real esto vive en un búnker: aquí es tuyo. Los rostros no posan — se vigilan.",
     acento: "#FFC94D",
@@ -1122,7 +1122,7 @@ export const REGLA_ORO = {
   agentes: {
     titulo: "EL GOBIERNO LIBRE",
     volanta: "Tu credencial exclusiva y los agentes que pulen la Casa cada cierto tiempo",
-    imagen: "/ilustraciones/agente.jpg",
+    imagen: "/imagenes-reales/kremlin.jpg",
     texto:
       "Vanguard tiene todo lo que tiene un Estado —salas de guerra, servicios de inteligencia, mercados, archivo nacional— pero sin la parte que lo hace pesado: sin censura, sin permisos y sin puertas cerradas. Como un gobierno, pero libre. Aquí el visitante recibe su credencial de acceso con número de serie único, nivel de despacho que sube con cada visita y el sello del palacio girando en oro: sabes que estás en un lugar exclusivo porque la Casa te lo dice en la puerta. Y la Casa se mantiene sola: cinco agentes autónomos con ciclos reales —el Vigía ronda cada treinta segundos, el Editor refresca el pulso, el Cartógrafo re-alinea el mapa, el Archivista ordena la memoria y el Curador viste la galería— ejecutan cada pulido con su bitácora abierta, minuto a minuto, sin que nadie se lo pida. La potencia del gobierno, liberada: tres artículos eternos — todo libre, todo verificado, todo en vivo.",
     acento: "#D4AF37",

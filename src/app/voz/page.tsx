@@ -81,7 +81,7 @@ export default function VozPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         {/* v402.2 — portada de sala: cifras del cerebro del Maestro */}
         <PortadaSala
-          imagen="/ilustraciones/canales.jpg"
+          imagen="/imagenes-reales/control.jpg"
           alt="Operador con auriculares frente a pantallas de transmisión en la noche"
           volanta="Inteligencia · La voz"
           titulo="La Voz Maestra"

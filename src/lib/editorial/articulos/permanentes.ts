@@ -10,7 +10,7 @@ export const westfalia: Articulo = {
   publicado: "2026-11-18",
   revisado: "2026-11-18",
   revisarCada: 365,
-  imagen: "/ilustraciones/historia.jpg",
+  imagen: "/imagenes-reales/muroberlin.jpg",
   claves: [
     "La Paz de Westfalia son los tratados de Osnabrück y Münster, firmados en 1648, que pusieron fin a la guerra de los Treinta Años y a la de los Ochenta Años.",
     "Reconocieron la independencia de las Provincias Unidas (Países Bajos) y de la Confederación Suiza, y ampliaron la autonomía de los príncipes alemanes.",
@@ -89,7 +89,7 @@ export const chips: Articulo = {
   publicado: "2026-11-18",
   revisado: "2026-11-18",
   revisarCada: 90,
-  imagen: "/ilustraciones/ciber.jpg",
+  imagen: "/imagenes-reales/gps.jpg",
   claves: [
     "La litografía ultravioleta extrema (EUV), con luz de 13,5 nanómetros, es imprescindible para los chips más avanzados; solo la fabrica la neerlandesa ASML.",
     "La cadena está repartida: diseño en EE. UU., máquinas en Europa y Japón, fabricación de vanguardia en Taiwán y Corea, ensamblaje en el Sudeste Asiático y China.",
@@ -169,7 +169,7 @@ export const verificar: Articulo = {
   publicado: "2026-11-18",
   revisado: "2026-11-18",
   revisarCada: 120,
-  imagen: "/ilustraciones/verifica.jpg",
+  imagen: "/imagenes-reales/control.jpg",
   claves: [
     "La primera pregunta no es «¿es verdad?», sino «¿cuándo y dónde se grabó por primera vez?».",
     "La búsqueda inversa de imágenes, la geolocalización y la sombra del sol resuelven la mayoría de los casos.",
@@ -241,7 +241,7 @@ export const reconocimiento: Articulo = {
   publicado: "2026-11-18",
   revisado: "2026-11-18",
   revisarCada: 60,
-  imagen: "/ilustraciones/mapa.jpg",
+  imagen: "/imagenes-reales/satelite.jpg",
   claves: [
     "La ONU tiene 193 Estados miembros y dos Estados observadores: la Santa Sede y Palestina.",
     "El derecho internacional suele citar cuatro requisitos (Montevideo, 1933): población, territorio, gobierno y capacidad de relacionarse con otros Estados.",
@@ -319,7 +319,7 @@ export const muertos: Articulo = {
   publicado: "2026-11-18",
   revisado: "2026-11-18",
   revisarCada: 180,
-  imagen: "/ilustraciones/estadisticas.jpg",
+  imagen: "/imagenes-reales/losangeles.jpg",
   claves: [
     "Muertes en combate, muertes violentas de civiles y exceso de mortalidad son tres medidas distintas.",
     "El UCDP de Uppsala llama «conflicto armado» a partir de 25 muertes en combate al año y «guerra» a partir de 1.000.",

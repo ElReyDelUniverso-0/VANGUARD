@@ -57,18 +57,20 @@
    es plano: --color-amber añade el tono base SIN tocar la escala por defecto
    amber-50…amber-950, y los modificadores /NN compilan con color-mix. */
 @theme {
-  /* v124.0 CAVIAR — la paleta se viste de alta clase: champán, ORO y
-     esmeralda fina sustituyen al neón frío. La crisis sigue siendo roja. */
-  --color-electric: #DCC078;   /* champán oro (antes azul eléctrico) */
-  --color-crisis: #FF3B30;
-  --color-neon: #3DDC97;       /* esmeralda fina (antes verde neón) */
-  --color-amber: #E8C56A;      /* EL ORO CAVIAR — acento de la casa */
-  --color-green-hud: #3DDC97;
-  --color-red-hud: #FF3B30;
-  --color-cyan-hud: #38BDF8;
-  --color-violet-hud: #A855F7;
-  /* v103.0 MODO AGENTE — color propio del agente (lima de LA MENTE, #BEF264) */
-  --color-lime-hud: #BEF264;
+  /* v434.0 NEGRO OSCURO — mandato del Dueño: «los colores deben ser negro
+     oscuro, está muy pintado». Los tonos HUD que antes eran neón/caviar
+     lamparos se atenúan a grises oscuros desaturados: un solo acento sobrio
+     (bronce apagado) y un rojo crisis reducido. Se elimina el «pinto». */
+  --color-electric: #6B5E3E;   /* bronce apagado (antes champán oro) */
+  --color-crisis: #8A3028;     /* rojo crisis atenuado */
+  --color-neon: #3A5A48;       /* verde oscuro desaturado */
+  --color-amber: #6B5E3E;      /* el acento sobrio de la casa */
+  --color-green-hud: #3A5A48;
+  --color-red-hud: #8A3028;
+  --color-cyan-hud: #3A6A7A;   /* cian apagado */
+  --color-violet-hud: #4A3A5A; /* violeta apagado */
+  /* MODO AGENTE — lima apagada, ya no chilla */
+  --color-lime-hud: #4A5A3A;
 }
 
 /* ====== Vanguard v14 — tema NEON GLOBAL (aliento fresco) ======
@@ -78,82 +80,83 @@
    sus valores apuntan ahora a la nueva paleta para renovar toda la app. */
 :root {
   --radius: 0.5rem;
-  /* v124.0 CAVIAR — noir cálido de terciopelo, marfil y ORO. La casa
-     entera pasa de neón frío a sala de lujo: cada token cálido, fino. */
-  --background: #070606;                      /* v124: noir caviar (antes abisal frío) */
-  --foreground: #F3EEE2;                      /* v124: marfil (antes blanco frío) */
-  --card: #0E0C09;                            /* v124: panel cálido */
-  --card-foreground: #F3EEE2;
-  --popover: #12100B;
-  --popover-foreground: #F3EEE2;
-  --primary: #D4AF37;                         /* v124: ORO CAVIAR */
-  --primary-foreground: #171104;
-  --secondary: #151209;                       /* v124: panel oro oscuro */
-  --secondary-foreground: #EAE3D2;
-  --muted: #131108;
-  --muted-foreground: #9E9682;                /* v124: champán grisáceo */
-  --accent: #FF3B30;                          /* rojo crisis — intacto para alertas */
-  --accent-foreground: #1c0605;
-  --destructive: #FF3B30;
-  --border: rgba(232, 197, 106, 0.10);        /* v124: hilatura de oro */
-  --input: rgba(232, 197, 106, 0.13);
-  --ring: rgba(212, 175, 55, 0.55);
-  --chart-1: #D4AF37;   /* v124: oro */
-  --chart-2: #FF3B30;   /* rojo crisis */
-  --chart-3: #38BDF8;   /* cian dato */
-  --chart-4: #3DDC97;   /* v124: esmeralda fina */
-  --chart-5: #A855F7;   /* violeta */
-  --sidebar: #12100B;
-  --sidebar-foreground: #F3EEE2;
-  --sidebar-primary: #D4AF37;
-  --sidebar-primary-foreground: #171104;
-  --sidebar-accent: #1D180D;
-  --sidebar-accent-foreground: #F3EEE2;
-  --sidebar-border: rgba(232, 197, 106, 0.10);
-  --sidebar-ring: rgba(212, 175, 55, 0.55);
+  /* v434.0 NEGRO OSCURO — mandato del Dueño: la casa se vuelve negro
+     profundo y se quita el «pinto» (caviar/oro/marfil que lampaba). Fondos
+     casi negros, bordes neutros casi invisibles, un acento sobrio. */
+  --background: #050505;                      /* negro profundo */
+  --foreground: #E6E6E4;                      /* blanco humo neutro (legible) */
+  --card: #0A0A0A;                            /* panel negro */
+  --card-foreground: #E6E6E4;
+  --popover: #080808;
+  --popover-foreground: #E6E6E4;
+  --primary: #6B5E3E;                         /* bronce sobrio (antes oro caviar) */
+  --primary-foreground: #0A0A0A;
+  --secondary: #0D0D0D;                       /* panel negro */
+  --secondary-foreground: #C8C8C6;
+  --muted: #0B0B0B;
+  --muted-foreground: #7A7A78;                /* gris humo */
+  --accent: #8A3028;                          /* rojo crisis atenuado */
+  --accent-foreground: #0A0A0A;
+  --destructive: #8A3028;
+  --border: rgba(255, 255, 255, 0.06);        /* hilatura neutra casi invisible */
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(180, 160, 110, 0.40);
+  --chart-1: #6B5E3E;   /* bronce sobrio */
+  --chart-2: #8A3028;   /* rojo crisis atenuado */
+  --chart-3: #3A6A7A;   /* cian apagado */
+  --chart-4: #3A5A48;   /* verde apagado */
+  --chart-5: #4A3A5A;   /* violeta apagado */
+  --sidebar: #080808;
+  --sidebar-foreground: #E6E6E4;
+  --sidebar-primary: #6B5E3E;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #0D0D0D;
+  --sidebar-accent-foreground: #E6E6E4;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: rgba(180, 160, 110, 0.40);
 
-  /* Vanguard extras — nombres intactos, valores caviar */
-  --hud-grid: rgba(212, 175, 55, 0.045); /* v124: rejilla tejida en oro */
-  --hud-amber: #E8C56A;   /* v124: EL ORO — acento principal de la casa */
-  --hud-red: #FF3B30;     /* rojo crisis */
-  --hud-cyan: #38BDF8;    /* cian dato */
-  --hud-green: #3DDC97;   /* v124: esmeralda fina */
-  --hud-violet: #A855F7;  /* violeta */
+  /* Vanguard extras — nombres intactos, valores negro oscuro */
+  --hud-grid: rgba(255, 255, 255, 0.025); /* v434: rejilla casi invisible */
+  --hud-amber: #6B5E3E;   /* acento sobrio de la casa */
+  --hud-red: #8A3028;     /* rojo crisis atenuado */
+  --hud-cyan: #3A6A7A;    /* cian apagado */
+  --hud-green: #3A5A48;   /* verde apagado */
+  --hud-violet: #4A3A5A;  /* violeta apagado */
 }
 
 .dark {
-  /* v124.0 CAVIAR — espejo exacto del tema claro de lujo */
-  --background: #070606;
-  --foreground: #F3EEE2;
-  --card: #0E0C09;
-  --card-foreground: #F3EEE2;
-  --popover: #12100B;
-  --popover-foreground: #F3EEE2;
-  --primary: #D4AF37;
-  --primary-foreground: #171104;
-  --secondary: #151209;
-  --secondary-foreground: #EAE3D2;
-  --muted: #131108;
-  --muted-foreground: #9E9682;
-  --accent: #FF3B30;
-  --accent-foreground: #1c0605;
-  --destructive: #FF3B30;
-  --border: rgba(232, 197, 106, 0.10);
-  --input: rgba(232, 197, 106, 0.13);
-  --ring: rgba(212, 175, 55, 0.55);
-  --chart-1: #D4AF37;
-  --chart-2: #FF3B30;
-  --chart-3: #38BDF8;
-  --chart-4: #3DDC97;
-  --chart-5: #A855F7;
-  --sidebar: #12100B;
-  --sidebar-foreground: #F3EEE2;
-  --sidebar-primary: #D4AF37;
-  --sidebar-primary-foreground: #171104;
-  --sidebar-accent: #1D180D;
-  --sidebar-accent-foreground: #F3EEE2;
-  --sidebar-border: rgba(232, 197, 106, 0.10);
-  --sidebar-ring: rgba(212, 175, 55, 0.55);
+  /* v434.0 NEGRO OSCURO — espejo exacto del tema negro oscuro */
+  --background: #050505;
+  --foreground: #E6E6E4;
+  --card: #0A0A0A;
+  --card-foreground: #E6E6E4;
+  --popover: #080808;
+  --popover-foreground: #E6E6E4;
+  --primary: #6B5E3E;
+  --primary-foreground: #0A0A0A;
+  --secondary: #0D0D0D;
+  --secondary-foreground: #C8C8C6;
+  --muted: #0B0B0B;
+  --muted-foreground: #7A7A78;
+  --accent: #8A3028;
+  --accent-foreground: #0A0A0A;
+  --destructive: #8A3028;
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(180, 160, 110, 0.40);
+  --chart-1: #6B5E3E;
+  --chart-2: #8A3028;
+  --chart-3: #3A6A7A;
+  --chart-4: #3A5A48;
+  --chart-5: #4A3A5A;
+  --sidebar: #080808;
+  --sidebar-foreground: #E6E6E4;
+  --sidebar-primary: #6B5E3E;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #0D0D0D;
+  --sidebar-accent-foreground: #E6E6E4;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: rgba(180, 160, 110, 0.40);
 }
 
 @layer base {
@@ -192,11 +195,11 @@
     );
   }
   ::selection {
-    background: rgba(232, 197, 106, 0.45);
-    color: #1c1405;
+    background: rgba(180, 160, 110, 0.30);
+    color: #0A0A0A;
   }
   :focus-visible {
-    outline: 1.5px solid rgba(232, 197, 106, 0.85);
+    outline: 1.5px solid rgba(180, 160, 110, 0.60);
     outline-offset: 2px;
   }
 }
@@ -212,30 +215,31 @@
   z-index: 0;
   pointer-events: none;
   filter: blur(72px);
-  opacity: 0.6;
+  opacity: 0.30;   /* v434 NEGRO OSCURO: aurora casi apagada, se quita el pinto */
   will-change: transform;
 }
 .aurora-orb { position: absolute; border-radius: 50%; }
-/* v71.0 OCASO: los orbes aurora son ahora nubes de crepúsculo — brasa, violeta
-   de ocaso, oro y carmesí — derivando lento detrás de todo el sistema */
+/* v434 NEGRO OSCURO: los orbes aurora ya no son crepúsculo lamparo
+   (brasa, violeta, oro, carmesí). Quedan como sombras oscuras, bajas,
+   desaturadas, para que el negro oscuro manda. */
 .aurora-orb-1 {
   width: 46vw; height: 46vw; left: -6%; top: -10%;
-  background: radial-gradient(circle, rgba(255, 110, 40, 0.17) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(120, 90, 60, 0.06) 0%, transparent 66%);
   animation: auroraA 28s ease-in-out infinite alternate;
 }
 .aurora-orb-2 {
   width: 40vw; height: 40vw; right: -8%; top: 24%;
-  background: radial-gradient(circle, rgba(150, 70, 200, 0.15) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(70, 60, 90, 0.055) 0%, transparent 66%);
   animation: auroraB 34s ease-in-out infinite alternate;
 }
 .aurora-orb-3 {
   width: 44vw; height: 44vw; left: 24%; bottom: -16%;
-  background: radial-gradient(circle, rgba(255, 180, 60, 0.15) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(100, 85, 55, 0.05) 0%, transparent 66%);
   animation: auroraC 40s ease-in-out infinite alternate;
 }
 .aurora-orb-4 {
   width: 30vw; height: 30vw; left: 40%; top: 8%;
-  background: radial-gradient(circle, rgba(255, 70, 60, 0.11) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(90, 55, 50, 0.04) 0%, transparent 66%);
   animation: auroraB 44s ease-in-out infinite alternate-reverse;
 }
 @keyframes auroraA {

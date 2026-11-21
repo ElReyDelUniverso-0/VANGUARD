@@ -295,7 +295,7 @@ export default async function NucleoPage({
   return (
     <>
     <PortadaSala
-      imagen="/ilustraciones/estadisticas.jpg"
+      imagen="/imagenes-reales/losangeles.jpg"
       alt="Paneles de datos iluminados en una sala de control en penumbra"
       volanta="LA CASA · EL NÚCLEO"
       titulo="EL CENSO DE LA CASA"

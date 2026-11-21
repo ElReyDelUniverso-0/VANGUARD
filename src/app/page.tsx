@@ -99,11 +99,11 @@ function coordsTexto(lat: number, lng: number) {
 }
 
 const SALAS = [
-  { href: "/en-vivo", titulo: "El Pulso", txt: "La última hora, minuto a minuto.", img: "/ilustraciones/envivo.jpg", tag: "En vivo" },
-  { href: "/mundo", titulo: "El Mundo 3D", txt: "Todas las guerras sobre un globo vivo.", img: "/ilustraciones/multijugador.jpg", tag: "3D" },
-  { href: "/vertigo", titulo: "El Vértigo", txt: "Las noticias en deslizamientos.", img: "/ilustraciones/pulso.jpg", tag: "Infinito" },
-  { href: "/zona-cero", titulo: "Zona Cero", txt: "La ciudad en guerra, en directo.", img: "/ilustraciones/frente.jpg", tag: "Teatro" },
-  { href: "/cuartel", titulo: "El Cuartel", txt: "Juego multijugador, misiones y ranking.", img: "/ilustraciones/mapa.jpg", tag: "Juego" },
+  { href: "/en-vivo", titulo: "El Pulso", txt: "La última hora, minuto a minuto.", img: "/imagenes-reales/satelite.jpg", tag: "En vivo" },
+  { href: "/mundo", titulo: "El Mundo 3D", txt: "Todas las guerras sobre un globo vivo.", img: "/imagenes-reales/dubai.jpg", tag: "3D" },
+  { href: "/vertigo", titulo: "El Vértigo", txt: "Las noticias en deslizamientos.", img: "/imagenes-reales/satelite.jpg", tag: "Infinito" },
+  { href: "/zona-cero", titulo: "Zona Cero", txt: "La ciudad en guerra, en directo.", img: "/imagenes-reales/portaaviones.jpg", tag: "Teatro" },
+  { href: "/cuartel", titulo: "El Cuartel", txt: "Juego multijugador, misiones y ranking.", img: "/imagenes-reales/satelite.jpg", tag: "Juego" },
 ];
 
 export default async function Portada() {

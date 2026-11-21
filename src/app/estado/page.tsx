@@ -92,7 +92,7 @@ export default function EstadoPage() {
         {/* v402.0 LOS CINCO MÓDULOS: el Estado reúne las seis salas internas
             (latido, novedades, calidad, torre, catálogo, núcleo, escudo) */}
         <PortadaSala
-          imagen="/ilustraciones/radar.jpg"
+          imagen="/assets/real/radar-1.jpg"
           alt="Sala de radar en penumbra con pantallas verdes encendidas"
           volanta="Módulo · Estado de Vanguard"
           titulo="La casa por dentro"

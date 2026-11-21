@@ -19,7 +19,7 @@ export const FICHA_SALIDAS = {
     lema: "Un solo mundo",
     texto:
       "Noticias en vivo, el globo, conocimiento, simulación, arsenal y el juego con tu rango: todo en la misma casa, con el mismo estilo y cada módulo con su información.",
-    img: "/ilustraciones/noticias.jpg",
+    img: "/imagenes-reales/suez.jpg",
     destino: "/",
     chips: MODULOS_PUBLICOS.map((m) => m.corto),
     modulos: MODULOS_PUBLICOS.length,
@@ -32,7 +32,7 @@ export const FICHA_SALIDAS = {
     lema: "El ojo de Vanguard",
     texto:
       "Una zona oscura con el ojo de la casa en el centro: tócalo, busca en todos los módulos y pega aquí noticias, países, armas, conocimiento e imágenes.",
-    img: "/ilustraciones/ojo-dios.jpg",
+    img: "/imagenes-reales/area51.jpg",
     destino: "/zona-cero",
     chips: ["Buscar", "Pegar", "Noticias", "Países", "Armas", "Imágenes"],
     modulos: MODULOS_PUBLICOS.length,

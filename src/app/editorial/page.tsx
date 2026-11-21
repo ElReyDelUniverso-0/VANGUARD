@@ -50,7 +50,7 @@ export default function Editorial() {
     <main className="vx ed">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(ld) }} />
       <PortadaSala
-        imagen="/ilustraciones/biblioteca.jpg"
+        imagen="/imagenes-reales/arco.jpg"
         alt="Estanterías de una gran biblioteca iluminadas en tonos dorados"
         volanta="REDACCIÓN · BIBLIOTECA DEL CONOCIMIENTO"
         titulo="La redacción de Vanguard"

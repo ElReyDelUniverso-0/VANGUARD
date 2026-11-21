@@ -43,7 +43,7 @@ export default function Calendario() {
   return (
     <main className="vx ed">
       <PortadaSala
-        imagen="/ilustraciones/briefing.jpg"
+        imagen="/imagenes-reales/suez.jpg"
         alt="Mesa de mando con documentos y pantallas de un briefing"
         volanta="REDACCIÓN · PLAN DE 30 DÍAS"
         titulo="Calendario editorial"

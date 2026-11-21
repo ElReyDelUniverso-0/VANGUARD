@@ -171,7 +171,7 @@ export default async function CrucePage() {
   return (
     <>
       <PortadaSala
-        imagen="/ilustraciones/planeta.jpg"
+        imagen="/imagenes-reales/satelite.jpg"
         alt="El planeta visto desde arriba, con una línea marcando la distancia de un punto a otro"
         volanta="EL CRUCE · LO QUE PASÓ HOY, MEDIDO DESDE CASA"
         titulo="LA DISTANCIA DE CASA"

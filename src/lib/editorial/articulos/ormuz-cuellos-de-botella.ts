@@ -10,7 +10,7 @@ export const ormuz: Articulo = {
   publicado: "2026-11-17",
   revisado: "2026-11-17",
   revisarCada: 7,
-  imagen: "/ilustraciones/geopolitica.jpg",
+  imagen: "/imagenes-reales/kremlin.jpg",
   claves: [
     "En 2024 pasaron por Ormuz unos 20 millones de barriles diarios: cerca del 20 % del consumo mundial de petróleo, según la EIA.",
     "Desde finales de febrero de 2026 Irán restringe el tránsito; EE. UU. responde con un bloqueo naval de los puertos iraníes y escoltas a los petroleros.",

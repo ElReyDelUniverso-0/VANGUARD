@@ -374,7 +374,7 @@ export function MiPaisPanel() {
       <TituloEpico
         titulo="MI PAÍS"
         volanta="Simulador de nación — funda, une y conquista"
-        imagen="/ilustraciones/mi-pais.jpg"
+        imagen="/imagenes-reales/arco.jpg"
         escena="ciudad"
         semilla={88}
         texto="Proclama tu propia nación: ponle nombre y bandera, elige su gobierno y territorio, nombra a sus figuras públicas, fúndala en una unión o cartel… y recluta aliados al azar entre los guerreros que están en línea ahora mismo."

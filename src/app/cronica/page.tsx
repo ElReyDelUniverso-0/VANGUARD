@@ -81,7 +81,7 @@ export default async function CronicaPage() {
             Smart Brevity: cinco claves con foto, luego teatro por teatro, luego
             quién firmó. Alimentada por los cables VIVOS (antes salía en cero). */}
         <PortadaSala
-          imagen="/ilustraciones/briefing.jpg"
+          imagen="/imagenes-reales/suez.jpg"
           alt="Mesa de briefing nocturna con carpetas, mapa y lámpara encendida"
           volanta={`Conflictos · Crónica del ${fechaCorta(parte.consultadoEn)}`}
           titulo="Qué pasó hoy, de verdad"

@@ -224,7 +224,7 @@ export default async function HistoriaPage() {
       />
 
       <PortadaSala
-        imagen="/ilustraciones/historia.jpg"
+        imagen="/imagenes-reales/muroberlin.jpg"
         alt="Libros y mapas antiguos apilados bajo una lámpara de latón"
         volanta="LA CASA · LA MEMORIA"
         titulo="LO QUE YA PASÓ, PARA LEER LO DE HOY"
@@ -400,7 +400,7 @@ export default async function HistoriaPage() {
           <div className="mb-5 overflow-hidden rounded-xl border border-slate-800">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/ilustraciones/wikiguerra.jpg"
+              src="/imagenes-reales/suez.jpg"
               alt="Una biblioteca antigua con volúmenes abiertos y un mapamundi: la memoria escrita del mundo"
               width={1408}
               height={704}

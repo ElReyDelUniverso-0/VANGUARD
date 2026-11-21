@@ -62,7 +62,7 @@ export default function NavegacionPage() {
     <>
       <main className="mx-auto max-w-[1408px] px-4 pb-16 pt-6 sm:px-6">
         <PortadaSala
-          imagen="/ilustraciones/operaciones.jpg"
+          imagen="/imagenes-reales/control.jpg"
           alt="Cartografía iluminada sobre una mesa de operaciones"
           volanta="LA CASA · NAVEGACIÓN"
           titulo="LA NAVEGACIÓN ADAPTATIVA"
