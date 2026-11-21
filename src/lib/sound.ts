@@ -338,3 +338,57 @@ export function initSound() {
     muted = localStorage.getItem("vanguard-muted") === "1";
   } catch {}
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// v436.2 · LA VOZ DE LAS ACCIONES — un reproductor de voces con datos
+//
+// El catálogo de acciones vive aparte (lib/sonido/acciones.ts) y aquí solo está
+// la boca: cada «voz» es una lista de notas con su timbre, su altura, su
+// duración, su ganancia y su momento. Así veintiséis acciones pueden sonar
+// DISTINTAS sin añadir veintiséis funciones a mano, y la casa sigue teniendo un
+// único camino hacia el AudioContext (la cadena compartida de arriba: nada de
+// contextos paralelos, nada de assets).
+//
+// Nada suena solo: esto solo se llama desde un gesto del usuario.
+// ═══════════════════════════════════════════════════════════════════════════
+
+/** Un golpe de la voz: madera (cuerpo), campana (aire), tono (color), ruido (piel). */
+export type NotaVoz = {
+  tipo: "madera" | "campana" | "tono" | "ruido";
+  /** Hz (en «ruido» se ignora) */
+  f?: number;
+  /** segundos */
+  d: number;
+  /** 0–1, se recorta en el reproductor para no romper oídos */
+  g: number;
+  /** retardo en segundos desde el primer golpe */
+  cuando?: number;
+  /** onda del tono: sine, triangle, sawtooth, square */
+  onda?: OscillatorType;
+  /** cola de sala 0–1 (solo tonos) */
+  verb?: number;
+};
+
+const TOPE_GANANCIA = 0.09;
+
+export function tocar(notas: NotaVoz[]) {
+  if (!Array.isArray(notas) || notas.length === 0) return;
+  if (isMuted()) return;
+  const c = getCtx();
+  if (!c) return;
+  // desbloqueo perezoso: si el navegador durmió el contexto, se despierta aquí
+  try {
+    if (c.state === "suspended") void c.resume();
+  } catch { /* sigue: los nodos se agendan igual */ }
+  for (const n of notas) {
+    const g = Math.max(0, Math.min(TOPE_GANANCIA, n.g));
+    const cuando = Math.max(0, n.cuando ?? 0);
+    const d = Math.max(0.02, Math.min(3, n.d));
+    try {
+      if (n.tipo === "madera") playWood(n.f ?? 440, d, g, cuando);
+      else if (n.tipo === "campana") playBell(n.f ?? 880, d, g, cuando);
+      else if (n.tipo === "ruido") playNoise(d, g, cuando);
+      else playTone(n.f ?? 440, d, n.onda ?? "sine", g, cuando, n.verb ?? 0.08);
+    } catch { /* una nota caída no calla a las demás */ }
+  }
+}

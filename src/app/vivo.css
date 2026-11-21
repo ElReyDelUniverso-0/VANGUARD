@@ -1,0 +1,342 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   v436.2 · LA CASA VIVA — color, movimiento y una voz para cada acción
+
+   QUÉ ES: la capa de pulso de Vanguard. No cambia geometría ni reescribe
+   ninguna sala: empuja el color un punto hacia la vida, da movimiento corto y
+   preciso a lo que se toca, y deja el sonido en manos de lib/sonido (aquí solo
+   viven los interruptores).
+
+   LO QUE BUSCA EL DUEÑO, EN SUS PALABRAS: «colores un poco vivos pero que no
+   parezca de un niño». Traducción a reglas de la casa:
+     · más LUZ, no más saturación: los acentos brillan, pero no gritan;
+     · acentos finos (bordes, hilos, subrayados, halos suaves) — nunca un bloque
+       de color plano detrás de un texto;
+     · registro profundo (casi negro azulado) para que el oro y el cian
+       parezcan joya, no plástico;
+     · movimiento con oficio: 120–320 ms, ease-out, amplitud de 2–12 px.
+       Cero rebotes, cero giros eternos, cero confeti.
+
+   REGLAS QUE NO SE ROMPEN:
+     · `html[data-vg-mov="quieto"]` apaga TODO lo decorativo (las funciones
+       quedan intactas).
+     · `prefers-reduced-motion: reduce` hace lo mismo sin depender del script.
+     · `html[data-vg-anim="desactivadas"]` (sistema v416.0) también manda.
+     · Nada de esta capa tapa un control ni cambia el orden de nada.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── paleta viva, sobria: joya, no caramelo ───────────────────────────── */
+  --vv-fondo: #05070d;
+  --vv-panel: #080c14;
+  --vv-panel-2: #0b111b;
+  --vv-tinta: #eef3fa;
+  --vv-tenue: #a3b3c8;
+  --vv-apagado: #6b7c93;
+
+  --vv-oro: #f3d68f;        /* el oro de la casa, un punto más encendido */
+  --vv-oro-hondo: #d8ac54;
+  --vv-cian: #5de6f7;       /* cian de radar, limpio */
+  --vv-cian-hondo: #159fb4;
+  --vv-violeta: #9a86ff;    /* solo para la sorpresa y los logros */
+  --vv-rosa: #ff7aa8;       /* solo para «en vivo» y los avisos duros */
+
+  --vv-linea: rgba(163, 179, 200, 0.16);
+  --vv-linea-fuerte: rgba(243, 214, 143, 0.42);
+
+  /* ── movimiento: tres velocidades y una curva ─────────────────────────── */
+  --vv-rapido: 120ms;
+  --vv-medio: 200ms;
+  --vv-lento: 320ms;
+  --vv-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --vv-onda: 0 0 0 1px rgba(93, 230, 247, 0.22), 0 10px 30px -18px rgba(93, 230, 247, 0.55);
+  --vv-halo-oro: 0 0 0 1px rgba(243, 214, 143, 0.28), 0 12px 34px -20px rgba(243, 214, 143, 0.55);
+}
+
+/* ── pulido global mínimo: lo que se toca responde ───────────────────────── */
+::selection {
+  background: rgba(93, 230, 247, 0.26);
+  color: #fff;
+}
+
+:where(button, a[href], [role="button"], [role="tab"], summary, label):focus-visible {
+  outline: 2px solid var(--vv-cian);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* presión: un velo, no un salto — no toca `transform`, que otras capas usan */
+:where(button, a[href], [role="button"], [role="tab"]):active {
+  filter: brightness(0.94) saturate(1.05);
+}
+
+* {
+  scrollbar-color: rgba(163, 179, 200, 0.3) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(243, 214, 143, 0.34), rgba(93, 230, 247, 0.28));
+  border-radius: 999px;
+  border: 3px solid var(--vv-fondo);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(243, 214, 143, 0.55); }
+
+/* ── los fotogramas ──────────────────────────────────────────────────────── */
+@keyframes vv-sube {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes vv-entra {
+  from { opacity: 0; transform: translateY(6px) scale(0.995); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes vv-sella {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes vv-onda {
+  0%   { box-shadow: 0 0 0 0 rgba(93, 230, 247, 0.42); }
+  70%  { box-shadow: 0 0 0 10px rgba(93, 230, 247, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(93, 230, 247, 0); }
+}
+@keyframes vv-tiza {
+  from { background-position: -160% 0; }
+  to   { background-position: 260% 0; }
+}
+@keyframes vv-trazar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes vv-sopla {
+  from { opacity: 0.9; }
+  to   { opacity: 1; }
+}
+@keyframes vv-marca {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
+}
+@keyframes vv-latido {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+/* ── utilidades: se aplican con una clase, nada más ──────────────────────── */
+.vv-entra   { animation: vv-entra var(--vv-lento) var(--vv-ease) both; }
+.vv-sube    { animation: vv-sube var(--vv-lento) var(--vv-ease) both; }
+.vv-sella   { animation: vv-sella 260ms var(--vv-ease); }
+.vv-onda    { animation: vv-onda 900ms var(--vv-ease) 1; }
+.vv-latido  { animation: vv-latido 2.6s ease-in-out infinite; }
+.vv-tz-1    { animation-delay: 40ms; }
+.vv-tz-2    { animation-delay: 90ms; }
+.vv-tz-3    { animation-delay: 140ms; }
+.vv-tz-4    { animation-delay: 190ms; }
+.vv-tz-5    { animation-delay: 240ms; }
+
+/* una lista que entra escalonada: `data-vg-vivo` en el contenedor */
+[data-vg-vivo] > * {
+  animation: vv-sube var(--vv-lento) var(--vv-ease) both;
+}
+[data-vg-vivo] > *:nth-child(1)  { animation-delay: 0ms; }
+[data-vg-vivo] > *:nth-child(2)  { animation-delay: 35ms; }
+[data-vg-vivo] > *:nth-child(3)  { animation-delay: 70ms; }
+[data-vg-vivo] > *:nth-child(4)  { animation-delay: 105ms; }
+[data-vg-vivo] > *:nth-child(5)  { animation-delay: 140ms; }
+[data-vg-vivo] > *:nth-child(6)  { animation-delay: 175ms; }
+[data-vg-vivo] > *:nth-child(7)  { animation-delay: 210ms; }
+[data-vg-vivo] > *:nth-child(8)  { animation-delay: 245ms; }
+[data-vg-vivo] > *:nth-child(n + 9) { animation-delay: 260ms; }
+
+/* la barra que se está llenando: una tiza de luz que la recorre una vez */
+.vv-tiza {
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 80%
+  );
+  background-size: 60% 100%;
+  background-repeat: no-repeat;
+  animation: vv-tiza 900ms var(--vv-ease) 1;
+}
+
+/* subrayado que se dibuja al pasar: acentos finos, no bloques */
+.vv-marca { position: relative; }
+.vv-marca::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--vv-oro), var(--vv-cian));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--vv-medio) var(--vv-ease);
+}
+.vv-marca:hover::after,
+.vv-marca:focus-visible::after { animation: vv-marca var(--vv-medio) var(--vv-ease) forwards; }
+
+/* una tarjeta que se levanta dos píxeles: el gesto más pequeño que se nota */
+.vv-sopla {
+  transition: transform var(--vv-medio) var(--vv-ease),
+              box-shadow var(--vv-medio) var(--vv-ease),
+              border-color var(--vv-medio) var(--vv-ease);
+}
+.vv-sopla:hover,
+.vv-sopla:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(--vv-onda);
+}
+
+/* ══ LOS DOS INTERRUPTORES ══════════════════════════════════════════════════ */
+.vv-ajustes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: stretch;
+}
+.vv-ajuste { display: flex; align-items: center; gap: 8px; }
+.vv-ajuste-largo { flex-direction: column; align-items: flex-start; gap: 5px; flex: 1 1 150px; }
+
+.vv-rotulo {
+  font: 700 8.5px/1 ui-monospace, monospace;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vv-apagado);
+}
+
+.vv-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px 7px 8px;
+  border: 1px solid var(--vv-linea);
+  border-radius: 4px;
+  background: var(--vv-panel);
+  color: var(--vv-tenue);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--vv-medio) var(--vv-ease), background var(--vv-medio) var(--vv-ease);
+}
+.vv-switch:hover { border-color: var(--vv-linea-fuerte); }
+.vv-switch-punto {
+  position: relative;
+  width: 26px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(163, 179, 200, 0.22);
+  flex: none;
+  transition: background var(--vv-medio) var(--vv-ease);
+}
+.vv-switch-punto::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--vv-tenue);
+  transition: transform var(--vv-medio) var(--vv-ease), background var(--vv-medio) var(--vv-ease);
+}
+.vv-switch.on .vv-switch-punto { background: rgba(243, 214, 143, 0.3); }
+.vv-switch.on .vv-switch-punto::after {
+  transform: translateX(12px);
+  background: var(--vv-oro);
+  box-shadow: 0 0 8px rgba(243, 214, 143, 0.7);
+}
+.vv-switch-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.vv-switch-txt b {
+  font: 700 10px/1.2 ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vv-tinta);
+}
+.vv-switch-txt em {
+  font: 500 10px/1.3 ui-sans-serif, system-ui, sans-serif;
+  font-style: normal;
+  color: var(--vv-apagado);
+}
+.vv-switch.on .vv-switch-txt em { color: var(--vv-tenue); }
+
+.vv-segmento {
+  display: inline-flex;
+  border: 1px solid var(--vv-linea);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--vv-panel);
+}
+.vv-segmento button {
+  border: none;
+  background: transparent;
+  color: var(--vv-apagado);
+  padding: 7px 10px;
+  min-height: 28px;
+  font: 700 9px/1 ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--vv-rapido) var(--vv-ease), background var(--vv-rapido) var(--vv-ease);
+}
+.vv-segmento button + button { border-left: 1px solid var(--vv-linea); }
+.vv-segmento button:hover { color: var(--vv-tinta); background: rgba(243, 214, 143, 0.06); }
+.vv-segmento button.on {
+  color: #0a0d14;
+  background: linear-gradient(180deg, var(--vv-oro), var(--vv-oro-hondo));
+}
+
+/* ══ QUIETUD: tres maneras de pedirla, una sola respuesta ═════════════════ */
+html[data-vg-mov="quieto"] *,
+html[data-vg-mov="quieto"] *::before,
+html[data-vg-mov="quieto"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* en «suave» no corren los bucles, solo entradas y salidas */
+html[data-vg-mov="suave"] .vv-latido,
+html[data-vg-mov="suave"] .vv-tiza { animation: none; }
+html[data-vg-mov="suave"] .vv-sopla:hover,
+html[data-vg-mov="suave"] .vv-sopla:focus-within { transform: none; }
+
+/* el sistema lo pide: lo mismo, sin depender del script */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .vv-sopla:hover, .vv-sopla:focus-within { transform: none; }
+}
+
+/* la casa v416.0 con las animaciones desactivadas sigue mandando */
+html[data-vg-anim="desactivadas"] [data-vg-vivo] > *,
+html[data-vg-anim="desactivadas"] .vv-entra,
+html[data-vg-anim="desactivadas"] .vv-sube,
+html[data-vg-anim="desactivadas"] .vv-latido,
+html[data-vg-anim="desactivadas"] .vv-tiza { animation: none !important; }
+
+/* pestaña oculta: ni una animación (el sistema v416.0 ya lo hace, se repite
+   aquí para que esta capa no dependa de otra) */
+html[data-vg-oculto="1"] * { animation-play-state: paused !important; }
+
+/* ══ Y UN PUNTO DE COLOR DONDE ANTES HABÍA GRIS ═══════════════════════════
+   Hilos de oro y cian en los bordes de los paneles: la casa se ve viva sin
+   que ningún bloque se vuelva amarillo.                                     */
+:where(.vd-panel, .dsc-bloque, .op-banda-guia) {
+  position: relative;
+}
+:where(.vd-panel, .dsc-bloque)::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(243, 214, 143, 0.55), rgba(93, 230, 247, 0.35), transparent);
+  pointer-events: none;
+  opacity: 0.85;
+}

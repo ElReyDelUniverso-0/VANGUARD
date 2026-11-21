@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    v435.2 · VANGUARD DISCOVERY SYSTEM — piel
-   Paleta de la casa (oro #e8c56a, cian #22d3ee, tinta #e9eef7, tenue #93a1b8).
+   Paleta de la casa (oro #f3d68f, cian #5de6f7, tinta #eef3fa, tenue #a3b3c8).
    Discreto por diseño: el lanzador mide 42 px y el panel no pasa de 360 px.
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -16,13 +16,13 @@
   border: 1px solid rgba(232, 197, 106, 0.45);
   border-radius: 50%;
   background: rgba(6, 10, 17, 0.92);
-  color: #e8c56a;
+  color: #f3d68f;
   cursor: pointer;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
   transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
 }
-.vd-burbuja:hover { transform: translateY(-2px); border-color: #e8c56a; background: rgba(232, 197, 106, 0.14); }
-.vd-burbuja:focus-visible { outline: 2px solid #22d3ee; outline-offset: 2px; }
+.vd-burbuja:hover { transform: translateY(-2px); border-color: #f3d68f; background: rgba(232, 197, 106, 0.14); }
+.vd-burbuja:focus-visible { outline: 2px solid #5de6f7; outline-offset: 2px; }
 .vd-burbuja-libre { opacity: 0.55; }
 .vd-burbuja-libre:hover { opacity: 1; }
 
@@ -31,7 +31,7 @@
   inset: -3px;
   border-radius: 50%;
   padding: 2px;
-  background: conic-gradient(#22d3ee var(--pct, 0%), rgba(147, 161, 184, 0.18) 0);
+  background: conic-gradient(#5de6f7 var(--pct, 0%), rgba(147, 161, 184, 0.18) 0);
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
   mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
   pointer-events: none;
@@ -50,7 +50,7 @@
   border-radius: 5px;
   background: #070b11;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
-  color: #e9eef7;
+  color: #eef3fa;
   animation: vd-entra 160ms ease-out;
   overflow: hidden;
 }
@@ -74,13 +74,13 @@
   font: 800 9px/1 ui-monospace, monospace;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #e8c56a;
+  color: #f3d68f;
 }
 .vd-tabs { display: flex; gap: 3px; margin-left: auto; }
 .vd-tab {
   border: none;
   background: transparent;
-  color: #93a1b8;
+  color: #a3b3c8;
   font: 600 9px/1 ui-monospace, monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -88,19 +88,19 @@
   border-radius: 3px;
   cursor: pointer;
 }
-.vd-tab:hover { color: #e9eef7; }
-.vd-tab.on { color: #0b0d12; background: #e8c56a; }
+.vd-tab:hover { color: #eef3fa; }
+.vd-tab.on { color: #0b0d12; background: #f3d68f; }
 .vd-x {
   border: none;
   background: transparent;
-  color: #93a1b8;
+  color: #a3b3c8;
   cursor: pointer;
   display: grid;
   place-items: center;
   width: 24px; height: 24px;
   border-radius: 3px;
 }
-.vd-x:hover { color: #e9eef7; background: rgba(147, 161, 184, 0.15); }
+.vd-x:hover { color: #eef3fa; background: rgba(147, 161, 184, 0.15); }
 
 .vd-cuerpo {
   padding: 10px;
@@ -119,21 +119,21 @@
   padding: 3px 6px;
   border-radius: 2px;
   border: 1px solid rgba(147, 161, 184, 0.28);
-  color: #93a1b8;
+  color: #a3b3c8;
 }
-.vd-distintivo > span:first-child { color: #e8c56a; border-color: rgba(232, 197, 106, 0.45); }
-.vd-vivo { color: #ff5470 !important; border-color: rgba(255, 84, 112, 0.5) !important; }
-.vd-suave { color: #22d3ee !important; border-color: rgba(34, 211, 238, 0.4) !important; }
+.vd-distintivo > span:first-child { color: #f3d68f; border-color: rgba(232, 197, 106, 0.45); }
+.vd-vivo { color: #ff7aa8 !important; border-color: rgba(255, 84, 112, 0.5) !important; }
+.vd-suave { color: #5de6f7 !important; border-color: rgba(34, 211, 238, 0.4) !important; }
 
 .vd-titulo { margin: 0; font: 700 16px/1.2 ui-sans-serif, system-ui, sans-serif; color: #fff; }
 .vd-que { margin: 0; font: 500 12px/1.55 ui-sans-serif, system-ui, sans-serif; color: #c6d2e1; }
-.vd-que a { color: #e8c56a; text-decoration: underline; }
+.vd-que a { color: #f3d68f; text-decoration: underline; }
 
 .vd-rotulo-mini {
   font: 700 8.5px/1 ui-monospace, monospace;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #93a1b8;
+  color: #a3b3c8;
   margin-top: 2px;
 }
 
@@ -148,7 +148,7 @@
   background: rgba(232, 197, 106, 0.05);
   border-radius: 0 3px 3px 0;
 }
-.vd-ejemplos svg { color: #e8c56a; flex: none; margin-top: 2px; }
+.vd-ejemplos svg { color: #f3d68f; flex: none; margin-top: 2px; }
 
 .vd-acciones { display: flex; flex-wrap: wrap; gap: 6px; }
 .vd-b {
@@ -159,16 +159,16 @@
   border: 1px solid rgba(232, 197, 106, 0.4);
   border-radius: 3px;
   background: rgba(232, 197, 106, 0.1);
-  color: #e8c56a;
+  color: #f3d68f;
   font: 700 9.5px/1 ui-monospace, monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
 }
-.vd-b:hover { background: rgba(232, 197, 106, 0.2); border-color: #e8c56a; }
-.vd-b-oro { background: #e8c56a; color: #0b0d12; border-color: #e8c56a; }
-.vd-b-oro:hover { background: #f2d585; }
+.vd-b:hover { background: rgba(232, 197, 106, 0.2); border-color: #f3d68f; }
+.vd-b-oro { background: #f3d68f; color: #0b0d12; border-color: #f3d68f; }
+.vd-b-oro:hover { background: #ffe6ab; }
 .vd-b-suave { border-color: rgba(147, 161, 184, 0.3); background: rgba(147, 161, 184, 0.08); color: #b9c6d6; }
 .vd-b:disabled { opacity: 0.45; cursor: not-allowed; }
 
@@ -185,14 +185,14 @@
   border: 1px solid rgba(147, 161, 184, 0.16);
   border-radius: 3px;
   background: rgba(147, 161, 184, 0.05);
-  color: #e9eef7;
+  color: #eef3fa;
   cursor: pointer;
 }
 .vd-destacados button:hover,
 .vd-sugeridas button:hover { border-color: rgba(232, 197, 106, 0.5); background: rgba(232, 197, 106, 0.08); }
 .vd-destacados b, .vd-sugeridas b { font: 700 11.5px/1.3 ui-sans-serif, system-ui, sans-serif; }
-.vd-destacados em, .vd-sugeridas em { grid-column: 1 / 2; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #93a1b8; font-style: normal; }
-.vd-destacados svg, .vd-sugeridas svg { grid-row: 1 / 3; grid-column: 2 / 3; color: #e8c56a; }
+.vd-destacados em, .vd-sugeridas em { grid-column: 1 / 2; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #a3b3c8; font-style: normal; }
+.vd-destacados svg, .vd-sugeridas svg { grid-row: 1 / 3; grid-column: 2 / 3; color: #f3d68f; }
 
 .vd-guias { display: flex; flex-direction: column; gap: 4px; }
 .vd-guia {
@@ -207,10 +207,10 @@
   cursor: pointer;
 }
 .vd-guia:hover { border-color: rgba(232, 197, 106, 0.4); }
-.vd-guia.on { border-color: #e8c56a; background: rgba(232, 197, 106, 0.09); }
+.vd-guia.on { border-color: #f3d68f; background: rgba(232, 197, 106, 0.09); }
 .vd-guia-nombre { font: 800 11px/1.2 ui-monospace, monospace; letter-spacing: 0.06em; text-transform: uppercase; }
-.vd-guia-para { grid-column: 1 / 2; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #93a1b8; }
-.vd-guia-pct { grid-row: 1 / 3; grid-column: 2 / 3; align-self: center; font: 700 9px/1 ui-monospace, monospace; color: #93a1b8; }
+.vd-guia-para { grid-column: 1 / 2; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #a3b3c8; }
+.vd-guia-pct { grid-row: 1 / 3; grid-column: 2 / 3; align-self: center; font: 700 9px/1 ui-monospace, monospace; color: #a3b3c8; }
 
 .vd-promesa {
   display: flex;
@@ -219,10 +219,10 @@
   font: 500 11px/1.5 ui-sans-serif, system-ui, sans-serif;
   color: #a9d8e6;
   background: rgba(34, 211, 238, 0.07);
-  border-left: 2px solid #22d3ee;
+  border-left: 2px solid #5de6f7;
   padding: 6px 8px;
 }
-.vd-promesa svg { flex: none; margin-top: 3px; color: #22d3ee; }
+.vd-promesa svg { flex: none; margin-top: 3px; color: #5de6f7; }
 
 .vd-pasos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .vd-paso {
@@ -242,12 +242,12 @@
   width: 22px; height: 22px;
   border-radius: 50%;
   border: 1px solid rgba(232, 197, 106, 0.4);
-  color: #e8c56a;
+  color: #f3d68f;
   font: 800 10px/1 ui-monospace, monospace;
 }
-.vd-paso.hecho .vd-paso-n { background: rgba(74, 222, 128, 0.15); border-color: #4ade80; color: #4ade80; }
+.vd-paso.hecho .vd-paso-n { background: rgba(74, 222, 128, 0.15); border-color: #6ee7a8; color: #6ee7a8; }
 .vd-paso-txt b { display: block; font: 700 11.5px/1.25 ui-sans-serif, system-ui, sans-serif; }
-.vd-paso-txt em { display: block; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #93a1b8; font-style: normal; }
+.vd-paso-txt em { display: block; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #a3b3c8; font-style: normal; }
 .vd-haz { display: block; margin-top: 3px; font: 500 10.5px/1.45 ui-sans-serif, system-ui, sans-serif; color: #dbe5f1; }
 .vd-paso-acciones { display: flex; flex-direction: column; gap: 3px; }
 .vd-mini {
@@ -262,14 +262,14 @@
   cursor: pointer;
 }
 .vd-mini:hover { color: #fff; border-color: rgba(232, 197, 106, 0.5); }
-.vd-mini-ok { color: #4ade80; border-color: rgba(74, 222, 128, 0.4); }
+.vd-mini-ok { color: #6ee7a8; border-color: rgba(74, 222, 128, 0.4); }
 
-.vd-paso-pie { margin: 0; font: 600 9px/1 ui-monospace, monospace; color: #93a1b8; text-transform: uppercase; letter-spacing: 0.1em; }
+.vd-paso-pie { margin: 0; font: 600 9px/1 ui-monospace, monospace; color: #a3b3c8; text-transform: uppercase; letter-spacing: 0.1em; }
 
 .vd-barra { height: 6px; border-radius: 999px; background: rgba(147, 161, 184, 0.16); overflow: hidden; }
-.vd-barra i { display: block; height: 100%; background: linear-gradient(90deg, #22d3ee, #e8c56a); }
-.vd-cifra { margin: 0; font: 500 11px/1.4 ui-sans-serif, system-ui, sans-serif; color: #93a1b8; }
-.vd-cifra b { color: #e8c56a; font-size: 14px; }
+.vd-barra i { display: block; height: 100%; background: linear-gradient(90deg, #5de6f7, #f3d68f); }
+.vd-cifra { margin: 0; font: 500 11px/1.4 ui-sans-serif, system-ui, sans-serif; color: #a3b3c8; }
+.vd-cifra b { color: #f3d68f; font-size: 14px; }
 
 .vd-sugeridas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 
@@ -283,22 +283,22 @@
   background: rgba(147, 161, 184, 0.04);
   cursor: pointer;
 }
-.vd-switch input { accent-color: #e8c56a; margin-top: 2px; }
+.vd-switch input { accent-color: #f3d68f; margin-top: 2px; }
 .vd-switch b { display: block; font: 700 11px/1.3 ui-sans-serif, system-ui, sans-serif; }
-.vd-switch em { display: block; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #93a1b8; font-style: normal; }
+.vd-switch em { display: block; font: 500 10px/1.4 ui-sans-serif, system-ui, sans-serif; color: #a3b3c8; font-style: normal; }
 
 .vd-pie-acciones { padding-top: 4px; border-top: 1px dashed rgba(147, 161, 184, 0.16); }
 .vd-enlace {
   border: none;
   background: transparent;
-  color: #93a1b8;
+  color: #a3b3c8;
   font: 600 10px/1.4 ui-monospace, monospace;
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
   padding: 2px 0;
 }
-.vd-enlace:hover { color: #e8c56a; }
+.vd-enlace:hover { color: #f3d68f; }
 .vd-nota { display: flex; align-items: center; gap: 5px; margin: 0; font: 500 9.5px/1.4 ui-monospace, monospace; color: rgba(147, 161, 184, 0.7); }
 
 @media (max-width: 640px) {
@@ -310,3 +310,86 @@
   .vd-panel { animation: none; }
   .vd-burbuja, .vd-b:hover { transition: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v436.2 · EL PULSO DEL LANZADOR — color un punto más vivo, movimiento corto
+   Todo lo de aquí respeta `html[data-vg-mov]` y `prefers-reduced-motion`
+   (las reglas de vivo.css apagan estas animaciones sin tocar funciones).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* la burbuja: oro por dentro, cian por fuera, y un halo que late despacio */
+.vd-burbuja {
+  background: radial-gradient(120% 120% at 30% 20%, #16202e 0%, #080c14 62%);
+  border-color: rgba(243, 214, 143, 0.5);
+  box-shadow: 0 6px 20px -12px rgba(93, 230, 247, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  color: #f3d68f;
+  transition: transform 160ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 200ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 200ms ease;
+}
+.vd-burbuja:hover {
+  transform: translateY(-2px);
+  border-color: #f3d68f;
+  box-shadow: 0 10px 26px -12px rgba(243, 214, 143, 0.75),
+              inset 0 0 0 1px rgba(243, 214, 143, 0.18);
+}
+.vd-anillo { border-color: rgba(93, 230, 247, 0.55); }
+
+/* el panel: hilo de oro arriba (viene de vivo.css) y entrada en dos tiempos */
+.vd-panel {
+  border-color: rgba(163, 179, 200, 0.2);
+  box-shadow: 0 26px 60px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(243, 214, 143, 0.06);
+  backdrop-filter: blur(6px);
+}
+.vd-cab { border-bottom-color: rgba(163, 179, 200, 0.14); }
+
+/* la pestaña activa: subrayado que se dibuja, no un bloque encendido */
+.vd-tab { position: relative; }
+.vd-tab::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: -1px;
+  height: 1.5px;
+  background: linear-gradient(90deg, #f3d68f, #5de6f7);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.vd-tab.on::after { transform: scaleX(1); }
+
+/* los botones del panel: se levantan un píxel, con halo de oro */
+.vd-b {
+  transition: transform 140ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 180ms ease, background 140ms ease, border-color 140ms ease;
+}
+.vd-b:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -12px rgba(243, 214, 143, 0.8);
+}
+.vd-b-oro { background: linear-gradient(180deg, #f3d68f, #d8ac54); border-color: #d8ac54; }
+
+/* cada fila pulsable: barrido de luz al pasar (1 px de oro, nada más) */
+.vd-guia,
+.vd-guia-pasos button,
+.vd-sugeridas button,
+.vd-destacados button {
+  transition: background 140ms ease, border-color 140ms ease, transform 140ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.vd-guia:hover,
+.vd-guia-pasos button:hover,
+.vd-sugeridas button:hover,
+.vd-destacados button:hover { transform: translateX(2px); }
+
+/* el paso recién cumplido: un sello que se hincha y vuelve */
+.vd-paso.hecho .vd-paso-n { animation: vv-sella 280ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+/* la barra de progreso: tiza de luz cuando avanza */
+.vd-barra i { transition: width 320ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+/* el estado «en vivo» con un latido lento, nunca un parpadeo nervioso */
+.vd-vivo { animation: vv-latido 2.8s ease-in-out infinite; }
+
+/* el interruptor del sonido dentro del panel, en columna estrecha */
+.vd-cuerpo .vv-ajustes { margin: 2px 0 4px; }

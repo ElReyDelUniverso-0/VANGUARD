@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  ArrowRight, Check, ChevronDown, Compass, Lock, Map as MapIcon, RotateCcw,
+  ArrowRight, Check, ChevronDown, Compass, Dices, Lock, Map as MapIcon, RotateCcw,
   Search, Sparkles,
 } from "lucide-react";
 import { FICHAS, PUERTAS_DE_ENTRADA, TOTAL_FICHAS, fichaDe, porDivision, type Ficha } from "@/lib/descubrimiento/fichas";
@@ -24,6 +24,9 @@ import {
   fichasVisitadas, guardar, leer, pctDescubierto, registrarPaso, reiniciar, type Progreso,
 } from "@/lib/descubrimiento/progreso";
 import { DESTACADOS } from "@/lib/descubrimiento/destacados";
+// v436.2 · voz por acción y los dos interruptores del pulso
+import { suena } from "@/lib/sonido/tocar";
+import { AjustesVivo } from "@/components/interfaz/ajustes-vivo";
 import "@/components/descubrimiento/descubrimiento.css";
 
 export function DescubrirCliente() {
@@ -66,7 +69,31 @@ export function DescubrirCliente() {
   const sugerida = p ? guiaSugerida(p.guias) : GUIAS[0];
   const pasoDeHoy = p ? pasoDe(sugerida.id, p.guias[sugerida.id] ?? 0) : null;
 
-  const ir = (ruta: string) => router.push(ruta);
+  const ir = (ruta: string) => {
+    suena("viaje");
+    router.push(ruta);
+  };
+
+  // la sorpresa del mandato: «llévame a algo que no conozco» — primero entre
+  // las salas que aún no has pisado; si ya las viste todas, entre todas
+  const sorpresa = () => {
+    const pendientes = FICHAS.filter((f) => !p?.visitadas[f.href.split("#")[0]]);
+    const pozo = pendientes.length > 0 ? pendientes : FICHAS;
+    const elegida = pozo[Math.floor(Math.random() * pozo.length)];
+    suena("sorpresa");
+    setBusca("");
+    setDivision("todas");
+    setAbierta(elegida.href);
+    requestAnimationFrame(() => {
+      document.getElementById(`dsc-${elegida.href}`)?.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+  };
+
+  const marcarPaso = (guiaId: string, indice: number) => {
+    if (!p) return;
+    suena("paso-hecho");
+    actualizar(registrarPaso(p, guiaId, indice));
+  };
 
   return (
     <div className="dsc">
@@ -95,7 +122,7 @@ export function DescubrirCliente() {
                 <button
                   type="button"
                   className="dsc-b"
-                  onClick={() => actualizar(registrarPaso(p, sugerida.id, p.guias[sugerida.id] ?? 0))}
+                  onClick={() => marcarPaso(sugerida.id, p.guias[sugerida.id] ?? 0)}
                 >
                   <Check className="w-3.5 h-3.5" /> lo he hecho
                 </button>
@@ -104,7 +131,7 @@ export function DescubrirCliente() {
           </div>
         </div>
 
-        <div className="dsc-guias">
+        <div className="dsc-guias" data-vg-vivo>
           {GUIAS.map((g) => {
             const hechos = p?.guias[g.id] ?? 0;
             const listo = hechos >= g.pasos.length;
@@ -158,27 +185,34 @@ export function DescubrirCliente() {
           <Search className="w-4 h-4" />
           <input
             value={busca}
-            onChange={(e) => setBusca(e.target.value)}
+            onChange={(e) => { if (e.target.value.length === 1) suena("buscar"); setBusca(e.target.value); }}
             placeholder="busca una sala o lo que quieras hacer…"
             aria-label="Buscar salas"
           />
           {busca ? (
-            <button type="button" className="dsc-limpiar" onClick={() => setBusca("")}>limpiar</button>
+            <button type="button" className="dsc-limpiar" onClick={() => { suena("buscar"); setBusca(""); }}>limpiar</button>
           ) : null}
         </div>
 
+        <div className="dsc-botones">
+          <button type="button" className="dsc-b dsc-b-suerte" onClick={sorpresa} disabled={!montado} title="Abre una ficha al azar entre las salas que no has pisado">
+            <Dices className="w-3.5 h-3.5" /> llévame a algo que no conozco
+          </button>
+          <span className="dsc-nota-mini">{p ? `${FICHAS.filter((f) => !p.visitadas[f.href.split("#")[0]]).length} salas sin pisar` : "—"}</span>
+        </div>
+
         <div className="dsc-filtros">
-          <button type="button" className={division === "todas" ? "on" : ""} onClick={() => setDivision("todas")}>
+          <button type="button" className={division === "todas" ? "on" : ""} onClick={() => { suena("filtro"); setDivision("todas"); }}>
             todas ({TOTAL_FICHAS})
           </button>
           {grupos.map((g) => (
-            <button key={g.codigo} type="button" className={division === g.codigo ? "on" : ""} onClick={() => setDivision(g.codigo)}>
+            <button key={g.codigo} type="button" className={division === g.codigo ? "on" : ""} onClick={() => { suena("filtro"); setDivision(g.codigo); }}>
               {g.codigo} · {g.nombre} ({g.fichas.length})
             </button>
           ))}
         </div>
 
-        <div className="dsc-entradas">
+        <div className="dsc-entradas" data-vg-vivo>
           {PUERTAS_DE_ENTRADA.map((r) => {
             const f = fichaDe(r);
             if (!f) return null;
@@ -198,13 +232,13 @@ export function DescubrirCliente() {
             No hay ninguna sala que case con «{busca}». Prueba con otra palabra o ábrete <Link href="/buscar">el buscador único</Link>.
           </p>
         ) : (
-          <ul className="dsc-lista">
+          <ul className="dsc-lista" data-vg-vivo>
             {filtradas.map((f) => {
               const on = abierta === f.href;
               const pisada = p ? Boolean(p.visitadas[f.href.split("#")[0]]) : false;
               return (
-                <li key={f.href} className={pisada ? "pisada" : ""}>
-                  <button type="button" className="dsc-ficha-cab" onClick={() => setAbierta(on ? null : f.href)} aria-expanded={on}>
+                <li key={f.href} id={`dsc-${f.href}`} className={`${pisada ? "pisada" : ""} ${on ? "abierta" : ""}`}>
+                  <button type="button" className="dsc-ficha-cab" onClick={() => { suena(on ? "ficha-cerrar" : "ficha-abrir"); setAbierta(on ? null : f.href); }} aria-expanded={on}>
                     <span className="dsc-ficha-div">{f.division}</span>
                     <span className="dsc-ficha-nombre">{f.nombre}</span>
                     {f.vivo ? <span className="dsc-vivo">en vivo</span> : null}
@@ -242,7 +276,7 @@ export function DescubrirCliente() {
             <p className="dsc-p">Cada línea es una versión real de la casa y una cosa que puedes probar ahora mismo. El archivo completo vive en <Link href="/novedades">Lo nuevo</Link>.</p>
           </div>
         </div>
-        <ul className="dsc-destacados">
+        <ul className="dsc-destacados" data-vg-vivo>
           {DESTACADOS.map((d) => (
             <li key={d.version}>
               <span className="dsc-version">{d.version}</span>
@@ -274,13 +308,15 @@ export function DescubrirCliente() {
             <span className="dsc-pct">{pct} %</span>
             <span className="dsc-pct-sub">{vistas} de {TOTAL_FICHAS} salas vistas</span>
             <div className="dsc-barra"><i style={{ width: `${pct}%` }} /></div>
+            <span className="dsc-rotulo-mini">sonido y movimiento</span>
+            <AjustesVivo compacto />
             {p ? (
               <div className="dsc-interruptores">
                 <label>
-                  <input type="checkbox" checked={p.modoLibre} onChange={(e) => actualizar({ ...p, modoLibre: e.target.checked })} />
+                  <input type="checkbox" checked={p.modoLibre} onChange={(e) => { suena("modo-libre"); actualizar({ ...p, modoLibre: e.target.checked }); }} />
                   <span>modo libre (sin avisos ni guía)</span>
                 </label>
-                <button type="button" className="dsc-enlace" onClick={() => actualizar(reiniciar())}>
+                <button type="button" className="dsc-enlace" onClick={() => { suena("reiniciar"); actualizar(reiniciar()); }}>
                   <RotateCcw className="w-3 h-3" /> reiniciar mi progreso
                 </button>
               </div>

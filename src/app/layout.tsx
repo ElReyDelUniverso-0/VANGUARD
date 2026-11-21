@@ -60,6 +60,9 @@ import { Caras } from "@/components/vanguard/caras";
 import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 // v435.2 · VANGUARD DISCOVERY SYSTEM — la guía acompaña en toda la casa
 import { Descubrimiento } from "@/components/descubrimiento/descubrimiento";
+// v436.2 · LA CASA VIVA — color, movimiento y el despertar del sonido
+import { Vivo } from "@/components/interfaz/vivo";
+import "./vivo.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 // v186.0 EL SALVAVIDAS: la versión viaja dentro del script inline (placa de
@@ -982,6 +985,9 @@ try{
         {/* v435.2: el descubrimiento — un lanzador discreto con la ficha de cada
             sala, las guías y el progreso. No tapa: vive abajo a la izquierda. */}
         <Descubrimiento />
+        {/* v436.2: el pulso — despierta el audio en el primer gesto y escribe
+            las perillas de sonido/movimiento en <html> para toda la casa. */}
+        <Vivo />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />
         {children}
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}

@@ -7102,8 +7102,43 @@
 // ideas», y después: muelle de UNA fila SÍ, pero con la radio a un toque.
 // La barra del teléfono pasa a cuatro destinos + MÁS (hoja con lo que no cabe)
 // y el ▶ de la radio, que enciende la única voz de la casa. Ver movil.css.
-export const APP_VERSION = "v436.0";
-export const APP_CODENAME = "EL MUELLE ÚNICO";
+// v436.2 · LA CASA VIVA — animaciones con oficio, un sonido por acción y el
+// color un punto más encendido, sin que la casa parezca de un niño.
+// ① CADA ACCIÓN TIENE SU VOZ (lib/sonido/acciones.ts): veintiséis acciones
+//    —entrar, viajar, pisar una sala nueva, abrir y cerrar el panel, cambiar de
+//    cara, dar un paso por hecho, pedir la sorpresa, filtrar, buscar, desplegar
+//    una ficha, subir de porcentaje, el modo libre, reiniciar, copiar, guardar,
+//    predecir, deshacer, un logro, un aviso, un error, el permiso de voz y el
+//    propio silencio— cada una con su TIMBRE, su intervalo, su mezcla y su
+//    anti-metralleta. Ninguna repite la receta de otra (lo comprueba la prueba).
+// ② UNA SOLA LEY DE SONIDO (lib/sonido/tocar.ts): `suena("paso-hecho")` y nada
+//    más. El portero exige gesto previo, sonido encendido, fuera de modo calma
+//    y pestaña visible: la casa jamás suena sola. Todo se sintetiza con el motor
+//    que ya existía (lib/sound.ts, al que solo se le añadió `tocar(notas)`):
+//    cero mp3, cero wav, cero URLs.
+// ③ UN ATRIBUTO BASTA PARA CUALQUIER SALA: `data-vg-son="logro"` y la capa
+//    viva lo hace sonar. No hay que tocar 380 archivos ni crear motores
+//    paralelos.
+// ④ LAS PERILLAS DEL PULSO (lib/interfaz/vivo.ts): sonido sí/no y movimiento
+//    auto·suave·quieto, guardadas en el aparato, saneadas al leer y escritas en
+//    <html> para que el CSS las lea. Donde se apagan, se apagan en toda la casa.
+// ⑤ COLOR JOYA, NO CARAMELO (app/vivo.css): más LUZ y no más saturación —oro
+//    #f3d68f y cian #5de6f7 sobre un fondo casi negro azulado—, acentos finos
+//    (hilos de 1 px, subrayados que se dibujan, halos suaves) y violeta/rosa
+//    solo en la sorpresa y en «en vivo». Ningún bloque de color plano detrás de
+//    un texto: eso es lo que vuelve infantil una interfaz.
+// ⑥ MOVIMIENTO CON OFICIO: nueve fotogramas y siete utilidades, amplitud de 1 a
+//    12 px, nada por encima de 900 ms, cero rebotes y cero confeti. Entrada
+//    escalonada para listas, sello del paso cumplido, subrayado que se dibuja y
+//    latido lento (2,8 s) para «en vivo».
+// ⑦ QUIETUD POR CUATRO CAMINOS: la perilla «quieto», `prefers-reduced-motion`,
+//    el sistema v416.0 (`data-vg-anim="desactivadas"`) y la pestaña oculta.
+//    Ninguna función depende de una animación.
+// ⑧ LA SORPRESA QUE FALTABA: /descubrir gana «llévame a algo que no conozco»
+//    —elige entre las salas sin pisar, abre la ficha, te lleva y suena— y dice
+//    cuántas quedan. 76 comprobaciones en tools/interfaz/probar.mts.
+export const APP_VERSION = "v436.2";
+export const APP_CODENAME = "LA CASA VIVA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7175,7 +7210,8 @@ export const APP_CODENAME = "EL MUELLE ÚNICO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v435.2";
+export const APP_VERSION_ANTERIOR = "v436.0";
+// (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";
