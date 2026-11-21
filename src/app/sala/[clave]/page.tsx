@@ -28,8 +28,11 @@ export async function generateMetadata({ params }: { params: Promise<{ clave: st
   const ficha = POR_CLAVE.get(clave);
   if (!ficha) return { title: "Sala no encontrada" };
   const nombre = ficha.sala.corto || ficha.sala.nombre;
+  // sin repetir el nombre cuando la constelación se llama igual que la sala
+  // («HANGAR · HANGAR»), y con absolute para que el layout no añada otro VANGUARD
+  const cola = ficha.constelacion.nombre === nombre ? "VANGUARD" : `${ficha.constelacion.nombre} · VANGUARD`;
   return {
-    title: `${nombre} · ${ficha.constelacion.nombre} — VANGUARD`,
+    title: { absolute: `${nombre} — ${cola}` },
     description: `${nombre}: ${ficha.constelacion.desc}. Sala del sistema VANGUARD, con su propia dirección.`,
     alternates: { canonical: `/sala/${clave}` },
     openGraph: { title: `${nombre} · VANGUARD`, description: ficha.constelacion.desc },
