@@ -33,52 +33,31 @@ export type Division = {
 /** Las siete divisiones. Todo módulo de la casa cae en una y solo una. */
 export const DIVISIONES: Division[] = [
   {
-    id: "frente",
+    id: "redaccion",
     codigo: "D-I",
-    nombre: "Frente",
-    lema: "Qué está pasando ahora mismo, con la hora y la fuente de cada cable",
-    modulos: ["frente"],
+    nombre: "La redacción",
+    lema: "Qué está pasando ahora y cómo lo cuenta la casa: cables, crónica, radio, foto y voz",
+    modulos: ["redaccion"],
   },
   {
-    id: "terreno",
+    id: "mundo",
     codigo: "D-II",
-    nombre: "Terreno",
-    lema: "Dónde pasa: el planeta, sus países y sus rostros",
-    modulos: ["terreno"],
+    nombre: "El mundo",
+    lema: "Dónde pasa y quién manda ahí: el planeta, sus países, sus datos y su poder",
+    modulos: ["mundo"],
   },
   {
-    id: "inteligencia",
+    id: "saber",
     codigo: "D-III",
-    nombre: "Inteligencia",
-    lema: "Quién manda y con qué: potencias, servicios y arsenales",
-    modulos: ["inteligencia"],
-  },
-  {
-    id: "conocimiento",
-    codigo: "D-IV",
-    nombre: "Conocimiento",
-    lema: "Por qué pasa: historia, lenguas, ciencia y escuela",
-    modulos: ["conocimiento"],
-  },
-  {
-    id: "metodo",
-    codigo: "D-V",
-    nombre: "Método",
-    lema: "Cómo se mide: los motores y algoritmos con los que la casa calcula",
-    modulos: ["metodo"],
-  },
-  {
-    id: "archivo",
-    codigo: "D-VI",
-    nombre: "Archivo y voz",
-    lema: "Lo que la casa ya contó: fototeca, radio, música y voz",
-    modulos: ["archivo"],
+    nombre: "El saber",
+    lema: "Por qué pasa y con qué se mide: historia, lenguas, ciencia, academia y motores",
+    modulos: ["saber"],
   },
   {
     id: "casa",
-    codigo: "D-VII",
+    codigo: "D-IV",
     nombre: "La casa",
-    lema: "Tu expediente y el estado del sistema",
+    lema: "Tu expediente, el latido del sistema y el índice de todas las salas",
     modulos: ["casa"],
   },
 ];
@@ -161,14 +140,14 @@ export function divisionDe(ruta: string): string | null {
 /**
  * LA CABECERA, ADELGAZADA.
  * Antes: 13 módulos seguidos + 4 botones (17 destinos que se tapaban).
- * Ahora: un índice y cinco puertas, una por división que se usa a diario.
+ * Ahora: un índice, un buscador y una puerta por módulo (v436.0: cuatro).
  * Todo lo demás no desaparece: vive ordenado dentro de /orden.
  */
 export const NAV_PRIMARIO = [
   { href: "/orden", label: "Orden" },
   { href: "/buscar", label: "Buscar" },
-  { href: "/guerra-hoy", label: "Frente" },
-  { href: "/mundo", label: "Terreno" },
-  { href: "/informacion", label: "Inteligencia" },
-  { href: "/atlas", label: "Conocimiento" },
+  { href: "/guerra-hoy", label: "Redacción" },
+  { href: "/mundos", label: "Mundo" },
+  { href: "/conocimiento", label: "Saber" },
+  { href: "/mi-universo", label: "Casa" },
 ];

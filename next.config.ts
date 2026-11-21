@@ -171,20 +171,27 @@ const nextConfig: NextConfig = {
       // los navegadores para «ajustes»). Los ajustes de verdad viven en /modo
       // (MODO Y CUENTA: tema, nivel de animaciones, sonido, mundo). Las tres
       // variantes aterrizan ahí en vez de morir en «esta sala no existe».
-            // v433.0 SIETE MÓDULOS, UN SOLO UNIVERSO — las catorce puertas viejas de los módulos apuntan a la
-      // puerta nueva de su división (301: los enlaces viejos y Google aprenden
-      // dónde vive ahora cada cosa). Nada se rompe: se muda.
-      { source: "/modulo/informacion", destination: "/modulo/inteligencia", permanent: true },
-      { source: "/modulo/secretos", destination: "/modulo/inteligencia", permanent: true },
-      { source: "/modulo/arsenal", destination: "/modulo/inteligencia", permanent: true },
-      { source: "/modulo/conflictos", destination: "/modulo/frente", permanent: true },
-      { source: "/modulo/datos", destination: "/modulo/frente", permanent: true },
-      { source: "/modulo/mapa", destination: "/modulo/terreno", permanent: true },
-      { source: "/modulo/planeta", destination: "/modulo/terreno", permanent: true },
-      { source: "/modulo/ciencia", destination: "/modulo/conocimiento", permanent: true },
-      { source: "/modulo/academia", destination: "/modulo/conocimiento", permanent: true },
-      { source: "/modulo/motores", destination: "/modulo/metodo", permanent: true },
-      { source: "/modulo/medios", destination: "/modulo/archivo", permanent: true },
+      // v436.0 CUATRO MÓDULOS — de siete a cuatro. Ninguna puerta vieja muere:
+      // las siete de v433.0 y las trece de las fusiones anteriores aterrizan
+      // directamente en el módulo donde ahora vive su contenido, sin cadenas de
+      // redirecciones (una 301 que rebota en otra 301 no la sigue Google).
+      { source: "/modulo/frente", destination: "/modulo/redaccion", permanent: true },
+      { source: "/modulo/archivo", destination: "/modulo/redaccion", permanent: true },
+      { source: "/modulo/conflictos", destination: "/modulo/redaccion", permanent: true },
+      { source: "/modulo/datos", destination: "/modulo/redaccion", permanent: true },
+      { source: "/modulo/medios", destination: "/modulo/redaccion", permanent: true },
+      { source: "/modulo/terreno", destination: "/modulo/mundo", permanent: true },
+      { source: "/modulo/inteligencia", destination: "/modulo/mundo", permanent: true },
+      { source: "/modulo/informacion", destination: "/modulo/mundo", permanent: true },
+      { source: "/modulo/secretos", destination: "/modulo/mundo", permanent: true },
+      { source: "/modulo/arsenal", destination: "/modulo/mundo", permanent: true },
+      { source: "/modulo/mapa", destination: "/modulo/mundo", permanent: true },
+      { source: "/modulo/planeta", destination: "/modulo/mundo", permanent: true },
+      { source: "/modulo/conocimiento", destination: "/modulo/saber", permanent: true },
+      { source: "/modulo/metodo", destination: "/modulo/saber", permanent: true },
+      { source: "/modulo/ciencia", destination: "/modulo/saber", permanent: true },
+      { source: "/modulo/academia", destination: "/modulo/saber", permanent: true },
+      { source: "/modulo/motores", destination: "/modulo/saber", permanent: true },
       { source: "/modulo/juego", destination: "/modulo/casa", permanent: true },
       { source: "/modulo/estado", destination: "/modulo/casa", permanent: true },
       // el cuartel deja de ser un destino (sus 155 salas viven en /orden) y las

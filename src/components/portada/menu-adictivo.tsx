@@ -18,14 +18,21 @@ export function BotonMenuAdictivo() {
     { id: "juego", label: "Juego & Media", icono: "🎮" },
   ];
 
+  // v436.0 · los filtros apuntaban a módulos que ya no existen (informacion,
+  // academia, arsenal, mapa, secretos, ciencia, datos, planeta, juego, medios):
+  // elegir cualquier categoría devolvía la lista VACÍA. Con los cuatro módulos
+  // de ahora cada categoría vuelve a enseñar algo, y lo que enseña es verdad.
+  const POR_CATEGORIA: Record<string, string[]> = {
+    novedades: ["redaccion"],
+    conflictos: ["redaccion", "mundo"],
+    inteligencia: ["saber", "mundo"],
+    datos: ["mundo"],
+    juego: ["casa", "redaccion"],
+  };
+
   const modulosFiltrados = MODULOS_PUBLICOS.filter((m) => {
     if (filtro === "todos") return true;
-    if (filtro === "novedades") return m.id === "informacion" || m.id === "academia" || m.id === "motores";
-    if (filtro === "conflictos") return m.id === "conflictos" || m.id === "arsenal" || m.id === "mapa" || m.id === "informacion";
-    if (filtro === "inteligencia") return m.id === "informacion" || m.id === "academia" || m.id === "motores" || m.id === "conocimiento" || m.id === "secretos" || m.id === "ciencia";
-    if (filtro === "datos") return m.id === "datos" || m.id === "planeta" || m.id === "mapa" || m.id === "informacion";
-    if (filtro === "juego") return m.id === "juego" || m.id === "medios";
-    return true;
+    return (POR_CATEGORIA[filtro] ?? []).includes(m.id);
   });
 
   const saltarAleatorio = () => {
