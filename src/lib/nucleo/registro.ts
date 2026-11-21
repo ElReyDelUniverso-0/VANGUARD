@@ -970,17 +970,17 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     alias: "constelacion constelaciones salas agrupadas tema intel mapa salas",
   },
   {
-    id: "mod:cuartel",
-    nombre: "EL CUARTEL",
-    lema: "La casa entera en una pantalla",
+    id: "mod:orden",
+    nombre: "EL ORDEN DE BATALLA",
+    lema: "Toda la casa en un solo cuerpo",
     descripcion:
-      "La aplicación completa: las 155 salas con sus paneles, el estado en vivo y la navegación por pestañas. Es la casa por dentro; la portada «/» es el escaparate y /sala/<clave> la puerta sin JavaScript de cada sala.",
+      "El índice único: siete divisiones, los módulos y las 156 salas con su código (D-I-M01) y un buscador que filtra mientras se escribe. Antes esto vivía dentro del cuartel; ahora el cuartel no existe como destino —/cuartel redirige aquí— y cada sala se abre por su propia dirección en /sala/<clave>, con su página de servidor y su enlace canónico.",
     categoria: "SISTEMA",
-    ruta: "/cuartel",
+    ruta: "/orden",
     permiso: "publico",
     estado: "VIVO",
     dependencias: ["fnt:modulos"],
-    alias: "cuartel app aplicacion paneles pestanas salas casa escritorio",
+    alias: "orden batalla indice divisiones salas codigo cuartel app paneles pestanas casa",
   },
   {
     id: "mod:clasico",
@@ -992,7 +992,7 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     ruta: "/clasico",
     permiso: "publico",
     estado: "VIVO",
-    dependencias: ["mod:cuartel"],
+    dependencias: ["mod:orden"],
     alias: "clasico casa clasica experiencia antigua alias home app",
   },
   {
