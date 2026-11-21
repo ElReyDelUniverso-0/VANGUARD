@@ -59,8 +59,8 @@ export function Ecosistema() {
                 <p className="vxe-eje-promesa">{e.promesa}</p>
                 <div className="vxe-eje-cifras">
                   {e.cifras.map((c) => (
-                    <span key={c.v} className="vxe-eje-cifra">
-                      <b>{c.v}</b> {c.k}
+                    <span key={c.valor} className="vxe-eje-cifra">
+                      <b>{c.valor}</b> {c.etiqueta}
                     </span>
                   ))}
                 </div>

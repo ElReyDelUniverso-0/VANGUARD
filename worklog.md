@@ -1,4 +1,13 @@
 
+### v436.1 · EL TRÁILER DE FAMILIAS (2026-11-19)
+- **Mandato** (clarificado por el Dueño como «combinación de todo»): actualizar los módulos del Cuartel, ponerlos en el Vanguard principal, agregarlos a las 10 familias, y presentar las familias como un **tráiler** donde estén **todos los módulos con sus portadas y animaciones** — todo en Vanguard (ecosistema + portada).
+- **Lo construido**:
+  - **Los 7 módulos entran en sus familias** en `src/lib/experiencia/registro.ts`: `ExperienciaEje` ahora lleva `img?` (portada real); añadido Frente→Actualidad, Terreno→Geografía, Método→Datos, Conocimiento→Educación, Archivo y voz→Narrativa, Inteligencia→Investigación, La casa→Mundos. Cada uno con su **portada real** (`portaaviones.jpg`, `satelite.jpg`, `radar-1.jpg`, `arco.jpg`, `kremlin.jpg`).
+  - **El Ecosistema se reconvierte en tráiler**: `src/components/experiencia/ecosistema.tsx` + `experiencia.css` — cada familia es una **tarjeta-tráiler** con **portada real en movimiento** (ken-burns `vxe-deriva` + respira), número, lema, promesa, cifras y el **tráiler completo**: todas sus experiencias y, para cada módulo, su **portada real** y la etiqueta «Módulo». Nuevas animaciones `vxe-revela`, foco por familia, `prefers-reduced-motion`.
+  - **Contrato ajustado** en `scripts/pruebas-experiencia.mjs`: admite rutas dinámicas (`/modulo/<id>` → `/modulo/[id]`) y las ilustraciones de eje + de módulos. **159 comprobaciones PASA**: 10 familias, 47 puertas reales.
+- **Cuartel**: los módulos ya son pestañas reales (`frente`, `mundo`, `atlas`, `galeria`…) con `PREFETCH_MODULOS`; `entradaDe` enlaza cada módulo a su sala/nav. Nada del 3D se rompe (`useSala3dContenido` es no-op desde v173).
+- **Commit** `2735cd4` pusheado a `main`; deployment Vercel automático del push.
+
 ### Despliegue Vercel · MISIÓN 03 (2026-11-19)
 - Producción: proyecto `vanguard-kq9r` (`prj_uJKJQvYBrY8wRtsS82Jl73cmj1lB`), build `dpl_9hVywytUiym82gqQNLw1Haz7xyMM` — READY y PROMOTED, commit `922e365` de `main` (descendiente de los commits del Atlas).
 - URL: https://vanguard-kq9r.vercel.app — las cuatro puertas, la ficha Golden Gate y `/mundos/us` responden 200; cabecera muestra **v420.3**.

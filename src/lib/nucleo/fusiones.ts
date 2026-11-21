@@ -923,7 +923,7 @@ export const FAMILIAS_MODULO: FamiliaModulos[] = [
       "El archivo no es un adorno: es la prueba. Búsqueda en tres instituciones, comparación de dos piezas, ficha de quién publica cada cosa y el método con el que se investiga. Sin esta familia, la casa afirma cosas sin poder mostrar el papel.",
     cifra: "9 puertas · 3 instituciones · derechos declarados",
   },
-];
+] as FamiliaModulos[];
 
 /** Todas las rutas declaradas en las familias (para las pruebas). */
 export function rutasDeFamilias(): string[] {
