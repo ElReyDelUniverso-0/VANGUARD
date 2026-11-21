@@ -303,7 +303,7 @@ export const FICHAS: Ficha[] = (() => {
           modulo: modulo.nombre,
           img: pestana?.img,
           vivo: pestana?.vivo,
-          primerPaso: primerPasoDe(sala.nombre, ejemplos, sala.txt),
+          primerPaso: primerPasoDe(sala.nombre, ejemplos, txt || modulo.lema),
           nivel: nivelDe(sala.href),
         });
       }
