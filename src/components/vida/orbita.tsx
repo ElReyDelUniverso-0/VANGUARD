@@ -16,7 +16,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type PointerEvent as PunteroReact } from "react";
-import { MODULOS } from "@/components/portada/modulos";
+// v432.0 ORDEN ÚNICO: la terminal ya no lleva su propia lista de módulos (se
+// pisaba con la cabecera). Lee el mismo árbol que el índice /orden: siete
+// divisiones, cada módulo con su código D-x-M0y. Una sola verdad, dos puertas.
+import { ARBOL } from "@/lib/operacion/orden";
 import { PALETA, haceCuanto } from "@/lib/vida/algoritmo";
 import { anotar, misFavoritos, recientes } from "@/lib/vida/senal";
 
@@ -30,20 +33,23 @@ const EXTRAS = [
 type Entrada = { id: string; nombre: string; grupo: string; href: string; acento: string; codigo: string };
 
 const ENTRADAS: Entrada[] = [
-  // UNA sola numeración para toda la casa: M-01… los módulos, T-01… tu lado.
-  // Es el «todos los módulos en uno»: un solo cuerpo, un solo registro.
-  ...MODULOS.map((m, i) => ({
-    id: m.id,
-    nombre: m.nombre,
-    grupo: "Orden de batalla",
-    href: m.nav,
-    acento: PALETA[i % PALETA.length],
-    codigo: `M-${String(i + 1).padStart(2, "0")}`,
-  })),
+  // Cada módulo cae bajo SU división (D-I… D-VII) y con su código completo.
+  // Así la terminal se lee de arriba abajo, como un documento, y ningún botón
+  // compite con otro: no hay dos listas paralelas, hay un solo orden.
+  ...ARBOL.flatMap((d, di) =>
+    d.modulosResueltos.map((m, mi) => ({
+      id: m.id,
+      nombre: m.nombre,
+      grupo: `${d.codigo} · ${d.nombre}`,
+      href: m.nav,
+      acento: PALETA[(di + mi) % PALETA.length],
+      codigo: m.codigo,
+    })),
+  ),
   ...EXTRAS.map((e, i) => ({
     ...e,
-    grupo: "Personal",
-    acento: PALETA[(MODULOS.length + i) % PALETA.length],
+    grupo: "Tu lado",
+    acento: PALETA[(ARBOL.length + i) % PALETA.length],
     codigo: `T-${String(i + 1).padStart(2, "0")}`,
   })),
 ];
@@ -237,6 +243,9 @@ export function Orbita() {
             <span>
               <kbd className="vida-kbd">Esc</kbd> cierra · <kbd className="vida-kbd">↑↓</kbd> recorre
             </span>
+            <Link href="/orden" className="vida-orbita-todo" onClick={() => setAbierto(false)}>
+              Índice completo · todas las salas
+            </Link>
             <span>
               <kbd className="vida-kbd">/</kbd> abre · registro activo
             </span>

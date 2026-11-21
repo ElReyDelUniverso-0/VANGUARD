@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { LogoVanguard } from "./logo";
 import { Reloj } from "./reloj";
 import { MODULOS_PUBLICOS, entradaDe, moduloDe } from "./modulos";
+import { NAV_PRIMARIO } from "@/lib/operacion/orden";
 import { IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
 // v403.8 LA PUERTA: el buscador universal (⌘K) llega por fin a la cabecera
 // viva. Busca las 155 salas del cuartel, las 46 puertas de los módulos y los
@@ -22,10 +23,14 @@ import { BotonGuiaVisual } from "@/components/vanguard/guia/GuiaVisualTactivaMod
 // v402.6 LOS NUEVE MÓDULOS — la cabecera lee los módulos de modulos.ts
 // (la portada está en el logo: ocho módulos caben en una sola fila)
 // v406.0 LA TRAVESÍA: «Explorar» abre la entrada inmersiva de toda la casa
-export const NAV = [
-  { href: "/entrar", label: "Explorar" },
-  ...MODULOS_PUBLICOS.map((m) => ({ href: entradaDe(m), label: m.corto })),
-];
+// v432.0 EL ORDEN — el Dueño: «hay muchos botones en el menú y unos opacan a
+// otros; ordena los módulos y los botones». La cabecera llevaba 13 módulos
+// seguidos más 4 botones. Ahora lleva el ÍNDICE y cinco puertas de uso diario.
+// Nada se pierde: los 14 módulos y sus salas viven ordenados en /orden.
+export const NAV = NAV_PRIMARIO;
+
+/** la lista vieja (13 módulos) queda disponible por compatibilidad; ya no se pinta */
+export const NAV_MODULOS = MODULOS_PUBLICOS.map((m) => ({ href: entradaDe(m), label: m.corto }));
 
 // v402 — cada sala cuelga de uno de los cinco módulos (fuente única: modulos.ts)
 function activo(ruta: string, href: string) {

@@ -879,3 +879,345 @@ body::after {
     content: "";
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   11 · EL ÍNDICE ÚNICO (v432.0) — /orden
+   Un documento, no una lista de botones: divisiones numeradas, módulos con
+   código, salas en renglones. Nada compite con nada porque todo está en una
+   sola columna de lectura.
+   ═══════════════════════════════════════════════════════════════════ */
+.op-orden-pag {
+  padding: 40px 0 90px;
+}
+
+.op-orden {
+  max-width: var(--vx-max, 1180px);
+  margin: 0 auto;
+  padding: 0 clamp(14px, 3vw, 28px);
+}
+
+.op-orden-cab {
+  border-bottom: 1px solid var(--op-hair2);
+  padding-bottom: 22px;
+  margin-bottom: 8px;
+}
+
+.op-orden-sello {
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--op-red);
+  margin: 0 0 10px;
+}
+
+.op-orden-titulo {
+  font-size: clamp(26px, 4.2vw, 44px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  color: var(--vx-tx, #e9eef1);
+}
+
+.op-orden-lema {
+  max-width: 70ch;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--vx-tx2, #b6c1c6);
+  margin: 0 0 20px;
+}
+
+/* el buscador: una regla, sin caja redonda */
+.op-orden-buscador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--op-hair2);
+  background: var(--op-panel);
+  padding: 0 12px;
+}
+.op-orden-buscador label {
+  font-family: var(--op-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--op-muted);
+  white-space: nowrap;
+}
+.op-orden-buscador input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: var(--vx-tx, #e9eef1);
+  font-family: var(--op-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  padding: 12px 0;
+}
+.op-orden-buscador input::placeholder {
+  color: #5f6b70;
+}
+.op-orden-buscador:focus-within {
+  border-color: var(--op-red);
+}
+.op-orden-cuenta {
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--op-steel);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* las salas rescatadas del cuartel */
+.op-rescatadas {
+  margin: 26px 0 10px;
+  border-left: 3px solid var(--op-amber);
+  background: rgba(255, 176, 32, 0.04);
+  padding: 16px 18px 18px;
+}
+.op-rescatadas h2 {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+.op-rescatadas p.op-rescatadas-nota {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--vx-tx2, #b6c1c6);
+  margin: 0 0 12px;
+  max-width: 76ch;
+}
+.op-rescatadas ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1px;
+  background: var(--op-hair);
+}
+.op-rescatadas li {
+  background: #070a0b;
+}
+.op-rescatadas a {
+  display: block;
+  padding: 10px 12px;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: border-color 90ms steps(2), background 90ms steps(2);
+}
+.op-rescatadas a:hover,
+.op-rescatadas a:focus-visible {
+  border-left-color: var(--op-red);
+  background: rgba(216, 31, 38, 0.06);
+}
+.op-rescatadas b {
+  display: block;
+  font-family: var(--op-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--op-steel);
+  margin-bottom: 3px;
+}
+.op-rescatadas span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--op-muted);
+}
+
+/* cada división */
+.op-div {
+  margin-top: 34px;
+  padding-top: 18px;
+  border-top: 1px solid var(--op-hair2);
+  scroll-margin-top: 84px;
+}
+.op-div-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.op-div-codigo {
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--op-red);
+  border: 1px solid var(--op-red);
+  padding: 3px 6px;
+}
+.op-div-cab h2 {
+  font-size: clamp(17px, 2.4vw, 23px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--vx-tx, #e9eef1);
+}
+.op-div-cuenta {
+  margin-left: auto;
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--op-muted);
+}
+.op-div-lema {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--vx-tx2, #b6c1c6);
+  margin: 8px 0 16px;
+  max-width: 78ch;
+}
+.op-div-cuerpo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px;
+  background: var(--op-hair);
+}
+
+/* cada módulo: una ficha con su código */
+.op-mod {
+  background: #070a0b;
+  padding: 14px 16px 16px;
+  border-left: 2px solid transparent;
+  transition: border-color 90ms steps(2);
+}
+.op-mod:hover {
+  border-left-color: var(--op-red);
+}
+.op-mod-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-bottom: 6px;
+}
+.op-mod-codigo {
+  font-family: var(--op-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--op-muted);
+  white-space: nowrap;
+}
+.op-mod-cab h3 {
+  margin: 0;
+  font-size: 14.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.op-mod-cab h3 a {
+  color: var(--op-steel);
+  text-decoration: none;
+}
+.op-mod-cab h3 a:hover,
+.op-mod-cab h3 a:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: var(--op-red);
+  text-underline-offset: 4px;
+}
+.op-mod-lema {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--op-muted);
+  margin: 0 0 10px;
+}
+.op-mod-salas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+.op-mod-salas li a {
+  display: inline-block;
+  font-family: var(--op-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #98a6ac;
+  border: 1px solid var(--op-hair2);
+  padding: 4px 7px;
+  text-decoration: none;
+  transition: color 90ms steps(2), border-color 90ms steps(2);
+}
+.op-mod-salas li a:hover,
+.op-mod-salas li a:focus-visible {
+  color: #fff;
+  border-color: var(--op-red);
+  background: rgba(216, 31, 38, 0.1);
+}
+
+.op-orden-vacio {
+  margin: 28px 0;
+  font-family: var(--op-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--op-muted);
+}
+.op-orden-vacio button {
+  font: inherit;
+  color: #fff;
+  background: var(--op-red);
+  border: 0;
+  padding: 6px 10px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .op-div-cuenta {
+    margin-left: 0;
+    width: 100%;
+  }
+  .op-orden-pag {
+    padding: 24px 0 70px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .op-rescatadas a,
+  .op-mod,
+  .op-mod-salas li a {
+    transition: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   12 · LA TERMINAL APUNTA AL ÍNDICE (v432.0)
+   El enlace al documento único dentro del pie de la terminal de mando.
+   ═══════════════════════════════════════════════════════════════════ */
+.vida-orbita-pie .vida-orbita-todo {
+  order: -1;
+  font-family: var(--op-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--op-steel);
+  text-decoration: none;
+  border-bottom: 1px solid var(--op-red);
+  padding-bottom: 2px;
+  white-space: nowrap;
+}
+.vida-orbita-pie .vida-orbita-todo:hover,
+.vida-orbita-pie .vida-orbita-todo:focus-visible {
+  color: #fff;
+}
+@media (max-width: 700px) {
+  .vida-orbita-pie {
+    flex-wrap: wrap;
+  }
+  .vida-orbita-pie .vida-orbita-todo {
+    width: 100%;
+    order: 0;
+  }
+}

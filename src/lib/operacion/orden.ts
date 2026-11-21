@@ -1,0 +1,174 @@
+// ═══════════════════════════════════════════════════════════════════
+// v432.0 · ORDEN DE BATALLA — LA CASA ENTERA, ORDENADA EN UN SOLO CUERPO
+//
+// Mandato del Dueño: «está muy saturado, hay muchas salas no ordenadas y
+// olvidadas, hay muchos botones en el menú y en el segundo menú unos opacan a
+// otros. Ordena todos los módulos, organízalos, los botones también. Hay
+// módulos buenísimos olvidados que están en el cuartel y todos deben estar en
+// la sección principal».
+//
+// Problema real medido: la cabecera llevaba 13 módulos seguidos + 4 botones;
+// cada módulo abría una barra de hasta 13 pestañas (94 en total) y varias de
+// esas pestañas apuntaban al MISMO href (las 6 de Información Perfecta, por
+// ejemplo): botones que se tapan entre sí.
+//
+// Lo que hace este archivo: NO inventa salas ni rutas. Toma `modulos.ts` —la
+// fuente única que ya usan la cabecera, la carcasa y el sitemap— y la reagrupa
+// en SIETE DIVISIONES con su código. Todo lo que estaba enterrado en el cuartel
+// sube a la superficie con su nombre propio.
+// ═══════════════════════════════════════════════════════════════════
+import { MODULOS, type Modulo } from "@/components/portada/modulos";
+
+export type Division = {
+  id: string;
+  /** código de orden de batalla: D-I … D-VII */
+  codigo: string;
+  nombre: string;
+  /** para qué sirve la división, en una línea */
+  lema: string;
+  /** ids de módulos de `modulos.ts`, en el orden en que se leen */
+  modulos: string[];
+};
+
+/** Las siete divisiones. Todo módulo de la casa cae en una y solo una. */
+export const DIVISIONES: Division[] = [
+  {
+    id: "frente",
+    codigo: "D-I",
+    nombre: "Frente",
+    lema: "Qué está pasando ahora mismo, con la hora y la fuente de cada cable",
+    modulos: ["conflictos", "datos"],
+  },
+  {
+    id: "terreno",
+    codigo: "D-II",
+    nombre: "Terreno",
+    lema: "Dónde pasa: el planeta, sus países y sus rostros",
+    modulos: ["mapa", "planeta"],
+  },
+  {
+    id: "inteligencia",
+    codigo: "D-III",
+    nombre: "Inteligencia",
+    lema: "Quién manda y con qué: potencias, servicios y arsenales",
+    modulos: ["informacion", "secretos", "arsenal"],
+  },
+  {
+    id: "conocimiento",
+    codigo: "D-IV",
+    nombre: "Conocimiento",
+    lema: "Por qué pasa: historia, lenguas, ciencia y escuela",
+    modulos: ["conocimiento", "ciencia", "academia"],
+  },
+  {
+    id: "metodo",
+    codigo: "D-V",
+    nombre: "Método",
+    lema: "Cómo se mide: los motores y algoritmos con los que la casa calcula",
+    modulos: ["motores"],
+  },
+  {
+    id: "archivo",
+    codigo: "D-VI",
+    nombre: "Archivo y voz",
+    lema: "Lo que la casa ya contó: fototeca, radio, música y voz",
+    modulos: ["medios"],
+  },
+  {
+    id: "casa",
+    codigo: "D-VII",
+    nombre: "La casa",
+    lema: "El juego, tu expediente y el estado del sistema",
+    modulos: ["juego", "estado"],
+  },
+];
+
+/**
+ * LO QUE ESTABA ENTERRADO EN EL CUARTEL.
+ * Salas buenas que solo se alcanzaban entrando a «Juego» y bajando: aquí suben
+ * a la superficie, con su nombre y su porqué. Los href son los reales del
+ * cuartel, comprobados en producción (nada inventado).
+ */
+export type Rescatada = { href: string; nombre: string; nota: string; division: string };
+
+export const RESCATADAS: Rescatada[] = [
+  { href: "/teatro-3d", nombre: "Teatro 3D", nota: "Escuadrones, uniformes y armas en volumen", division: "inteligencia" },
+  { href: "/teatro-3d?modo=libre", nombre: "Teatro 3D · modo libre", nota: "Países y nuclear, sin guion", division: "inteligencia" },
+  { href: "/teatro-3d?modo=tiempo", nombre: "Máquina del tiempo 3D", nota: "La guerra contada en el mapa que cambia", division: "conocimiento" },
+  { href: "/zona-cero", nombre: "Zona Cero", nota: "El ojo de la casa: busca en todo y pégale a lo que encuentres", division: "terreno" },
+  { href: "/vertigo", nombre: "El Vértigo", nota: "El archivo en vivo, una pieza por deslizamiento", division: "frente" },
+  { href: "/mision", nombre: "Misión 100", nota: "Cien objetivos que te enseñan la casa jugando", division: "casa" },
+  { href: "/objetivos", nombre: "Objetivos", nota: "Lo que llevas hecho, medido", division: "casa" },
+  { href: "/universo", nombre: "Colecciones", nota: "Las piezas que has ido reuniendo", division: "casa" },
+  { href: "/creadores", nombre: "La Forja", nota: "Publica lo tuyo dentro de la casa", division: "casa" },
+  { href: "/novedades", nombre: "Novedades", nota: "Lo último que ha entrado al sistema", division: "casa" },
+];
+
+const POR_ID = new Map(MODULOS.map((m) => [m.id, m]));
+
+export type Sala = { href: string; nombre: string };
+export type ModuloOrdenado = Modulo & { salas: Sala[]; codigo: string };
+export type DivisionOrdenada = Division & { modulosResueltos: ModuloOrdenado[]; salas: number };
+
+/**
+ * Las salas REALES de un módulo: se quitan los href repetidos (las pestañas
+ * que apuntan al mismo sitio son las que se tapan entre sí) y se queda la
+ * primera etiqueta de cada destino.
+ */
+export function salasDe(m: Modulo): Sala[] {
+  const vistas = new Set<string>();
+  const salas: Sala[] = [];
+  for (const p of m.pestanas) {
+    if (vistas.has(p.href)) continue;
+    vistas.add(p.href);
+    salas.push({ href: p.href, nombre: p.label });
+  }
+  return salas;
+}
+
+/** El árbol completo, ya numerado. Es lo que pintan el índice y la terminal. */
+export const ARBOL: DivisionOrdenada[] = DIVISIONES.map((d) => {
+  let n = 0;
+  const modulosResueltos: ModuloOrdenado[] = d.modulos
+    .map((id) => POR_ID.get(id))
+    .filter((m): m is Modulo => !!m)
+    .map((m) => {
+      n += 1;
+      const salas = salasDe(m);
+      return { ...m, salas, codigo: `${d.codigo}-M${String(n).padStart(2, "0")}` };
+    });
+  return {
+    ...d,
+    modulosResueltos,
+    salas: modulosResueltos.reduce((t, m) => t + m.salas.length, 0),
+  };
+});
+
+export const TOTAL_MODULOS = ARBOL.reduce((t, d) => t + d.modulosResueltos.length, 0);
+export const TOTAL_SALAS = ARBOL.reduce((t, d) => t + d.salas, 0);
+
+/** División de una ruta, para encender la luz correcta. */
+export function divisionDe(ruta: string): string | null {
+  for (const d of ARBOL) {
+    for (const m of d.modulosResueltos) {
+      if (ruta === m.nav || ruta.startsWith(m.nav + "/")) return d.id;
+      if (m.salas.some((s) => ruta === s.href || ruta.startsWith(s.href + "/"))) return d.id;
+    }
+  }
+  return null;
+}
+
+/**
+ * LA CABECERA, ADELGAZADA.
+ * Antes: 13 módulos seguidos + 4 botones (17 destinos que se tapaban).
+ * Ahora: un índice y cinco puertas, una por división que se usa a diario.
+ * Todo lo demás no desaparece: vive ordenado dentro de /orden.
+ */
+export const NAV_PRIMARIO = [
+  { href: "/orden", label: "Orden" },
+  { href: "/guerra-hoy", label: "Frente" },
+  { href: "/mundo", label: "Terreno" },
+  { href: "/informacion", label: "Inteligencia" },
+  { href: "/atlas", label: "Conocimiento" },
+  { href: "/cuartel", label: "La casa" },
+];
