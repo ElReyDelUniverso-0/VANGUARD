@@ -39,7 +39,7 @@ export default function PaginaEcosistema() {
         </p>
       </header>
 
-      <Ecosistema cabecera={false} />
+      <Ecosistema />
 
       <section className="vxe-pagina-indice" aria-labelledby="vxe-indice-titulo">
         <h2 id="vxe-indice-titulo" className="vxe-viva-titulo">

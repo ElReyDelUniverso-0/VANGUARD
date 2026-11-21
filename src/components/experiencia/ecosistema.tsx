@@ -22,7 +22,7 @@ export function Ecosistema() {
   return (
     <section id="ecosistema" className="vxe-eco" aria-labelledby="vxe-eco-h">
       <div className="vxe-eco-cab">
-        <p className="vxe-eco-sello">{cifras.ejes} familias · {cifras.portales} puertas · un solo universo</p>
+        <p className="vxe-eco-sello">{cifras.ejes} familias · {cifras.experiencias} experiencias · un solo universo</p>
         <h2 id="vxe-eco-h" className="vxe-eco-titulo">
           Las diez familias, en un tráiler
         </h2>
