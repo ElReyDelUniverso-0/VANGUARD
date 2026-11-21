@@ -51,13 +51,10 @@ import { Registrador } from "@/components/travesia/registrador";
 // v431.0 · LA MENTE, EN TODAS PARTES — el panel global del cerebro de la casa.
 // Si el gateway de lenguaje está caído, la propia mente lo dice y pasa a modo
 // casa: no hay simulación de inteligencia en ningún punto.
-import { MenteGlobal } from "@/components/mente/mente-global";
-// v431.4 UNA CASA, UNA VOZ: las dos caras (Hoy ↔ Salas ↔ Radio) en el mismo
-// interruptor y la emisora de la casa montada UNA vez, para que suene en toda
-// la casa sin cortarse al navegar. Orden del Dueño: «la voz está en otro lado,
-// está en Cuartel… ¿por qué no lo centralizas?».
+// v434.2: se eliminan las dos voces (radio + orbe/mente); quedan sin importar.
+// v431.4 UNA CASA, UNA VOZ: las dos caras (Hoy ↔ Salas) en el mismo
+// interruptor. La emisora y la mente se quitaron del layout por mandato.
 import { Caras } from "@/components/vanguard/caras";
-import { EmisoraGlobal } from "@/components/radio/emisora-global";
 import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -970,12 +967,11 @@ try{
         {/* v405.10: el muelle contextual — se adapta a la sala en la que estás */}
         <BarraAdaptativa />
         <Registrador />
-        {/* v431.4: el interruptor de cara y la voz de la casa, en todas partes */}
+        {/* v431.4: el interruptor de cara, en todas partes */}
         <Caras />
-        <EmisoraGlobal />
-        {/* v431.0: LA MENTE — habla desde cualquier sala y te lleva a los sitios.
-            Se monta fuera de /vanguard2 y de las salas inmersivas (canvas puro). */}
-        <MenteGlobal />
+        {/* v434.2: se eliminan las dos voces de la casa (radio + el orbe/mente en
+            el centro), por mandato del Dueño. EmisoraGlobal y MenteGlobal no
+            se montan; la interfaz queda sin botones de voz. */}
         {/* v403.1 LOS DOS MUNDOS: la Puerta (primera visita) y el Cruce entre mundos */}
         <PuertaMundos />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />
