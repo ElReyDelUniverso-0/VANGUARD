@@ -35,6 +35,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Artefacto, Enlace } from "@/lib/mente/agente";
 import { decir, leerGustos, pararBoca } from "@/lib/voz/decir";
+import { comoIdiomaVoz } from "@/lib/voz/idiomas";
 import {
   AJUSTES_DEFECTO,
   leerAjustes,
@@ -207,7 +208,8 @@ export function OrbeMente() {
       try {
         const hablo = decir(limpio.slice(0, 900), {
           gustos: leerGustos(),
-          idioma: ajustes.idioma.split("-")[0],
+          // v437.0 · el orbe habla el idioma de la casa, no una cadena suelta
+          idioma: comoIdiomaVoz(ajustes.idioma),
           interrumpir: true,
           onFin: () => setEstado((e) => (e === "hablando" ? "inactivo" : e)),
         });

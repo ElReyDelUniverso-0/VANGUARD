@@ -809,3 +809,14 @@
 @media (max-width: 420px) {
   .vxr-reglas-lista li { grid-template-columns: 30px minmax(0, 1fr); gap: 8px; }
 }
+
+/* v437.0 · el idioma de la emisión, a la vista y sin adornos */
+.vxr-idioma-nota {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--vg-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8b8f96;
+}

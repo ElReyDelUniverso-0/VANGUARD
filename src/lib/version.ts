@@ -7137,8 +7137,16 @@
 // ⑧ LA SORPRESA QUE FALTABA: /descubrir gana «llévame a algo que no conozco»
 //    —elige entre las salas sin pisar, abre la ficha, te lleva y suena— y dice
 //    cuántas quedan. 76 comprobaciones en tools/interfaz/probar.mts.
-export const APP_VERSION = "v436.2";
-export const APP_CODENAME = "LA CASA VIVA";
+// (anterior) export const APP_VERSION = "v436.2";
+// (anterior) export const APP_CODENAME = "LA CASA VIVA";
+// v437.0 · LA CASA HABLA TU IDIOMA — mandato del Dueño: «pule más las voces,
+// la personalización también, los idiomas en Vanguard, o sea que Vanguard al
+// cambiar de idioma TODO cambie — y la voz más hermosa de todas». Ocho idiomas
+// en una tabla sola (lib/voz/idiomas.ts), la boca lee el idioma de la casa,
+// cada idioma guarda su voz y su ritmo, y la radio traduce sus fórmulas sin
+// tocar un solo cable. Ver movil.css, limpiar.ts, decir.ts y marcos.ts.
+export const APP_VERSION = "v437.0";
+export const APP_CODENAME = "LA CASA HABLA TU IDIOMA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7210,8 +7218,7 @@ export const APP_CODENAME = "LA CASA VIVA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v436.0";
-// (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
+export const APP_VERSION_ANTERIOR = "v436.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";

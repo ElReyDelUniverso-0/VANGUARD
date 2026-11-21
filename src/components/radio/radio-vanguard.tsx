@@ -45,6 +45,8 @@ import {
 import { type BloqueGuion, type EstiloRadio, construirPrograma, programaAGuion } from "@/lib/radio/guion";
 import { SUGERENCIAS, type Memoria, MEMORIA_VACIA, responder } from "@/lib/radio/conversar";
 import { usaEmision } from "@/lib/radio/usa-emision";
+import { useT } from "@/lib/i18n";
+import { comoIdiomaVoz, idiomaVoz } from "@/lib/voz/idiomas";
 import "./radio.css";
 
 const LS = "vanguard:radio:v2";
@@ -127,6 +129,9 @@ type Reconocimiento = {
 };
 
 export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraServidor: number }) {
+  // v437.0 · el idioma de la casa manda: el programa se escribe y se dice en él
+  const { lang } = useT();
+  const idioma = comoIdiomaVoz(lang);
   const [ajustes, setAjustes] = useState<Ajustes>(AJUSTES_DEFECTO);
   const [reloj, setReloj] = useState<{ hora?: number; ahora: number }>({ ahora: ahoraServidor });
   const [voces, setVoces] = useState<VozDisponible[]>([]);
@@ -151,8 +156,9 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
         conFuentes: ajustes.conFuentes,
         hora: reloj.hora,
         ahora: reloj.ahora,
+        idioma,
       }),
-    [notas, ajustes.estilo, ajustes.duracionMin, ajustes.conResumen, ajustes.conFuentes, reloj]
+    [notas, ajustes.estilo, ajustes.duracionMin, ajustes.conResumen, ajustes.conFuentes, reloj, idioma]
   );
 
   const guardar = useCallback((nuevo: Ajustes) => {
@@ -170,8 +176,8 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
     setReloj({ hora: new Date().getHours(), ahora: Date.now() });
     setAjustes(leerAjustes());
     const cargar = () => {
-      setVoces(escanearVoces("es"));
-      setAvisos(avisosDelAparato("es"));
+      setVoces(escanearVoces(idioma));
+      setAvisos(avisosDelAparato(idioma));
     };
     cargar();
     if ("speechSynthesis" in window) {
@@ -184,7 +190,7 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
     if (Recon) {
       try {
         const r = new Recon();
-        r.lang = "es-ES";
+        r.lang = idiomaVoz(idioma).bcp47;
         r.continuous = false;
         r.interimResults = false;
         reconocedor.current = r;
@@ -202,11 +208,12 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
     return () => {
       if ("speechSynthesis" in window) window.speechSynthesis.removeEventListener("voiceschanged", cargar);
     };
-  }, []);
+  }, [idioma]);
 
   // ② LA EMISIÓN: un solo encadenado para toda la casa (lib/radio/usa-emision).
   // Aquí ya no hay copia del bucle: la misma pieza que usa la emisora global.
   const emision = usaEmision(programa.bloques, ajustes.gustos, {
+    idioma,
     onBloque: (i) => {
       try {
         window.localStorage.setItem(LS_POS, JSON.stringify({ generadoEn: programa.generadoEn, bloque: i }));
@@ -380,6 +387,10 @@ export function RadioVanguard({ notas, ahoraServidor }: { notas: Nota[]; ahoraSe
 
         <h2 className="vxr-titulo-programa">
           {programa.titulo}
+          {/* v437.0 · lo que la casa dice va en tu idioma; los cables, como se publicaron */}
+          <span className="vxr-idioma-nota">
+            {idiomaVoz(idioma).nativo} · los cables llegan en el idioma en que se publicaron
+          </span>
           <span className="vxr-dur"> · {mmss(programa.duracionMs)}</span>
         </h2>
 

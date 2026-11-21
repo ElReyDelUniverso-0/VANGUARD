@@ -6,6 +6,7 @@ import { VozSala } from "@/components/vanguard/voz-sala";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { PERSONAS } from "@/lib/voz/decir";
+import { ORDEN_IDIOMAS } from "@/lib/voz/idiomas";
 import { TEATROS_SABER, CONCEPTOS_SABER } from "@/lib/agente/saber";
 import { NAVEGACION } from "@/lib/agente/maestro";
 
@@ -88,6 +89,7 @@ export default function VozPage() {
           sumario="Elige con quién hablas y pídele que te explique un frente, un concepto o el parte del día. Sigue hablando: se acuerda de lo último que te explicó."
           cifras={[
             { valor: Object.keys(PERSONAS).length, etiqueta: "Voces", nota: "con tono y ritmo propios" },
+            { valor: ORDEN_IDIOMAS.length, etiqueta: "Idiomas", nota: "la boca y la casa cambian juntas" },
             { valor: Object.keys(TEATROS_SABER).length, etiqueta: "Frentes", nota: "explicados a fondo" },
             { valor: CONCEPTOS_SABER.length, etiqueta: "Conceptos", nota: "con su clase" },
             { valor: NAVEGACION.length, etiqueta: "Salas", nota: "a las que te lleva" },
@@ -101,6 +103,13 @@ export default function VozPage() {
             locutora, el analista, el general o el cronista — y pídele que te explique un teatro,
             que te dé clase de un concepto, que te lea el parte del día o que te lleve a una sala.
             Y sigue hablando: se acuerda de lo último que te explicó.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+            Y háblale en tu idioma: la casa tiene ocho —español, inglés, portugués, francés, alemán,
+            italiano, ruso y chino— y cambiar de idioma cambia las dos cosas a la vez, lo que se lee
+            y lo que se oye. Cada idioma guarda su propia voz, su velocidad y su tono; al volver a
+            él, siguen donde los dejaste. Lo único que no se traduce son los cables: llegan en el
+            idioma en que el medio los publicó, y la pantalla lo dice.
           </p>
 
           <div className="mt-8">

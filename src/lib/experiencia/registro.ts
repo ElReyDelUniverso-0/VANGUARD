@@ -321,6 +321,9 @@ export function cifrasEcosistema() {
   return {
     ejes: EJES.length,
     experiencias: EXPERIENCIAS.length,
+    // v437.0 · «puertas» son las experiencias del registro (una puerta cada
+    // una): el tráiler de familias las cuenta y necesitaba el dato con nombre.
+    portales: EXPERIENCIAS.length,
     paises: PAISES_GEO.length,
     publicaciones: PUBLICACIONES.length,
     cursos: CURSOS_ACADEMIA.length,

@@ -16,11 +16,20 @@ import { EJES, type Eje, cifrasEcosistema } from "@/lib/experiencia/registro";
 const ejeDeFondo = (img: string) =>
   `linear-gradient(180deg, rgba(4, 6, 12, .35) 0%, rgba(4, 6, 12, .78) 100%), url("${img}")`;
 
-export function Ecosistema() {
+export function Ecosistema({ cabecera = true }: { cabecera?: boolean } = {}) {
   const cifras = cifrasEcosistema();
 
   return (
-    <section id="ecosistema" className="vxe-eco" aria-labelledby="vxe-eco-h">
+    <section
+      id="ecosistema"
+      className="vxe-eco"
+      // si la cabecera está apagada, el título no existe: la sección se nombra
+      aria-labelledby={cabecera ? "vxe-eco-h" : undefined}
+      aria-label={cabecera ? undefined : "El ecosistema, familia por familia"}
+    >
+      {/* v437.0 · la portada de /ecosistema pinta su propia cabecera: aquí se
+          puede apagar la del componente sin duplicar el título en la página. */}
+      {cabecera ? (
       <div className="vxe-eco-cab">
         <p className="vxe-eco-sello">{cifras.ejes} familias · {cifras.experiencias} experiencias · un solo universo</p>
         <h2 id="vxe-eco-h" className="vxe-eco-titulo">
@@ -33,6 +42,7 @@ export function Ecosistema() {
           por donde quieras; todas las rutas terminan en la misma casa.
         </p>
       </div>
+      ) : null}
 
       <ul className="vxe-ejes">
         {EJES.map((e: Eje) => (

@@ -23,6 +23,7 @@ import { usePathname } from "next/navigation";
 import { avisosDelAparato, leerGustos, type GustosVoz } from "@/lib/voz/decir";
 import type { BloqueGuion } from "@/lib/radio/guion";
 import { usaEmision } from "@/lib/radio/usa-emision";
+import { idiomaActual } from "@/lib/voz/idiomas";
 
 type Programa = {
   titulo: string;
@@ -77,7 +78,10 @@ export function EmisoraGlobal() {
       setCargando(true);
       setError("");
       try {
-        const r = await fetch(`/api/radio/programa?min=${min}`, { headers: { accept: "application/json" } });
+        // v437.0 · el programa se pide en el idioma de la casa
+        const r = await fetch(`/api/radio/programa?min=${min}&lang=${idiomaActual()}`, {
+          headers: { accept: "application/json" },
+        });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const j = (await r.json()) as { ok: boolean; programa: Programa };
         if (marca !== pedido.current) return null;

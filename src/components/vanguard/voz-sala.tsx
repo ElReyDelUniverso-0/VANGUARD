@@ -30,8 +30,11 @@ import {
   avisosDelAparato,
   decir,
   escanearVoces,
+  guardarAjustesIdioma,
+  gustosEnIdioma,
   guardarGustos,
   leerGustos,
+  type AjustesIdioma,
   pausarBoca,
   pararBoca,
   reanudarBoca,
@@ -40,6 +43,8 @@ import {
   type PersonaId,
   type VozDisponible,
 } from "@/lib/voz/decir";
+import { IDIOMAS_VOZ, ORDEN_IDIOMAS, comoIdiomaVoz, idiomaVoz, type IdiomaVozId } from "@/lib/voz/idiomas";
+import { useT } from "@/lib/i18n";
 
 // ── tipos mínimos de la Web Speech API (sin dependencias) ──
 interface SRItem {
@@ -86,6 +91,11 @@ interface RespuestaApi {
 
 export function VozSala() {
   const router = useRouter();
+  // v437.0 · UNA SOLA FUENTE PARA EL IDIOMA: el de la casa (lib/i18n). Al
+  // cambiarlo aquí cambia la pantalla entera y la boca con ella.
+  const { lang, setLang } = useT();
+  const idioma: IdiomaVozId = comoIdiomaVoz(lang);
+  const tabla = idiomaVoz(idioma);
   const [gustos, setGustos] = useState<GustosVoz>(GUSTOS_DEFECTO);
   const [persona, setPersona] = useState<PersonaId>("locutora");
   const [voces, setVoces] = useState<VozDisponible[]>([]);
@@ -108,21 +118,10 @@ export function VozSala() {
     const g = leerGustos();
     setGustos(g);
     setPersona(g.persona);
-    const cargar = () => {
-      const lista = escanearVoces("es");
-      setVoces(lista);
-      setAvisos(avisosDelAparato("es"));
-      setSinVoz(lista.length === 0);
-    };
-    cargar();
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.onvoiceschanged = cargar;
-    }
     const quitar = alCambiarBoca(setBoca);
     return () => {
       quitar();
       pararBoca();
-      if ("speechSynthesis" in window) window.speechSynthesis.onvoiceschanged = null;
       try {
         srRef.current?.abort();
       } catch {
@@ -131,10 +130,43 @@ export function VozSala() {
     };
   }, []);
 
+  // ⑤ v437.0 · EL CENSO DE VOCES ES DEL IDIOMA, no de la casa: al cambiar de
+  // idioma se vuelve a escanear y la sala dice qué voces hay para ese idioma.
+  useEffect(() => {
+    const cargar = () => {
+      const lista = escanearVoces(idioma);
+      setVoces(lista);
+      setAvisos(avisosDelAparato(idioma));
+      setSinVoz(lista.length === 0);
+    };
+    cargar();
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = cargar;
+    }
+    // los gustos que valen en este idioma (voz forzada, velocidad, tono)
+    setGustos((g) => gustosEnIdioma(g, idioma));
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, [idioma]);
+
   const guardar = useCallback((g: GustosVoz) => {
     setGustos(g);
     guardarGustos(g);
   }, []);
+
+  /**
+   * v437.0 · LO QUE SE AJUSTA AQUÍ ES DE ESTE IDIOMA.
+   * Antes cada cambio pisaba el ajuste global: elegías una voz en francés y el
+   * español la heredaba. Ahora cada idioma guarda lo suyo y cambiar de idioma
+   * recupera lo que ya habías elegido para él.
+   */
+  const guardarEnIdioma = useCallback(
+    (cambios: AjustesIdioma) => {
+      setGustos((g) => guardarAjustesIdioma(g, idioma, cambios));
+    },
+    [idioma]
+  );
 
   const preguntar = useCallback(
     async (texto: string) => {
@@ -173,6 +205,7 @@ export function VozSala() {
         const dicho = decir(respuesta, {
           persona,
           gustos: { ...gustos, persona },
+          idioma,
           onFin: ruta && j.modo === "navegar" ? () => router.push(ruta) : undefined,
         });
         if (!dicho) setSinVoz(true);
@@ -210,7 +243,7 @@ export function VozSala() {
     pararBoca();
     const sr = new Ctor();
     srRef.current = sr;
-    sr.lang = "es-ES";
+    sr.lang = tabla.bcp47;
     sr.continuous = false;
     sr.interimResults = false;
     sr.onresult = (e) => {
@@ -229,12 +262,17 @@ export function VozSala() {
     } catch {
       setEscuchando(false);
     }
-  }, [escuchando, preguntar]);
+  }, [escuchando, preguntar, tabla.bcp47]);
 
+  /**
+   * v437.0 · PROBAR ES PROBAR ESE IDIOMA: se dice la frase de la casa escrita
+   * en ese idioma (idiomas.ts), con sus comas, sus dos puntos y su punto — para
+   * que se oigan las tres respiraciones.
+   */
   const probar = useCallback(() => {
-    const frase = `${PERSONAS[persona].nombre}. ${PERSONAS[persona].lema}. Así suena la casa cuando habla de geopolítica: con pausas, con datos y con fuente.`;
-    if (!decir(frase, { persona, gustos: { ...gustos, persona } })) setSinVoz(true);
-  }, [persona, gustos]);
+    const frase = tabla.saludo;
+    if (!decir(frase, { persona, gustos: { ...gustos, persona }, idioma })) setSinVoz(true);
+  }, [gustos, idioma, persona, tabla.saludo]);
 
   const mejorVoz = voces[0];
   const etiquetaBoca = useMemo(() => {
@@ -333,10 +371,54 @@ export function VozSala() {
         </ul>
       ) : null}
 
+      {/* ── v437.0 · EL IDIOMA DE LA VOZ ──
+          Cambiar aquí cambia la CASA: el mismo estado que mueve los textos de
+          toda la interfaz (`useLangStore`). Y la boca lo sigue porque decir()
+          lee el idioma de la casa cuando nadie se lo dice. */}
+      <section className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4">
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+          {tabla.textos.idioma}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {ORDEN_IDIOMAS.map((id) => {
+            const t = IDIOMAS_VOZ[id];
+            const activa = id === idioma;
+            return (
+              <button
+                key={id}
+                type="button"
+                lang={t.bcp47}
+                aria-pressed={activa}
+                onClick={() => {
+                  if (id !== idioma) setLang(id as typeof lang);
+                  // la prueba manda: se oye la frase de ESE idioma al instante
+                  decir(t.saludo, { idioma: id, persona, gustos });
+                }}
+                className={`inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+                  activa
+                    ? "border-amber-500/60 bg-amber-500/15 text-amber-200"
+                    : "border-zinc-700 text-zinc-400 hover:border-amber-hud hover:text-amber-200"
+                }`}
+              >
+                <span aria-hidden className="text-zinc-500">{t.glyph}</span>
+                {t.nativo}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-[12px] leading-relaxed text-zinc-400">{tabla.textos.idiomaNota}</p>
+        <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-600">
+          {tabla.textos.estaVoz}: {tabla.bcp47} ·{" "}
+          {mejorVoz ? `${mejorVoz.nombre} (${mejorVoz.calidad}/100)` : tabla.textos.sinVoz}
+          {" · "}
+          {tabla.textos.seRecuerda}
+        </p>
+      </section>
+
       {/* ── LAS CUATRO PERSONAS ── */}
       <section className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
-          LAS CUATRO VOCES DE LA CASA · elige con quién hablas
+          {tabla.textos.personas}
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {(Object.keys(PERSONAS) as PersonaId[]).map((id) => {
@@ -374,26 +456,26 @@ export function VozSala() {
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <label className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-zinc-400">
-            VELOCIDAD
+            {tabla.textos.velocidad}
             <input
               type="range"
               min={0.7}
               max={1.3}
               step={0.05}
               value={gustos.rate}
-              onChange={(e) => guardar({ ...gustos, rate: Number(e.target.value) })}
+              onChange={(e) => guardarEnIdioma({ rate: Number(e.target.value) })}
               className="w-24 accent-amber-400"
             />
           </label>
           <label className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-zinc-400">
-            TONO
+            {tabla.textos.tono}
             <input
               type="range"
               min={0.7}
               max={1.3}
               step={0.05}
               value={gustos.pitch}
-              onChange={(e) => guardar({ ...gustos, pitch: Number(e.target.value) })}
+              onChange={(e) => guardarEnIdioma({ pitch: Number(e.target.value) })}
               className="w-24 accent-amber-400"
             />
           </label>
@@ -404,42 +486,42 @@ export function VozSala() {
               onChange={(e) => guardar({ ...gustos, pausas: e.target.checked })}
               className="accent-amber-400"
             />
-            PAUSAS
+            {tabla.textos.pausas}
           </label>
           <button
             type="button"
             onClick={probar}
             className="ml-auto inline-flex items-center gap-2 rounded-sm border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 font-mono text-[9px] uppercase tracking-widest text-amber-300"
           >
-            <Volume2 size={12} /> probar esta voz
+            <Volume2 size={12} /> {tabla.textos.probar}
           </button>
         </div>
 
         {voces.length > 1 ? (
           <div className="mt-3">
             <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-500">
-              VOCES INSTALADAS EN TU APARATO (la casa elige la mejor; puedes forzar otra)
+              {tabla.textos.instaladas} — {tabla.nativo}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               <button
                 type="button"
-                onClick={() => guardar({ ...gustos, vozURI: null })}
+                onClick={() => guardarEnIdioma({ vozURI: null })}
                 className={`rounded-sm border px-2 py-1 font-mono text-[9px] uppercase tracking-widest ${
-                  gustos.vozURI === null
+                  (gustos.porIdioma?.[idioma]?.vozURI ?? null) === null
                     ? "border-amber-500/60 text-amber-300"
                     : "border-zinc-700 text-zinc-400"
                 }`}
               >
-                AUTOMÁTICA
+                {tabla.textos.automatica}
               </button>
               {voces.slice(0, 8).map((v) => (
                 <button
                   key={v.uri}
                   type="button"
-                  title={v.nota}
-                  onClick={() => guardar({ ...gustos, vozURI: v.uri })}
+                  title={`${v.nota}${v.genero !== "sin dato" ? ` · ${v.genero}` : ""}`}
+                  onClick={() => guardarEnIdioma({ vozURI: v.uri })}
                   className={`rounded-sm border px-2 py-1 font-mono text-[9px] uppercase tracking-widest ${
-                    gustos.vozURI === v.uri
+                    (gustos.porIdioma?.[idioma]?.vozURI ?? null) === v.uri
                       ? "border-amber-500/60 text-amber-300"
                       : "border-zinc-700 text-zinc-400"
                   }`}
@@ -456,7 +538,7 @@ export function VozSala() {
       <section className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4">
         <div className="flex items-center justify-between">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
-            CONVERSACIÓN · {historial.length} turnos (memoria del aparato)
+            {tabla.textos.conversacion} · {historial.length} · {tabla.textos.seRecuerda}
           </p>
           {historial.length > 0 ? (
             <button

@@ -21,6 +21,23 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v437.0",
+    nombre: "LA CASA HABLA TU IDIOMA — la voz, la personalización y los idiomas, pulidos",
+    tipo: "ia",
+    hitos: [
+      "OCHO IDIOMAS EN UNA SOLA TABLA (src/lib/voz/idiomas.ts): español, inglés, portugués, francés, alemán, italiano, ruso y chino, cada uno con su etiqueta BCP-47, su frase de prueba escrita en su propio alfabeto, sus símbolos, sus voces conocidas (Aria, Jorge, Francisca, Amélie, Katja, Elsa, Milena, Xiaoxiao), su respiración y sus textos. Nadie más en la casa vuelve a escribir «es-ES» a mano.",
+      "LA BOCA LEE EL IDIOMA DE LA CASA: decir() ya no asume español — toma el idioma que el piloto eligió (idiomaActual(), que lee el idioma guardado y, si no, el <html lang> que ahora sí se mantiene al día). La etiqueta que recibe el motor sale de la tabla, y ninguna voz de otro idioma puede colarse: hablaEseIdioma() lo impide.",
+      "PERSONALIZACIÓN POR IDIOMA, NO GLOBAL: cada idioma guarda su voz forzada, su velocidad y su tono (gustos.porIdioma). Antes, ajustar el inglés cambiaba el español; ahora el español puede ir a 1,3 y el inglés a 0,8 y ninguno se presta nada. Medido en el navegador: ES 1,3 · EN 0,8 · volver a cada uno devuelve lo suyo.",
+      "LA PROSODIA, PULIDA DE VERDAD: ritmo propio por idioma (el alemán y el ruso piden más calma que el español), silencios por idioma (260/700 ms en español, 280/730 en alemán), la pregunta sube el tono 0,05 y la exclamación 0,02 — la curva que separa leer de hablar en un motor plano.",
+      "EL LIMPIADOR HABLA OCHO IDIOMAS: «50 %» se dice «por ciento», «percent», «pour cent», «Prozent», «per cento», «процентов» o «百分之». Y lo que era del español (EE. UU., S. XXI, km², cifras 0–100 con letra) sigue siendo del español: en los demás idiomas la cifra se deja EN CIFRA, porque escribirla a mano en otro idioma sería inventar. El troceado entiende la puntuación china (。！？) y no corta una frase a la mitad.",
+      "LA RADIO TRADUCE SUS FÓRMULAS Y NO TOCA UN CABLE (src/lib/radio/marcos.ts): sintonía, cifras, puentes, cierre e invitación existen en los ocho idiomas; el titular, el resumen y la fuente viajan como el medio los publicó y la pantalla lo dice («los cables llegan en el idioma en que se publicaron»). En español los tres estilos siguen diciendo palabra por palabra lo mismo que decían — comprobado letra a letra.",
+      "LA SALA DE LA VOZ (/voz) ES EL SITIO: ocho botones de idioma que cambian la CASA entera (el mismo estado que mueve los textos), la frase de prueba en ese idioma, la lista de voces de ese idioma con su nota y su género, velocidad y tono que se recuerdan por idioma, y el micrófono hablando la lengua elegida.",
+      "EL ▶ DEL MUELLE pide el programa con ?lang= y lo emite con esa boca: la barra del teléfono ya no suena en un idioma distinto al de la pantalla.",
+      "HONESTO HASTA EL FINAL: si el aparato no tiene voz de ese idioma, se dice en ese idioma y con el nombre del idioma; un código que la casa no tiene cae a español y la API devuelve idiomaPedido para que se vea. Los ajustes globales de antes de esta versión se migran al idioma actual: nadie pierde su voz.",
+      "DOS ROTURAS QUE VENÍAN DE v436.1, ARREGLADAS DE PASO (el build las cazó, no el ojo): las familias de módulos tenían una coma doble (\"},,\") que dejaba un hueco vacío en la lista — las páginas /nucleo y /colecciones reventaban al leer la familia fantasma; y el índice del Núcleo ponía como enlace rutas con corchetes (/noticia/[id]), que Next rechaza en un <Link>: ahora se muestran como patrón, sin enlace falso. El ecosistema, además, ya no deja su título apuntando a la nada cuando se apaga su cabecera.",
+    ],
+  },
+  {
     version: "v436.0",
     nombre: "EL MUELLE ÚNICO — el teléfono pequeño, arreglado de raíz",
     tipo: "nav",

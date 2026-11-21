@@ -12,7 +12,25 @@
 //
 // REGLA DE ORO (ley de la casa): la limpieza JAMÁS altera una cifra, un
 // nombre propio ni una fuente. Si no sabe cómo se dice algo, lo deja quieto.
+//
+// ── v437.0 · LA VOZ EN TU IDIOMA ───────────────────────────────────────────
+// La boca ya no da por hecho que la casa habla español. `textoDeBoca` y
+// `trocearParaBoca` reciben el idioma y lo usan para TRES cosas, y solo tres:
+//   ① LOS SÍMBOLOS. «50 %» se dice «por ciento» en español, «percent» en
+//      inglés, «pour cent» en francés, «процентов» en ruso y «百分之» en chino.
+//      La tabla vive en idiomas.ts y es la única fuente.
+//   ② LO QUE ES SOLO DEL ESPAÑOL. Las abreviaturas (EE. UU., S. XXI, km²) y el
+//      paso de cifra a palabra (0–100) se quedan donde estaba comprobado: en
+//      español. En los demás idiomas la cifra se deja EN CIFRA, porque los
+//      motores la leen bien y escribirla a mano en otro idioma sería inventar.
+//   ③ LAS PAUSAS Y EL CORTE DE FRASES. Cada idioma trae su respiración
+//      (fruto de la prosodia: el alemán y el ruso piden más silencio que el
+//      español) y el corte entiende la puntuación china (。！？) además de la
+//      latina.
+// Lo que NO cambia: la limpieza es la misma para todos y no toca ni una cifra.
 // ============================================================
+
+import { idiomaVoz, type IdiomaVozId } from "./idiomas";
 
 const RE_URL = /\b(?:https?:\/\/|www\.)\S+/gi;
 const RE_ENLACE_MD = /\[([^\]]+)\]\([^)]*\)/g; // [texto](url) → texto
@@ -41,8 +59,8 @@ const NUMEROS: Record<string, string> = {
   "90": "noventa", "100": "cien",
 };
 
-/** Abreviaturas y símbolos: se dicen, no se deletrean. */
-const SIMBOLOS: [RegExp, string][] = [
+/** Abreviaturas y símbolos del ESPAÑOL: se dicen, no se deletrean. */
+const SIMBOLOS_ES: [RegExp, string][] = [
   [/\bEE\.?\s?UU\.?/gi, "Estados Unidos"],
   [/\bEEUU\b/gi, "Estados Unidos"],
   [/\bS\.\s?XXI\b/gi, "siglo veintiuno"],
@@ -95,8 +113,10 @@ function pausasReales(t: string): string {
  * TEXTO DE BOCA. La única puerta: todo lo que la casa quiere DECIR pasa por
  * aquí. Determinista, sin dependencias y sin red.
  */
-export function textoDeBoca(entrada: string): string {
+export function textoDeBoca(entrada: string, idioma: IdiomaVozId = "es"): string {
   if (!entrada) return "";
+  const tabla = idiomaVoz(idioma);
+  const esEspanol = tabla.id === "es";
   let t = entrada.normalize("NFC");
   t = t.replace(RE_ENLACE_MD, "$1");
   t = t.replace(RE_URL, " ");
@@ -108,9 +128,18 @@ export function textoDeBoca(entrada: string): string {
   t = t.replace(RE_SIGNO_REPETIDO, "$1");
   t = t.replace(RE_VINETA_LINEA, "$1");
   t = t.replace(RE_ALMOHADILLA, " ");
-  t = t.replace(RE_UNIDAD_H, (_m, d: string) => (d === "1" ? "una hora" : `${d} horas`));
-  for (const [re, con] of SIMBOLOS) t = t.replace(re, con);
-  t = numerosLegibles(t);
+  // ② lo que es solo del español (abreviaturas y cifras con letra)
+  if (esEspanol) {
+    t = t.replace(RE_UNIDAD_H, (_m, d: string) => (d === "1" ? "una hora" : `${d} horas`));
+    for (const [re, con] of SIMBOLOS_ES) t = t.replace(re, con);
+    t = numerosLegibles(t);
+  } else {
+    // ① los símbolos del idioma, en su orden; la cifra se queda en cifra
+    for (const [re, con] of tabla.simbolos) t = t.replace(re, con);
+    // el decimal con coma se dice con punto en todos los motores (3,5 → 3.5)
+    t = t.replace(/(\d),(\d)/g, "$1.$2");
+    t = t.replace(/\s{2,}/g, " ");
+  }
   t = pausasReales(t);
   return t;
 }
@@ -128,23 +157,28 @@ export interface BloqueBoca {
 }
 
 const MAX_TROZO = 170;
+/** Pausas por defecto (las del español). Cada idioma trae las suyas en idiomas.ts. */
 export const PAUSA_FRASE = 260;
 export const PAUSA_PARRAFO = 700;
 export const PAUSA_TITULO = 420;
 
-export function trocearParaBoca(texto: string): BloqueBoca[] {
-  const limpio = textoDeBoca(texto);
+export function trocearParaBoca(texto: string, idioma: IdiomaVozId = "es"): BloqueBoca[] {
+  const limpio = textoDeBoca(texto, idioma);
   if (!limpio) return [];
+  const tabla = idiomaVoz(idioma);
+  // la respiración de cada idioma (idiomas.ts) manda sobre la de por defecto
+  const pFrase = tabla.pausaFrase;
+  const pParrafo = tabla.pausaParrafo;
   const parrafos = limpio.split(/\n{1,}/).map((p) => p.trim()).filter(Boolean);
   const salida: BloqueBoca[] = [];
   for (const parrafo of parrafos) {
-    // frases: corta en . ! ? … sin comerse las abreviaturas cortas
-    const frases = parrafo.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/g) ?? [parrafo];
+    // frases: corta en . ! ? … y también en la puntuación china (。！？；)
+    const frases = parrafo.match(/[^.!?…。！？；]+[.!?…。！？；]+|[^.!?…。！？；]+$/g) ?? [parrafo];
     for (const bruta of frases) {
       const frase = bruta.trim();
       if (!frase) continue;
       if (frase.length <= MAX_TROZO) {
-        salida.push({ texto: frase, pausa: PAUSA_FRASE });
+        salida.push({ texto: frase, pausa: pFrase });
         continue;
       }
       // frase larga: se parte por comas, la respiración natural
@@ -155,7 +189,7 @@ export function trocearParaBoca(texto: string): BloqueBoca[] {
       }
     }
     // respiro largo entre párrafos
-    if (salida.length > 0) salida[salida.length - 1].pausa = PAUSA_PARRAFO;
+    if (salida.length > 0) salida[salida.length - 1].pausa = pParrafo;
   }
   return salida;
 }

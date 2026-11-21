@@ -256,6 +256,10 @@ function Ficha({ ficha }: { ficha: FichaEntidad }) {
   );
 }
 
+/** v437.0 · una ruta con corchetes (/noticia/[id]) no se puede enlazar:
+    Next la rechaza en <Link>. Se muestra el patrón como código y ya. */
+const esPatron = (ruta: string) => /\[[^\]]+\]/.test(ruta);
+
 export default async function NucleoPage({
   searchParams,
 }: {
@@ -479,14 +483,31 @@ export default async function NucleoPage({
                         {m.descripcion}
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                        <Link
-                          href={m.ruta}
-                          className="font-mono text-[10px] uppercase tracking-widest text-cyan-hud hover:text-amber"
-                        >
-                          {m.ruta} ▸
-                        </Link>
+                        {esPatron(m.ruta) ? (
+                          <code
+                            title="El patrón de la ruta: cada cable tiene su id"
+                            className="font-mono text-[10px] uppercase tracking-widest text-cyan-hud/70"
+                          >
+                            {m.ruta}
+                          </code>
+                        ) : (
+                          <Link
+                            href={m.ruta}
+                            className="font-mono text-[10px] uppercase tracking-widest text-cyan-hud hover:text-amber"
+                          >
+                            {m.ruta} ▸
+                          </Link>
+                        )}
                         {m.dependencias.map((d) =>
-                          d.startsWith("mod:") && moduloPorId(d) ? (
+                          d.startsWith("mod:") && moduloPorId(d) && esPatron(moduloPorId(d)!.ruta) ? (
+                            <span
+                              key={d}
+                              title={`depende de ${d}`}
+                              className="rounded-sm border border-zinc-800 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest text-zinc-600"
+                            >
+                              {moduloPorId(d)!.nombre}
+                            </span>
+                          ) : d.startsWith("mod:") && moduloPorId(d) ? (
                             <Link
                               key={d}
                               href={moduloPorId(d)!.ruta}

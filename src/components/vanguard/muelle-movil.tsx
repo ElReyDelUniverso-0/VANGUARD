@@ -32,6 +32,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { leerGustos } from "@/lib/voz/decir";
+import { idiomaActual } from "@/lib/voz/idiomas";
 import { usaEmision } from "@/lib/radio/usa-emision";
 import type { Programa } from "@/lib/radio/guion";
 import { IcoMenu, IcoCerrar, IcoBuscar } from "../portada/iconos";
@@ -175,13 +176,19 @@ export function BotonRadioMuelle() {
   const arrancarAlLlegar = useRef(false);
 
   const bloques = programa?.bloques ?? [];
-  const emision = usaEmision(bloques, leerGustos());
+  // el idioma va en la emisión: la boca dice el programa en la lengua pedida
+  const emision = usaEmision(bloques, leerGustos(), { idioma: idiomaActual() });
 
   const pedir = useCallback(async () => {
     setPidiendo(true);
     setFallo("");
     try {
-      const r = await fetch("/api/radio/programa?min=5", { headers: { accept: "application/json" } });
+      // v437.0 · el programa se pide en el idioma de la casa: las fórmulas
+      // (sintonía, cifras, puentes, cierre) viajan traducidas desde el servidor
+      const idioma = idiomaActual();
+      const r = await fetch(`/api/radio/programa?min=5&lang=${idioma}`, {
+        headers: { accept: "application/json" },
+      });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const j = (await r.json()) as { ok: boolean; programa: Programa };
       setPrograma(j.programa);

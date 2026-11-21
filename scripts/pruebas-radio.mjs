@@ -52,7 +52,10 @@ function cargar(archivo, salida) {
     // `relevancia` es la de la portada, que arrastra SQLite: en Node se
     // sustituye por el MISMO cálculo copiado literalmente (la prueba ⑩
     // comprueba que el módulo importa la de la casa, así que no hay deriva).
-    .replace(/from "@\/lib\/portada\/notas"/g, 'from "./_notas.mjs"');
+    .replace(/from "@\/lib\/portada\/notas"/g, 'from "./_notas.mjs"')
+    // v437.0: los marcos del idioma son un módulo hermano; se carga igual
+    // (los `import type` de idiomas.ts se borran al compilar: no hace falta stub)
+    .replace(/from "\.\/(marcos)"/g, 'from "./$1.mjs"');
   writeFileSync(join(tmp, salida), js, "utf8");
   return pathToFileURL(join(tmp, salida)).href;
 }
@@ -73,9 +76,11 @@ export function relevancia(n, ahora = Date.now()) {
   "utf8"
 );
 const urlAgrupar = cargar("src/lib/radio/agrupar.ts", "agrupar.mjs");
+const urlMarcos = cargar("src/lib/radio/marcos.ts", "marcos.mjs");
 const urlGuion = cargar("src/lib/radio/guion.ts", "guion.mjs");
 const urlConversar = cargar("src/lib/radio/conversar.ts", "conversar.mjs");
 const agrupar = await import(urlAgrupar);
+await import(urlMarcos);
 const guion = await import(urlGuion);
 const conversar = await import(urlConversar);
 rmSync(tmp, { recursive: true, force: true });

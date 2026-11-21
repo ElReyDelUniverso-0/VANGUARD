@@ -803,6 +803,20 @@ export function useT() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const effective = mounted ? lang : "es";
+  // v437.0 · EL <html lang> NO SE QUEDA ATRÁS. Antes solo cambiaba al pulsar un
+  // selector: si el piloto entraba con «en» guardado, el documento seguía
+  // diciendo «es» y con él la boca (idiomaActual() cae al <html lang>). Ahora
+  // acompaña al idioma efectivo en cada montaje y en cada cambio.
+  useEffect(() => {
+    try {
+      if (typeof document !== "undefined" && document.documentElement.lang !== effective) {
+        document.documentElement.lang = effective;
+      }
+    } catch {
+      /* sin documento no hay nada que anunciar */
+    }
+  }, [effective]);
+
   // v193.0: si el idioma elegido no es es, su diccionario diferido se trae
   // aquí (una sola vez); al aterrizar, dicVersion repinta los textos.
   useEffect(() => {

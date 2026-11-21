@@ -15,6 +15,14 @@
 //   ⑤ NO REPITE SUS PROPIAS FÓRMULAS: los conectores rotan por índice; antes
 //      un programa de seis bloques podía decir «Te cuento» tres veces.
 //
+// ── v437.0 · EL PROGRAMA EN TU IDIOMA ──────────────────────────────────────
+// Las fórmulas de la casa (sintonía, cifras, puentes, cierre, invitación) ya no
+// están escritas aquí dentro: viven en marcos.ts, un marco por idioma, y se
+// eligen con `opciones.idioma`. En español los tres estilos dicen exactamente lo
+// mismo que decían (los textos están copiados tal cual, uno por uno). Los cables
+// —titular, resumen, fuente— NO se traducen: se leen como se publicaron, y la
+// pantalla lo dice. Traducir a ojo sería inventar.
+//
 // LO QUE NO HA CAMBIADO (ley de la casa): no se inventa ni un dato. El texto
 // sale del titular, el resumen, la fuente, la región y la hora REALES. Las
 // fórmulas de locución no afirman nada. Si no hay cables, el programa lo dice.
@@ -23,8 +31,10 @@
 
 import type { Nota } from "@/lib/portada/notas";
 import { type Grupo, agrupar, asuntosPara, seleccionar, tokens } from "./agrupar";
+import { marcoDe, type EstiloRadio as EstiloMarco } from "./marcos";
+import type { IdiomaVozId } from "@/lib/voz/idiomas";
 
-export type EstiloRadio = "serena" | "cercana" | "filosa";
+export type EstiloRadio = EstiloMarco;
 
 export type TipoBloque =
   | "sintonia"
@@ -56,6 +66,8 @@ export type BloqueGuion = {
 export type Programa = {
   titulo: string;
   estilo: EstiloRadio;
+  /** v437.0 · el idioma en que la casa DICE este programa (las fórmulas) */
+  idioma: IdiomaVozId;
   bloques: BloqueGuion[];
   /** estimación honesta de duración (~14 caracteres por segundo + silencios) */
   duracionMs: number;
@@ -86,57 +98,11 @@ export type OpcionesPrograma = {
   hora?: number;
   /** fecha de referencia para decir «hace X» */
   ahora?: number;
-};
-
-const REGION_NOMBRE: Record<string, string> = {
-  europa: "Europa",
-  oriente: "Oriente Medio",
-  americas: "América",
-  africa: "África",
-  asia: "Asia",
-  mundo: "el mundo",
-};
-
-/** Fórmulas de locución por estilo. No afirman hechos: son cuerpo, no datos. */
-const VOCES: Record<
-  EstiloRadio,
-  {
-    saludo: string[];
-    titulares: string[];
-    antes: string[];
-    despues: string[];
-    puente: string[];
-    cierre: string[];
-    invitacion: string[];
-  }
-> = {
-  serena: {
-    saludo: ["Radio Vanguard. La casa te cuenta el día.", "Son las {hora}. Esto es Radio Vanguard."],
-    titulares: ["Estos son los cables que abren el día.", "Los asuntos para entender la jornada.", "Lo que hay, en orden."],
-    antes: ["Empezamos por", "Vamos con", "Primer asunto:"],
-    despues: ["Seguimos.", "Siguiente.", "Otro frente."],
-    puente: ["Cambiamos de región.", "Nos vamos a", "Ahora, en"],
-    cierre: ["Hasta aquí el programa. Las fuentes quedan en pantalla.", "Esto es todo por ahora.", "Cerramos aquí. Todo lo dicho tiene su fuente."],
-    invitacion: ["Puedes preguntarme por cualquier frente. Te responderé con lo que hay en el archivo, y te diré cuándo no hay nada."],
-  },
-  cercana: {
-    saludo: ["¡Hola! Soy la voz de la casa. Vamos a ver el día juntos.", "Buenas. Te cuento lo que está pasando, sin prisa.", "Aquí la radio de la casa. Vamos allá."],
-    titulares: ["Te cuento lo que hay hoy.", "Mira lo que tenemos en el archivo.", "Esto es lo que ha entrado."],
-    antes: ["Te cuento lo de", "Empecemos por", "Vamos con"],
-    despues: ["Y ahora, otra cosa.", "Seguimos.", "Vamos a otro sitio."],
-    puente: ["Nos vamos a", "Ahora te llevo a", "Cambiamos de escenario:"],
-    cierre: ["Nada más por ahora. Todo lo que has oído tiene su fuente en pantalla.", "Y hasta aquí el paseo de hoy.", "Lo dejamos aquí, que el día sigue."],
-    invitacion: ["Pregúntame lo que quieras: si está en el archivo te lo leo, y si no está, te lo digo claro."],
-  },
-  filosa: {
-    saludo: ["Radio Vanguard. Sin adornos: los cables del día.", "Directo al grano.", "Lo que hay, sin relleno."],
-    titulares: ["Esto es lo que hay.", "Los titulares, sin relleno.", "Los hechos, uno detrás de otro."],
-    antes: ["Primero:", "Vamos con", "Empezamos por"],
-    despues: ["Siguiente.", "Vamos a lo siguiente.", "Otro."],
-    puente: ["Saltamos a", "Ahora:", "Nos vamos a"],
-    cierre: ["Fin del programa. Las fuentes están en pantalla: compruébalas.", "Corto y claro: hasta aquí.", "Se acabó. Los datos, a la vista."],
-    invitacion: ["Si quieres una explicación, pregunta. Si no lo sé, no me lo invento."],
-  },
+  /**
+   * v437.0 · el idioma de las fórmulas. Si falta, español. Los cables NO se
+   * traducen: viajan en el idioma en que el medio los publicó.
+   */
+  idioma?: IdiomaVozId;
 };
 
 const PAUSA: Record<TipoBloque, number> = {
@@ -166,21 +132,12 @@ export function recortarPorFrase(texto: string, max: number): string {
   return `${limpio.slice(0, espacio > 0 ? espacio : max).trim()}…`;
 }
 
-/** «Hace 12 minutos», en palabras que se puedan decir. */
-export function haceLegible(iso: string, ahora: number): string {
-  const t = Date.parse(iso);
-  if (!Number.isFinite(t)) return "";
-  const min = Math.round((ahora - t) / 60000);
-  if (min < 2) return "hace un momento";
-  if (min < 60) return `hace ${min} minutos`;
-  const h = Math.round(min / 60);
-  if (h < 24) return `hace ${h} ${h === 1 ? "hora" : "horas"}`;
-  const d = Math.round(h / 24);
-  return `hace ${d} ${d === 1 ? "día" : "días"}`;
-}
-
-function regionDe(nota: Nota): string {
-  return REGION_NOMBRE[nota.region] ?? "el mundo";
+/**
+ * «Hace 12 minutos», en palabras que se puedan decir.
+ * v437.0 · con idioma: la frase la pone el marco del idioma (marcos.ts).
+ */
+export function haceLegible(iso: string, ahora: number, idioma: IdiomaVozId = "es"): string {
+  return marcoDe("cercana", idioma).hace(iso, ahora);
 }
 
 function enlace(nota: Nota): string {
@@ -200,10 +157,9 @@ function enumerar(items: string[]): string {
 export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}): Programa {
   // Un estilo que no existe (ajuste viejo guardado en el aparato, o llamada
   // desde fuera) NO puede tumbar el programa: se cae al de por defecto.
+  const ESTILOS_VALIDOS: EstiloRadio[] = ["serena", "cercana", "filosa"];
   const estilo: EstiloRadio =
-    opciones.estilo && Object.prototype.hasOwnProperty.call(VOCES, opciones.estilo)
-      ? opciones.estilo
-      : "cercana";
+    opciones.estilo && ESTILOS_VALIDOS.includes(opciones.estilo) ? opciones.estilo : "cercana";
   const limite = Math.max(
     1,
     Math.min(8, opciones.limite ?? (opciones.objetivoMs ? asuntosPara(opciones.objetivoMs) : 4))
@@ -213,7 +169,9 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
   const conCifras = opciones.conCifras !== false;
   const conInvitacion = opciones.conInvitacion !== false;
   const ahora = opciones.ahora ?? Date.now();
-  const v = VOCES[estilo];
+  const idioma: IdiomaVozId = opciones.idioma ?? "es";
+  // el marco del idioma: aquí están las palabras que la casa dice (marcos.ts)
+  const v = marcoDe(estilo, idioma);
 
   const utiles = notas.filter((n) => n && n.titulo);
   const grupos = seleccionar(utiles, { maximo: Math.max(limite, 1), ahora, objetivoMs: opciones.objetivoMs });
@@ -227,18 +185,17 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
   bloques.push({
     id: "sintonia",
     tipo: "sintonia",
-    texto:
-      utiles.length === 0
-        ? "Radio Vanguard. Ahora mismo el archivo no tiene cables nuevos: cuando lleguen, aquí estarán."
-        : `${saludo} ${utiles.length} ${utiles.length === 1 ? "cable abierto" : "cables abiertos"} en el archivo.`,
+    // el separador y el punto final son del idioma (en chino: ninguno y «。」)
+    texto: utiles.length === 0 ? v.sinCables : `${saludo}${v.sep}${v.archivo(utiles.length)}${v.punto}`,
     pausaMs: PAUSA.sintonia,
-    rotulo: "Sintonía",
+    rotulo: v.rot.sintonia,
   });
 
   if (utiles.length === 0) {
     return {
       titulo: "Radio Vanguard",
       estilo,
+      idioma,
       bloques,
       duracionMs: estimarDuracion(bloques),
       notaIds: [],
@@ -253,19 +210,15 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
     const medios = new Set(utiles.map((n) => n.fuente)).size;
     const regiones = new Set(utiles.map((n) => n.region)).size;
     const repetidos = todasAgrupadas.reduce((s, g) => s + g.duplicados.length, 0);
-    const partes = [
-      `${utiles.length} ${utiles.length === 1 ? "cable" : "cables"}`,
-      `${medios} ${medios === 1 ? "medio" : "medios"}`,
-      `${regiones} ${regiones === 1 ? "región" : "regiones"}`,
-    ];
     bloques.push({
       id: "cifras",
       tipo: "cifras",
-      texto: repetidos > 0
-        ? `Hoy: ${partes.join(", ")}. ${repetidos} ${repetidos === 1 ? "cable cuenta" : "cables cuentan"} lo mismo que otro, así que los junto en un solo asunto.`
-        : `Hoy: ${partes.join(", ")}.`,
+      texto:
+        repetidos > 0
+          ? `${v.cifras({ cables: utiles.length, medios, regiones })} ${v.repetidos(repetidos)}`
+          : v.cifras({ cables: utiles.length, medios, regiones }),
       pausaMs: PAUSA.cifras,
-      rotulo: "El archivo en cifras",
+      rotulo: v.rot.cifras,
     });
   }
 
@@ -276,12 +229,12 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
     tipo: "titular",
     texto: turno(v.titulares, grupos.length),
     pausaMs: 240,
-    rotulo: "Titulares",
+    rotulo: v.rot.titulares,
   });
   for (let i = 0; i < cuantosTitulares; i++) {
     const g = grupos[i];
     const n = g.principal;
-    const extra = conFuentes && g.fuentes.length > 1 ? `, también en ${g.fuentes.length - 1} ${g.fuentes.length - 1 === 1 ? "medio" : "medios"}` : "";
+    const extra = conFuentes && g.fuentes.length > 1 ? v.tambienEn(g.fuentes.length - 1) : "";
     bloques.push({
       id: `titular-${i}`,
       tipo: "titular",
@@ -301,7 +254,7 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
   for (let i = 0; i < cuantos; i++) {
     const g = grupos[i];
     const n = g.principal;
-    const region = regionDe(n);
+    const region = v.region(n.region);
 
     if (i === 0) {
       bloques.push({
@@ -325,17 +278,17 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
         tipo: "puente",
         texto: turno(v.despues, giro++),
         pausaMs: 200,
-        rotulo: "Seguimos",
+        rotulo: v.rot.seguimos,
       });
     }
     regionPrevia = region;
 
     const cuerpo = conResumen && n.resumen ? recortarPorFrase(n.resumen, 260) : "";
-    const cuando = haceLegible(n.fecha, ahora);
+    const cuando = v.hace(n.fecha, ahora);
     bloques.push({
       id: `desarrollo-${i}`,
       tipo: "desarrollo",
-      texto: `${recortarPorFrase(n.titulo, 160)}.${cuerpo ? ` ${cuerpo}` : ""} Fuente: ${n.fuente}${cuando ? `, ${cuando}` : ""}.`,
+      texto: v.desarrollo(recortarPorFrase(n.titulo, 160), cuerpo, n.fuente, cuando),
       pausaMs: PAUSA.desarrollo,
       notaId: n.id,
       fuente: n.fuente,
@@ -350,13 +303,13 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
       bloques.push({
         id: `contexto-${i}`,
         tipo: "contexto",
-        texto: `Este asunto lo ${g.fuentes.length === 2 ? "firman dos medios" : `firman ${g.fuentes.length} medios`}: ${enumerar(g.fuentes)}. Te he leído la versión de ${n.fuente}${otros.length ? `; las otras ${otros.length === 1 ? "está" : "están"} enlazadas en pantalla` : ""}.`,
+        texto: v.firma(g.fuentes.length, enumerar(g.fuentes), n.fuente, otros.length),
         pausaMs: PAUSA.contexto,
         notaId: n.id,
         fuente: n.fuente,
         href: enlace(n),
         fuentes: g.fuentes,
-        rotulo: "Quién lo firma",
+        rotulo: v.rot.firma,
       });
     }
   }
@@ -367,7 +320,7 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
     tipo: "cierre",
     texto: turno(v.cierre, cuantos),
     pausaMs: PAUSA.cierre,
-    rotulo: "Cierre",
+    rotulo: v.rot.cierre,
   });
   if (conInvitacion) {
     bloques.push({
@@ -375,7 +328,7 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
       tipo: "invitacion",
       texto: turno(v.invitacion, 0),
       pausaMs: PAUSA.invitacion,
-      rotulo: "Puedes preguntar",
+      rotulo: v.rot.invitacion,
     });
   }
 
@@ -384,8 +337,9 @@ export function construirPrograma(notas: Nota[], opciones: OpcionesPrograma = {}
     .reduce((s, g) => s + g.duplicados.length, 0);
 
   return {
-    titulo: `Radio Vanguard · ${cuantosTitulares} titulares, ${cuantos} ${cuantos === 1 ? "asunto" : "asuntos"}`,
+    titulo: v.titulo(cuantosTitulares, cuantos),
     estilo,
+    idioma,
     bloques,
     duracionMs: estimarDuracion(bloques),
     notaIds: grupos.slice(0, cuantos).map((g) => g.principal.id),
@@ -413,6 +367,7 @@ export function programaAGuion(p: Programa): string {
     `# ${p.titulo}`,
     ``,
     `- estilo: ${p.estilo}`,
+    `- idioma: ${p.idioma}`,
     `- bloques: ${p.bloques.length}`,
     `- duración estimada: ${Math.round(p.duracionMs / 1000)} s`,
     `- asuntos: ${p.asuntos} · cables agrupados por repetirse: ${p.repetidos}`,

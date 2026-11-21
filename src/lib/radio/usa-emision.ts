@@ -16,11 +16,17 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { decir, pararBoca, type GustosVoz } from "@/lib/voz/decir";
+import { idiomaActual, type IdiomaVozId } from "@/lib/voz/idiomas";
 import type { BloqueGuion } from "./guion";
 
 export type Frase = { texto: string; i: number; total: number };
 
 export type OpcionesEmision = {
+  /**
+   * v437.0 · el idioma en que se emite. Si falta, se usa el de la CASA
+   * (`idiomaActual()`): cambiar el idioma de la interfaz cambia la boca.
+   */
+  idioma?: IdiomaVozId;
   /** se llama al entrar en un bloque (para señalar en pantalla) */
   onBloque?: (i: number) => void;
   /** se llama al terminar el programa */
@@ -44,6 +50,9 @@ export function usaEmision(bloques: BloqueGuion[], gustos: GustosVoz, opciones: 
   bloquesRef.current = bloques;
   const gustosRef = useRef(gustos);
   gustosRef.current = gustos;
+  // v437.0 · el idioma de la emisión: el de la casa si no se dice otro
+  const idiomaRef = useRef<IdiomaVozId>(opciones.idioma ?? idiomaActual());
+  idiomaRef.current = opciones.idioma ?? idiomaActual();
 
   const parar = useCallback(() => {
     vivo.current = false;
@@ -73,6 +82,7 @@ export function usaEmision(bloques: BloqueGuion[], gustos: GustosVoz, opciones: 
     cb.current.onPosicion?.(i);
     const ok = decir(bloque.texto, {
       gustos: gustosRef.current,
+      idioma: idiomaRef.current,
       interrumpir: i === 0,
       onFrase: (texto, indice, total) => setFrase({ texto, i: indice, total }),
       onFin: () => {
