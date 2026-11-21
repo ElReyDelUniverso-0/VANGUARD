@@ -7049,9 +7049,18 @@
 // piezas con hilos, tablero que se arrastra y mapa 3D de todo, cuatro pieles
 // que cambian el papel y un emblema editable que se descarga. Arranca vacío y
 // vive en el aparato.
-export const APP_VERSION = "v432.3";
-export const APP_CODENAME = "EL CUADERNO";
+// v432.4 · EL ALGORITMO — mandato del Dueño: «agrégale un algoritmo como el
+// de TikTok». El feed deja de sumar puntos a mano y pasa a predecir: cada rasgo
+// (tema, tipo, autor) lleva una Beta con su certeza; cada gesto se convierte en
+// recompensa según la escala real de un feed (saltar resta, terminar suma un
+// poco, guardar y compartir suman mucho); la exploración muestrea lo que aún no
+// sabe; lo repetido se castiga sin enterrarlo; el orden respeta la variedad; y
+// la memoria se diluye a la mitad cada 30 días. Todo en el aparato, con la caja
+// negra abierta (botón ALGORITMO dentro del feed) y derecho al olvido.
+export const APP_VERSION = "v432.4";
+export const APP_CODENAME = "EL ALGORITMO";
 // (anterior) export const APP_VERSION = "v431.5";
+// (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
 // (anterior) export const APP_VERSION = "v422.1";
 // (anterior) export const APP_CODENAME = "VANGUARD REBIRTH";

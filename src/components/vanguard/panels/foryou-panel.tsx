@@ -30,6 +30,7 @@ import {
   Heart, MessageSquare, Share2, Coins, ChevronUp, ChevronDown, Flame,
   Radio, ExternalLink, Clapperboard, Music, Image as ImageIcon, Play,
   Sparkles, Laugh, MonitorPlay, Clock, Zap, MousePointerClick, GraduationCap,
+  Bookmark, EyeOff, SlidersHorizontal, Brain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -41,7 +42,9 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import {
   ordenarAlgoritmo, ordenarReciente, leerPerfil, notaVista, notaLike, notaComentario,
-  marcarVista, type TarjetaFeed, type TarjetaPuntuada, type PerfilFeed,
+  marcarVista, notaGuarda, notaComparte, notaNoInteresa, notaDesgusta, notaSigue,
+  termometro, gustos, olvidarAlgoritmo, leerMemoria,
+  type TarjetaFeed, type TarjetaPuntuada, type PerfilFeed,
 } from "@/lib/algoritmo-feed";
 import { primeraHornada, leerCache, latidoProductor } from "@/lib/productor-vivo";
 import { TV_VIDEOS, TV_CHANNELS } from "@/lib/social-data";
@@ -99,6 +102,11 @@ export function ForYouPanel() {
   const [likeCount, setLikeCount] = useState<Record<string, number>>({});
   const [showComments, setShowComments] = useState<string | null>(null);
   const [burst, setBurst] = useState<{ id: string; x: number; y: number } | null>(null);
+  // v432.4 · EL ALGORITMO: lo que se guarda, lo que se aparta y cuándo re-ordenar
+  const [saved, setSaved] = useState<Record<string, boolean>>({});
+  const [ocultas, setOcultas] = useState<Record<string, boolean>>({});
+  const [revision, setRevision] = useState(0);
+  const [maquinas, setMaquinas] = useState(false);
   const perfilRef = useRef<PerfilFeed>(leerPerfil());
   const scrollerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<TarjetaPuntuada[]>([]);
@@ -211,10 +219,11 @@ export function ForYouPanel() {
       bola: s.item.authorBall,
       datos: { slide: s },
     }));
-    const todas = [...ugc, ...mesaTarjetas, ...memes, ...tvTarjetas, ...pulsos];
+    const todas = [...ugc, ...mesaTarjetas, ...memes, ...tvTarjetas, ...pulsos]
+      .filter((t) => !ocultas[t.id]);
     const ahora = Date.now();
     return vista === "reciente" ? ordenarReciente(todas) : ordenarAlgoritmo(todas, perfilRef.current, ahora);
-  }, [ugcSlides, mesaTarjetas, memes, tvTarjetas, pulsos, vista]);
+  }, [ugcSlides, mesaTarjetas, memes, tvTarjetas, pulsos, vista, ocultas, revision]);
 
   listRef.current = lista;
 
@@ -237,13 +246,56 @@ export function ForYouPanel() {
     return () => obs.disconnect();
   }, [lista, vista]);
 
-  // afinidad: la slide activa ensancha el perfil (lo que miras, pesa)
+  // v432.4 · TIEMPO EN PANTALLA — la señal que manda en un feed de verdad.
+  // Antes se apuntaba «vio» al instante (todo valía igual). Ahora se mide lo
+  // que la tarjeta estuvo delante y se manda con ese dato: dos segundos y
+  // cuarenta segundos ya no son lo mismo.
+  const inicioSlide = useRef<{ id: string; t: number } | null>(null);
   useEffect(() => {
-    const p = lista[active];
-    if (!p) return;
-    notaVista(p.tarjeta.tipo, p.tarjeta.autor);
-    marcarVista(p.tarjeta.id);
+    const ahora = Date.now();
+    const previa = inicioSlide.current;
+    if (previa) {
+      const ms = Math.max(0, ahora - previa.t);
+      const p = listRef.current.find((x) => x.tarjeta.id === previa.id);
+      if (p) {
+        const dur = typeof p.tarjeta.datos?.duracionMs === "number" ? (p.tarjeta.datos.duracionMs as number) : undefined;
+        notaVista(p.tarjeta.tipo, p.tarjeta.autor, {
+          id: p.tarjeta.id,
+          titulo: p.tarjeta.titulo,
+          ms,
+          duracionMs: dur,
+        });
+      }
+    }
+    const actual = lista[active];
+    if (actual) {
+      inicioSlide.current = { id: actual.tarjeta.id, t: ahora };
+      marcarVista(actual.tarjeta.id);
+    }
   }, [active, lista]);
+
+  // si cierra la pestaña a media tarjeta, se apunta lo visto hasta ahí
+  useEffect(() => {
+    const cerrar = () => {
+      const previa = inicioSlide.current;
+      if (!previa) return;
+      const p = listRef.current.find((x) => x.tarjeta.id === previa.id);
+      if (!p) return;
+      notaVista(p.tarjeta.tipo, p.tarjeta.autor, {
+        id: p.tarjeta.id,
+        titulo: p.tarjeta.titulo,
+        ms: Math.max(0, Date.now() - previa.t),
+      });
+      inicioSlide.current = null;
+    };
+    const alOcultar = () => { if (document.visibilityState === "hidden") cerrar(); };
+    window.addEventListener("pagehide", cerrar);
+    document.addEventListener("visibilitychange", alOcultar);
+    return () => {
+      window.removeEventListener("pagehide", cerrar);
+      document.removeEventListener("visibilitychange", alOcultar);
+    };
+  }, []);
 
   const go = useCallback((dir: 1 | -1) => {
     const root = scrollerRef.current;
@@ -271,7 +323,10 @@ export function ForYouPanel() {
     const already = !!liked[key];
     setLiked((m) => ({ ...m, [key]: !already }));
     setLikeCount((m) => ({ ...m, [key]: (m[key] ?? p.tarjeta.likes) + (already ? -1 : 1) }));
-    notaLike(p.tarjeta.tipo, p.tarjeta.autor); // el algoritmo aprende del like
+    // el algoritmo aprende del like… y del DES-like (quitar también dice algo)
+    const extra = { id: p.tarjeta.id, titulo: p.tarjeta.titulo };
+    if (already) notaDesgusta(p.tarjeta.tipo, p.tarjeta.autor, extra);
+    else notaLike(p.tarjeta.tipo, p.tarjeta.autor, extra);
     if (p.tarjeta.id.startsWith("ugc-")) {
       try {
         const r = await fetch(`/api/ugc/${p.tarjeta.id.slice(4)}`, {
@@ -319,7 +374,25 @@ export function ForYouPanel() {
       if (navigator.share) await navigator.share({ title: "VANGUARD · Para Ti", url });
       else await navigator.clipboard.writeText(url);
       toast("Enlace copiado — comparte VANGUARD con el mundo");
+      if (_p) notaComparte(_p.tarjeta.tipo, _p.tarjeta.autor, { id: _p.tarjeta.id, titulo: _p.tarjeta.titulo });
     } catch { /* cancelado */ }
+  };
+
+  // v432.4 · GUARDAR y NO ME INTERESA — dos gestos que el algoritmo pesa mucho
+  const guardar = (p: TarjetaPuntuada) => {
+    const ya = !!saved[p.tarjeta.id];
+    setSaved((m) => ({ ...m, [p.tarjeta.id]: !ya }));
+    if (!ya) {
+      notaGuarda(p.tarjeta.tipo, p.tarjeta.autor, { id: p.tarjeta.id, titulo: p.tarjeta.titulo });
+      toast("Guardado — el algoritmo lo tendrá muy en cuenta");
+    }
+  };
+
+  const noMeInteresa = (p: TarjetaPuntuada) => {
+    notaNoInteresa(p.tarjeta.tipo, p.tarjeta.autor, { id: p.tarjeta.id, titulo: p.tarjeta.titulo });
+    setOcultas((m) => ({ ...m, [p.tarjeta.id]: true }));
+    toast("Fuera de tu feed — se aprende y no se repite");
+    setActive((n) => Math.max(0, Math.min(n, listRef.current.length - 2)));
   };
 
   const navegar = useCallback((tab: string) => {
@@ -704,7 +777,16 @@ export function ForYouPanel() {
                       </div>
                       <p className="text-[11px] text-white/90 leading-snug line-clamp-2 mt-0.5">{p.tarjeta.titulo}</p>
                       <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                        <span className="text-[8px] font-mono px-1.5 py-0.5 bg-amber-hud/25 text-amber-hud rounded-sm uppercase tracking-wider">{p.porQue}</span>
+                        <span
+                          className="text-[8px] font-mono px-1.5 py-0.5 bg-amber-hud/25 text-amber-hud rounded-sm uppercase tracking-wider"
+                          title={
+                            p.desglose
+                              ? `POR QUÉ: gusto ${p.desglose.gusto.toFixed(2)} · estancia ${p.desglose.estancia.toFixed(2)} · enganche ${p.desglose.enganche.toFixed(2)} · frescura ${p.desglose.frescura.toFixed(2)} · exploración ${p.desglose.exploracion.toFixed(2)} · castigo ${p.desglose.castigo.toFixed(2)} → ${p.score.toFixed(2)}`
+                              : undefined
+                          }
+                        >
+                          {p.porQue}
+                        </span>
                         <span className="text-[9px] font-mono text-white/60">{timeAgo(new Date(p.tarjeta.ts).toISOString())}</span>
                       </div>
                     </div>
@@ -720,9 +802,27 @@ export function ForYouPanel() {
                       <Heart className={cn("w-6 h-6", liked[key] && "fill-red-hud text-red-hud")} />
                       <span className="text-[9px] font-mono">{likeCount[key] ?? p.tarjeta.likes}</span>
                     </button>
+                    <button
+                      onClick={() => guardar(p)}
+                      className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-amber-hud"
+                      aria-label="Guardar"
+                      title="Guardar — el algoritmo lo pesa casi como un compartir"
+                    >
+                      <Bookmark className={cn("w-6 h-6", saved[key] && "fill-amber-hud text-amber-hud")} />
+                      <span className="text-[9px] font-mono">{saved[key] ? "✓" : "▾"}</span>
+                    </button>
+                    <button
+                      onClick={() => noMeInteresa(p)}
+                      className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-white/80"
+                      aria-label="No me interesa"
+                      title="No me interesa — se aprende y no vuelve por un tiempo"
+                    >
+                      <EyeOff className="w-6 h-6" />
+                      <span className="text-[9px] font-mono">✕</span>
+                    </button>
                     {esUgc && (
                       <button
-                        onClick={() => { setShowComments(showComments === key ? null : key); notaComentario(p.tarjeta.tipo); }}
+                        onClick={() => { setShowComments(showComments === key ? null : key); notaComentario(p.tarjeta.tipo, p.tarjeta.autor, { id: p.tarjeta.id, titulo: p.tarjeta.titulo }); }}
                         className="flex flex-col items-center gap-0.5 text-muted-foreground hover:text-cyan-hud"
                         aria-label="Comentarios"
                       >
@@ -771,9 +871,72 @@ export function ForYouPanel() {
               <ChevronDown className="w-4 h-4" />
             </button>
           </div>
-          <div className="absolute left-3 top-3 text-[9px] font-mono text-white/70 bg-black/40 px-1.5 py-0.5 rounded-sm pointer-events-none flex items-center gap-1">
-            <Flame className="w-3 h-3 text-red-hud" /> {active + 1} / {lista.length + 1} · {vista === "algoritmo" ? "PARA TI" : "RECIENTE"}
+          <div className="absolute left-3 top-3 flex items-center gap-1">
+            <span className="text-[9px] font-mono text-white/70 bg-black/40 px-1.5 py-0.5 rounded-sm pointer-events-none flex items-center gap-1">
+              <Flame className="w-3 h-3 text-red-hud" /> {active + 1} / {lista.length + 1} · {vista === "algoritmo" ? "PARA TI" : "RECIENTE"}
+            </span>
+            <button
+              onClick={() => setMaquinas((v) => !v)}
+              className="text-[9px] font-mono text-white/80 bg-black/50 hover:bg-amber-hud/25 border border-amber-hud/30 px-1.5 py-0.5 rounded-sm flex items-center gap-1"
+              title="La sala de máquinas: lo que el algoritmo ha aprendido de ti"
+            >
+              <Brain className="w-3 h-3 text-amber-hud" /> ALGORITMO
+            </button>
           </div>
+
+          {/* v432.4 · LA SALA DE MÁQUINAS — la caja negra, abierta */}
+          {maquinas && (
+            <div className="absolute left-3 top-11 z-20 w-[min(320px,calc(100%-24px))] hud-panel p-3 space-y-2 bg-black/90 border border-amber-hud/40">
+              <div className="flex items-center gap-1.5">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-amber-hud" />
+                <span className="text-[9px] font-mono uppercase tracking-widest text-amber-hud">el algoritmo de la casa</span>
+                <button onClick={() => setMaquinas(false)} className="ml-auto text-[10px] font-mono text-white/60 hover:text-white">×</button>
+              </div>
+              {(() => {
+                const t = termometro(lista);
+                const gs = gustos(leerMemoria(), 6);
+                return (
+                  <>
+                    <p className="text-[9px] font-mono text-white/60 leading-relaxed">
+                      {lista.length} tarjetas · frescura {t.frescura.toFixed(2)} · exploración {t.exploracion.toFixed(2)} · castigo {t.castigo.toFixed(2)}
+                    </p>
+                    <div className="space-y-1">
+                      {gs.length === 0 ? (
+                        <p className="text-[9px] font-mono text-white/50">Aún no sé nada de ti. Mira, guarda o comparte algo y empiezo.</p>
+                      ) : (
+                        gs.map((g) => (
+                          <div key={g.rasgo} className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-mono text-white/70 flex-1 truncate">{g.rasgo.replace(":", " · ").toUpperCase()}</span>
+                            <div className="w-16 h-1 bg-white/15 rounded-full overflow-hidden">
+                              <div className="h-full bg-amber-hud" style={{ width: `${Math.round(g.valor * 100)}%` }} />
+                            </div>
+                            <span className="text-[8px] font-mono text-amber-hud w-7 text-right">{Math.round(g.valor * 100)}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    <div className="flex gap-1.5 pt-1">
+                      <button
+                        onClick={() => { setRevision((n) => n + 1); toast("El algoritmo re-ordenó tu feed"); }}
+                        className="flex-1 text-[9px] font-mono py-1 bg-amber-hud/20 text-amber-hud border border-amber-hud/40 rounded-sm"
+                      >
+                        RE-ORDENAR
+                      </button>
+                      <button
+                        onClick={() => { olvidarAlgoritmo(); setRevision((n) => n + 1); toast("Olvidado — el algoritmo empieza de cero contigo"); }}
+                        className="flex-1 text-[9px] font-mono py-1 bg-white/10 text-white/70 border border-white/20 rounded-sm"
+                      >
+                        OLVIDARME
+                      </button>
+                    </div>
+                    <p className="text-[8px] font-mono text-white/35 leading-snug">
+                      Todo se aprende en tu aparato. Saltar resta; terminar, guardar y compartir suman; lo repetido se aparta y lo nuevo tiene su hueco.
+                    </p>
+                  </>
+                );
+              })()}
+            </div>
+          )}
         </div>
       )}
 

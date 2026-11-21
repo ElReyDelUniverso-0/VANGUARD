@@ -1,28 +1,26 @@
-// ============================================================
-// v191.0 EL ALGORITMO — el cerebro del feed PARA TI.
-// Mandato del Dueño: «haz que Vanguard tenga un algoritmo como TikTok».
-// Hasta hoy el feed ordenaba por fecha (sort createdAt) — un cronómetro,
-// no un algoritmo. Ahora cada tarjeta se puntúa como en TikTok:
+// ═══════════════════════════════════════════════════════════════════════════
+// EL ALGORITMO DE LA CASA — puente entre las tarjetas del feed y el motor
 //
-//   PUNTUACIÓN = ENGAÑO + FRESCURA + AFINIDAD − VISTO_HACE_POCO
+// v191 hizo la primera versión (suma de engaño + frescura + afinidad). v432.4
+// la sustituye por el motor de verdad (`lib/para-ti/motor.ts`): Beta por rasgo,
+// predicción de estancia, exploración con muestreo de Thompson, castigos por
+// repetición y diversidad en el orden. Este fichero NO duplica esa lógica:
+// solo traduce las tarjetas de la casa a candidatos y los gestos a eventos.
 //
-//   · ENGAÑO  — log(1+likes)·1.6: los gustos pesan, pero con rendimiento
-//               decreciente (un viral no aplasta todo lo demás).
-//   · FRESCURA — decaimiento exponencial con vida media de 10 h: lo nuevo
-//               manda, lo viejo se apaga suave (nunca muere del todo).
-//   · AFINIDAD — el perfil del espectador (localStorage vg191-perfil):
-//               cada tipo que miras/te gusta crece de peso (+0.15, tope 3)
-//               y cada autor al que le das like también (+0.2, tope 2).
-//   · VISTO   — lo que viste hace <8 h se penaliza −1.8 (no repetir).
-//
-// DIVERSIDAD: tras ordenar, un pase de entrelazado evita 3 tarjetas del
-// mismo tipo seguidas — como el «For You» real, que mezcla para no hartar.
-//
-// HONESTIDAD RADICAL: cada tarjeta explica POR QUÉ está (chip «porque
-// miras MEMES» / «porque te gusta @autor» / «porque es nuevo») — el
-// algoritmo no es una caja negra, es un comando que da la cara.
-// Todo local (localStorage), cero servidor, cero datos personales.
-// ============================================================
+// Todo lo aprendido vive en el aparato (`vg432:algoritmo:v2`). No hay servidor
+// mirando, ni perfiles, ni datos personales.
+// ═══════════════════════════════════════════════════════════════════════════
+
+import {
+  rango,
+  salud,
+  PESOS,
+  type Candidato,
+  type Desglose,
+  type Puntuado,
+} from "@/lib/para-ti/motor";
+import { aprenderLocal, guardarMemoria, leerMemoria, olvidarTodo } from "@/lib/para-ti/almacen";
+import { gustos, madurar, type Memoria } from "@/lib/para-ti/memoria";
 
 // v317 LA MESA EN LA PORTADA: la escuela produce contenido con tus partidas —
 // el tipo "mesa" es la última partida de la escuela entrando al algoritmo.
@@ -43,156 +41,103 @@ export interface PerfilFeed {
   pesoTipo: Record<string, number>;
   pesoAutor: Record<string, number>;
   vistas: number;
+  /** el modelo completo (evidencia Beta por rasgo) */
+  memoria?: Memoria;
 }
-
-const K_PERFIL = "vg191-perfil";
-const K_VISTAS = "vg191-vistas";
-const MAX_VISTAS = 400;
-
-// ---------- PERFIL (afinidad aprendida, todo en localStorage) ----------
-
-export function leerPerfil(): PerfilFeed {
-  try {
-    const raw = localStorage.getItem(K_PERFIL);
-    if (raw) {
-      const p = JSON.parse(raw) as PerfilFeed;
-      return {
-        pesoTipo: p.pesoTipo ?? {},
-        pesoAutor: p.pesoAutor ?? {},
-        vistas: p.vistas ?? 0,
-      };
-    }
-  } catch { /* perfil nuevo */ }
-  return { pesoTipo: {}, pesoAutor: {}, vistas: 0 };
-}
-
-function guardarPerfil(p: PerfilFeed): void {
-  try { localStorage.setItem(K_PERFIL, JSON.stringify(p)); } catch { /* noop */ }
-}
-
-/** El espectador MIRÓ una tarjeta (activa ≥60% en pantalla). */
-export function notaVista(tipo: TipoFeed, _autor: string): void {
-  const p = leerPerfil();
-  p.vistas += 1;
-  p.pesoTipo[tipo] = Math.min(3, (p.pesoTipo[tipo] ?? 1) + 0.05);
-  guardarPerfil(p);
-}
-
-/** El espectador dio LIKE — la señal más fuerte del algoritmo. */
-export function notaLike(tipo: TipoFeed, autor: string): void {
-  const p = leerPerfil();
-  p.pesoTipo[tipo] = Math.min(3, (p.pesoTipo[tipo] ?? 1) + 0.15);
-  p.pesoAutor[autor] = Math.min(2, (p.pesoAutor[autor] ?? 0.5) + 0.2);
-  guardarPerfil(p);
-}
-
-/** El espectador abrió comentarios — interés medio. */
-export function notaComentario(tipo: TipoFeed): void {
-  const p = leerPerfil();
-  p.pesoTipo[tipo] = Math.min(3, (p.pesoTipo[tipo] ?? 1) + 0.1);
-  guardarPerfil(p);
-}
-
-// ---------- VISTAS RECIENTES (no repetir lo recién visto) ----------
-
-export function marcarVista(id: string): void {
-  try {
-    const raw = localStorage.getItem(K_VISTAS);
-    const m = raw ? (JSON.parse(raw) as Record<string, number>) : {};
-    m[id] = Date.now();
-    const podado = Object.entries(m)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, MAX_VISTAS);
-    localStorage.setItem(K_VISTAS, JSON.stringify(Object.fromEntries(podado)));
-  } catch { /* noop */ }
-}
-
-function vistoHace(id: string, ahora: number): number | null {
-  try {
-    const raw = localStorage.getItem(K_VISTAS);
-    const m = raw ? (JSON.parse(raw) as Record<string, number>) : {};
-    const t = m[id];
-    return t ? ahora - t : null;
-  } catch { return null; }
-}
-
-// ---------- PUNTUACIÓN ----------
 
 export interface TarjetaPuntuada {
   tarjeta: TarjetaFeed;
   score: number;
   porQue: string;
+  /** el desglose numérico: la caja negra, abierta */
+  desglose?: Desglose;
+  rasgosTop?: string[];
 }
+
+const DURACION_ESTIMADA = 20_000;
+
+// ── perfil (lo que el algoritmo sabe de ti, en la forma de siempre) ────────
+
+export function leerPerfil(): PerfilFeed {
+  const memoria = leerMemoria();
+  const pesoTipo: Record<string, number> = {};
+  const pesoAutor: Record<string, number> = {};
+  for (const [rasgo, e] of Object.entries(memoria.rasgo)) {
+    const valor = (1 + e.a) / (2 + e.a + e.b); // media de la Beta
+    if (rasgo.startsWith("tipo:")) pesoTipo[rasgo.slice(5)] = valor;
+    if (rasgo.startsWith("autor:")) pesoAutor[rasgo.slice(6)] = valor;
+  }
+  return {
+    pesoTipo,
+    pesoAutor,
+    vistas: Object.keys(memoria.vistos).length,
+    memoria,
+  };
+}
+
+// ── traducir una tarjeta a candidato del motor ─────────────────────────────
+
+function numero(v: unknown): number {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.max(0, n) : 0;
+}
+
+export function aCandidato(t: TarjetaFeed): Candidato {
+  const d = t.datos ?? {};
+  const etiquetas = Array.isArray(d.tags) ? (d.tags as unknown[]).map(String) : [];
+  return {
+    id: t.id,
+    tipo: t.tipo,
+    autor: t.autor,
+    ts: t.ts,
+    titulo: t.titulo,
+    temas: etiquetas,
+    duracionMs: numero(d.duracionMs) || undefined,
+    senales: {
+      vistas: numero(d.vistas) || numero(d.views),
+      likes: t.likes,
+      compartidos: numero(d.compartidos) || numero(d.shares),
+      guardados: numero(d.guardados) || numero(d.saves),
+      estanciaMs: numero(d.estanciaMs) || numero(d.vistas) * 9_000,
+    },
+    // empuje legítimo: lo que ahora mismo está pasando, y lo que la casa
+    // produjo para ti (pulsos del Productor, tu partida de la escuela)
+    base: t.tipo === "vivo" ? 1.6 : t.tipo === "pulso" || t.tipo === "mesa" ? 1.2 : 0,
+  };
+}
+
+// ── puntuación ─────────────────────────────────────────────────────────────
 
 export function puntuar(t: TarjetaFeed, perfil: PerfilFeed, ahora: number): TarjetaPuntuada {
-  const horas = Math.max(0, (ahora - t.ts) / 3_600_000);
-  const engano = Math.log10(1 + Math.max(0, t.likes)) * 1.6;
-  const frescura = Math.pow(0.5, horas / 10) * 2.2;
-  const afinTipo = Math.min(3, perfil.pesoTipo[t.tipo] ?? 1);
-  const afinAutor = Math.min(1.5, (perfil.pesoAutor[t.autor] ?? 0.5) * 0.75);
-  const visto = vistoHace(t.id, ahora);
-  const penalVisto = visto !== null && visto < 8 * 3_600_000 ? -1.8 : 0;
-  // los PULSOS del Productor, los canales VIVO y LA MESA (v317 — contenido
-  // que VANGUARD produjo con tu partida) llevan base propia para mezclarse
-  // con dignidad aunque no tengan likes todavía
-  const base = t.tipo === "pulso" || t.tipo === "mesa" ? 1.2 : t.tipo === "vivo" ? 1.6 : 0;
-
-  const score = base + engano + frescura + afinTipo + afinAutor + penalVisto;
-
-  // explicación honesta: ¿por qué está esta tarjeta aquí?
-  let porQue: string;
-  if (t.tipo === "vivo") porQue = "EN VIVO AHORA MISMO";
-  else if (t.tipo === "pulso") porQue = "VANGUARD LO PRODUJO PARA TI";
-  else if (t.tipo === "mesa") porQue = "TU ÚLTIMA PARTIDA EN LA ESCUELA";
-  else if (visto !== null && visto < 8 * 3_600_000) porQue = "LO VISTE HACE POCO";
-  else if ((perfil.pesoAutor[t.autor] ?? 0) > 0.9) porQue = `PORQUE TE GUSTA @${t.autor.toUpperCase()}`;
-  else if (afinTipo >= 1.45) porQue = `PORQUE MIRAS ${etiquetaTipo(t.tipo)}`;
-  else if (horas < 2) porQue = "RECIÉN LLEGADO AL MUNDO";
-  else if (t.likes >= 8) porQue = `VIRAL · ${t.likes} LIKES`;
-  else porQue = "PARA DIVERSIFICAR TU FEED";
-
-  return { tarjeta: t, score, porQue };
+  const memoria = perfil.memoria ?? leerMemoria(ahora);
+  const [p] = rango([aCandidato(t)], memoria, { ahora, semilla: "casa", limite: 1 });
+  return {
+    tarjeta: t,
+    score: p?.score ?? 0,
+    porQue: p?.porQue ?? "PARA DIVERSIFICARTE EL FEED",
+    desglose: p?.desglose,
+    rasgosTop: p?.rasgosTop,
+  };
 }
 
-function etiquetaTipo(tipo: TipoFeed): string {
-  switch (tipo) {
-    case "video": return "VIDEOS";
-    case "musica": return "MÚSICA";
-    case "foto": return "FOTOS";
-    case "meme": return "MEMES";
-    case "tv": return "TV";
-    case "pulso": return "PULSOS";
-    case "vivo": return "EN VIVO";
-    case "mesa": return "LA MESA";
-  }
-}
-
-// ---------- ORDEN + DIVERSIDAD ----------
-
-/** Ordena por score y entrelaza: jamás 3 tarjetas del mismo tipo seguidas. */
+/** Ordena con el motor + diversidad. Sin candidatos, devuelve vacío. */
 export function ordenarAlgoritmo(
   tarjetas: TarjetaFeed[],
   perfil: PerfilFeed,
   ahora: number,
 ): TarjetaPuntuada[] {
-  const puntuadas = tarjetas.map((t) => puntuar(t, perfil, ahora));
-  puntuadas.sort((a, b) => b.score - a.score);
+  const memoria = perfil.memoria ?? leerMemoria(ahora);
+  const candidatos = tarjetas.map(aCandidato);
+  const ordenados = rango(candidatos, memoria, { ahora, semilla: semillaDeSesion(), limite: tarjetas.length });
+  const porId = new Map(tarjetas.map((t) => [t.id, t]));
 
-  const salida: TarjetaPuntuada[] = [];
-  const resto = [...puntuadas];
-  while (resto.length > 0) {
-    let elegido = 0;
-    if (salida.length >= 2) {
-      const t1 = salida[salida.length - 1].tarjeta.tipo;
-      const t2 = salida[salida.length - 2].tarjeta.tipo;
-      if (t1 === t2) {
-        const proximo = resto.findIndex((p) => p.tarjeta.tipo !== t1);
-        if (proximo > -1) elegido = proximo;
-      }
-    }
-    salida.push(resto.splice(elegido, 1)[0]);
-  }
-  return salida;
+  return ordenados.map((p: Puntuado) => ({
+    tarjeta: porId.get(p.candidato.id) as TarjetaFeed,
+    score: p.score,
+    porQue: p.porQue,
+    desglose: p.desglose,
+    rasgosTop: p.rasgosTop,
+  }));
 }
 
 /** Orden cronológico puro (pestaña RECIENTE). */
@@ -200,4 +145,118 @@ export function ordenarReciente(tarjetas: TarjetaFeed[]): TarjetaPuntuada[] {
   return [...tarjetas]
     .sort((a, b) => b.ts - a.ts)
     .map((tarjeta) => ({ tarjeta, score: 0, porQue: "LO MÁS NUEVO PRIMERO" }));
+}
+
+/** El barajado de la sesión: cambia al recargar, no en cada render. */
+function semillaDeSesion(): string {
+  if (typeof window === "undefined") return "casa";
+  try {
+    const guardada = window.sessionStorage.getItem("vg432:semilla");
+    if (guardada) return guardada;
+    const nueva = Math.random().toString(36).slice(2, 10);
+    window.sessionStorage.setItem("vg432:semilla", nueva);
+    return nueva;
+  } catch {
+    return "casa";
+  }
+}
+
+// ── señales: cada gesto del espectador entra aquí ──────────────────────────
+
+type Extra = {
+  id?: string;
+  titulo?: string;
+  temas?: readonly string[];
+  ms?: number;
+  duracionMs?: number;
+};
+
+function evento(t: TarjetaFeed, accion: Parameters<typeof aprenderLocal>[0]["accion"], extra?: Extra) {
+  return aprenderLocal({
+    id: extra?.id ?? t.id,
+    tipo: t.tipo,
+    autor: t.autor,
+    titulo: extra?.titulo ?? t.titulo,
+    temas: extra?.temas ?? (Array.isArray(t.datos?.tags) ? (t.datos?.tags as unknown[]).map(String) : undefined),
+    accion,
+    ms: extra?.ms,
+    duracionMs: extra?.duracionMs ?? (typeof t.datos?.duracionMs === "number" ? t.datos.duracionMs : DURACION_ESTIMADA),
+  });
+}
+
+/**
+ * El espectador MIRÓ una tarjeta. Ahora con el dato que de verdad importa:
+ * cuánto tiempo estuvo en pantalla. Un vistazo de un segundo no es un «me
+ * gusta» — y el motor lo distingue.
+ */
+export function notaVista(tipo: TipoFeed, autor: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor, titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "vista", extra);
+}
+
+/** Marcador de «esto ya se vio», sin señal de gusto (no ensucia el perfil). */
+export function marcarVista(id: string, ahora = Date.now()): void {
+  if (!id) return;
+  try {
+    const m = leerMemoria(ahora);
+    const previa = m.vistos[id];
+    m.vistos[id] = { ts: ahora, veces: (previa?.veces ?? 0) + 1, pct: previa?.pct ?? 0 };
+    guardarMemoria(madurar(m, ahora));
+  } catch {
+    /* sin almacén: el feed sigue */
+  }
+}
+
+/** LIKE — la señal clásica, fuerte pero no la más fuerte. */
+export function notaLike(tipo: TipoFeed, autor: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor, titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "gusta", extra);
+}
+
+/** Quitar el like también enseña (hacia abajo, pero flojo). */
+export function notaDesgusta(tipo: TipoFeed, autor: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor, titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "desgusta", extra);
+}
+
+/** GUARDAR — «esto lo quiero tener»: por encima del like. */
+export function notaGuarda(tipo: TipoFeed, autor: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor, titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "guarda", extra);
+}
+
+/** COMPARTIR — la señal más fuerte de un feed real. */
+export function notaComparte(tipo: TipoFeed, autor: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor, titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "comparte", extra);
+}
+
+/** Comentarios abiertos — interés medio. */
+export function notaComentario(tipo: TipoFeed, autor?: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor: autor ?? "", titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "comenta", extra);
+}
+
+/** «NO ME INTERESA» — se aparta de verdad, pero no para siempre. */
+export function notaNoInteresa(tipo: TipoFeed, autor: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor, titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "noInteresa", extra);
+}
+
+/** Siguió al autor — el compromiso más alto. */
+export function notaSigue(tipo: TipoFeed, autor: string, extra?: Extra): void {
+  evento({ id: extra?.id ?? "", tipo, autor, titulo: extra?.titulo ?? "", ts: Date.now(), likes: 0 }, "sigue", extra);
+}
+
+// ── la sala de máquinas: lo que el algoritmo ha aprendido, a la vista ──────
+
+export { gustos, salud, PESOS, olvidarTodo as olvidarAlgoritmo, leerMemoria };
+
+/** Termómetro del feed actual (para el cartel de la sala de máquinas). */
+export function termometro(puntuados: readonly TarjetaPuntuada[]) {
+  const saludable = salud(
+    puntuados
+      .filter((p) => p.desglose)
+      .map((p) => ({
+        candidato: aCandidato(p.tarjeta),
+        score: p.score,
+        desglose: p.desglose as Desglose,
+        porQue: p.porQue,
+        rasgosTop: p.rasgosTop ?? [],
+      }))
+  );
+  return saludable;
 }
