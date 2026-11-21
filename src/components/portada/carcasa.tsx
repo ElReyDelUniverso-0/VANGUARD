@@ -103,7 +103,15 @@ function Pestanas({ ruta }: { ruta: string }) {
           <span className="vx-pest-corto">{m.corto}</span>
         </Link>
         <div className="vx-pest-lista">
-          {m.pestanas.map((p) => {
+          {/* v432.0 EL SEGUNDO MENÚ, ORDENADO — el Dueño: «en el segundo menú
+              hay botones que opacan a otros». Había módulos con seis pestañas
+              apuntando al MISMO href (Información Perfecta: las seis a
+              /informacion), así que se encendían seis a la vez y además
+              compartían key de React. Se quitan los destinos repetidos: queda
+              una pestaña por sala real. Ninguna sala se pierde. */}
+          {m.pestanas
+            .filter((p, i, todas) => todas.findIndex((x) => x.href === p.href) === i)
+            .map((p) => {
             const on = activa(p.href) || (p.href === "/conflictos" && ruta.startsWith("/conflicto/"));
             return (
               <Link
@@ -117,7 +125,7 @@ function Pestanas({ ruta }: { ruta: string }) {
                 {p.label}
               </Link>
             );
-          })}
+            })}
         </div>
       </div>
     </nav>
