@@ -18,6 +18,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { NextResponse } from "next/server";
+import { APP_VERSION } from "@/lib/version";
 import { obtenerNotas, type Nota } from "@/lib/portada/notas";
 import { construirPrograma, type EstiloRadio } from "@/lib/radio/guion";
 import { ORDEN_IDIOMAS, esIdiomaVoz, idiomaVoz, type IdiomaVozId } from "@/lib/voz/idiomas";
@@ -58,7 +59,8 @@ export async function GET(req: Request) {
   return NextResponse.json(
     {
       ok: true,
-      version: "v437.0",
+      // v437.1 · la versión la dice la casa, no una cadena copiada a mano
+      version: APP_VERSION,
       estilo,
       idioma,
       idiomaPedido: langBruto,
