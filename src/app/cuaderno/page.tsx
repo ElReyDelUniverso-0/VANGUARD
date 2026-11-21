@@ -128,8 +128,18 @@ export default function CuadernoPage() {
         .cu-sala {
           max-width: 1280px;
           margin: 0 auto;
-          padding: 26px 14px 72px;
+          /* el muelle de la casa (caras + emisora + orbe) es fijo abajo: se le
+             deja su sitio para que ninguna pieza quede detrás del cristal */
+          padding: 26px 14px 168px;
           color: #e9eef7;
+        }
+        /* el riel de iconos de la casa vive pegado a la izquierda: se le deja
+           su carril para que no tape el buscador ni las piezas */
+        @media (min-width: 900px) {
+          .cu-sala { padding-left: 74px; padding-right: 24px; }
+        }
+        @media (max-width: 760px) {
+          .cu-sala { padding-bottom: 196px; }
         }
         .cu-sala-cab { max-width: 78ch; margin-bottom: 20px; }
         .cu-sala-sello {
