@@ -117,3 +117,20 @@
   (negro oscuro); **0 ilustraciones** (img/css/markup); **0 errores JS**; home renderiza
   **19 background-images de fotos reales** + `/worlds` 1 `<img>` real cargado. Sin regreso
   en MISIÓN 04 `/worlds`.
+
+## v434.2 · ELIMINAR LAS DOS VOCES (radio + orbe)
+
+**Mandato del Dueño:** «Quita las dos voces que hay en vanguard: la que se llama radio y
+el otro botón en el medio; elimínalos a los dos.»
+
+- **`src/app/layout.tsx`:** se quitan los dos montajes de voz — `<EmisoraGlobal />` (la
+  radio) y `<MenteGlobal />` (que renderizaba `<OrbeMente />` + `<PanelMente />`, el
+  orbe/voz en el centro). Se limpian las imports correspondientes. `<Caras />`
+  (navegación HOY↔SALAS) se mantiene. Los componentes quedan como código muerto
+  (sin importar), así que no se renderizan en ningún punto de la casa.
+- **Commit:** `351d3fb` — push a `main` OK.
+- **Deploy Vercel:** `dpl_4L3BD9s5ioyKmsi1Un3xLpb6Q43v` (commit `351d3fb`) → READY/PROMOTED,
+  alias `vanguard-kq9r.vercel.app`. Build OK (`next build` sin errores).
+- **Audit headless PASS (producción):** `/` y `/worlds` → HTTP 200; **orbe = 0**
+  (`vg-orbe-zona`), **emisora = 0** (`vxe-emisora`); bg `rgb(6,8,12)` negro oscuro intacto;
+  **0 errores JS**. Las dos voces no aparecen en ningún lado.
