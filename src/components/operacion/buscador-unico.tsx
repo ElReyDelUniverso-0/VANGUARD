@@ -40,10 +40,10 @@ const INDICE: Hit[] = (() => {
   const cuartel: Hit[] = [];
   for (const c of CONSTELACIONES) {
     for (const s of c.salas) {
-      if (vistos.has(`/cuartel?sala=${s.clave}`)) continue;
-      vistos.add(`/cuartel?sala=${s.clave}`);
+      if (vistos.has(`/sala/${s.clave}`)) continue;
+      vistos.add(`/sala/${s.clave}`);
       cuartel.push({
-        href: `/cuartel?sala=${s.clave}`,
+        href: `/sala/${s.clave}`,
         nombre: s.corto || s.nombre,
         grupo: `Cuartel · ${c.nombre}`,
         nota: c.desc,

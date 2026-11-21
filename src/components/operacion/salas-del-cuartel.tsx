@@ -27,7 +27,7 @@ export function SalasDelCuartel() {
       </div>
       <p className="op-div-lema">
         Las {total} salas que vivían encerradas en el cuartel. Ya no hay que entrar a «Juego» y bajar: están aquí,
-        con su nombre y su enlace. El cuartel deja de ser un sitio y pasa a ser el motor que las abre.
+        con su nombre y su enlace. Cada una tiene ya su propia dirección (/sala/…): el cuartel deja de ser un sitio y pasa a ser el motor que las abre.
       </p>
       <div className="op-cuartel-rejilla">
         {CONSTELACIONES.map((c) => (
@@ -37,7 +37,7 @@ export function SalasDelCuartel() {
             <ul>
               {c.salas.map((s) => (
                 <li key={s.clave}>
-                  <Link href={`/cuartel?sala=${s.clave}`}>{s.corto || s.nombre}</Link>
+                  <Link href={`/sala/${s.clave}`}>{s.corto || s.nombre}</Link>
                 </li>
               ))}
             </ul>

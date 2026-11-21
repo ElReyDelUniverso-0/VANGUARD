@@ -1166,6 +1166,17 @@ export default function Home() {
           handleTabChangeRef.current(pedida as TabKey);
         }
       } catch { /* sin URL legible, el vestíbulo */ }
+      // v434.1 CADA SALA CON SU URL — el Dueño: «conviértelas en páginas
+      // propias para que el cuartel pueda morir sin perder nada». /sala/<clave>
+      // abre exactamente la misma sala que /cuartel?sala=<clave>.
+      try {
+        const enRuta = /^\/sala\/([a-z0-9-]+)\/?$/i.exec(window.location.pathname);
+        const clave = enRuta?.[1];
+        if (clave && ALL_TABS.includes(clave as TabKey)) {
+          forceDirRef.current = 1;
+          handleTabChangeRef.current(clave as TabKey);
+        }
+      } catch { /* la ruta no manda: manda el vestíbulo */ }
       hidratado.current = true;
     }, 0);
     return () => clearTimeout(id);
