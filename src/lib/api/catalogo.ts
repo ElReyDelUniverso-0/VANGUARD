@@ -532,6 +532,8 @@ export const RUTAS_INVENTARIADAS: string[] = [
   "/api/mi-universo",
   "/api/memes/[id]",
   "/api/mente",
+  "/api/mente/chat",
+  "/api/mente/estado",
   "/api/mercado",
   "/api/meteo",
   "/api/mp/stats",
@@ -541,6 +543,7 @@ export const RUTAS_INVENTARIADAS: string[] = [
   "/api/og",
   "/api/portada",
   "/api/presence",
+  "/api/radio/programa",
   "/api/reclutar",
   "/api/sharegoal",
   "/api/telegram",
@@ -553,6 +556,8 @@ export const RUTAS_INVENTARIADAS: string[] = [
   "/api/verify",
   "/api/vertigo",
   "/api/visits",
+  "/api/voz",
+  "/api/voz/tts",
 ];
 
 /** Todos los endpoints conocidos (documentados + inventariados). */

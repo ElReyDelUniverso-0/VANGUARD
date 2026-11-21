@@ -136,6 +136,39 @@ export default async function ZonaCeroPage() {
   return (
     <>
     <NucleoZonaCero />
+    {/* v431.6: el tablero se queda; lo que anotes vive ahora en su propia sala */}
+    <nav
+      aria-label="El cuaderno"
+      style={{
+        maxWidth: 1180,
+        margin: "14px auto 0",
+        padding: "0 14px",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 10,
+        alignItems: "center",
+        justifyContent: "space-between",
+        font: "600 12.5px/1.5 system-ui, sans-serif",
+        color: "#a9b4c6",
+      }}
+    >
+      <span>
+        ¿Muchas piezas y quieres escribir alrededor de ellas? Tienes una sala entera:
+      </span>
+      <a
+        href="/cuaderno"
+        style={{
+          color: "#0b0d12",
+          background: "#e8c56a",
+          borderRadius: 999,
+          padding: "9px 14px",
+          textDecoration: "none",
+          fontWeight: 700,
+        }}
+      >
+        Abrir EL CUADERNO — escribir, señalar y mapas 3D →
+      </a>
+    </nav>
     <div id="teatro-global" style={{ scrollMarginTop: 72 }} />
     <PortadaSala
       nivel="p"

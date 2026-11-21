@@ -21,6 +21,24 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v432.3",
+    nombre: "EL CUADERNO · escribe, señala y anota el mundo",
+    tipo: "tecno",
+    hitos: [
+      "EL CUADERNO, en su propia sala (/cuaderno): el Dueño pidió «que sea un módulo aparte, más hermoso, más fluido, que pueda agregar más cosas, escribir, señalar y mucho más… mapas 3D de todo, hacerlo expansible». Ya no vive dentro del tablero de la Zona Cero: tiene sala, puertas y navegación propia, y la Zona Cero sigue entera donde estaba.",
+      "SIETE CLASES DE PIEZA, no dos: nota, cita (con autor y obra), enlace (a cualquier sala de la casa), lugar (con coordenadas reales), cifra (valor, unidad y fuente), tarea (hecha o no) e imagen (con su crédito). Cada una con etiquetas, marca (señalada, importante, por comprobar, comprobada) y tinta.",
+      "ESCRIBIR de verdad: editor con negrita, cursiva, código, listas, tareas, citas y enlaces; vista previa en vivo, contador de palabras y tiempo de lectura. El texto se guarda como texto plano con marcas y se lee en trozos tipados: nunca se inyecta HTML del usuario en la casa.",
+      "SEÑALAR: eliges un tramo de tu texto y queda resaltado con el acento de la piel. Si repites sobre el mismo tramo, el resaltado se va: idempotente, probado de ida y vuelta.",
+      "CUATRO PIELES que cambian el papel, no sólo el color: cuaderno de campo (renglones y tinta sepia), pizarra táctica (retícula y tiza), constelación (estrellas y tinta de oro) y terminal (fósforo verde y barrido). Y tres vistas: lista, tablero y globo.",
+      "EL MAPA 3D DE TODO: el globo real de la casa (GlobeMap3D, el mismo motor del resto), con cada pieza con coordenadas como punto y cada hilo como arco sobre el planeta; tocar el globo fija ahí el lugar, y lo que no tiene sitio se queda en la lista sin inventarse una geografía. Si el 3D no está disponible, se dice.",
+      "EL EMBLEMA EDITABLE — «pueda editar el logo»: cinco formas (sello, escudo, rombo, círculo, hexágono), doce iconos, monograma, lema y dos tintas; el SVG se genera con el modelo y se descarga a 512 px o se copia al portapapeles.",
+      "TABLERO FLUIDO: las fichas se arrastran con el dedo, el ratón o el lápiz mediante punteros y sin re-render por píxel; los hilos entre piezas se dibujan como arcos y «Acomodar» las reparte sin amontonarlas.",
+      "Nada se pierde: el tablero de la Zona Cero no se borra — se copia al Cuaderno de una vez («Al Cuaderno ↦», pieza a pieza o entero) y la primera vez que abres el Cuaderno también se trae solo, leyendo sin borrar. Importar y exportar en JSON y Markdown; 24 pasos de deshacer y rehacer.",
+      "Arranca VACÍO y lo dice: el cuaderno no trae notas de ejemplo ni cifras inventadas; lo que no has escrito, no está. Todo vive en el aparato (clave propia vg-cuaderno-v1, guardado con 400 ms de respiro), sin cuentas y sin servidor.",
+      "PUERTAS: cuarta puerta en la entrada de la casa, cinta de la portada, pie, catálogo de módulos y el buscador global de la casa ya encuentran el Cuaderno; la Zona Cero y su ojo siguen intactos.",
+    ],
+  },
+  {
     version: "v432.0",
     nombre: "UN SOLO MUNDO · ZONA CERO",
     tipo: "mundo",

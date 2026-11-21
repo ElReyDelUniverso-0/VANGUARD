@@ -7044,8 +7044,13 @@
 // (sin markdown, sin rutas, sin muletillas, máximo cinco frases) y el respaldo
 // dice qué es, dónde está y qué hay dentro. La voz va por la boca de la casa y,
 // si hay clave de voz neuronal (/api/voz/tts), por la voz de estudio.
-export const APP_VERSION = "v432.2";
-export const APP_CODENAME = "EL ORBE A TU MANERA";
+// v432.3 · EL CUADERNO — el anotador, en su sala propia (/cuaderno): siete
+// clases de pieza, escribir con formato, señalar el tramo que importa, unir
+// piezas con hilos, tablero que se arrastra y mapa 3D de todo, cuatro pieles
+// que cambian el papel y un emblema editable que se descarga. Arranca vacío y
+// vive en el aparato.
+export const APP_VERSION = "v432.3";
+export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
 // (anterior) export const APP_VERSION = "v422.1";

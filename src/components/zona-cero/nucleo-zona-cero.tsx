@@ -34,6 +34,9 @@ import {
 import Link from "next/link";
 import { OjoVanguard } from "./ojo-vanguard";
 import type { FiltroZonaCero, PiezaZonaCero, RespuestaZonaCero } from "@/lib/zona-cero/buscar";
+// v431.6: lo que pegas aquí se puede anotar en EL CUADERNO sin perder nada —
+// el tablero no se borra, se copia a la pieza del cuaderno que le corresponde.
+import { anotarEnCuaderno, type Encargo } from "@/lib/cuaderno/enviar";
 import "./zona-cero.css";
 
 const CLAVE = "vx-zona-cero-v1";
@@ -46,6 +49,30 @@ type Pegada = PiezaZonaCero & { x: number; y: number; t: number; nota?: string }
 type Enlace = [string, string];
 type Tablero = { piezas: Pegada[]; enlaces: Enlace[] };
 type Deshacer = { texto: string; antes: Tablero } | null;
+
+/** De una pieza del tablero a una pieza del cuaderno: su puerta, su origen, su nota. */
+function encargoDe(p: PiezaZonaCero & { nota?: string }): Encargo {
+  const cuerpo = [p.nota?.trim(), p.sub?.trim(), p.credito ? `Imagen: ${p.credito}` : ""]
+    .filter(Boolean)
+    .join("\n\n");
+  return {
+    tipo: "enlace",
+    titulo: p.titulo,
+    cuerpo,
+    ruta: p.ruta,
+    fuente: [p.origen, p.fecha].filter(Boolean).join(" · ") || "Zona Cero de Vanguard",
+    imagen: p.imagen,
+    etiquetas: ["zona-cero", p.clase],
+    marca: "bandera",
+  };
+}
+
+/** Manda una pieza y lo dice con la verdad: cuántas quedan dentro. */
+function avisarEnvio(titulo: string, r: { ok: boolean; dentro: number; motivo?: string }) {
+  return r.ok
+    ? `«${titulo}» quedó anotada en EL CUADERNO (${r.dentro} ${r.dentro === 1 ? "pieza" : "piezas"} dentro).`
+    : `No se pudo anotar: ${r.motivo ?? "el aparato no dejó"}.`;
+}
 
 const FILTROS: { id: FiltroZonaCero; label: string }[] = [
   { id: "todo", label: "Todo" },
@@ -947,6 +974,26 @@ export function NucleoZonaCero() {
               <button type="button" onClick={exportar}>
                 Exportar
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  let dentro = 0;
+                  let fallos = 0;
+                  for (const p of piezas) {
+                    const r = anotarEnCuaderno(encargoDe(p));
+                    if (r.ok) dentro = r.dentro;
+                    else fallos += 1;
+                  }
+                  setAviso(
+                    fallos === 0
+                      ? `Las ${piezas.length} piezas están en EL CUADERNO (${dentro} dentro). El tablero sigue aquí.`
+                      : `${piezas.length - fallos} piezas pasaron al Cuaderno; ${fallos} no pudieron.`
+                  );
+                }}
+                title="Copiar todo este tablero a EL CUADERNO (el tablero no se toca)"
+              >
+                Al Cuaderno ↦
+              </button>
             </>
           )}
           <button type="button" onClick={() => archivo.current?.click()}>
@@ -973,6 +1020,13 @@ export function NucleoZonaCero() {
                 <span className="zc-lista-et">{p.etiqueta}</span>
                 <Link href={p.ruta}>{p.titulo}</Link>
                 {p.nota && <em className="zc-lista-nota">— {p.nota}</em>}
+                <button
+                  type="button"
+                  onClick={() => setAviso(avisarEnvio(p.titulo, anotarEnCuaderno(encargoDe(p))))}
+                  aria-label={`Anotar ${p.titulo} en EL CUADERNO`}
+                >
+                  Al Cuaderno
+                </button>
                 <button type="button" onClick={() => quitar(p.id)} aria-label={`Quitar ${p.titulo}`}>
                   Quitar
                 </button>

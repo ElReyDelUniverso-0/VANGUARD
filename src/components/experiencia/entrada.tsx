@@ -40,6 +40,7 @@ const PUERTAS: { n: string; titulo: string; detalle: string; href: string }[] = 
   { n: "01", titulo: "Ver qué pasa", detalle: "La última hora del mundo, con su fuente a la vista.", href: "/en-vivo" },
   { n: "02", titulo: "Mirar el planeta", detalle: "El globo vivo: guerras, fronteras y mapas.", href: "/mundo" },
   { n: "03", titulo: "Jugar la misión", detalle: "El Cuartel: salas, misiones y mando.", href: "/cuartel" },
+  { n: "04", titulo: "Escribir lo tuyo", detalle: "EL CUADERNO: anotar, señalar y verlo en 3D.", href: "/cuaderno" },
 ];
 
 /** La cinta de las que salvan al que se pierde. Rutas que existen todas. */
@@ -52,6 +53,7 @@ const CINTA: { href: string; nombre: string }[] = [
   { href: "/teatro-3d", nombre: "Teatro 3D" },
   { href: "/radio", nombre: "Radio" },
   { href: "/divisas", nombre: "Divisas" },
+  { href: "/cuaderno", nombre: "Cuaderno" },
 ];
 
 export function Entrada({

@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, EyeOff, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users, ScrollText, Camera } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, EyeOff, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users, ScrollText, Camera, NotebookPen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -173,6 +173,13 @@ export function SectionSearch({
         icon: <Globe className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · OSINT en vivo", icon_color: "text-red-hud",
         kind: "page", href: "/zona-cero",
+      },
+      {
+        // v431.6 EL CUADERNO: el anotador, en su propia sala
+        key: "pg:cuaderno", label: "EL CUADERNO — escribir, señalar y anotar el mundo", short: "cuaderno anotar escribir señalar notas emblema",
+        icon: <NotebookPen className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · tu anotador", icon_color: "text-amber-300",
+        kind: "page", href: "/cuaderno",
       },
       {
         key: "pg:guerra-hoy", label: "GUERRA HOY — conflictos del día", short: "guerra hoy conflictos",

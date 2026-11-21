@@ -258,6 +258,7 @@ export const MODULOS: Modulo[] = [
       { href: "/academia/certificados", label: "Certificados", txt: "Validación criptográfica SHA-256 de diplomas." },
       { href: "/academia/glosario", label: "Glosario", txt: "Términos doctrinales, militares y de OSINT." },
       { href: "/academia/historial", label: "Historial", txt: "Tus intentos, calificaciones y tiempo dedicado." },
+      { href: "/cuaderno", label: "El Cuaderno", txt: "Tu anotador: escribir, señalar, unir con hilos y verlo en un mapa 3D." },
     ],
   },
   {
