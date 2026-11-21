@@ -31,8 +31,13 @@ import "./descubrimiento.css";
 
 type Cara = "sala" | "guias" | "progreso";
 
-/** Donde no se monta: pantalla completa, entrada y el propio hub. */
+/** Donde NO se abre sola la ficha: la portada y las salas de entrada. */
 const SIN_AVISO = ["/", "/descubrir", "/entrar", "/vanguard2", "/vertigo", "/offline", "/cortina", "/trailer"];
+
+/** Donde el lanzador NI SIQUIERA se monta: pantalla completa y el propio hub.
+ *  La portada NO está aquí a propósito: si el mapa no está en la puerta de
+ *  entrada, nadie lo encuentra. */
+const SIN_MONTAJE = ["/descubrir", "/vanguard2", "/vertigo", "/offline", "/cortina", "/trailer", "/entrar"];
 
 function enLista(ruta: string, lista: string[]): boolean {
   return lista.some((r) => ruta === r || ruta.startsWith(r + "/"));
@@ -55,6 +60,9 @@ export function Descubrimiento() {
     const p = leer();
     setProgreso(p);
     setMontado(true);
+    // en una puerta sin ficha (la portada, por ejemplo) se abre por las guías:
+    // «esta sala» no tendría nada que contar
+    if (!fichaDe(window.location.pathname)) setCara("guias");
   }, []);
 
   useEffect(() => {
@@ -106,17 +114,8 @@ export function Descubrimiento() {
 
   if (!montado || !progreso) return null;
 
-  // el hub ya explica todo: ahí el lanzador no hace falta
-  if (enLista(ruta, ["/descubrir"])) return null;
-  // ni en las salas de pantalla completa (canvas / entrada / cortinas)
-  if (enLista(ruta, SIN_AVISO)) return null;
-  if (progreso.modoLibre) {
-    return (
-      <button type="button" className="vd-burbuja vd-burbuja-libre" onClick={() => setAbierto((v) => !v)} aria-label="Descubrimiento (modo libre)">
-        <Compass className="w-4 h-4" />
-      </button>
-    );
-  }
+  // el hub ya explica todo, y en las salas de pantalla completa no se monta nada
+  if (enLista(ruta, SIN_MONTAJE)) return null;
 
   const pct = pctDescubierto(progreso);
   const vistas = fichasVisitadas(progreso);
@@ -133,7 +132,13 @@ export function Descubrimiento() {
   return (
     <>
       {!abierto ? (
-        <button type="button" className="vd-burbuja" onClick={() => setAbierto(true)} aria-label="Abrir la guía de la casa" title="¿Perdido? Te guío">
+        <button
+          type="button"
+          className={progreso.modoLibre ? "vd-burbuja vd-burbuja-libre" : "vd-burbuja"}
+          onClick={() => setAbierto(true)}
+          aria-label="Abrir la guía de la casa"
+          title={progreso.modoLibre ? "Descubrimiento (modo libre — sigues tú al mando)" : "¿Perdido? Te guío"}
+        >
           <Compass className="w-4 h-4" />
           {pct < 100 ? <span className="vd-anillo" style={{ ["--pct" as string]: `${pct}%` }} aria-hidden /> : null}
         </button>
