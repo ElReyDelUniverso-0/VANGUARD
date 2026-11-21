@@ -7049,16 +7049,16 @@
 // piezas con hilos, tablero que se arrastra y mapa 3D de todo, cuatro pieles
 // que cambian el papel y un emblema editable que se descarga. Arranca vacío y
 // vive en el aparato.
-// v432.4 · EL ALGORITMO — mandato del Dueño: «agrégale un algoritmo como el
-// de TikTok». El feed deja de sumar puntos a mano y pasa a predecir: cada rasgo
-// (tema, tipo, autor) lleva una Beta con su certeza; cada gesto se convierte en
-// recompensa según la escala real de un feed (saltar resta, terminar suma un
-// poco, guardar y compartir suman mucho); la exploración muestrea lo que aún no
-// sabe; lo repetido se castiga sin enterrarlo; el orden respeta la variedad; y
-// la memoria se diluye a la mitad cada 30 días. Todo en el aparato, con la caja
-// negra abierta (botón ALGORITMO dentro del feed) y derecho al olvido.
-export const APP_VERSION = "v432.4";
-export const APP_CODENAME = "EL ALGORITMO";
+// v434.1 · LA SALA DEL CUADERNO, CON LA PIEL DE LA CASA Y UNA SOLA VOZ.
+// El Dueño: «esos colores azules sin imágenes, sin guías ni animaciones;
+// agrega cada texto a cada color de Vanguard… y elimina el modo voz, solo hay
+// uno». La sala deja el azul y viste como las demás (portada con foto real,
+// cifras del modelo y oro); cada bloque toma el acento de su familia; hay guía
+// de tres pasos, pie de foto con la razón de cada imagen y animación con
+// propósito. Y la voz: fuera el orbe viejo (VG-ASSIST) y fuera el «modo voz»
+// del orbe — una sola voz en la casa.
+export const APP_VERSION = "v434.1";
+export const APP_CODENAME = "UNA SOLA VOZ";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7130,7 +7130,7 @@ export const APP_CODENAME = "EL ALGORITMO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v431.5";
+export const APP_VERSION_ANTERIOR = "v432.4";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v419.0";

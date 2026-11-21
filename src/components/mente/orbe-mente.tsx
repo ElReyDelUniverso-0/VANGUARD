@@ -13,9 +13,12 @@
 //   ② NO TAPA. En reposo baja de opacidad mientras lees, y en cuanto se coloca
 //      encima de algo pulsable (un botón, un enlace, un campo) se aparta solo.
 //      Además hay «modo discreto»: un punto pequeño que solo crece al tocarlo.
-//   ③ SE EDITA TODO. Una hoja de ajustes con tamaño, opacidad, voz, persona,
-//      velocidad, idioma, chips, si te lleva sola y si se esconde al desplazar.
+//   ③ SE EDITA TODO. Una hoja de ajustes con tamaño, opacidad, idioma de
+//      escucha, chips, si te lleva sola y si se esconde al desplazar.
 //      Todo se guarda en `vg:mente:orbe:v1`; nada sale del aparato.
+//      v432.4 · UNA SOLA VOZ: aquí ya no hay «modo voz» ni persona ni velocidad
+//      propias. El Dueño: «elimina el modo voz, solo hay uno». Hay UNA voz —la
+//      de la casa, la de la radio y /voz— y se ajusta en UN solo sitio.
 //   ④ HABLA MEJOR. Usa la BOCA DE LA CASA (lib/voz/decir): elige la mejor voz
 //      neuronal instalada, respeta las pausas entre frases y encadena sin
 //      pisarse. Si el proyecto tiene clave de voz neuronal (/api/voz/tts), usa
@@ -31,7 +34,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Artefacto, Enlace } from "@/lib/mente/agente";
-import { decir, leerGustos, pararBoca, type PersonaId } from "@/lib/voz/decir";
+import { decir, leerGustos, pararBoca } from "@/lib/voz/decir";
 import {
   AJUSTES_DEFECTO,
   leerAjustes,
@@ -174,36 +177,36 @@ export function OrbeMente() {
     async (textoVoz: string) => {
       const limpio = textoVoz.replace(/\s+/g, " ").trim();
       if (!limpio) return;
-      if (ajustes.voz === "apagada") return;
       setEstado("hablando");
 
-      if (ajustes.voz === "casa") {
-        try {
-          const res = await fetch("/api/voz/tts", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ texto: limpio.slice(0, 700) }),
-          });
-          const tipo = res.headers.get("content-type") ?? "";
-          if (res.ok && tipo.startsWith("audio")) {
-            const blob = await res.blob();
-            const audio = new Audio(URL.createObjectURL(blob));
-            audioRef.current = audio;
-            audio.onended = () => setEstado((e) => (e === "hablando" ? "inactivo" : e));
-            audio.onerror = () => setEstado((e) => (e === "hablando" ? "inactivo" : e));
-            await audio.play();
-            return;
-          }
-        } catch {
-          /* sin voz de estudio: sigue la del aparato */
+      // v432.4 · UNA SOLA VOZ. No hay modo voz ni voz propia del orbe: se habla
+      // con la voz de la casa, la misma que suena en la radio y en /voz. Primero
+      // su mejor versión (la de estudio, si la casa tiene clave); si no, la misma
+      // boca en el aparato, con LOS GUSTOS DEL OPERADOR (persona, velocidad,
+      // tono, volumen y pausas que ya eligió en /voz). Aquí no se pisa nada.
+      try {
+        const res = await fetch("/api/voz/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ texto: limpio.slice(0, 700) }),
+        });
+        const tipo = res.headers.get("content-type") ?? "";
+        if (res.ok && tipo.startsWith("audio")) {
+          const blob = await res.blob();
+          const audio = new Audio(URL.createObjectURL(blob));
+          audioRef.current = audio;
+          audio.onended = () => setEstado((e) => (e === "hablando" ? "inactivo" : e));
+          audio.onerror = () => setEstado((e) => (e === "hablando" ? "inactivo" : e));
+          await audio.play();
+          return;
         }
+      } catch {
+        /* sin voz de estudio: sigue la misma voz en el aparato */
       }
 
       try {
-        const gustos = { ...leerGustos(), persona: ajustes.persona, rate: ajustes.velocidad };
         const hablo = decir(limpio.slice(0, 900), {
-          persona: ajustes.persona,
-          gustos,
+          gustos: leerGustos(),
           idioma: ajustes.idioma.split("-")[0],
           interrumpir: true,
           onFin: () => setEstado((e) => (e === "hablando" ? "inactivo" : e)),
@@ -213,7 +216,7 @@ export function OrbeMente() {
         setEstado("inactivo");
       }
     },
-    [ajustes.voz, ajustes.persona, ajustes.velocidad, ajustes.idioma]
+    [ajustes.idioma]
   );
 
   // ── mandar lo dicho (o escrito) a LA MENTE de la casa ──
@@ -637,37 +640,13 @@ export function OrbeMente() {
             </label>
           </div>
 
-          <label className="vg-orbe-campo">
-            <span>Voz</span>
-            <select value={ajustes.voz} onChange={(e) => guardar({ ...ajustes, voz: e.target.value as AjustesOrbe["voz"] })}>
-              <option value="casa">de estudio si hay clave; si no, la de la casa</option>
-              <option value="aparato">la del aparato</option>
-              <option value="apagada">callada (solo texto)</option>
-            </select>
-          </label>
-
-          <label className="vg-orbe-campo">
-            <span>Persona</span>
-            <select value={ajustes.persona} onChange={(e) => guardar({ ...ajustes, persona: e.target.value as PersonaId })}>
-              <option value="locutora">locutora — clara, sin prisa</option>
-              <option value="analista">analista — fría, segura</option>
-              <option value="general">general — grave, lenta</option>
-              <option value="cronista">cronista — rápida, cercana</option>
-            </select>
-          </label>
-
-          <label className="vg-orbe-campo">
-            <span>Velocidad</span>
-            <input
-              type="range"
-              min={0.6}
-              max={1.4}
-              step={0.02}
-              value={ajustes.velocidad}
-              onChange={(e) => guardar({ ...ajustes, velocidad: Number(e.target.value) })}
-            />
-            <em>×{ajustes.velocidad.toFixed(2)}</em>
-          </label>
+          {/* v432.4: aquí estaba el «modo voz» (estudio / aparato / callada) con su
+              persona y su velocidad. Ya no: hay UNA voz en la casa y se ajusta en
+              un solo sitio — la sala /voz y los ajustes de la radio. */}
+          <p className="vg-orbe-nota">
+            Hablo con la <b>voz de la casa</b>, la misma de la radio y de la sala /voz. Si quieres otra
+            persona, otra velocidad o callarme, se cambia allí, una sola vez para toda la casa.
+          </p>
 
           <label className="vg-orbe-campo">
             <span>Escuchar en</span>
@@ -682,7 +661,7 @@ export function OrbeMente() {
             <button type="button" className="vg-orbe-mini" onClick={() => guardar({ ...ajustes, x: null, y: null })}>
               centrar abajo
             </button>
-            <button type="button" className="vg-orbe-mini" onClick={() => hablar("Así suena mi voz. Puedes cambiarla en los ajustes.")}>
+            <button type="button" className="vg-orbe-mini" onClick={() => hablar("Así suena la voz de la casa. Se ajusta en la sala Voz.")}>
               probar voz
             </button>
             <button type="button" className="vg-orbe-mini" onClick={() => guardar({ ...ajustes, visible: false })}>

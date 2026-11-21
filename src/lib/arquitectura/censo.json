@@ -1,13 +1,13 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-21",
-  "paginas": 184,
+  "paginas": 185,
   "rutasApi": 141,
-  "total": 325,
-  "bienConectadas": 163,
+  "total": 326,
+  "bienConectadas": 164,
   "huerfanas": [],
-  "paginasConReferencias": 184,
-  "mediaReferencias": 13.14,
+  "paginasConReferencias": 185,
+  "mediaReferencias": 13.11,
   "rutas": [
     {
       "ruta": "/",
@@ -23,12 +23,12 @@
     {
       "ruta": "/academia",
       "tipo": "pagina",
-      "referencias": 21,
+      "referencias": 22,
       "desde": [
         "app/academia/cursos/[slug]/page.tsx",
         "app/academia/ejercicios/page.tsx",
-        "components/conocimiento/academia.tsx",
-        "components/experiencia/entrada.tsx"
+        "app/cuaderno/page.tsx",
+        "components/conocimiento/academia.tsx"
       ]
     },
     {
@@ -132,12 +132,12 @@
     {
       "ruta": "/api",
       "tipo": "api",
-      "referencias": 166,
+      "referencias": 165,
       "desde": [
         "app/audios/grabador.tsx",
         "app/audios/page.tsx",
         "app/ciencia/metodo/page.tsx",
-        "app/cuaderno/page.tsx"
+        "app/datos/page.tsx"
       ]
     },
     {
@@ -881,9 +881,8 @@
     {
       "ruta": "/api/maestro",
       "tipo": "api",
-      "referencias": 3,
+      "referencias": 2,
       "desde": [
-        "components/vanguard/asistente-voz.tsx",
         "components/vanguard/voz-sala.tsx",
         "lib/api/catalogo.ts"
       ]
@@ -1065,12 +1064,12 @@
     {
       "ruta": "/api/noticias",
       "tipo": "api",
-      "referencias": 5,
+      "referencias": 6,
       "desde": [
+        "components/operacion/buscador-unico.tsx",
         "components/vanguard/buscador-universal.tsx",
         "components/vanguard/panels/redaccion-panel.tsx",
-        "components/vanguard/section-search.tsx",
-        "components/vanguard2/mundos-datos.ts"
+        "components/vanguard/section-search.tsx"
       ]
     },
     {
@@ -1419,9 +1418,10 @@
     {
       "ruta": "/api/voz/tts",
       "tipo": "api",
-      "referencias": 1,
+      "referencias": 2,
       "desde": [
-        "components/mente/orbe-mente.tsx"
+        "components/mente/orbe-mente.tsx",
+        "lib/api/catalogo.ts"
       ]
     },
     {
@@ -1495,6 +1495,14 @@
         "components/portada/areas.ts",
         "components/portada/modulos.ts",
         "components/vanguard/section-search.tsx"
+      ]
+    },
+    {
+      "ruta": "/buscar",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "lib/operacion/orden.ts"
       ]
     },
     {
@@ -1941,9 +1949,9 @@
       "referencias": 49,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
-        "app/cuaderno/page.tsx",
         "app/cuartel/layout.tsx",
-        "app/layout.tsx"
+        "app/layout.tsx",
+        "app/mision/page.tsx"
       ]
     },
     {
@@ -2109,7 +2117,7 @@
     {
       "ruta": "/en-vivo",
       "tipo": "pagina",
-      "referencias": 46,
+      "referencias": 47,
       "desde": [
         "app/centinela/page.tsx",
         "app/cronica/page.tsx",
@@ -2675,8 +2683,9 @@
     {
       "ruta": "/mi-universo",
       "tipo": "pagina",
-      "referencias": 3,
+      "referencias": 4,
       "desde": [
+        "components/portada/modulos.ts",
         "components/vida/orbita.tsx",
         "components/vida/para-ti.tsx",
         "lib/navegacion/espacios.ts"
@@ -2852,7 +2861,7 @@
     {
       "ruta": "/noticia/[id]",
       "tipo": "pagina",
-      "referencias": 31,
+      "referencias": 32,
       "desde": [
         "app/audios/emisora-cliente.tsx",
         "app/conflicto/[tag]/page.tsx",
@@ -2918,8 +2927,10 @@
     {
       "ruta": "/orden",
       "tipo": "pagina",
-      "referencias": 2,
+      "referencias": 4,
       "desde": [
+        "components/operacion/buscador-unico.tsx",
+        "components/portada/carcasa.tsx",
         "components/vida/orbita.tsx",
         "lib/operacion/orden.ts"
       ]
@@ -3026,7 +3037,7 @@
     {
       "ruta": "/radio",
       "tipo": "pagina",
-      "referencias": 10,
+      "referencias": 11,
       "desde": [
         "app/cuaderno/page.tsx",
         "components/cuaderno/cuaderno.tsx",

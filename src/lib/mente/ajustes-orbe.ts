@@ -14,9 +14,11 @@
 //     localStorage manipulado no puede dejar el orbe gigante ni invisible.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import type { PersonaId } from "@/lib/voz/decir";
-
-export type VozOrbe = "casa" | "aparato" | "apagada";
+// v432.4 · UNA SOLA VOZ — aquí ya NO hay «modo voz». El orbe no tiene voz
+// propia: habla con la boca de la casa (lib/voz/decir) y con los gustos que el
+// operador ya ajustó en /voz y en la radio. Había tres modos (estudio, aparato,
+// callada) y cuatro personas: dos maneras de configurar la MISMA voz, y el
+// Dueño pidió una: «elimina el modo voz, solo hay uno».
 
 export type AjustesOrbe = {
   /** si se apaga, el orbe no se pinta (el panel sigue en ⌘J) */
@@ -34,11 +36,6 @@ export type AjustesOrbe = {
   discreto: boolean;
   /** chips de sugerencias encima */
   chips: boolean;
-  /** hablar: con la boca de la casa, con la del aparato, o callarse */
-  voz: VozOrbe;
-  persona: PersonaId;
-  /** 0.6 – 1.4 (se le pasa a la boca de la casa) */
-  velocidad: number;
   /** idioma del reconocimiento */
   idioma: "es-ES" | "es-419" | "es-MX";
   /** la casa te lleva sola cuando la orden es directa («llévame…») */
@@ -56,9 +53,6 @@ export const AJUSTES_DEFECTO: AjustesOrbe = {
   autoOcultar: true,
   discreto: false,
   chips: true,
-  voz: "casa",
-  persona: "locutora",
-  velocidad: 1,
   idioma: "es-ES",
   dirigirSolo: true,
 };
@@ -71,9 +65,7 @@ function freno(valor: number, min: number, max: number, defecto: number): number
 /** Limpia cualquier cosa que venga del almacén y devuelve ajustes usables. */
 export function sanear(crudo: unknown): AjustesOrbe {
   const j = (crudo ?? {}) as Partial<Record<keyof AjustesOrbe, unknown>>;
-  const personas: PersonaId[] = ["locutora", "analista", "general", "cronista"];
   const idiomas: AjustesOrbe["idioma"][] = ["es-ES", "es-419", "es-MX"];
-  const voces: VozOrbe[] = ["casa", "aparato", "apagada"];
   return {
     visible: j.visible !== false,
     x: typeof j.x === "number" && Number.isFinite(j.x) ? Math.round(j.x) : null,
@@ -83,9 +75,6 @@ export function sanear(crudo: unknown): AjustesOrbe {
     autoOcultar: j.autoOcultar !== false,
     discreto: j.discreto === true,
     chips: j.chips !== false,
-    voz: voces.includes(j.voz as VozOrbe) ? (j.voz as VozOrbe) : "casa",
-    persona: personas.includes(j.persona as PersonaId) ? (j.persona as PersonaId) : "locutora",
-    velocidad: freno(Number(j.velocidad), 0.6, 1.4, 1),
     idioma: idiomas.includes(j.idioma as AjustesOrbe["idioma"]) ? (j.idioma as AjustesOrbe["idioma"]) : "es-ES",
     dirigirSolo: j.dirigirSolo !== false,
   };

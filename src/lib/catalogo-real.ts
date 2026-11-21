@@ -165,7 +165,6 @@ export const COSAS_REALES: CosaReal[] = [
   { id: "real-134", tipo: "panel", nombre: "ACTIVITY LOG MODAL", archivo: "src/components/vanguard/activity-log-modal.tsx" },
   { id: "real-135", tipo: "panel", nombre: "ARCADE CONVOY", archivo: "src/components/vanguard/arcade-convoy.tsx", lema: "VANGUARD v83.0 ESTADIO GLOBAL — ARCADE #11: CONVOY BAJO FUEGO." },
   { id: "real-136", tipo: "panel", nombre: "ARCADE SIMON", archivo: "src/components/vanguard/arcade-simon.tsx", lema: "VANGUARD v83.0 ESTADIO GLOBAL — ARCADE #12: CIFRADO SIMON." },
-  { id: "real-137", tipo: "panel", nombre: "ASISTENTE VOZ", archivo: "src/components/vanguard/asistente-voz.tsx", lema: "v179.0 VG-ASSIST — EL AGENTE DE VOZ DE VANGUARD (el Siri de la Casa)." },
   { id: "real-138", tipo: "panel", nombre: "ATAJOS VANGUARD", archivo: "src/components/vanguard/atajos-vanguard.tsx", lema: "Vanguard v195.0 TU LADO — ATAJOS DE VANGUARD: el muelle que aprende." },
   { id: "real-139", tipo: "panel", nombre: "ATLAS SECRETO", archivo: "src/components/vanguard/atlas-secreto.tsx", lema: "v82.0 TODO EL MUNDO — ATLAS SECRETO DEL MUNDO (en El Ojo de Dios)." },
   { id: "real-140", tipo: "panel", nombre: "AUTO ACTUALIZACION", archivo: "src/components/vanguard/auto-actualizacion.tsx", lema: "Vanguard v207.0 INFINITO — AUTO-ACTUALIZACIÓN A LA VISTA." },

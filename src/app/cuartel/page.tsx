@@ -79,7 +79,6 @@ import { NavZonas } from "@/components/vanguard/nav-zonas";
 const MercadoVivo = dynamic(() => import("@/components/vanguard/mercado-vivo"), { ssr: false });
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
 const SectionSearch = dynamic(() => import("@/components/vanguard/section-search").then((m) => m.SectionSearch), { ssr: false });
-const AsistenteVoz = dynamic(() => import("@/components/vanguard/asistente-voz").then((m) => m.AsistenteVoz), { ssr: false });
 // v201.0 LA VOZ VIVA — la tarjeta del PERMISO DE HABLAR: la casa pide voz
 // con una notificación honesta y el toque del Dueño abre la boca del aparato.
 const PermisoVoz = dynamic(() => import("@/components/vanguard/permiso-voz").then((m) => m.PermisoVoz), { ssr: false });
@@ -1597,10 +1596,12 @@ export default function Home() {
       {/* v400.0: el manual de 10 pasos ya no salta solo en la 1ª visita (tapaba todo) */}
       {/* v105.0 EL NAVEGADOR — brújula global "¿qué quiero hacer hoy?" */}
       <Navegador />
-      {/* v179.0 VG-ASSIST — el orbe Siri de Vanguard: toca y habla, la Casa obedece */}
+      {/* v432.4 UNA SOLA VOZ — el orbe viejo (VG-ASSIST) se retira: había dos
+          orbes de voz y el Dueño pidió uno. La voz de la casa es la del orbe
+          global (components/mente) y la boca de lib/voz/decir, la misma que
+          suena en la radio y en /voz. */}
       {/* v180.0 VANGUARD AUTOMÁTICO — el radar que te busca: nada se pierde sin buscar */}
       <MontajeTardio>
-        <AsistenteVoz />
         <PermisoVoz />
         <PermisoMic />
         <CentinelaImpacto />

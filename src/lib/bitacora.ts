@@ -21,6 +21,23 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v434.1",
+    nombre: "EL CUADERNO CON LA PIEL DE LA CASA · UNA SOLA VOZ",
+    tipo: "nav",
+    hitos: [
+      "EL CUADERNO CON LA PIEL DE LA CASA — el Dueño: «esos colores azules sin imágenes, sin guías ni animaciones; agrega cada texto a cada color de Vanguard, mejóralo de verdad». La sala /cuaderno deja de ser un párrafo con enlaces cian sobre azul oscuro: ahora abre con la MISMA portada de sala que el resto de la casa (foto real, velo, sellos de expediente, cifras y anclas) y viste de oro.",
+      "CADA TEXTO CON SU COLOR DE VANGUARD: los seis bloques de «lo que puedes hacer aquí» toman el acento de su familia tal como la casa lo tiene en su navegación — oro (escribir), rojo batalla (señalar), cian vivo (conocimiento y hilos), turquesa (el planeta), amatista (pieles y emblema) y verde (lo que se guarda) — con su imagen propia y su puerta.",
+      "FOTOS REALES, CON SU RAZÓN: la casa pasó a fotos reales (v434) y la sala la sigue — Angkor para escribir, un arco tensado para señalar, una sala de trazos de radar para unir fichas, un satélite sobre el planeta para el globo, los moáis de Rapa Nui para el emblema y la bóveda de Svalbard para lo que se guarda. Cada carta lleva su pie de foto explicando por qué está, y su descripción dice lo que de verdad se ve en la imagen.",
+      "GUÍA EN TRES PASOS con flecha: escribir la primera pieza, ordenarla con las demás y sacarla o verla en el planeta; y los atajos de la casa a la vista (/ buscar · n nueva · s señalar · 1 2 3 vistas · Ctrl+Z · Esc).",
+      "ANIMACIÓN CON PROPÓSITO: las tarjetas entran escalonadas, la barra de color de cada familia barre una sola vez, la imagen respira al pasar el ratón y el número del paso late. Todo se apaga con prefers-reduced-motion.",
+      "LAS CIFRAS DE LA PORTADA NO SE ESCRIBEN A MANO: salen del modelo del cuaderno (7 clases de pieza, 4 pieles, 3 vistas, 5×12 emblemas, 400 piezas). Y los seis acentos se leen de SECTION_ACCENT, la paleta que la navegación ya usa: si un mundo se repinta, la prueba lo canta.",
+      "LA FOTO NO ROMPE LA TARJETA: con <img> y filtro, este motor rasterizaba la imagen en negro y la carta salía vacía —lo destapó la QA con navegador—. La foto va como fondo del marco (role=img + aria-label) y se pinta siempre.",
+      "UNA SOLA VOZ — el Dueño: «elimina el modo voz que hay en Vanguard, solo hay uno». Se retira el orbe viejo VG-ASSIST del Cuartel (tenía su propia voz, velocidad, tono y volumen) y con él su archivo, su montaje y su ficha del catálogo: en la casa había dos orbes que hablaban.",
+      "Y el orbe que queda deja de tener «modo voz»: se van el selector de tres modos (estudio / aparato / callada), la persona y la velocidad propias. Habla con la VOZ DE LA CASA —la misma de la radio y de la sala /voz— leyendo los gustos que el operador ya ajustó, sin pisarlos. Hay una voz y se ajusta en un solo sitio.",
+      "Pruebas nuevas: scripts/pruebas-voz-unica.mjs (32 comprobaciones) vigila que no vuelva a haber dos voces: ni orbe viejo, ni campos de voz en los ajustes del orbe, ni selectores de voz en su hoja.",
+    ],
+  },
+  {
     version: "v432.3",
     nombre: "EL CUADERNO · escribe, señala y anota el mundo",
     tipo: "tecno",
