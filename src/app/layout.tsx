@@ -85,7 +85,9 @@ import { Barrido } from "@/components/vida/barrido";
 import { Progreso } from "@/components/vida/progreso";
 // v421.9 VIDA — aurora, cortina de arranque y órbita (menú vivo)
 import { Aurora } from "@/components/vida/aurora";
-import { Cortina } from "@/components/vida/cortina";
+// v438.0 LA ENTRADA: la Cortina v422.3 se jubila — la entrada del logo la sustituye
+import { IntroVanguard } from "@/components/intro/intro-vanguard";
+import "@/components/intro/intro-vanguard.css";
 import { Orbita } from "@/components/vida/orbita";
 import { Clasificacion } from "@/components/operacion/clasificacion";
 import { PanelAjustes } from "@/components/config/panel-ajustes";
@@ -316,6 +318,10 @@ document.documentElement.setAttribute('data-vg-anim',n);}catch(e){document.docum
           }}
         />
         <AplicarAnimacion />
+        {/* v438.0 LA ENTRADA — el logo de VANGUARD, sus símbolos, el ojo y la voz
+            «¡VANGUARD!», ANTES de que cargue nada. HTML/CSS de servidor + un
+            guion vanilla; una vez por sesión y nunca eterna (ver el archivo). */}
+        <IntroVanguard />
         {/* ════════════════════════════════════════════════════════════
             v360.0 LA CASA QUE RESPIRA — el aire vive en TODA la casa.
             La aurora v16 solo existía en la portada SPA; las páginas
@@ -1011,7 +1017,6 @@ try{
         <PanelAjustes />
         <Progreso />
         <Aurora />
-        <Cortina />
         <Orbita />
         <Barrido />
         <MenuVanguardMount />

@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v438.0",
+    nombre: "LA ENTRADA — el logo, el ojo y la voz «¡VANGUARD!» antes que todo",
+    tipo: "luxe",
+    hitos: [
+      "MANDATO DEL DUEÑO: «cuando uno entre a Vanguard, antes de que cargue todo, que aparezca el logo de Vanguard con sus símbolos y diga fuerte VANGUARD, con un sonido que caracterice a Vanguard; animaciones, el ojo y más».",
+      "CUATRO SEGUNDOS Y MEDIO: el cielo se enciende y los anillos se dibujan; el OJO de la casa se abre; los ocho símbolos (globo, mira, radar, escudo, rayo, lenguas, Polaris y el emblema) entran en órbita; a 1,30 s el IMPACTO — destello, onda, sacudida — y «VANGUARD» cae con su voz; el lema, las salas, la línea de carga, un parpadeo y la cámara entra por la pupila a la casa.",
+      "ANTES DE QUE CARGUE NADA: es un componente de servidor — HTML y CSS que se pintan con el primer byte, sin esperar a React. Si el guion no corriera, el CSS la retira solo a los 4,1 s: la entrada jamás se queda puesta.",
+      "EL SONIDO DE LA CASA (public/sonidos/intro-vanguard.mp3, 64 KB): dron, subida, latidos, el soplo del párpado, el impacto con metal y acorde, campanas doradas y la voz «¡VANGUARD!» con sala y eco. Si el navegador prohíbe sonar sin gesto, aparece «Toca para escuchar» y el toque repite el impacto en sincronía.",
+      "CON RESPETO: una vez por sesión, botón «Entrar ›» y Escape para saltarla, nunca a robots ni en iframes ni en /vanguard2, respeta el sonido apagado del Dueño y la quietud del sistema, y habla los ocho idiomas. La Cortina v422.3 se jubila: no hay dos arranques.",
+    ],
+  },
+  {
     version: "v437.1",
     nombre: "EL ESTUDIO EN TU IDIOMA — el cromo de la radio habla lo que habla la casa",
     tipo: "ia",

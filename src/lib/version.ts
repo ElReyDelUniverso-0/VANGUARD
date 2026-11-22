@@ -7183,8 +7183,14 @@
 // ⑦ CUATRO VOCES NUEVAS (puesto-abrir, puesto-cerrar, moneda, mercado-musica),
 //    el portero de la casa aprende a tocar música que avanza (`suenaNotas`) y el
 //    mercado entra en el descubrimiento con su ficha. 107 comprobaciones.
-export const APP_VERSION = "v437.2";
-export const APP_CODENAME = "EL MERCADO DE VANGUARD";
+// (anterior) export const APP_VERSION = "v437.2";
+// (anterior) export const APP_CODENAME = "EL MERCADO DE VANGUARD";
+// v438.0 · LA ENTRADA — mandato del Dueño: «que cuando uno entre a Vanguard,
+// antes de que cargue todo, aparezca el logo de Vanguard con sus símbolos y
+// diga fuerte VANGUARD con un sonido que lo caracterice; animaciones, el ojo y
+// más». Componente de servidor (components/intro) + sonido por código.
+export const APP_VERSION = "v438.0";
+export const APP_CODENAME = "LA ENTRADA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7256,7 +7262,8 @@ export const APP_CODENAME = "EL MERCADO DE VANGUARD";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v437.1";
+export const APP_VERSION_ANTERIOR = "v437.2"; // EL MERCADO DE VANGUARD
+// (anterior) export const APP_VERSION_ANTERIOR = "v437.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.0"; // EL ESTUDIO EN TU IDIOMA
 // (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";
