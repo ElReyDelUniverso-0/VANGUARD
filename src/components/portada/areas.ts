@@ -45,6 +45,7 @@ export const AREAS: Area[] = [
     vivo: true,
     atajos: [
       { href: "/guerra-hoy", label: "Guerra hoy" },
+      { href: "/war-humanity", label: "War & Humanity" },
       { href: "/cronica", label: "Crónica del día" },
       { href: "/vertigo", label: "Vértigo" },
     ],

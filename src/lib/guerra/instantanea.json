@@ -1,0 +1,2137 @@
+{
+ "meta": {
+  "titulo": "WAR & HUMANITY · instantánea de datos",
+  "generado": "2026-11-22T19:59:11Z",
+  "fuentes": [
+   {
+    "id": "ucdp",
+    "nombre": "UCDP/PRIO · muertes en combate (vía Banco Mundial, indicador VC.BTL.DETH)",
+    "url": "https://data.worldbank.org/indicator/VC.BTL.DETH",
+    "api": "https://api.worldbank.org/v2/country/all/indicator/VC.BTL.DETH",
+    "ultimaActualizacionFuente": "2026-11-11",
+    "licencia": "CC BY 4.0 (Banco Mundial) · UCDP: CC BY 4.0",
+    "quéEs": "Personas muertas en combate en conflictos armados, contadas por año y país. Incluye combatientes y civiles muertos por acción armada en combate; NO desglosa víctimas civiles."
+   },
+   {
+    "id": "unhcr",
+    "nombre": "UNHCR · población de interés (refugiados, solicitantes, desplazados internos)",
+    "url": "https://www.unhcr.org/refugee-statistics/",
+    "api": "https://api.unhcr.org/population/v1/population/",
+    "ultimaActualizacionFuente": "2024",
+    "licencia": "UNHCR · datos abiertos con atribución",
+    "quéEs": "Personas desplazadas por origen declarado: refugiados, solicitantes de asilo y desplazados internos, por año."
+   }
+  ],
+  "limitaciones": [
+   "Las muertes en combate NO son víctimas civiles: es la cuenta de UCDP/PRIO de personas muertas en combate, sin desglose civil.",
+   "No hay serie abierta y verificada de víctimas civiles que podamos conectar sin clave: OHCHR, UCDP One-sided Violence y las autoridades nacionales publican informes, no API. No se ponen cifras que no podamos citar.",
+   "Cada dato lleva su año: el último año disponible de UNHCR (2024) y el del Banco Mundial no coinciden siempre.",
+   "Los países sin dato aparecen como «sin dato declarado», nunca como cero."
+  ]
+ },
+ "anios": {
+  "combate": [
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024
+  ],
+  "desplazamiento": [
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024
+  ]
+ },
+ "combate": {
+  "AFG": {
+   "2024": 260,
+   "2023": 237,
+   "2022": 917,
+   "2021": 35787,
+   "2020": 20475,
+   "2019": 29940,
+   "2018": 25676,
+   "2017": 19014,
+   "2016": 17985,
+   "2015": 17303,
+   "2014": 12284
+  },
+  "DZA": {
+   "2020": 26,
+   "2018": 33,
+   "2017": 60,
+   "2016": 86,
+   "2015": 110,
+   "2014": 107
+  },
+  "AGO": {
+   "2024": 25,
+   "2022": 20,
+   "2020": 21,
+   "2019": 25,
+   "2017": 25,
+   "2016": 25
+  },
+  "ARM": {
+   "2023": 20,
+   "2022": 154,
+   "2021": 10,
+   "2020": 10,
+   "2016": 4,
+   "2015": 9
+  },
+  "AUS": {
+   "2018": 1
+  },
+  "AZE": {
+   "2023": 442,
+   "2022": 154,
+   "2021": 30,
+   "2020": 7636,
+   "2017": 36,
+   "2016": 137,
+   "2015": 63,
+   "2014": 46
+  },
+  "BGD": {
+   "2024": 2,
+   "2022": 2,
+   "2020": 2,
+   "2017": 47,
+   "2016": 41
+  },
+  "BEL": {
+   "2018": 3,
+   "2016": 2
+  },
+  "BEN": {
+   "2024": 77,
+   "2023": 28,
+   "2022": 30
+  },
+  "BFA": {
+   "2024": 2199,
+   "2023": 4608,
+   "2022": 2093,
+   "2021": 991,
+   "2020": 512,
+   "2019": 349,
+   "2018": 79
+  },
+  "BDI": {
+   "2024": 19,
+   "2023": 86,
+   "2021": 24,
+   "2020": 63,
+   "2019": 16,
+   "2015": 185,
+   "2014": 56
+  },
+  "CMR": {
+   "2024": 231,
+   "2023": 358,
+   "2022": 406,
+   "2021": 581,
+   "2020": 429,
+   "2019": 693,
+   "2018": 752,
+   "2017": 98,
+   "2016": 181,
+   "2015": 924,
+   "2014": 969
+  },
+  "CAF": {
+   "2024": 177,
+   "2023": 261,
+   "2022": 675,
+   "2021": 906,
+   "2020": 57,
+   "2019": 51,
+   "2018": 103,
+   "2017": 35,
+   "2015": 27,
+   "2014": 153
+  },
+  "TCD": {
+   "2024": 69,
+   "2023": 61,
+   "2022": 35,
+   "2021": 486,
+   "2020": 196,
+   "2019": 144,
+   "2018": 150,
+   "2017": 57,
+   "2015": 275
+  },
+  "CHN": {
+   "2023": 1,
+   "2015": 5
+  },
+  "COL": {
+   "2024": 225,
+   "2023": 89,
+   "2022": 122,
+   "2021": 113,
+   "2020": 23,
+   "2019": 115,
+   "2018": 131,
+   "2016": 30,
+   "2015": 134,
+   "2014": 119
+  },
+  "COD": {
+   "2024": 1138,
+   "2023": 689,
+   "2022": 1723,
+   "2021": 1019,
+   "2020": 1200,
+   "2019": 766,
+   "2018": 817,
+   "2017": 3632,
+   "2016": 794,
+   "2015": 197,
+   "2014": 993
+  },
+  "COG": {
+   "2022": 3,
+   "2020": 0,
+   "2019": 0,
+   "2016": 73
+  },
+  "ECU": {
+   "2019": 2
+  },
+  "EGY": {
+   "2022": 231,
+   "2021": 112,
+   "2020": 527,
+   "2019": 637,
+   "2018": 680,
+   "2017": 497,
+   "2016": 355,
+   "2015": 767,
+   "2014": 184
+  },
+  "ERI": {
+   "2022": 4,
+   "2016": 25
+  },
+  "ETH": {
+   "2024": 2824,
+   "2023": 1688,
+   "2022": 163210,
+   "2021": 124550,
+   "2020": 20916,
+   "2019": 67,
+   "2016": 50,
+   "2015": 49,
+   "2014": 25
+  },
+  "FRA": {
+   "2018": 4,
+   "2017": 2,
+   "2015": 3
+  },
+  "HTI": {
+   "2024": 193
+  },
+  "IND": {
+   "2024": 437,
+   "2023": 217,
+   "2022": 310,
+   "2021": 430,
+   "2020": 584,
+   "2019": 594,
+   "2018": 824,
+   "2017": 665,
+   "2016": 637,
+   "2015": 504,
+   "2014": 473
+  },
+  "IDN": {
+   "2024": 57,
+   "2023": 59,
+   "2022": 46,
+   "2021": 51,
+   "2020": 31,
+   "2019": 34,
+   "2018": 28
+  },
+  "IRN": {
+   "2024": 123,
+   "2023": 34,
+   "2021": 27,
+   "2020": 212,
+   "2019": 31,
+   "2018": 60,
+   "2017": 27,
+   "2016": 22
+  },
+  "IRQ": {
+   "2024": 396,
+   "2023": 469,
+   "2022": 993,
+   "2021": 872,
+   "2020": 902,
+   "2019": 822,
+   "2018": 1294,
+   "2017": 10248,
+   "2016": 9630,
+   "2015": 10139,
+   "2014": 13168
+  },
+  "ISR": {
+   "2024": 21440,
+   "2023": 26712,
+   "2022": 84,
+   "2021": 269,
+   "2019": 48,
+   "2018": 53,
+   "2014": 2378
+  },
+  "JOR": {
+   "2024": 3,
+   "2016": 34,
+   "2015": 1
+  },
+  "KEN": {
+   "2024": 66,
+   "2023": 202,
+   "2022": 72,
+   "2021": 75,
+   "2020": 94,
+   "2019": 61,
+   "2018": 69,
+   "2017": 85,
+   "2016": 49,
+   "2015": 48,
+   "2014": 42
+  },
+  "KGZ": {
+   "2022": 63,
+   "2021": 40
+  },
+  "LBN": {
+   "2024": 4335,
+   "2023": 123,
+   "2017": 74,
+   "2015": 76,
+   "2014": 140
+  },
+  "LBY": {
+   "2024": 2,
+   "2020": 668,
+   "2019": 1631,
+   "2018": 44,
+   "2017": 404,
+   "2016": 1727,
+   "2015": 275,
+   "2014": 274
+  },
+  "MYS": {
+   "2017": 1
+  },
+  "MLI": {
+   "2024": 1008,
+   "2023": 1238,
+   "2022": 1440,
+   "2021": 726,
+   "2020": 583,
+   "2019": 603,
+   "2018": 521,
+   "2017": 359,
+   "2016": 97,
+   "2015": 172,
+   "2014": 189
+  },
+  "MRT": {
+   "2024": 3
+  },
+  "MOZ": {
+   "2024": 151,
+   "2023": 176,
+   "2022": 378,
+   "2021": 867,
+   "2020": 939,
+   "2019": 291,
+   "2018": 51,
+   "2016": 55,
+   "2014": 30
+  },
+  "MMR": {
+   "2024": 2332,
+   "2023": 2439,
+   "2022": 2036,
+   "2021": 1031,
+   "2020": 168,
+   "2019": 558,
+   "2018": 99,
+   "2017": 517,
+   "2016": 118,
+   "2015": 629,
+   "2014": 187
+  },
+  "NER": {
+   "2024": 952,
+   "2023": 337,
+   "2022": 516,
+   "2021": 459,
+   "2020": 535,
+   "2019": 298,
+   "2018": 74,
+   "2017": 229,
+   "2016": 274,
+   "2015": 368
+  },
+  "NGA": {
+   "2024": 1486,
+   "2023": 2084,
+   "2022": 1535,
+   "2021": 1999,
+   "2020": 2001,
+   "2019": 1326,
+   "2018": 1173,
+   "2017": 1879,
+   "2016": 2491,
+   "2015": 4637,
+   "2014": 3819
+  },
+  "PAK": {
+   "2024": 1534,
+   "2023": 1054,
+   "2022": 630,
+   "2021": 416,
+   "2020": 373,
+   "2019": 267,
+   "2018": 228,
+   "2017": 701,
+   "2016": 796,
+   "2015": 2126,
+   "2014": 3154
+  },
+  "PER": {
+   "2020": 5
+  },
+  "PHL": {
+   "2024": 176,
+   "2023": 243,
+   "2022": 219,
+   "2021": 266,
+   "2020": 348,
+   "2019": 309,
+   "2018": 420,
+   "2017": 1623,
+   "2016": 550,
+   "2015": 572,
+   "2014": 470
+  },
+  "POL": {
+   "2022": 2
+  },
+  "RUS": {
+   "2024": 7670,
+   "2023": 197,
+   "2022": 65,
+   "2020": 32,
+   "2019": 26,
+   "2018": 30,
+   "2017": 53,
+   "2016": 69,
+   "2015": 84,
+   "2014": 174
+  },
+  "RWA": {
+   "2024": 1,
+   "2022": 4,
+   "2019": 19
+  },
+  "SAU": {
+   "2023": 9,
+   "2021": 6,
+   "2020": 0,
+   "2019": 5,
+   "2018": 11,
+   "2017": 45,
+   "2016": 120,
+   "2015": 81
+  },
+  "SOM": {
+   "2024": 2284,
+   "2023": 3847,
+   "2022": 3032,
+   "2021": 2174,
+   "2020": 1942,
+   "2019": 1943,
+   "2018": 2204,
+   "2017": 1918,
+   "2016": 1933,
+   "2015": 1201,
+   "2014": 1111
+  },
+  "SSD": {
+   "2024": 2,
+   "2021": 188,
+   "2020": 58,
+   "2019": 110,
+   "2018": 526,
+   "2017": 484,
+   "2016": 735,
+   "2015": 493,
+   "2014": 1674
+  },
+  "SDN": {
+   "2024": 4680,
+   "2023": 5353,
+   "2022": 54,
+   "2021": 31,
+   "2020": 45,
+   "2018": 243,
+   "2017": 160,
+   "2016": 1309,
+   "2015": 1264,
+   "2014": 849
+  },
+  "SYR": {
+   "2024": 2732,
+   "2023": 1660,
+   "2022": 966,
+   "2021": 1523,
+   "2020": 4862,
+   "2019": 7539,
+   "2018": 13246,
+   "2017": 25035,
+   "2016": 44938,
+   "2015": 51086,
+   "2014": 66066
+  },
+  "TJK": {
+   "2022": 87,
+   "2021": 16,
+   "2019": 49,
+   "2018": 52
+  },
+  "TZA": {
+   "2020": 25
+  },
+  "THA": {
+   "2024": 35,
+   "2023": 30,
+   "2022": 29,
+   "2021": 38,
+   "2020": 46,
+   "2019": 55,
+   "2018": 36,
+   "2017": 43,
+   "2016": 50,
+   "2015": 57,
+   "2014": 68
+  },
+  "TGO": {
+   "2024": 46,
+   "2023": 29,
+   "2022": 34
+  },
+  "TUN": {
+   "2016": 71,
+   "2015": 59,
+   "2014": 50
+  },
+  "TUR": {
+   "2024": 34,
+   "2023": 106,
+   "2022": 96,
+   "2021": 117,
+   "2020": 192,
+   "2019": 245,
+   "2018": 434,
+   "2017": 378,
+   "2016": 1421,
+   "2015": 902
+  },
+  "UGA": {
+   "2022": 25,
+   "2017": 0
+  },
+  "UKR": {
+   "2024": 68097,
+   "2023": 75080,
+   "2022": 91478,
+   "2021": 208,
+   "2020": 196,
+   "2019": 311,
+   "2018": 243,
+   "2017": 447,
+   "2016": 697,
+   "2015": 1890,
+   "2014": 4894
+  },
+  "ARE": {
+   "2022": 3
+  },
+  "GBR": {
+   "2019": 1
+  },
+  "YEM": {
+   "2024": 918,
+   "2023": 795,
+   "2022": 2917,
+   "2021": 23351,
+   "2020": 6294,
+   "2019": 2629,
+   "2018": 4639,
+   "2017": 3145,
+   "2016": 3013,
+   "2015": 7720,
+   "2014": 1826
+  }
+ },
+ "desplazamiento": {
+  "AFG": {
+   "anio": 2024,
+   "refugiados": 5766586,
+   "solicitantes": 384732,
+   "desplazadosInternos": 3199710,
+   "apátridas": 0
+  },
+  "AIA": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ALB": {
+   "anio": 2024,
+   "refugiados": 21875,
+   "solicitantes": 11498,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "DZA": {
+   "anio": 2024,
+   "refugiados": 8800,
+   "solicitantes": 13598,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "AND": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 16,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "AGO": {
+   "anio": 2024,
+   "refugiados": 12545,
+   "solicitantes": 21440,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ATG": {
+   "anio": 2024,
+   "refugiados": 91,
+   "solicitantes": 80,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "EGY": {
+   "anio": 2024,
+   "refugiados": 23736,
+   "solicitantes": 55917,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ARG": {
+   "anio": 2024,
+   "refugiados": 464,
+   "solicitantes": 6189,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ARM": {
+   "anio": 2024,
+   "refugiados": 15933,
+   "solicitantes": 20459,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "AUS": {
+   "anio": 2024,
+   "refugiados": 31,
+   "solicitantes": 83,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "AUT": {
+   "anio": 2024,
+   "refugiados": 33,
+   "solicitantes": 40,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "AZE": {
+   "anio": 2024,
+   "refugiados": 153154,
+   "solicitantes": 7626,
+   "desplazadosInternos": 655212,
+   "apátridas": 0
+  },
+  "BHR": {
+   "anio": 2024,
+   "refugiados": 289,
+   "solicitantes": 325,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BRB": {
+   "anio": 2024,
+   "refugiados": 415,
+   "solicitantes": 620,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BDI": {
+   "anio": 2024,
+   "refugiados": 322462,
+   "solicitantes": 60731,
+   "desplazadosInternos": 6877,
+   "apátridas": 0
+  },
+  "BEL": {
+   "anio": 2024,
+   "refugiados": 93,
+   "solicitantes": 187,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BEN": {
+   "anio": 2024,
+   "refugiados": 1064,
+   "solicitantes": 3725,
+   "desplazadosInternos": 8785,
+   "apátridas": 0
+  },
+  "BMU": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 94,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BGD": {
+   "anio": 2024,
+   "refugiados": 28473,
+   "solicitantes": 108131,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BHS": {
+   "anio": 2024,
+   "refugiados": 1449,
+   "solicitantes": 2607,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BTN": {
+   "anio": 2024,
+   "refugiados": 7433,
+   "solicitantes": 523,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BFA": {
+   "anio": 2024,
+   "refugiados": 150081,
+   "solicitantes": 130695,
+   "desplazadosInternos": 2062534,
+   "apátridas": 0
+  },
+  "BLR": {
+   "anio": 2024,
+   "refugiados": 17704,
+   "solicitantes": 12787,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BOL": {
+   "anio": 2024,
+   "refugiados": 612,
+   "solicitantes": 7080,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BWA": {
+   "anio": 2024,
+   "refugiados": 249,
+   "solicitantes": 1331,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BRA": {
+   "anio": 2024,
+   "refugiados": 5072,
+   "solicitantes": 86150,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BRN": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 71,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BIH": {
+   "anio": 2024,
+   "refugiados": 26821,
+   "solicitantes": 961,
+   "desplazadosInternos": 94796,
+   "apátridas": 0
+  },
+  "BGR": {
+   "anio": 2024,
+   "refugiados": 498,
+   "solicitantes": 426,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "VGB": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "BLZ": {
+   "anio": 2024,
+   "refugiados": 104,
+   "solicitantes": 1400,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "KHM": {
+   "anio": 2024,
+   "refugiados": 11474,
+   "solicitantes": 1521,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CAN": {
+   "anio": 2024,
+   "refugiados": 309,
+   "solicitantes": 351,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CAF": {
+   "anio": 2024,
+   "refugiados": 693488,
+   "solicitantes": 18082,
+   "desplazadosInternos": 469342,
+   "apátridas": 0
+  },
+  "TCD": {
+   "anio": 2024,
+   "refugiados": 14617,
+   "solicitantes": 28234,
+   "desplazadosInternos": 220610,
+   "apátridas": 0
+  },
+  "CHN": {
+   "anio": 2024,
+   "refugiados": 166140,
+   "solicitantes": 180961,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CHL": {
+   "anio": 2024,
+   "refugiados": 4809,
+   "solicitantes": 24434,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CMR": {
+   "anio": 2024,
+   "refugiados": 109879,
+   "solicitantes": 59627,
+   "desplazadosInternos": 1036775,
+   "apátridas": 0
+  },
+  "COG": {
+   "anio": 2024,
+   "refugiados": 14110,
+   "solicitantes": 12278,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "COD": {
+   "anio": 2024,
+   "refugiados": 1060086,
+   "solicitantes": 165456,
+   "desplazadosInternos": 6905511,
+   "apátridas": 0
+  },
+  "COM": {
+   "anio": 2024,
+   "refugiados": 2322,
+   "solicitantes": 468,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "COL": {
+   "anio": 2024,
+   "refugiados": 77775,
+   "solicitantes": 397872,
+   "desplazadosInternos": 7031498,
+   "apátridas": 0
+  },
+  "CRI": {
+   "anio": 2024,
+   "refugiados": 316,
+   "solicitantes": 2381,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CUB": {
+   "anio": 2024,
+   "refugiados": 23865,
+   "solicitantes": 344138,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CUW": {
+   "anio": 2024,
+   "refugiados": 8,
+   "solicitantes": 0,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CPV": {
+   "anio": 2024,
+   "refugiados": 14,
+   "solicitantes": 272,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CYP": {
+   "anio": 2024,
+   "refugiados": 10,
+   "solicitantes": 52,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CZE": {
+   "anio": 2024,
+   "refugiados": 1057,
+   "solicitantes": 167,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "DNK": {
+   "anio": 2024,
+   "refugiados": 16,
+   "solicitantes": 30,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "DJI": {
+   "anio": 2024,
+   "refugiados": 2055,
+   "solicitantes": 1973,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "DMA": {
+   "anio": 2024,
+   "refugiados": 88,
+   "solicitantes": 547,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "DOM": {
+   "anio": 2024,
+   "refugiados": 1080,
+   "solicitantes": 15821,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ECU": {
+   "anio": 2024,
+   "refugiados": 5015,
+   "solicitantes": 105087,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GNQ": {
+   "anio": 2024,
+   "refugiados": 426,
+   "solicitantes": 688,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ERI": {
+   "anio": 2024,
+   "refugiados": 551296,
+   "solicitantes": 111762,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "EST": {
+   "anio": 2024,
+   "refugiados": 126,
+   "solicitantes": 62,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ETH": {
+   "anio": 2024,
+   "refugiados": 164423,
+   "solicitantes": 158142,
+   "desplazadosInternos": 2272533,
+   "apátridas": 0
+  },
+  "GUF": {
+   "anio": 2024,
+   "refugiados": 33,
+   "solicitantes": 505,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "FJI": {
+   "anio": 2024,
+   "refugiados": 248,
+   "solicitantes": 3168,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "FIN": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 43,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NCL": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "FRA": {
+   "anio": 2024,
+   "refugiados": 139,
+   "solicitantes": 608,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "FSM": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GAB": {
+   "anio": 2024,
+   "refugiados": 948,
+   "solicitantes": 909,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GMB": {
+   "anio": 2024,
+   "refugiados": 8140,
+   "solicitantes": 7587,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PSE": {
+   "anio": 2024,
+   "refugiados": 43712,
+   "solicitantes": 15720,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GBR": {
+   "anio": 2024,
+   "refugiados": 417,
+   "solicitantes": 701,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GEO": {
+   "anio": 2024,
+   "refugiados": 16554,
+   "solicitantes": 35010,
+   "desplazadosInternos": 299172,
+   "apátridas": 0
+  },
+  "DEU": {
+   "anio": 2024,
+   "refugiados": 348,
+   "solicitantes": 853,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GHA": {
+   "anio": 2024,
+   "refugiados": 15078,
+   "solicitantes": 19345,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GLP": {
+   "anio": 2024,
+   "refugiados": 17,
+   "solicitantes": 81,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GNB": {
+   "anio": 2024,
+   "refugiados": 1900,
+   "solicitantes": 1267,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GRC": {
+   "anio": 2024,
+   "refugiados": 97,
+   "solicitantes": 233,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GRD": {
+   "anio": 2024,
+   "refugiados": 100,
+   "solicitantes": 136,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GTM": {
+   "anio": 2024,
+   "refugiados": 36323,
+   "solicitantes": 195319,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GIN": {
+   "anio": 2024,
+   "refugiados": 42096,
+   "solicitantes": 55204,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "GUY": {
+   "anio": 2024,
+   "refugiados": 313,
+   "solicitantes": 1591,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "HTI": {
+   "anio": 2024,
+   "refugiados": 148252,
+   "solicitantes": 275050,
+   "desplazadosInternos": 1037463,
+   "apátridas": 0
+  },
+  "HKG": {
+   "anio": 2024,
+   "refugiados": 240,
+   "solicitantes": 855,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "HND": {
+   "anio": 2024,
+   "refugiados": 100969,
+   "solicitantes": 237701,
+   "desplazadosInternos": 247090,
+   "apátridas": 0
+  },
+  "HRV": {
+   "anio": 2024,
+   "refugiados": 17891,
+   "solicitantes": 99,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "HUN": {
+   "anio": 2024,
+   "refugiados": 1984,
+   "solicitantes": 1586,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ISL": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CIV": {
+   "anio": 2024,
+   "refugiados": 29442,
+   "solicitantes": 26785,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "IND": {
+   "anio": 2024,
+   "refugiados": 39303,
+   "solicitantes": 202933,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "IDN": {
+   "anio": 2024,
+   "refugiados": 9172,
+   "solicitantes": 18198,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "IRL": {
+   "anio": 2024,
+   "refugiados": 68,
+   "solicitantes": 405,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "IRN": {
+   "anio": 2024,
+   "refugiados": 158171,
+   "solicitantes": 61176,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "IRQ": {
+   "anio": 2024,
+   "refugiados": 305504,
+   "solicitantes": 151623,
+   "desplazadosInternos": 1031475,
+   "apátridas": 0
+  },
+  "ISR": {
+   "anio": 2024,
+   "refugiados": 1307,
+   "solicitantes": 1659,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ITA": {
+   "anio": 2024,
+   "refugiados": 263,
+   "solicitantes": 1857,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "JAM": {
+   "anio": 2024,
+   "refugiados": 2552,
+   "solicitantes": 9460,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "JOR": {
+   "anio": 2024,
+   "refugiados": 4990,
+   "solicitantes": 14273,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "JPN": {
+   "anio": 2024,
+   "refugiados": 55,
+   "solicitantes": 165,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "KAZ": {
+   "anio": 2024,
+   "refugiados": 4119,
+   "solicitantes": 12388,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "KEN": {
+   "anio": 2024,
+   "refugiados": 11696,
+   "solicitantes": 19107,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "KGZ": {
+   "anio": 2024,
+   "refugiados": 3400,
+   "solicitantes": 11350,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "KIR": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 53,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "KOR": {
+   "anio": 2024,
+   "refugiados": 142,
+   "solicitantes": 1089,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PRK": {
+   "anio": 2024,
+   "refugiados": 283,
+   "solicitantes": 105,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "KWT": {
+   "anio": 2024,
+   "refugiados": 3019,
+   "solicitantes": 3662,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "LAO": {
+   "anio": 2024,
+   "refugiados": 6556,
+   "solicitantes": 760,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "LBR": {
+   "anio": 2024,
+   "refugiados": 5086,
+   "solicitantes": 4466,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "LBY": {
+   "anio": 2024,
+   "refugiados": 17235,
+   "solicitantes": 6358,
+   "desplazadosInternos": 32791,
+   "apátridas": 0
+  },
+  "LCA": {
+   "anio": 2024,
+   "refugiados": 160,
+   "solicitantes": 299,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "LBN": {
+   "anio": 2024,
+   "refugiados": 9534,
+   "solicitantes": 12125,
+   "desplazadosInternos": 123774,
+   "apátridas": 0
+  },
+  "LSO": {
+   "anio": 2024,
+   "refugiados": 25,
+   "solicitantes": 49,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "LKA": {
+   "anio": 2024,
+   "refugiados": 147033,
+   "solicitantes": 33347,
+   "desplazadosInternos": 4806,
+   "apátridas": 0
+  },
+  "LTU": {
+   "anio": 2024,
+   "refugiados": 111,
+   "solicitantes": 151,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "LUX": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 0,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "LVA": {
+   "anio": 2024,
+   "refugiados": 179,
+   "solicitantes": 166,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MAC": {
+   "anio": 2024,
+   "refugiados": 15,
+   "solicitantes": 13,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MDG": {
+   "anio": 2024,
+   "refugiados": 604,
+   "solicitantes": 295,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MTQ": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MRT": {
+   "anio": 2024,
+   "refugiados": 38111,
+   "solicitantes": 28422,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MKD": {
+   "anio": 2024,
+   "refugiados": 2013,
+   "solicitantes": 2468,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MDA": {
+   "anio": 2024,
+   "refugiados": 6236,
+   "solicitantes": 5882,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MDV": {
+   "anio": 2024,
+   "refugiados": 76,
+   "solicitantes": 31,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MEX": {
+   "anio": 2024,
+   "refugiados": 39241,
+   "solicitantes": 204729,
+   "desplazadosInternos": 262411,
+   "apátridas": 0
+  },
+  "MHL": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 10,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MLI": {
+   "anio": 2024,
+   "refugiados": 354075,
+   "solicitantes": 18463,
+   "desplazadosInternos": 360591,
+   "apátridas": 0
+  },
+  "MYS": {
+   "anio": 2024,
+   "refugiados": 1209,
+   "solicitantes": 12779,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MWI": {
+   "anio": 2024,
+   "refugiados": 570,
+   "solicitantes": 2784,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MNE": {
+   "anio": 2024,
+   "refugiados": 763,
+   "solicitantes": 1058,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MNG": {
+   "anio": 2024,
+   "refugiados": 2501,
+   "solicitantes": 7517,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MAR": {
+   "anio": 2024,
+   "refugiados": 10609,
+   "solicitantes": 20302,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MOZ": {
+   "anio": 2024,
+   "refugiados": 114,
+   "solicitantes": 8944,
+   "desplazadosInternos": 577545,
+   "apátridas": 0
+  },
+  "MLT": {
+   "anio": 2024,
+   "refugiados": 10,
+   "solicitantes": 10,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MUS": {
+   "anio": 2024,
+   "refugiados": 263,
+   "solicitantes": 631,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "MMR": {
+   "anio": 2024,
+   "refugiados": 1322503,
+   "solicitantes": 65946,
+   "desplazadosInternos": 3513867,
+   "apátridas": 0
+  },
+  "NAM": {
+   "anio": 2024,
+   "refugiados": 646,
+   "solicitantes": 897,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NPL": {
+   "anio": 2024,
+   "refugiados": 7840,
+   "solicitantes": 19619,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NLD": {
+   "anio": 2024,
+   "refugiados": 136,
+   "solicitantes": 258,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NER": {
+   "anio": 2024,
+   "refugiados": 44119,
+   "solicitantes": 10775,
+   "desplazadosInternos": 507438,
+   "apátridas": 0
+  },
+  "NIC": {
+   "anio": 2024,
+   "refugiados": 30020,
+   "solicitantes": 356201,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NGA": {
+   "anio": 2024,
+   "refugiados": 467605,
+   "solicitantes": 87289,
+   "desplazadosInternos": 3432959,
+   "apátridas": 0
+  },
+  "NIU": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NOR": {
+   "anio": 2024,
+   "refugiados": 22,
+   "solicitantes": 37,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NRU": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 18,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "NZL": {
+   "anio": 2024,
+   "refugiados": 52,
+   "solicitantes": 27,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "OMN": {
+   "anio": 2024,
+   "refugiados": 118,
+   "solicitantes": 91,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PAK": {
+   "anio": 2024,
+   "refugiados": 86285,
+   "solicitantes": 82958,
+   "desplazadosInternos": 3439,
+   "apátridas": 0
+  },
+  "PAN": {
+   "anio": 2024,
+   "refugiados": 333,
+   "solicitantes": 2627,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PRY": {
+   "anio": 2024,
+   "refugiados": 170,
+   "solicitantes": 3054,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PER": {
+   "anio": 2024,
+   "refugiados": 6459,
+   "solicitantes": 119061,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PHL": {
+   "anio": 2024,
+   "refugiados": 785,
+   "solicitantes": 6742,
+   "desplazadosInternos": 121576,
+   "apátridas": 0
+  },
+  "PNG": {
+   "anio": 2024,
+   "refugiados": 504,
+   "solicitantes": 982,
+   "desplazadosInternos": 84051,
+   "apátridas": 0
+  },
+  "POL": {
+   "anio": 2024,
+   "refugiados": 1528,
+   "solicitantes": 1076,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PRT": {
+   "anio": 2024,
+   "refugiados": 110,
+   "solicitantes": 1092,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "PRI": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 5,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "QAT": {
+   "anio": 2024,
+   "refugiados": 65,
+   "solicitantes": 55,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ROU": {
+   "anio": 2024,
+   "refugiados": 2919,
+   "solicitantes": 8952,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ZAF": {
+   "anio": 2024,
+   "refugiados": 1174,
+   "solicitantes": 4907,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "RUS": {
+   "anio": 2024,
+   "refugiados": 96869,
+   "solicitantes": 125962,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "RWA": {
+   "anio": 2024,
+   "refugiados": 249096,
+   "solicitantes": 21270,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SLV": {
+   "anio": 2024,
+   "refugiados": 71765,
+   "solicitantes": 136774,
+   "desplazadosInternos": 71500,
+   "apátridas": 0
+  },
+  "SAU": {
+   "anio": 2024,
+   "refugiados": 2332,
+   "solicitantes": 1539,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SEN": {
+   "anio": 2024,
+   "refugiados": 12947,
+   "solicitantes": 39749,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SYC": {
+   "anio": 2024,
+   "refugiados": 10,
+   "solicitantes": 18,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SGP": {
+   "anio": 2024,
+   "refugiados": 45,
+   "solicitantes": 303,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SLE": {
+   "anio": 2024,
+   "refugiados": 8042,
+   "solicitantes": 8893,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SLB": {
+   "anio": 2024,
+   "refugiados": 44,
+   "solicitantes": 835,
+   "desplazadosInternos": 11,
+   "apátridas": 0
+  },
+  "SOM": {
+   "anio": 2024,
+   "refugiados": 894120,
+   "solicitantes": 237183,
+   "desplazadosInternos": 3861643,
+   "apátridas": 0
+  },
+  "ESP": {
+   "anio": 2024,
+   "refugiados": 174,
+   "solicitantes": 1979,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SRB": {
+   "anio": 2024,
+   "refugiados": 31438,
+   "solicitantes": 6104,
+   "desplazadosInternos": 209753,
+   "apátridas": 0
+  },
+  "VNM": {
+   "anio": 2024,
+   "refugiados": 19961,
+   "solicitantes": 22594,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SSD": {
+   "anio": 2024,
+   "refugiados": 2290622,
+   "solicitantes": 32841,
+   "desplazadosInternos": 944631,
+   "apátridas": 0
+  },
+  "XXA": {
+   "anio": 2024,
+   "refugiados": 36296,
+   "solicitantes": 4787,
+   "desplazadosInternos": 0,
+   "apátridas": 4360087
+  },
+  "KNA": {
+   "anio": 2024,
+   "refugiados": 27,
+   "solicitantes": 81,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "STP": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 20,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SDN": {
+   "anio": 2024,
+   "refugiados": 2094373,
+   "solicitantes": 682535,
+   "desplazadosInternos": 11559970,
+   "apátridas": 0
+  },
+  "SUR": {
+   "anio": 2024,
+   "refugiados": 50,
+   "solicitantes": 251,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SVK": {
+   "anio": 2024,
+   "refugiados": 664,
+   "solicitantes": 137,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SVN": {
+   "anio": 2024,
+   "refugiados": 17,
+   "solicitantes": 100,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SWZ": {
+   "anio": 2024,
+   "refugiados": 150,
+   "solicitantes": 543,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SWE": {
+   "anio": 2024,
+   "refugiados": 98,
+   "solicitantes": 295,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "CHE": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 50,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "SYR": {
+   "anio": 2024,
+   "refugiados": 5952174,
+   "solicitantes": 167334,
+   "desplazadosInternos": 7408909,
+   "apátridas": 0
+  },
+  "TZA": {
+   "anio": 2024,
+   "refugiados": 1259,
+   "solicitantes": 3900,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TCA": {
+   "anio": 2024,
+   "refugiados": 14,
+   "solicitantes": 6,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "THA": {
+   "anio": 2024,
+   "refugiados": 300,
+   "solicitantes": 4022,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TJK": {
+   "anio": 2024,
+   "refugiados": 4045,
+   "solicitantes": 7945,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TKM": {
+   "anio": 2024,
+   "refugiados": 2580,
+   "solicitantes": 2327,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TLS": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 1453,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TGO": {
+   "anio": 2024,
+   "refugiados": 12685,
+   "solicitantes": 5251,
+   "desplazadosInternos": 9680,
+   "apátridas": 0
+  },
+  "TON": {
+   "anio": 2024,
+   "refugiados": 42,
+   "solicitantes": 1712,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TTO": {
+   "anio": 2024,
+   "refugiados": 474,
+   "solicitantes": 1110,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TUN": {
+   "anio": 2024,
+   "refugiados": 3593,
+   "solicitantes": 11415,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TUR": {
+   "anio": 2024,
+   "refugiados": 139640,
+   "solicitantes": 158221,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "TUV": {
+   "anio": 2024,
+   "refugiados": 0,
+   "solicitantes": 11,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ARE": {
+   "anio": 2024,
+   "refugiados": 261,
+   "solicitantes": 159,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "UGA": {
+   "anio": 2024,
+   "refugiados": 10384,
+   "solicitantes": 18311,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "UNK": {
+   "anio": 2024,
+   "refugiados": 191689,
+   "solicitantes": 62717,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "UKR": {
+   "anio": 2024,
+   "refugiados": 5120036,
+   "solicitantes": 44349,
+   "desplazadosInternos": 3665000,
+   "apátridas": 0
+  },
+  "URY": {
+   "anio": 2024,
+   "refugiados": 131,
+   "solicitantes": 989,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "USA": {
+   "anio": 2024,
+   "refugiados": 4004,
+   "solicitantes": 2409,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "UZB": {
+   "anio": 2024,
+   "refugiados": 5152,
+   "solicitantes": 22765,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "VUT": {
+   "anio": 2024,
+   "refugiados": 5,
+   "solicitantes": 1151,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "VCT": {
+   "anio": 2024,
+   "refugiados": 186,
+   "solicitantes": 229,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "VEN": {
+   "anio": 2024,
+   "refugiados": 370169,
+   "solicitantes": 1360041,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "WSM": {
+   "anio": 2024,
+   "refugiados": 8,
+   "solicitantes": 484,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ESH": {
+   "anio": 2024,
+   "refugiados": 174578,
+   "solicitantes": 867,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "YEM": {
+   "anio": 2024,
+   "refugiados": 51384,
+   "solicitantes": 32810,
+   "desplazadosInternos": 4795983,
+   "apátridas": 0
+  },
+  "ZMB": {
+   "anio": 2024,
+   "refugiados": 337,
+   "solicitantes": 983,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  },
+  "ZWE": {
+   "anio": 2024,
+   "refugiados": 8002,
+   "solicitantes": 10349,
+   "desplazadosInternos": 0,
+   "apátridas": 0
+  }
+ },
+ "mundo": [
+  {
+   "anio": 2014,
+   "refugiados": 14384289,
+   "solicitantes": 1794701,
+   "desplazadosInternos": 32274619,
+   "apátridas": 3492255,
+   "retornados": 126767
+  },
+  {
+   "anio": 2015,
+   "refugiados": 16110276,
+   "solicitantes": 3223458,
+   "desplazadosInternos": 37494172,
+   "apátridas": 3687759,
+   "retornados": 201387
+  },
+  {
+   "anio": 2016,
+   "refugiados": 17184286,
+   "solicitantes": 2729520,
+   "desplazadosInternos": 36627127,
+   "apátridas": 3242206,
+   "retornados": 552219
+  },
+  {
+   "anio": 2017,
+   "refugiados": 19940566,
+   "solicitantes": 3089508,
+   "desplazadosInternos": 39118516,
+   "apátridas": 3853982,
+   "retornados": 384887
+  },
+  {
+   "anio": 2018,
+   "refugiados": 20359553,
+   "solicitantes": 3501629,
+   "desplazadosInternos": 41425168,
+   "apátridas": 3851981,
+   "retornados": 519321
+  },
+  {
+   "anio": 2019,
+   "refugiados": 20414669,
+   "solicitantes": 4148141,
+   "desplazadosInternos": 43503362,
+   "apátridas": 4217774,
+   "retornados": 317181
+  },
+  {
+   "anio": 2020,
+   "refugiados": 20661846,
+   "solicitantes": 4184932,
+   "desplazadosInternos": 48557439,
+   "apátridas": 4179331,
+   "retornados": 250951
+  },
+  {
+   "anio": 2021,
+   "refugiados": 21327285,
+   "solicitantes": 4616135,
+   "desplazadosInternos": 51322623,
+   "apátridas": 4338192,
+   "retornados": 429234
+  },
+  {
+   "anio": 2022,
+   "refugiados": 29429078,
+   "solicitantes": 5442313,
+   "desplazadosInternos": 57321197,
+   "apátridas": 4428314,
+   "retornados": 999261
+  },
+  {
+   "anio": 2023,
+   "refugiados": 31637408,
+   "solicitantes": 6858501,
+   "desplazadosInternos": 63251367,
+   "apátridas": 4358195,
+   "retornados": 1126551
+  },
+  {
+   "anio": 2024,
+   "refugiados": 30958200,
+   "solicitantes": 8352713,
+   "desplazadosInternos": 68131711,
+   "apátridas": 4360087,
+   "retornados": 1615821
+  }
+ ]
+}

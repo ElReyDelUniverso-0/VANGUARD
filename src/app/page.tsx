@@ -27,6 +27,7 @@ import { Foto } from "@/components/portada/foto";
 import { Hace } from "@/components/portada/hace";
 import { Historias, type GrupoHistoria } from "@/components/portada/historias";
 import { MapaPortada } from "@/components/portada/mapa-portada";
+import { TiraWarHumanity } from "@/components/guerra/tira-war-humanity";
 import { AvisoNuevas } from "@/components/portada/aviso-nuevas";
 import { Pie } from "@/components/portada/pie";
 import { inter } from "@/components/portada/fuente";
@@ -265,6 +266,15 @@ export default async function Portada() {
         <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
           <TituloSeccion sello="Sección 07 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
           <MapaPortada notas={notas} />
+        </section>
+
+        {/* v441.0 · WAR & HUMANITY — la sala nueva también se ve desde la puerta
+            de la casa: muertes en combate del último año, desplazados por la
+            fuerza y los tres países donde más se muere, cada cifra con su
+            fuente. Componente de servidor sobre la instantánea real. */}
+        <section id="guerra" className="vx-sec vxp-ancla" aria-label="War & Humanity">
+          <TituloSeccion sello="Sala nueva · El mundo" titulo="War & Humanity: el mapa de las guerras, con el número al lado" sub="Muertos en combate, desplazados y refugiados, país por país y año por año, con su fuente y su año." enlace="/war-humanity" textoEnlace="Abrir la sala" />
+          <TiraWarHumanity />
         </section>
 
         {/* v436.7 · EL TALLER DE MAPAS — orden del Dueño: «no he visto nada de lo

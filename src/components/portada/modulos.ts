@@ -85,6 +85,7 @@ export const MODULOS: Modulo[] = [
     destacadas: ["/mapas", "/mapas/taller", "/mundos", "/mundo", "/tierra", "/rostros"],
     pestanas: [
             { href: "/mundos", label: "Países", img: "/imagenes-reales/arco.jpg", txt: "El mapa de los mundos: la ficha de cada país con sus fronteras reales." },
+            { href: "/war-humanity", label: "War & Humanity", img: "/imagenes-reales/khmer.jpg", txt: "El centro mundial de las guerras y las crisis: muertos en combate, desplazados y refugiados país por país, año por año, con su fuente — y lo que la fuente no mide, declarado." },
             { href: "/mundo", label: "Globo vivo", img: "/imagenes-reales/satelite.jpg", txt: "El globo 3D con los teatros encendidos y sus cables." },
             { href: "/mapas", label: "Centro de mapas", img: "/imagenes-reales/satelite.jpg", txt: "Ocho capas geográficas sobre un solo globo: mundial, político, físico, económico, demográfico, temático, histórico y de acontecimientos." },
             { href: "/worlds", label: "Mundos vivos", img: "/imagenes-reales/satelite.jpg", txt: "Cinco mundos explorables —América, Europa, África, Asia y Oceanía— con lugares reales y sus experiencias: ficha, atlas, obra, historia, datos y ciencia. Tres vistas, capas conmutables y alternativa 2D." },
