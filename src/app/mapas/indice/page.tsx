@@ -79,11 +79,14 @@ const CSS = `
 @keyframes vxi-l{0%{box-shadow:0 0 0 0 rgba(255,159,69,.55)}70%{box-shadow:0 0 0 10px rgba(255,159,69,0)}100%{box-shadow:0 0 0 0 rgba(255,159,69,0)}}
 @media (max-width:900px){.vxi-in{grid-template-columns:1fr;padding:18px}.vxi-num{grid-template-columns:repeat(2,minmax(0,1fr))}.vxi-planeta{display:none}}
 @media (prefers-reduced-motion:reduce){.vxi-sello i{animation:none}}
+/* v436.7b — EL MUELLE NO TAPA EL HÉROE (misma cura que en el taller). */
+.vxi-page{padding-left:82px}
+@media (max-width:979px){.vxi-page{padding-left:12px}}
 `;
 
 export default function PaginaIndiceMapas() {
   return (
-    <main className="mx-auto w-full max-w-[1500px] px-3 py-6 sm:px-5">
+    <main className="mx-auto w-full max-w-[1500px] px-3 py-6 sm:px-5 vxi-page">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
       <header className="vxi-hero">

@@ -79,11 +79,16 @@ const CSS = `
 @keyframes vxtl-l{0%{box-shadow:0 0 0 0 rgba(255,159,69,.55)}70%{box-shadow:0 0 0 10px rgba(255,159,69,0)}100%{box-shadow:0 0 0 0 rgba(255,159,69,0)}}
 @media (max-width:900px){.vxtl-in{grid-template-columns:1fr;padding:18px}.vxtl-map{order:-1}}
 @media (prefers-reduced-motion:reduce){.vxtl-sello i{animation:none}}
+/* v436.7b — EL MUELLE NO TAPA EL HÉROE: en pantalla grande el muelle vive en
+   x 10–68, y esta sala empezaba en x 12. Aquí se aparta, como el resto de la
+   casa. En pantalla pequeña el muelle no existe y el margen vuelve a cero. */
+.vxtl-page{padding-left:82px}
+@media (max-width:979px){.vxtl-page{padding-left:12px}}
 `;
 
 export default function PaginaTallerMapas() {
   return (
-    <main className="mx-auto w-full max-w-[1500px] px-3 py-5 sm:px-5">
+    <main className="mx-auto w-full max-w-[1500px] px-3 py-5 sm:px-5 vxtl-page">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
       <header className="vxtl-hero">
