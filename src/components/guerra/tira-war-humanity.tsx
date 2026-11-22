@@ -28,6 +28,8 @@ const CSS = `
 .vxwh-tira h2 em{font-style:normal;color:#ff6a4d}
 .vxwh-tira p{max-width:56ch;color:rgba(233,238,241,.82);line-height:1.6;font-size:.98rem}
 .vxwh-tira-acc{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.1rem}
+.vxwh-tira-nota{margin:1rem 0 0;font-size:.78rem;line-height:1.5;color:rgba(233,238,241,.5);max-width:52ch}
+
 .vxwh-tira-cifras{display:grid;gap:.9rem;margin:0}
 .vxwh-tira-cifras>div{padding:.85rem .95rem;border:1px solid rgba(255,255,255,.12);border-left:2px solid #ff5a46;
   background:rgba(0,0,0,.35);display:flex;flex-direction:column;gap:.25rem}
@@ -75,6 +77,10 @@ export function TiraWarHumanity() {
             Ver desplazamiento
           </Link>
         </div>
+        <p className="vxwh-tira-nota">
+          Se regenera sola cada 24 h y dice, en la propia sala, si está leyendo la API en vivo o la
+          instantánea guardada. Ninguna cifra se escribe a mano.
+        </p>
       </div>
 
       <dl className="vxwh-tira-cifras">
