@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ListaMapas } from "@/components/mapas/lista-mapas";
+import { MiniMapa } from "@/components/mapas/mini-mapa";
 import {
   CAPAS_DEL_CENTRO,
   CAPAS_TACTICAS,
@@ -45,41 +46,80 @@ export const metadata: Metadata = {
 const ACENTO = "#FF9F45";
 const VERDE = "#4ADE80";
 
+const CSS = `
+.vxi-hero{position:relative;overflow:hidden;border:1px solid #24313f;border-radius:6px;margin-bottom:18px;
+  background:
+    radial-gradient(110% 150% at 6% 0%, rgba(255,159,69,.12), transparent 55%),
+    radial-gradient(90% 130% at 100% 100%, rgba(74,222,128,.10), transparent 60%),
+    linear-gradient(180deg,#0a1017,#070b10 72%);}
+.vxi-hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:42px 42px;mask-image:radial-gradient(120% 120% at 45% 0%,#000 25%,transparent 80%)}
+.vxi-in{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:22px;align-items:center;padding:24px}
+.vxi-sello{display:inline-flex;align-items:center;gap:8px;font:700 10px/1 ui-monospace,monospace;letter-spacing:.3em;text-transform:uppercase;
+  color:${ACENTO};border:1px solid rgba(255,159,69,.45);border-radius:999px;padding:7px 12px;background:rgba(255,159,69,.08)}
+.vxi-sello i{display:inline-block;width:6px;height:6px;border-radius:50%;background:${ACENTO};animation:vxi-l 2.4s ease-out infinite}
+.vxi-h{margin:14px 0 6px;font-size:clamp(28px,3.8vw,50px);line-height:1;letter-spacing:-.03em;font-weight:800;color:#f4f7fb}
+.vxi-h em{font-style:normal;background:linear-gradient(180deg,#ffe9c9,#FF9F45 68%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.vxi-p{margin:0;max-width:58ch;font-size:14px;line-height:1.6;color:#a2b2c6}
+.vxi-num{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:18px}
+.vxi-num div{padding:10px 11px;border:1px solid #1e2a37;border-radius:4px;background:rgba(8,13,19,.72)}
+.vxi-num b{display:block;font:800 22px/1 ui-monospace,monospace;color:#fff;letter-spacing:-.03em}
+.vxi-num span{display:block;margin-top:5px;font:600 8.5px/1.2 ui-monospace,monospace;letter-spacing:.16em;color:#7b8ca0;text-transform:uppercase}
+.vxi-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.vxi-b1,.vxi-b2{display:inline-flex;align-items:center;gap:9px;padding:11px 17px;border-radius:4px;font:700 11px/1 ui-monospace,monospace;
+  letter-spacing:.16em;text-transform:uppercase;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.vxi-b1{color:#0a0d12;background:linear-gradient(180deg,#ffca8a,#FF9F45);box-shadow:0 10px 26px rgba(255,159,69,.28)}
+.vxi-b1:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(255,159,69,.4)}
+.vxi-b2{color:#dbe6f2;border:1px solid #2c3d4f;background:rgba(255,255,255,.03)}
+.vxi-b2:hover{transform:translateY(-2px);border-color:${VERDE};color:#fff}
+.vxi-planeta{position:relative;border:1px solid #24313f;border-radius:5px;overflow:hidden;background:#070c12}
+.vxi-planeta .vxm{display:block;width:100%;height:auto}
+.vxi-planeta span{position:absolute;right:10px;bottom:8px;font:600 8.5px/1 ui-monospace,monospace;letter-spacing:.2em;text-transform:uppercase;color:#7d8ea2}
+@keyframes vxi-l{0%{box-shadow:0 0 0 0 rgba(255,159,69,.55)}70%{box-shadow:0 0 0 10px rgba(255,159,69,0)}100%{box-shadow:0 0 0 0 rgba(255,159,69,0)}}
+@media (max-width:900px){.vxi-in{grid-template-columns:1fr;padding:18px}.vxi-num{grid-template-columns:repeat(2,minmax(0,1fr))}.vxi-planeta{display:none}}
+@media (prefers-reduced-motion:reduce){.vxi-sello i{animation:none}}
+`;
+
 export default function PaginaIndiceMapas() {
   return (
     <main className="mx-auto w-full max-w-[1500px] px-3 py-6 sm:px-5">
-      <header className="mb-5 border-b border-slate-800 pb-4">
-        <p className="font-mono text-[10px] uppercase tracking-[0.34em]" style={{ color: ACENTO }}>
-          Índice · {TOTAL_SUPERFICIES} superficies declaradas
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl">
-          El índice de mapas
-        </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-400">
-          Todos los mapas que la casa tiene, uno por uno: su ruta, la pregunta que responde, con qué
-          se pinta y de qué fuente sale cada cifra. No hay relleno — lo que no está, no existe
-          todavía. Y lo que falte se puede hacer abajo, en el taller.
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Link
-            href="/mapas/taller"
-            className="rounded border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em]"
-            style={{ borderColor: ACENTO, color: ACENTO, background: "#1a1206" }}
-          >
-            Abrir el Taller de Mapas ▸
-          </Link>
-          <Link
-            href="/mapas"
-            className="rounded border border-slate-800 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-300 hover:border-slate-600"
-          >
-            Centro de Mapas
-          </Link>
-          <Link
-            href="/mundos"
-            className="rounded border border-slate-800 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-300 hover:border-slate-600"
-          >
-            Los países
-          </Link>
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
+
+      <header className="vxi-hero">
+        <div className="vxi-in">
+          <div>
+            <span className="vxi-sello"><i aria-hidden /> Índice · {TOTAL_SUPERFICIES} superficies declaradas</span>
+            <h1 className="vxi-h">
+              El índice <em>de mapas</em>
+            </h1>
+            <p className="vxi-p">
+              Todos los mapas que la casa tiene, uno por uno: su ruta, la pregunta que responde, con qué se pinta y de
+              qué fuente sale cada cifra. No hay relleno — lo que no está, no existe todavía. Y lo que falte se puede
+              hacer abajo, en el taller.
+            </p>
+            <div className="vxi-num">
+              <div><b>{MAPAS.length}</b><span>salas con mapa</span></div>
+              <div><b>{CAPAS_DEL_CENTRO.length}</b><span>capas del planeta</span></div>
+              <div><b>{CAPAS_TACTICAS.length}</b><span>clases de trazo</span></div>
+              <div><b>∞</b><span>mapas posibles</span></div>
+            </div>
+            <div className="vxi-botones">
+              <Link href="/mapas/taller" className="vxi-b1">
+                Abrir el Taller de Mapas <span aria-hidden>▸</span>
+              </Link>
+              <Link href="/mapas" className="vxi-b2">
+                Centro de Mapas
+              </Link>
+              <Link href="/mundos" className="vxi-b2">
+                Los 249 países
+              </Link>
+            </div>
+          </div>
+          <div className="vxi-planeta">
+            <MiniMapa etiqueta="El planeta de la casa" />
+            <span>Natural Earth 110m</span>
+          </div>
         </div>
       </header>
 

@@ -146,6 +146,88 @@ export function normalizar(entrada: unknown): DocumentoMapa | null {
   };
 }
 
+// ── PLANTILLAS: empezar con el mapa ya vivo ─────────────────────────
+//
+// Un taller vacío no dice «wow», dice «y ahora qué». Estas tres plantillas
+// ponen el mapa a funcionar en un toque. Lo que llevan dentro son LUGARES y
+// sus coordenadas (Natural Earth 110m): ni una cifra que no se pueda
+// comprobar, y cada punto declara de dónde sale su posición. La nota cuenta
+// qué es el sitio; si alguien le añade un dato, tendrá que añadir su fuente.
+
+export type Plantilla = {
+  id: string;
+  nombre: string;
+  lema: string;
+  puntos: Omit<Punto, "id">[];
+  trazos: { nombre: string; color: string; puntos: [number, number][] }[];
+};
+
+const COORD = "Coordenadas del lugar (Natural Earth 110m)";
+
+export const PLANTILLAS: Plantilla[] = [
+  {
+    id: "estrechos",
+    nombre: "Los tres estrechos",
+    lema: "Los pasos de agua donde se aprieta el comercio del mundo",
+    puntos: [
+      { lat: 26.5667, lng: 56.25, nombre: "Estrecho de Ormuz", tipo: "exclusion", nota: "Entre el golfo Pérsico y el golfo de Omán.", fuente: COORD },
+      { lat: 12.5833, lng: 43.3333, nombre: "Bab el-Mandeb", tipo: "exclusion", nota: "Puerta sur del mar Rojo: entre Yibuti y Yemen.", fuente: COORD },
+      { lat: 1.4333, lng: 102.8833, nombre: "Estrecho de Malaca", tipo: "exclusion", nota: "Entre la península malaya y Sumatra.", fuente: COORD },
+      { lat: -8.65, lng: 115.2167, nombre: "Canal de Bali", tipo: "punto", nota: "Alternativa al sur del archipiélago.", fuente: COORD },
+    ],
+    trazos: [
+      { nombre: "Golfo → Asia oriental", color: "#FFD166", puntos: [[26.5667, 56.25], [12.5833, 43.3333], [5.0, 80.0], [1.4333, 102.8833], [-8.65, 115.2167]] },
+    ],
+  },
+  {
+    id: "puertos",
+    nombre: "Los grandes puertos",
+    lema: "Las puertas del comercio marítimo",
+    puntos: [
+      { lat: 51.9244, lng: 4.4777, nombre: "Róterdam", tipo: "base", nota: "Desembocadura del Rin, puerta de Europa.", fuente: COORD },
+      { lat: 1.2644, lng: 103.8222, nombre: "Singapur", tipo: "base", nota: "Ciudad-Estado y paso obligado del estrecho.", fuente: COORD },
+      { lat: 31.2304, lng: 121.4737, nombre: "Shanghái", tipo: "base", nota: "Delta del Yangtsé.", fuente: COORD },
+      { lat: 33.7405, lng: -118.2775, nombre: "Los Ángeles", tipo: "base", nota: "Puerta del Pacífico americano.", fuente: COORD },
+      { lat: 25.2048, lng: 55.2708, nombre: "Dubái", tipo: "base", nota: "Golfo Pérsico, escala entre Asia y Europa.", fuente: COORD },
+      { lat: -23.9608, lng: -46.3336, nombre: "Santos", tipo: "base", nota: "El gran puerto de Sudamérica.", fuente: COORD },
+    ],
+    trazos: [
+      { nombre: "Europa → Asia", color: "#38BDF8", puntos: [[51.9244, 4.4777], [36.0, -5.6], [31.3, 32.3], [12.5833, 43.3333], [1.2644, 103.8222], [31.2304, 121.4737]] },
+    ],
+  },
+  {
+    id: "cinturon",
+    nombre: "El cinturón de fuego",
+    lema: "El borde del Pacífico donde tiembla la corteza",
+    puntos: [
+      { lat: 35.6762, lng: 139.6503, nombre: "Tokio", tipo: "frente", nota: "Varias placas se encuentran bajo la bahía.", fuente: COORD },
+      { lat: -33.4489, lng: -70.6693, nombre: "Santiago", tipo: "frente", nota: "Borde de la placa de Nazca.", fuente: COORD },
+      { lat: 19.4326, lng: -99.1332, nombre: "Ciudad de México", tipo: "frente", nota: "Valle sobre antiguos lagos y volcanes.", fuente: COORD },
+      { lat: -6.2088, lng: 106.8456, nombre: "Yakarta", tipo: "frente", nota: "Arco volcánico de Java.", fuente: COORD },
+      { lat: 61.2181, lng: -149.9003, nombre: "Anchorage", tipo: "frente", nota: "Subducción de la placa del Pacífico.", fuente: COORD },
+      { lat: 14.5995, lng: 120.9842, nombre: "Manila", tipo: "frente", nota: "Fosa de Manila y arco de Luzón.", fuente: COORD },
+    ],
+    trazos: [
+      { nombre: "Borde del Pacífico", color: "#F43F5E", puntos: [[61.2181, -149.9003], [35.6762, 139.6503], [14.5995, 120.9842], [-6.2088, 106.8456], [-33.4489, -70.6693], [19.4326, -99.1332]] },
+    ],
+  },
+];
+
+export function desdePlantilla(id: string): DocumentoMapa | null {
+  const p = PLANTILLAS.find((x) => x.id === id);
+  if (!p) return null;
+  return {
+    version: 1,
+    id: nuevoId(),
+    nombre: p.nombre,
+    lema: p.lema,
+    autor: "",
+    actualizado: new Date().toISOString(),
+    puntos: p.puntos.map((q) => ({ ...q, id: nuevoId() })),
+    trazos: p.trazos.map((t) => ({ ...t, id: nuevoId() })),
+  };
+}
+
 // ── El almacén del aparato: ni cuenta ni servidor ───────────────────
 
 export function leerLista(): DocumentoMapa[] {

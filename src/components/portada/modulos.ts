@@ -82,7 +82,7 @@ export const MODULOS: Modulo[] = [
     nav: "/mundos",
     img: "/imagenes-reales/satelite.jpg",
     gancho: "El mapa, el atlas, los 200 países con sus medidas, las potencias con su arsenal y los rostros que firman las decisiones. Antes eran dos módulos (Terreno e Inteligencia) que se miraban de espaldas.",
-    destacadas: ["/mundos", "/mapas", "/mundo", "/informacion", "/rostros", "/tierra"],
+    destacadas: ["/mapas", "/mapas/taller", "/mundos", "/mundo", "/tierra", "/rostros"],
     pestanas: [
             { href: "/mundos", label: "Países", img: "/imagenes-reales/arco.jpg", txt: "El mapa de los mundos: la ficha de cada país con sus fronteras reales." },
             { href: "/mundo", label: "Globo vivo", img: "/imagenes-reales/satelite.jpg", txt: "El globo 3D con los teatros encendidos y sus cables." },

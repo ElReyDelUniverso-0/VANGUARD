@@ -20,11 +20,13 @@ import worldPaths from "@/lib/world-paths.json";
 import { geoMercator } from "d3-geo";
 import {
   COLOR_TRAZO,
+  PLANTILLAS,
   TIPOS,
   aGeoJSON,
   aHTML,
   aJSON,
   colorDeTipo,
+  desdePlantilla,
   desdeTexto,
   descargar,
   documentoVacio,
@@ -85,7 +87,10 @@ export function TallerMapa() {
   const [guardados, setGuardados] = useState<DocumentoMapa[]>([]);
   const [aviso, setAviso] = useState<string>("");
   const [entrada, setEntrada] = useState<string>("");
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const archivo = useRef<HTMLInputElement | null>(null);
+  const cerrarTrazoRef = useRef<(() => void) | null>(null);
+  const quitarPuntoRef = useRef<((id: string) => void) | null>(null);
 
   useEffect(() => {
     setGuardados(leerLista());
@@ -99,6 +104,39 @@ export function TallerMapa() {
   const cambiar = useCallback((parcial: Partial<DocumentoMapa>) => {
     setDoc((d) => ({ ...d, ...parcial }));
   }, []);
+
+  // ── empezar con el mapa ya vivo ──────────────────────────────────────
+  const cargarPlantilla = useCallback(
+    (id: string) => {
+      const doc = desdePlantilla(id);
+      if (!doc) return;
+      setDoc(doc);
+      setSeleccion(null);
+      setTrazoEnCurso([]);
+      decir(`Plantilla cargada: ${doc.puntos.length} puntos y ${doc.trazos.length} trazo. Cámbialo a tu gusto.`);
+    },
+    [decir]
+  );
+
+  // ── teclado: Enter cierra el trazo, Supr borra el punto elegido ──────
+  useEffect(() => {
+    const tecla = (e: KeyboardEvent) => {
+      const enCampo = (e.target as HTMLElement | null)?.tagName;
+      if (enCampo === "INPUT" || enCampo === "TEXTAREA") return;
+      if (e.key === "Enter" && herramienta === "trazo" && trazoEnCurso.length > 1) {
+        e.preventDefault();
+        cerrarTrazoRef.current?.();
+      } else if ((e.key === "Delete" || e.key === "Backspace") && seleccion) {
+        e.preventDefault();
+        quitarPuntoRef.current?.(seleccion);
+      } else if (e.key === "Escape") {
+        setTrazoEnCurso([]);
+        setSeleccion(null);
+      }
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [herramienta, trazoEnCurso.length, seleccion]);
 
   // ── el planeta se toca y aparece un punto ────────────────────────────
   const clic2D = useCallback(
@@ -174,6 +212,10 @@ export function TallerMapa() {
     setDoc((d) => ({ ...d, puntos: d.puntos.filter((p) => p.id !== id) }));
     setSeleccion((s) => (s === id ? null : s));
   }, []);
+
+  // el teclado llama a lo último que se dibujó, sin volver a montar nada
+  cerrarTrazoRef.current = cerrarTrazo;
+  quitarPuntoRef.current = quitarPunto;
 
   const n = resumen(doc);
 
@@ -295,6 +337,40 @@ export function TallerMapa() {
         </span>
       </div>
 
+      {/* PLANTILLAS — el mapa vivo en un toque, para que el taller no arranque vacío */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          gap: 8,
+          padding: "9px 11px",
+          border: `1px solid ${borde}`,
+          borderRadius: 4,
+          background: "linear-gradient(90deg,#0d141c,#0a1017)",
+        }}
+      >
+        <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: ".18em", color: oro }}>
+          EMPEZAR CON
+        </span>
+        {PLANTILLAS.map((pl) => (
+          <button
+            key={pl.id}
+            type="button"
+            onClick={() => cargarPlantilla(pl.id)}
+            title={pl.lema}
+            style={{ ...boton(false), borderColor: "#2a3a4b" }}
+          >
+            {pl.nombre} <span style={{ color: tenue, fontSize: 10 }}>· {pl.puntos.length}p</span>
+          </button>
+        ))}
+        <span style={{ marginLeft: "auto", fontFamily: "ui-monospace, monospace", fontSize: 10.5, color: coords ? oro : tenue }}>
+          {coords
+            ? `${Math.abs(coords.lat).toFixed(2)}° ${coords.lat >= 0 ? "N" : "S"} · ${Math.abs(coords.lng).toFixed(2)}° ${coords.lng >= 0 ? "E" : "O"}`
+            : "mueve sobre el plano para leer coordenadas"}
+        </span>
+      </div>
+
       {herramienta === "punto" && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           {TIPOS.map((t) => (
@@ -322,6 +398,15 @@ export function TallerMapa() {
             <svg
               viewBox={`0 0 ${W} ${H}`}
               onClick={clic2D}
+              onMouseMove={(e) => {
+                const caja = e.currentTarget.getBoundingClientRect();
+                const { lat, lng } = unprojectXY(
+                  ((e.clientX - caja.left) / caja.width) * W,
+                  ((e.clientY - caja.top) / caja.height) * H
+                );
+                if (Number.isFinite(lat) && Number.isFinite(lng)) setCoords({ lat, lng });
+              }}
+              onMouseLeave={() => setCoords(null)}
               style={{ display: "block", width: "100%", height: "auto", cursor: "crosshair" }}
               role="application"
               aria-label="Plano del mundo: toca para poner un punto o un vértice del trazo"
@@ -409,7 +494,12 @@ export function TallerMapa() {
             <p style={{ margin: "0 0 8px", fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: ".16em", color: oro }}>
               PUNTOS
             </p>
-            {doc.puntos.length === 0 && <p style={{ margin: 0, fontSize: 12, color: tenue }}>Toca el mapa para poner el primero.</p>}
+            {doc.puntos.length === 0 && (
+              <p style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: tenue }}>
+                Toca el planeta para poner el primero — o carga una de las tres plantillas de arriba y tendrás el mapa
+                hecho en un segundo.
+              </p>
+            )}
             <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "grid", gap: 4 }}>
               {doc.puntos.map((p, i) => (
                 <li key={p.id} style={{ display: "flex", alignItems: "center", gap: 6 }}>

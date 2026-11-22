@@ -3,6 +3,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { CentroMapas } from "@/components/vanguard/centro-mapas";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import { EscaparateTaller } from "@/components/mapas/escaparate-taller";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { construirPayload, paisesDeAcontecimiento } from "@/lib/mapas-payload";
@@ -140,6 +141,12 @@ export default function MapasPage() {
           ]}
           nota="Se puede arrastrar, girar con la rueda, buscar un país por su nombre y volar hasta él. En móvil, el mismo globo con los mandos a mano."
         />
+
+      {/* v436.7 · la herramienta, antes que las capas: quien entra al Centro de
+          Mapas ve primero que puede HACER uno, no solo mirarlo. */}
+      <div className="vx-wrap" style={{ marginTop: 18, marginBottom: 6 }}>
+        <EscaparateTaller compacto />
+      </div>
 
         <CentroMapas payload={payload} paisesPorAcontecimiento={paisesPorAcontecimiento} />
 

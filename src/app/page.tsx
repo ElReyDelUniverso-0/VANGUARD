@@ -40,6 +40,9 @@ import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 // v406.0 LA TRAVESÍA — el hilo (continúa donde lo dejaste) y la puerta a la entrada inmersiva
 import { HiloPortada, BotonTravesia, BotonDirectorio } from "@/components/travesia/hilo-portada";
 import { DescubreHoy, NovedadesPortada } from "@/components/portada/portada-nueva";
+// v436.7 · EL TALLER DE MAPAS, en la portada: una herramienta que se ve antes de
+// que nadie la busque. Componente de servidor: cero JavaScript extra.
+import { EscaparateTaller } from "@/components/mapas/escaparate-taller";
 import { ParaTi } from "@/components/vida/para-ti";
 // v422.1 REBIRTH · la entrada del ecosistema (MISIÓN: dejar de ser «un diario
 // con módulos» y ser una casa con diez familias). Tres piezas nuevas, todas
@@ -249,6 +252,15 @@ export default async function Portada() {
         <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
           <TituloSeccion sello="Sección 07 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
           <MapaPortada notas={notas} />
+        </section>
+
+        {/* v436.7 · EL TALLER DE MAPAS — orden del Dueño: «no he visto nada de lo
+            que agregaste, mejóralo y púlelo más, que diga wow». La herramienta
+            existía y no la encontraba nadie: ahora tiene su franja grande en la
+            portada, con el planeta en miniatura y las dos puertas. */}
+        <section id="taller" className="vx-sec vxp-ancla" aria-label="El Taller de Mapas">
+          <TituloSeccion sello="Sección · Herramientas" titulo="El Taller de Mapas" sub="Crear un mapa 2D o 3D con tus puntos, tus fichas y tus fuentes — y sacarlo de la casa." enlace="/mapas/taller" textoEnlace="Abrir el taller" />
+          <EscaparateTaller />
         </section>
 
 
