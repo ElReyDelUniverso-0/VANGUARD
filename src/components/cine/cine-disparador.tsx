@@ -82,8 +82,9 @@ function quieto(): boolean {
   }
 }
 function introActiva(): boolean {
+  // la entrada usa a → go → fin → fuera; «visto» = ya se vio en esta sesión
   const v = document.documentElement.getAttribute("data-vi");
-  return !!v && v !== "fuera";
+  return v === "a" || v === "go" || v === "fin";
 }
 
 type Activa = { tipo: TipoEscena; material?: Material; extra?: ExtraCine };
