@@ -230,6 +230,7 @@ export default async function GlobalDangerPage() {
           (GDACS) y eventos naturales observados por satélite (NASA EONET). Todo lo que se ve aquí lo publicó
           alguien con nombre y fecha; el mapa sólo lo pone en su sitio.
         </p>
+        <p className="gd-intro"><a href="/desastres">Explorar Disaster Radar: filtros por tipo y período, cronología y mapa →</a></p>
         <MapaRiesgos puntos={puntos} />
 
         <div className="gd-mapa-fichas">

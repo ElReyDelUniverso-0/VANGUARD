@@ -1,0 +1,9 @@
+# Disaster Radar — alcance inicial
+
+Ruta `/desastres`, accesible desde Global Danger como vista especializada, sin sustituir ese observatorio. Reutiliza la silueta y la proyección de `world-paths.json` / d3-geo. API `/api/desastres` consulta solo URLs fijas: USGS (magnitud ≥4,5, último mes) y NASA EONET v3 (volcanes, inundaciones, tormentas severas, abiertos y cerrados, 30 días, máximo 500). El filtro temporal solo filtra lo recibido. La fecha es la del registro USGS o la última geometría puntual válida EONET; una etiqueta «abierto» no es alerta, ni indica riesgo. Los sismos son registros, no eventos activos. No se relacionan automáticamente eventos entre fuentes ni se hacen agregados de daños.
+
+El cliente consulta la API al entrar y cada 5 minutos mientras esté abierto; no es una tarea programada del servidor. Cada fuente se conserva en memoria hasta el siguiente refresco; ante fallo, la última respuesta de esa misma instancia se etiqueta como respaldo y mantiene su fecha de consulta. Es efímero, no compartido ni garantizado tras reinicio. Las fuentes responden de forma independiente. Si no hay dato, se informa sin inventar. Tiempo máximo por fuente 9 segundos.
+
+Limitaciones: eventos con geometría distinta de Point no se dibujan. EONET no es una lista global exhaustiva; 500 es el límite solicitado, no un censo. Los datos sísmicos son preliminares y pueden revisarse. No hay integración de accidentes industriales, daños o alertas oficiales; hay que incorporar fuentes, criterios de licencia, historial y validación antes de mostrarlos. No hay histórico de más de 30 días. La vista no sirve para protección civil.
+
+Pruebas `node --test tests/desastres/datos.test.cjs`. Verificación de tipos acotada en desarrollo. Recuperación: revertir el commit del radar, no hay migraciones ni cambios de datos de usuario. Compruebe las fuentes y las etiquetas en producción; HTTP 200 no basta para probar datos o accesibilidad.
