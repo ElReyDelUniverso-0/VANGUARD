@@ -15,3 +15,9 @@ export const IcoReloj = (p: P) => (<svg {...base} {...p}><circle cx="12" cy="12"
 export const IcoRayo = (p: P) => (<svg {...base} {...p}><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>);
 export const IcoExterno = (p: P) => (<svg {...base} {...p}><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg>);
 export const IcoModulos = (p: P) => (<svg {...base} {...p}><rect x="3.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.5" /></svg>);
+
+// v439.10 · SIMBOLOS DEL MENÚ — los símbolos característicos de cada
+// sección del menú. Trazo propio, cero dependencias.
+export const IcoMercado = (p: P) => (<svg {...base} {...p}><path d="M5 9.5 7.5 4h9L19 9.5M4.5 9.5h15v10.5H4.5zM9.5 14h5" /></svg>);
+export const IcoRedaccion = (p: P) => (<svg {...base} {...p}><path d="M5 3.5h10.5L19.5 8v12.5H5zM8.5 8v12M14.5 8v12M5 12.5h6.5M5 15.5h6.5" /></svg>);
+export const IcoSaber = (p: P) => (<svg {...base} {...p}><path d="M4 5.5 20 4.5v14L10 19.5zM4 5.5 10 11M4 5.5 7.5 10.5M14 8.5h3" /></svg>);

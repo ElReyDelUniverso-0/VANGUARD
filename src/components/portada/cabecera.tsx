@@ -10,7 +10,10 @@ import { LogoVanguard } from "./logo";
 import { Reloj } from "./reloj";
 import { MODULOS_PUBLICOS, entradaDe, moduloDe } from "./modulos";
 import { NAV_PRIMARIO } from "@/lib/operacion/orden";
-import { IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
+import {
+  IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo,
+  IcoBuscar, IcoMercado, IcoRedaccion, IcoSaber,
+} from "./iconos";
 // v403.8 LA PUERTA: el buscador universal (⌘K) llega por fin a la cabecera
 // viva. Busca las 155 salas del cuartel, las 46 puertas de los módulos y los
 // cables en vivo. Antes el icono de lupa llevaba a /guerra-hoy: una lupa que
@@ -30,7 +33,31 @@ import { BotonGuiaVisual } from "@/components/vanguard/guia/GuiaVisualTactivaMod
 // otros; ordena los módulos y los botones». La cabecera llevaba 13 módulos
 // seguidos más 4 botones. Ahora lleva el ÍNDICE y cinco puertas de uso diario.
 // Nada se pierde: los 14 módulos y sus salas viven ordenados en /orden.
+//
+// v439.10 · EL MENÚ ANIMADO CON SÍMBOLOS — el Dueño: «el menú está super
+// feo; cámbialo, combínalo, animado, con los símbolos característicos, más
+// cómodo y más llamativo, y que sea ROTADO (fijo): que siempre esté el
+// mismo, que no sea diferente». Cada puerta del menú lleva su SÍMBOLO
+// característico + su etiqueta, con animación al pasar y al activarse.
+// El ORDEN del menú es FIJO y determinista: siempre el mismo, para todos,
+// en todos los dispositivos — nunca se reordena ni se reshufflea.
 export const NAV = NAV_PRIMARIO;
+
+/** SÍMBOLO característico de cada puerta del menú (clave: href). */
+const SIMBOLOS: Record<string, typeof IcoInicio> = {
+  "/orden": IcoJuego,
+  "/buscar": IcoBuscar,
+  "/mercado": IcoMercado,
+  "/guerra-hoy": IcoRedaccion,
+  "/mundos": IcoMapa,
+  "/conocimiento": IcoSaber,
+  "/mi-universo": IcoInicio,
+};
+
+function Simbolo({ href }: { href: string }) {
+  const Ico = SIMBOLOS[href] ?? IcoInicio;
+  return <Ico className="vx-nav-ico" />;
+}
 
 /** la lista vieja (13 módulos) queda disponible por compatibilidad; ya no se pinta */
 export const NAV_MODULOS = MODULOS_PUBLICOS.map((m) => ({ href: entradaDe(m), label: m.corto }));
@@ -78,7 +105,8 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
         <nav className="vx-nav" aria-label="Secciones">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} data-on={activo(ruta, n.href) ? "1" : "0"} aria-current={activo(ruta, n.href) ? "page" : undefined}>
-              {n.label}
+              <span className="vx-nav-icowrap"><Simbolo href={n.href} /></span>
+              <span className="vx-nav-t">{n.label}</span>
             </Link>
           ))}
         </nav>
