@@ -59,7 +59,7 @@ export function ListaMapas({ mapas }: { mapas: MapaDeLaCasa[] }) {
       </div>
 
       <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
-        {filtrados.length} de {mapas.length} superficies
+        {filtrados.length} de {mapas.length} salas con mapa
       </p>
 
       {filtrados.length === 0 && (

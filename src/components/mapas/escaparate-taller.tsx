@@ -91,7 +91,7 @@ export function EscaparateTaller({ compacto = false }: { compacto?: boolean }) {
       <div className="vxt-txt">
         <span className="vxt-sello"><i aria-hidden /> Herramienta nueva · crear mapas</span>
         <h2 className="vxt-h">
-          Haz tu propio mapa: <em>pon el punto, firma la fuente</em> y llévatelo.
+          Haz tu propio mapa. <em>Y sácalo de aquí.</em>
         </h2>
         <p className="vxt-p">
           El Taller es la primera herramienta de la casa que no te enseña un mapa: te deja hacerlo. Tocas el planeta
