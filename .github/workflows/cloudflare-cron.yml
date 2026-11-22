@@ -1,0 +1,23 @@
+name: Cloudflare — tareas diarias de la casa
+
+# Sustituye a los crons de vercel.json (que solo corren en Vercel).
+# Llama una vez al día a las mismas rutas, en la casa de Cloudflare.
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+    - cron: "30 13 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  llamar:
+    runs-on: ubuntu-latest
+    if: ${{ vars.CF_SITE_URL != '' }}
+    steps:
+      - name: Llamar a la ruta del día
+        env:
+          CASA: ${{ vars.CF_SITE_URL }}
+        run: |
+          if [ "${{ github.event.schedule }}" = "30 13 * * *" ]; then RUTA=/api/agent-ping; else RUTA=/api/news; fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then RUTAS="/api/news /api/agent-ping"; else RUTAS="$RUTA"; fi
+          for r in $RUTAS; do echo "→ $CASA$r"; curl -s -o /dev/null -w "%{http_code}\n" --max-time 60 "$CASA$r" || true; done

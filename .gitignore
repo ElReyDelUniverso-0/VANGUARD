@@ -97,3 +97,8 @@ __pycache__/
 
 # Informes locales de supervisión (los conserva Actions como artefacto)
 informes-ecosistema/
+
+# cloudflare (v443.0)
+.open-next
+.wrangler
+.dev.vars*

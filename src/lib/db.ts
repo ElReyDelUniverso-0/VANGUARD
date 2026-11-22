@@ -80,10 +80,28 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-const urlResuelta = resolverDbUrl()
+// v443.0 LA MUDANZA A CLOUDFLARE — en un Worker (workerd) no hay motor nativo
+// de Prisma ni archivo SQLite: la BD se declara ausente con un cliente que
+// rechaza toda consulta, y las rutas caen en su fail-soft de siempre (igual que
+// cuando la BD no abría en Vercel). En Vercel/local nada cambia.
+const EN_WORKERD =
+  typeof navigator !== "undefined" &&
+  (navigator as { userAgent?: string }).userAgent === "Cloudflare-Workers"
 
-export const db =
-  globalForPrisma.prisma ??
+function clienteAusente(): PrismaClient {
+  const rechazo = () => Promise.reject(new Error("BD no disponible en Cloudflare Workers"))
+  const hoja: ProxyHandler<(...a: unknown[]) => unknown> = {
+    get: (_t, prop) => (prop === "then" ? undefined : new Proxy(() => undefined, hoja)),
+    apply: () => rechazo(),
+  }
+  return new Proxy(() => undefined, hoja) as unknown as PrismaClient
+}
+
+const urlResuelta = EN_WORKERD ? undefined : resolverDbUrl()
+
+export const db: PrismaClient = EN_WORKERD
+  ? clienteAusente()
+  : globalForPrisma.prisma ??
   new PrismaClient({
     // v27 ESTABILIDAD: log de queries desactivado (llenaba el log y frenaba el server
     // en sesiones largas) — solo errores. WAL + busy_timeout evitan "database is locked"
@@ -92,7 +110,7 @@ export const db =
     ...(urlResuelta ? { datasources: { db: { url: urlResuelta } } } : {}),
   })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+if (!EN_WORKERD && process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
 
 // v27: aplicar pragmas SQLite una sola vez por proceso
 let pragmasDone = false

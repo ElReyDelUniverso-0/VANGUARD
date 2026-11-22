@@ -19,6 +19,11 @@ const BUSCADORES = "Googlebot|GoogleOther|Storebot|bingbot|msnbot|YandexBot|Peta
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  /* v443.0 LA MUDANZA A CLOUDFLARE: en Cloudflare Workers no hay sharp (binario
+     nativo) para optimizar imágenes en el servidor; allí las imágenes se sirven
+     tal cual. En Vercel/local nada cambia (VANGUARD_CF solo existe en el build
+     de Cloudflare). */
+  ...(process.env.VANGUARD_CF === "1" ? { images: { unoptimized: true } } : {}),
   htmlLimitedBots: new RegExp(`${BOTS_DE_FABRICA}|${BUSCADORES}`, "i"),
   /* v244.0 LA FAMILIA REUNIDA — LA CURA DE LA DEUDA v240. Medido en el
      build v243 (censo con marcadores de clase que sobreviven a la

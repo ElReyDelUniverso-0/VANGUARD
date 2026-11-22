@@ -1,0 +1,18 @@
+// v443.0 LA MUDANZA A CLOUDFLARE — Workers & Pages (plan gratis).
+// La casa se construye con OpenNext (@opennextjs/cloudflare) en GitHub Actions
+// (.github/workflows/cloudflare.yml) y se publica como un Worker.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vanguard",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    { "binding": "WORKER_SELF_REFERENCE", "service": "vanguard" }
+  ],
+  "observability": { "enabled": true }
+}
