@@ -94,3 +94,6 @@ tmp/
 censo-seo.json
 panel-seo.html
 __pycache__/
+
+# Informes locales de supervisión (los conserva Actions como artefacto)
+informes-ecosistema/

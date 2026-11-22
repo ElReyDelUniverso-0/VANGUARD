@@ -22,7 +22,8 @@
 type NoticiasRespuesta = { items?: unknown[]; error?: string; pulso?: unknown };
 
 type Balde = { resp: NoticiasRespuesta; ts: number } | null;
-type Pozo = { todo: Balde; centro: Balde; vueloTodo: Promise<unknown[]> | null; vueloCentro: Promise<unknown[]> | null };
+type EstadoFuente = { ultimoExito: number | null; ultimoError: number | null; respaldoDisponible: boolean };
+type Pozo = { todo: Balde; centro: Balde; vueloTodo: Promise<unknown[]> | null; vueloCentro: Promise<unknown[]> | null; estado?: Record<"todo" | "centro", EstadoFuente> };
 
 // v196.1: el pozo vive en globalThis — Turbopack puede duplicar el módulo en
 // varios chunks y cada copia traería SU propia caché (3 llamadas en vez de 1).
@@ -33,6 +34,13 @@ const G = globalThis as typeof globalThis & { __vgPozoNoticias?: Pozo };
 const pozo: Pozo = (G.__vgPozoNoticias ??= { todo: null, centro: null, vueloTodo: null, vueloCentro: null });
 
 const TTL_MS = 45_000;
+// La copia vive únicamente en esta pestaña. No es una base persistente.
+const MAX_RESPALDO_MS = 24 * 60 * 60_000;
+pozo.estado ??= {
+  todo: { ultimoExito: null, ultimoError: null, respaldoDisponible: false },
+  centro: { ultimoExito: null, ultimoError: null, respaldoDisponible: false },
+};
+
 
 function urlDe(clave: "todo" | "centro"): string {
   return clave === "centro" ? "/api/news?modo=centro" : "/api/news";
@@ -45,8 +53,21 @@ function pedir(clave: "todo" | "centro"): Promise<unknown[]> {
       return r.json() as Promise<NoticiasRespuesta>;
     })
     .then((j) => {
-      pozo[clave] = { resp: j, ts: Date.now() };
-      return Array.isArray(j?.items) ? j.items : [];
+      // No sobrescribir un balde válido con una respuesta parcial o mal formada.
+      if (!j || !Array.isArray(j.items) || j.error) throw new Error("Respuesta de noticias inválida");
+      const ahora = Date.now();
+      pozo[clave] = { resp: j, ts: ahora };
+      pozo.estado![clave] = { ultimoExito: ahora, ultimoError: null, respaldoDisponible: false };
+      return j.items;
+    })
+    .catch((error: unknown) => {
+      const ahora = Date.now();
+      const anterior = pozo[clave];
+      const valido = anterior && ahora - anterior.ts <= MAX_RESPALDO_MS && Array.isArray(anterior.resp.items);
+      pozo.estado![clave] = { ultimoExito: anterior?.ts ?? null, ultimoError: ahora, respaldoDisponible: !!valido };
+      // No entregar datos antiguos como si fueran nuevos. El consumidor puede
+      // solicitar explícitamente el respaldo y rotular su fecha.
+      throw error;
     })
     .finally(() => {
       if (clave === "centro") pozo.vueloCentro = null; else pozo.vueloTodo = null;
@@ -79,4 +100,16 @@ export function noticiasEnCache(clave: "todo" | "centro" = "todo"): unknown[] | 
 /** El pulso de la Agencia (viaja en la respuesta del balde CENTRO). */
 export function pulsoCentro(): unknown {
   return pozo.centro?.resp?.pulso ?? null;
+}
+
+/** Diagnóstico para la interfaz: indica si existe respaldo y cuándo se obtuvo. */
+export function estadoNoticias(clave: "todo" | "centro" = "todo"): Readonly<EstadoFuente> {
+  return { ...pozo.estado![clave] };
+}
+
+/** Respaldo explícito y fechado; null si no existe o tiene más de 24 horas. */
+export function respaldoNoticias(clave: "todo" | "centro" = "todo"): { items: unknown[]; obtenidoEn: number } | null {
+  const anterior = pozo[clave];
+  if (!anterior || Date.now() - anterior.ts > MAX_RESPALDO_MS || !Array.isArray(anterior.resp.items)) return null;
+  return { items: anterior.resp.items, obtenidoEn: anterior.ts };
 }
