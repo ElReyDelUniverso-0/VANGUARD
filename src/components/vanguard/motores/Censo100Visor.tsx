@@ -107,10 +107,21 @@ export function Censo100Visor() {
             </div>
 
             <div className="mt-4 border-t border-zinc-800/80 pt-3 text-[11px]">
-              <div className="flex items-center justify-between text-zinc-500">
-                <span>Ruta en Vanguard:</span>
-                <span className="font-mono font-medium text-purple-400">
-                  {plat.analogiaVanguard}
+              <div className="flex items-start justify-between gap-2 text-zinc-500">
+                <span className="shrink-0">Ruta en Vanguard:</span>
+                {/* v436.9c · cada sala, su enlace. Antes era un texto suelto y el
+                    botón abría sólo la primera: «/armeria y /espia» dejaba la
+                    segunda sin puerta. */}
+                <span className="flex flex-wrap justify-end gap-1">
+                  {plat.analogiaVanguard.split(" y ").map((ruta) => (
+                    <Link
+                      key={ruta}
+                      href={ruta}
+                      className="rounded border border-purple-500/30 bg-purple-500/5 px-1.5 py-0.5 font-mono text-[10px] font-medium text-purple-300 transition hover:bg-purple-500/20"
+                    >
+                      {ruta}
+                    </Link>
+                  ))}
                 </span>
               </div>
               <div className="mt-2 flex items-center justify-between">
@@ -123,7 +134,7 @@ export function Censo100Visor() {
                   Sitio oficial ↗
                 </a>
                 <Link
-                  href={plat.analogiaVanguard.split(" ")[0]}
+                  href={plat.analogiaVanguard.split(" y ")[0]}
                   className="rounded bg-purple-500/10 px-2.5 py-1 font-mono text-[10px] font-bold text-purple-300 hover:bg-purple-500/20 border border-purple-500/30"
                 >
                   Abrir en Vanguard →

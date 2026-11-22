@@ -15,7 +15,7 @@ import { ORGANIZACIONES } from "@/lib/planeta/organizaciones";
 // ═══════════════════════════════════════════════════════════════════
 
 export const metadata: Metadata = {
-  title: "Comparador de países: población, PIB, renta, gasto militar y esperanza de vida | VANGUARD",
+  title: "Comparador de países: población, PIB, renta, gasto militar y esperanza de vida",
   description:
     "Compara hasta cuatro países cifra a cifra con datos del Banco Mundial: población, superficie, densidad, PIB, renta por habitante, gasto y esfuerzo militar y esperanza de vida, con su puesto mundial.",
   alternates: { canonical: `${SITE_URL}/comparador` },

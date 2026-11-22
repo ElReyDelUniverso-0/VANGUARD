@@ -17,7 +17,7 @@ import type { FilaPlaneta } from "@/lib/planeta/indicadores";
 // ═══════════════════════════════════════════════════════════════════
 
 export const metadata: Metadata = {
-  title: "Organizaciones internacionales: OTAN, UE, BRICS, OPEP, G20 y más, con su peso real | VANGUARD",
+  title: "Organizaciones internacionales: OTAN, UE, BRICS, OPEP, G20 y más, con su peso real",
   description:
     "Dieciséis organizaciones internacionales con sus miembros, su fuente oficial y lo que pesan juntas en población, PIB y gasto militar. Busca a qué bloques pertenece tu país.",
   alternates: { canonical: `${SITE_URL}/organizaciones` },

@@ -32,7 +32,7 @@ import { POR_ISO2 } from "@/lib/geo-paises";
 export const revalidate = 1800;
 
 export const metadata: Metadata = {
-  title: "Atlas de infraestructura mundial: aeropuertos, puertos, puentes, presas y grandes obras | VANGUARD",
+  title: "Atlas de infraestructura mundial: aeropuertos, puertos, puentes, presas y grandes obras",
   description:
     "Catálogo mundial de infraestructura civil documentada: aeropuertos, puertos, ferrocarril, puentes, túneles, centrales energéticas, presas, agua, educación, sanitaria y edificios emblemáticos. Cada obra con su categoría, su fecha, sus características y su fuente.",
   alternates: { canonical: `${SITE_URL}/infraestructura` },
