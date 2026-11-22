@@ -1,4 +1,4 @@
-# EL MERCADO DE VANGUARD · v437.2
+# EL MERCADO DE VANGUARD · v437.2 → v438.1 LA PLAZA VIVA
 
 > Orden del Dueño, textual: *«veo las 10 familias de Vanguard, ocupan mucho
 > espacio, la verdad. Haz que la presentación sea un módulo aparte donde se llame
@@ -147,3 +147,66 @@ en la vuelta y lleva campana en las dos entradas · que **la portada ya no pinta
 un asset de audio ni una imagen descargada en los mercaderes.
 
 En vivo: **`/mercado`**. Y en la portada, la franja de los diez toldos.
+
+---
+
+## 8 · v438.1 · LA PLAZA VIVA — lo que se sumó después
+
+El Dueño dijo «sigue» y «púlelo más, agrega más». Nada de lo anterior se tocó;
+todo lo que sigue se **suma**.
+
+### 8.1 · El pregón (`src/lib/mercado/pregon.ts`)
+
+Una cinta en la entrada que va soltando, puesto por puesto, lo que hay dentro:
+**diez líneas compuestas con los datos reales** (familia, mercader, oficio, lema
+y número de secciones) — no hay una frase publicitaria escrita a mano que la casa
+no pueda sostener. Cada línea lleva a **su** puesto (`/mercado#puesto-<id>`), pasa
+cada **7 s**, da la vuelta sin romperse y **se puede parar**. Con la casa en
+movimiento quieto, la cinta no gira: se lee entera, quieta.
+
+### 8.2 · La ronda
+
+«Dar una vuelta» abre los diez puestos en orden, **uno cada 4,5 s**, cada uno con
+su voz. Se para con su botón, con **Escape** o **tocando cualquier puesto**. Es
+una ayuda, no un tour obligatorio (regla del Dueño: no secuestrar la exploración).
+
+### 8.3 · La voz de los mercaderes
+
+Cada mercader tiene **su persona de la boca de la casa** (`lib/voz/decir`:
+locutora, analista, general, cronista). Solo habla si enciendes «que hablen» y si
+el sonido no está apagado; cerrar el puesto corta la voz; si el aparato no sabe
+hablar, el bocadillo de papel ya lo dice (la casa nunca finge que suena).
+
+### 8.4 · La cesta (`src/lib/mercado/cesta.ts`)
+
+En un mercado se echa a la cesta lo que quieres volver a ver: cada sección tiene
+su tecla «a la cesta», el contador vive en la barra y el panel de la cesta enlaza
+lo apuntado. Lógica **pura y probada**; se guarda en el aparato
+(`vg:mercado:v1`), **tira sola las rutas que ya no existen**, tiene tope de 24 y
+se vacía con un botón.
+
+### 8.5 · Enlace directo
+
+`/mercado#puesto-geografia` abre ese puesto. El enlace se puede **copiar** desde
+el mostrador, y los diez toldos de la portada llevan cada uno al suyo. Abrir un
+puesto **no recarga** la página (`history.replaceState`).
+
+### 8.6 · La plaza responde
+
+El puesto abierto manda y los demás se retiran un paso (y se recuperan al
+tocarlos). Con movimiento quieto no hay salud ni ronda girando: la plaza se queda
+quieta y sigue entera.
+
+### 8.7 · Comprobado en esta tanda
+
+```bash
+npx tsx tools/mercado/probar.mts          # 156 comprobaciones, 0 fallos
+npx tsx tools/interfaz/probar.mts         #  80 comprobaciones, 0 fallos
+npx tsx tools/descubrimiento/probar.mts   #  47 comprobaciones, 0 fallos
+```
+
+Lo nuevo que vigila la prueba: que el pregón diga el mercader, la familia y las
+secciones de cada puesto y que su enlace sea el de su puesto · que la ronda tenga
+reloj y se pueda parar · que el mercader use **su** persona y que cerrar corte la
+voz · que la cesta no acepte rutas inventadas, no duplique, respete el tope y
+sobreviva a un JSON roto · que el enlace directo abra el puesto sin recargar.

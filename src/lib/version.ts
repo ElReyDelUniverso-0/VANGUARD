@@ -7189,8 +7189,32 @@
 // antes de que cargue todo, aparezca el logo de Vanguard con sus símbolos y
 // diga fuerte VANGUARD con un sonido que lo caracterice; animaciones, el ojo y
 // más». Componente de servidor (components/intro) + sonido por código.
-export const APP_VERSION = "v438.0";
-export const APP_CODENAME = "LA ENTRADA";
+// (anterior) export const APP_VERSION = "v438.0";
+// (anterior) export const APP_CODENAME = "LA ENTRADA";
+// v438.1 · LA PLAZA VIVA — el mercado deja de ser un escaparate y se pone a
+// hablar: pregón, ronda, voz de los mercaderes, cesta y enlace directo.
+// ① EL PREGÓN (lib/mercado/pregon.ts): una cinta en la entrada que va soltando,
+//    puesto por puesto, lo que hay dentro —diez líneas compuestas con los datos
+//    reales (familia, mercader, oficio, lema y número de secciones)—. Cada línea
+//    lleva a SU puesto (#puesto-id), da la vuelta sin romperse y se puede parar.
+//    Con la casa en movimiento quieto, la cinta no gira: se lee entera, quieta.
+// ② LA RONDA: «dar una vuelta» abre los diez puestos en orden, uno cada 4,5 s,
+//    con su voz. Se para con su botón, con Escape o tocando cualquier puesto:
+//    es una ayuda, no un tour obligatorio (regla del Dueño: no secuestrar).
+// ③ LA VOZ DE LOS MERCADERES: cada uno con su persona de la boca de la casa
+//    (lib/voz/decir: locutora, analista, general, cronista). Solo habla si el
+//    piloto enciende «que hablen» y si el sonido no está apagado; cerrar el
+//    puesto corta la voz. Si el aparato no sabe hablar, el bocadillo ya lo dice.
+// ④ LA CESTA (lib/mercado/cesta.ts): apuntar secciones para volver a ellas.
+//    Lógica pura y probada; se guarda en el aparato (vg:mercado:v1), tira sola
+//    las rutas que ya no existen, tiene tope de 24 y se vacía con un botón.
+// ⑤ ENLACE DIRECTO: /mercado#puesto-geografia abre ese puesto; el enlace se
+//    puede copiar desde el mostrador y los diez toldos de la portada llevan cada
+//    uno al suyo. Abrir un puesto no recarga la página (history.replaceState).
+// ⑥ LA PLAZA RESPONDE: el puesto abierto manda y los demás se retiran un paso
+//    (se recuperan al tocarlos). 156 comprobaciones en tools/mercado/probar.mts.
+export const APP_VERSION = "v438.1";
+export const APP_CODENAME = "LA PLAZA VIVA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7262,8 +7286,9 @@ export const APP_CODENAME = "LA ENTRADA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v437.2"; // EL MERCADO DE VANGUARD
-// (anterior) export const APP_VERSION_ANTERIOR = "v437.1";
+export const APP_VERSION_ANTERIOR = "v438.0"; // LA ENTRADA
+// (anterior) export const APP_VERSION_ANTERIOR = "v437.2"; // EL MERCADO DE VANGUARD
+// (anterior) export const APP_VERSION_ANTERIOR = "v437.1"; // EL ESTUDIO EN TU IDIOMA
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.0"; // EL ESTUDIO EN TU IDIOMA
 // (anterior) export const APP_VERSION_ANTERIOR = "v435.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v420.2";

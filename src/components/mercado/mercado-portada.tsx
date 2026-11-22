@@ -26,12 +26,13 @@ export function MercadoPortada() {
         </p>
       </div>
 
+      {/* v438.1 · cada toldo abre ESE puesto en la plaza (#puesto-id) */}
       <ul className="mp-toldos">
         {PUESTOS.map((p) => (
           <li key={p.id}>
             <Link
               className="mp-toldo"
-              href={p.puerta}
+              href={`/mercado#puesto-${p.id}`}
               style={{ ["--mp-color" as string]: p.color } as CSSProperties}
               title={`${p.nombre} · ${p.personaje.nombre}, ${p.personaje.oficio}`}
             >
@@ -44,7 +45,8 @@ export function MercadoPortada() {
       <div className="mp-franja-pie">
         <p>
           Diez familias, diez puestos y un mercader en cada uno que enseña lo suyo, con todas sus
-          secciones. Con música propia de la plaza, si la quieres.
+          secciones. Pregón en la entrada, ronda guiada, cesta para apuntar y música propia de la
+          plaza, si la quieres.
         </p>
         <Link className="mp-entrar" href="/mercado">
           entrar al mercado →

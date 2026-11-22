@@ -617,3 +617,169 @@ html[data-vg-anim="desactivadas"] .pm-ecualizador i {
   .pm-secciones { grid-template-columns: 1fr; }
   .mp-toldos { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v438.1 · LA PLAZA VIVA — pregón, ronda, voz, cesta y enlace directo
+
+   Lo mismo de siempre: el color vivo en el papel, el oro y la madera para
+   todo lo demás. Nada de esto se superpone a lo pulsable: el pregón y la
+   cesta van en flujo normal, dentro de la plaza.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── el pregón: la cinta de la entrada ────────────────────────────────── */
+.pm-pregon {
+  max-width: 1180px;
+  margin: 0 auto 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--pm-linea);
+  border-left: 3px solid var(--pm-oro);
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(180deg, rgba(239, 227, 198, 0.03) 0 1px, transparent 1px 24px),
+    rgba(19, 16, 25, 0.82);
+}
+.pm-pregon-sello {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--pm-oro);
+  color: #241a14;
+  font: 700 9.5px/1.7 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.pm-pregon-txt {
+  flex: 1 1 320px;
+  min-width: 0;
+  color: var(--pm-lino);
+  font: 400 14px/1.45 Georgia, "Times New Roman", serif;
+  text-decoration: none;
+}
+.pm-pregon-txt:hover { color: var(--pm-oro); text-decoration: underline; text-underline-offset: 3px; }
+.pm-pregon-puntos { flex: none; display: inline-flex; gap: 4px; }
+.pm-pregon-puntos i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(239, 227, 198, 0.25);
+}
+.pm-pregon-puntos i.pm-on { background: var(--pm-oro); }
+.pm-pregon-freno {
+  flex: none;
+  padding: 5px 10px;
+  border: 1px solid var(--pm-linea);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(239, 227, 198, 0.72);
+  font: 600 11px/1 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+.pm-pregon-freno:hover:not(:disabled) { border-color: rgba(232, 197, 106, 0.55); color: var(--pm-oro); }
+.pm-pregon-freno:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── las teclas de la plaza (música, voz, ronda, cesta) ────────────────── */
+.pm-tecla {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid var(--pm-linea);
+  border-radius: 999px;
+  background: rgba(19, 16, 25, 0.9);
+  color: var(--pm-lino);
+  font: 600 12.5px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+}
+.pm-tecla:hover { border-color: rgba(232, 197, 106, 0.5); }
+.pm-tecla[aria-pressed="true"],
+.pm-tecla[aria-expanded="true"] {
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.2), rgba(232, 197, 106, 0.06));
+  border-color: rgba(232, 197, 106, 0.6);
+  color: #f7efd8;
+}
+.pm-tecla-mini { padding: 5px 10px; font-size: 11px; }
+.pm-cesta-tecla { font-variant-numeric: tabular-nums; }
+
+.pm-aviso {
+  max-width: 1180px;
+  margin: 0 auto 12px;
+  padding: 8px 12px;
+  border: 1px dashed var(--pm-linea);
+  border-radius: 8px;
+  font: 500 12.5px/1.5 ui-monospace, Menlo, monospace;
+  color: var(--pm-oro);
+  overflow-wrap: anywhere;
+}
+
+/* ── el puesto abierto manda; los demás se retiran un paso ────────────── */
+.pm-plaza.pm-con-abierto .pm-otro { opacity: 0.55; transition: opacity 180ms ease; }
+.pm-plaza.pm-con-abierto .pm-otro:hover,
+.pm-plaza.pm-con-abierto .pm-otro:focus-within { opacity: 1; }
+
+/* ── la cesta ─────────────────────────────────────────────────────────── */
+.pm-cesta {
+  max-width: 1180px;
+  margin: 20px auto 0;
+  padding: 16px;
+  border: 1px solid var(--pm-linea);
+  border-radius: 14px;
+  background: rgba(19, 16, 25, 0.86);
+  display: grid;
+  gap: 12px;
+}
+.pm-cesta-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pm-cesta-cab h3 {
+  margin: 0;
+  font: 700 16px/1.2 Georgia, "Times New Roman", serif;
+  color: var(--pm-lino);
+}
+.pm-cesta-acciones { display: inline-flex; align-items: center; gap: 8px; }
+.pm-cerrar-cesta { position: static; }
+.pm-cesta-vacia {
+  margin: 0;
+  font: 400 13px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: rgba(239, 227, 198, 0.7);
+}
+.pm-seccion-acciones { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.pm-cesta-btn,
+.pm-quitar {
+  padding: 5px 9px;
+  border: 1px solid rgba(239, 227, 198, 0.22);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(239, 227, 198, 0.75);
+  font: 600 10px/1.4 ui-monospace, Menlo, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.pm-cesta-btn:hover,
+.pm-quitar:hover { border-color: var(--pm-color, var(--pm-oro)); color: var(--pm-color, var(--pm-oro)); }
+.pm-cesta-btn[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--pm-color, #e8c56a) 22%, transparent);
+  border-color: var(--pm-color, var(--pm-oro));
+  color: #f7efd8;
+}
+
+.pm-bocadillo-pie { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.pm-bocadillo-pie .pm-tecla {
+  background: rgba(36, 26, 20, 0.08);
+  border-color: rgba(36, 26, 20, 0.25);
+  color: #3a2a18;
+}
+.pm-bocadillo-pie .pm-tecla:hover { border-color: #6b4a2a; color: #241a14; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pm-plaza.pm-con-abierto .pm-otro { transition: none; }
+}

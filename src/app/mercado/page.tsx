@@ -19,6 +19,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { MercadoCliente } from "@/components/mercado/mercado-cliente";
 import { PUESTOS, cifrasMercado, puestoDelDia } from "@/lib/mercado/puestos";
 import { DURACION_VUELTA, BPM } from "@/lib/mercado/musica";
+import { pregonDelDia } from "@/lib/mercado/pregon";
 
 export const metadata: Metadata = {
   title: "El mercado de Vanguard · las diez familias, puesto a puesto",
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
 export default function MercadoPage() {
   const cifras = cifrasMercado();
   const delDia = puestoDelDia();
+  const pregon = pregonDelDia();
 
   return (
     <main className="pm-pagina">
@@ -54,7 +56,7 @@ export default function MercadoPage() {
       <footer className="pm-pie">
         <span>
           Hoy atiende el puesto {delDia.numero} · {delDia.nombre}, con {delDia.personaje.nombre},{" "}
-          {delDia.personaje.oficio}.
+          {delDia.personaje.oficio}. Y el pregón de hoy dice: «{pregon.texto}»
         </span>
         <Link href="/mercado#plaza">volver a la plaza ↑</Link>
       </footer>

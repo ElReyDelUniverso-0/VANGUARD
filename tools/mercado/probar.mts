@@ -46,6 +46,24 @@ import {
   notasDeCompas,
   partitura,
 } from "@/lib/mercado/musica";
+import {
+  SEGUNDOS_PREGON,
+  pregonDe,
+  pregonDelDia,
+  pregones,
+} from "@/lib/mercado/pregon";
+import {
+  CLAVE_CESTA,
+  TOPE_CESTA,
+  alternarCesta,
+  cestaVacia,
+  contarCesta,
+  detalleCesta,
+  enCesta,
+  leerCesta,
+  sanearCesta,
+  textoCesta,
+} from "@/lib/mercado/cesta";
 import { EJES, EXPERIENCIAS } from "@/lib/experiencia/registro";
 import { ACCIONES, TODAS, firma, firmasUnicas } from "@/lib/sonido/acciones";
 import { NAV_PRIMARIO } from "@/lib/operacion/orden";
@@ -322,6 +340,95 @@ const css = lee("src/components/mercado/mercado.css");
 comprueba(css.includes("prefers-reduced-motion"), "el mercado respeta a quien pidió no moverse");
 comprueba(css.includes('data-vg-mov="quieto"'), "el mercado obedece la perilla de movimiento de la casa");
 comprueba((css.match(/!important/g) ?? []).length <= 6, "la piel no abusa de !important (solo para la quietud)");
+
+
+console.log("\n── ⑨ el pregón de la plaza ─────────────────────────────────────\n");
+
+const cinta = pregones();
+comprueba(cinta.length === 10, "el pregón tiene una línea por puesto");
+comprueba(new Set(cinta.map((x) => x.texto)).size === 10, "ninguna línea del pregón se repite");
+comprueba(
+  cinta.every((x) => PUESTOS.some((p) => p.id === x.puesto.id) && x.texto.includes(x.puesto.personaje.nombre)),
+  "cada línea dice el mercader de su puesto",
+);
+comprueba(
+  cinta.every((x) => x.texto.includes(x.puesto.nombre) && x.texto.includes(String(x.puesto.secciones.length))),
+  "cada línea dice la familia y cuántas secciones hay dentro",
+);
+comprueba(cinta.every((x) => x.href === `/mercado#puesto-${x.puesto.id}`), "cada línea lleva a SU puesto, no a la plaza");
+comprueba(cinta.every((x) => x.texto.length >= 40 && x.texto.length <= 190), "las líneas caben en una cinta, ni mudas ni ladrillos");
+comprueba(cinta.every((x) => !/[<>]/.test(x.texto)), "el pregón es texto, no marcado");
+comprueba(pregonDe(10).puesto.id === pregonDe(0).puesto.id, "el pregón da la vuelta");
+comprueba(pregonDe(-3).puesto.id === pregones()[7].puesto.id, "un índice negativo no rompe la cinta");
+comprueba(pregonDelDia(new Date(2026, 4, 2)).puesto.id === pregonDelDia(new Date(2026, 4, 2, 22, 30)).puesto.id, "el pregón del día aguanta el día entero");
+comprueba(SEGUNDOS_PREGON >= 5 && SEGUNDOS_PREGON <= 12, "el pregón da tiempo a leerlo (5–12 s por línea)");
+
+console.log("\n── ⑩ la cesta ──────────────────────────────────────────────────\n");
+
+const unaRuta = SECCIONES[0].href;
+const otraRuta = SECCIONES[1].href;
+comprueba(CLAVE_CESTA === "vg:mercado:v1", "la cesta vive en la clave de la casa (vg:mercado:v1)");
+comprueba(contarCesta(cestaVacia()) === 0, "la cesta empieza vacía");
+comprueba(contarCesta(alternarCesta(cestaVacia(), unaRuta)) === 1, "se puede echar una sección");
+comprueba(enCesta(alternarCesta(cestaVacia(), unaRuta), unaRuta), "y queda apuntada");
+comprueba(
+  contarCesta(alternarCesta(alternarCesta(cestaVacia(), unaRuta), unaRuta)) === 0,
+  "volver a tocarla la saca (la tecla es la misma)",
+);
+comprueba(
+  contarCesta(alternarCesta(alternarCesta(alternarCesta(cestaVacia(), unaRuta), unaRuta), unaRuta)) === 1,
+  "echar, sacar y volver a echar no duplica nada",
+);
+comprueba(
+  contarCesta(alternarCesta(alternarCesta(cestaVacia(), unaRuta), otraRuta)) === 2,
+  "dos secciones distintas caben las dos",
+);
+comprueba(contarCesta(alternarCesta(cestaVacia(), "/ruta-inventada")) === 0, "una ruta inventada no entra en la cesta");
+comprueba(sanearCesta(["no-es-una-cesta"]).secciones.length === 0, "basura guardada no se convierte en cesta");
+comprueba(sanearCesta(null).secciones.length === 0, "una cesta vacía de verdad no rompe nada");
+comprueba(leerCesta("{esto no es json").secciones.length === 0, "un JSON roto se lee como cesta vacía");
+comprueba(
+  leerCesta(textoCesta(alternarCesta(cestaVacia(), unaRuta))).secciones[0] === unaRuta,
+  "lo guardado y lo leído coinciden",
+);
+comprueba(
+  sanearCesta({ secciones: Array.from({ length: TOPE_CESTA + 10 }, (_, i) => SECCIONES[i % SECCIONES.length].href) })
+    .secciones.length <= TOPE_CESTA,
+  "la cesta tiene tope (no es un almacén)",
+);
+comprueba(detalleCesta(alternarCesta(cestaVacia(), unaRuta))[0].href === unaRuta, "la cesta se resuelve con su sección entera");
+comprueba(
+  detalleCesta(alternarCesta(cestaVacia(), unaRuta))[0].puestoNombre.length > 0,
+  "y dice de qué puesto es",
+);
+
+console.log("\n── ⑪ la plaza vive: pregón, ronda, voz, cesta y enlace ────────\n");
+
+comprueba(cliente.includes("pregonDe(") && cliente.includes("pregones()"), "la plaza pinta el pregón desde sus datos");
+comprueba(cliente.includes("setInterval") && cliente.includes("MS_RONDA"), "la ronda avanza con su propio reloj");
+comprueba(cliente.includes("darUnaVuelta") && cliente.includes("ronda"), "hay ronda y se puede parar");
+comprueba(cliente.includes('"Escape"'), "Escape para la ronda y cierra el puesto");
+comprueba(cliente.includes("decir(") && cliente.includes("personaje.voz"), "el mercader habla con SU persona de la casa");
+comprueba(cliente.includes("speechSynthesis"), "si el aparato no sabe hablar, se calla sin romperse");
+comprueba(cliente.includes("pararBoca"), "cerrar el puesto corta la voz");
+comprueba(cliente.includes("CLAVE_CESTA") && cliente.includes("localStorage"), "la cesta se guarda en el aparato");
+comprueba(cliente.includes("alternarCesta("), "la cesta usa la lógica pura, no una copia");
+comprueba(cliente.includes("clipboard") && cliente.includes("#puesto-"), "el enlace del puesto se puede copiar");
+comprueba(cliente.includes("location.hash") && cliente.includes("puesto-"), "un enlace directo abre su puesto al entrar");
+comprueba(cliente.includes("history.replaceState"), "abrir un puesto no recarga la página");
+comprueba(lee("src/components/mercado/mercado-portada.tsx").includes("/mercado#puesto-"), "los toldos de la portada abren su puesto");
+comprueba(lee("src/app/mercado/page.tsx").includes("pregonDelDia"), "la página cierra con el pregón del día");
+const cssViva = lee("src/components/mercado/mercado.css");
+for (const clase of ["pm-pregon", "pm-tecla", "pm-cesta", "pm-otro", "pm-aviso"]) {
+  comprueba(cssViva.includes(`.${clase}`), `la piel tiene ${clase}`);
+}
+comprueba(cssViva.includes(".pm-plaza.pm-con-abierto"), "el puesto abierto manda en la plaza");
+comprueba(
+  PUESTOS.every((p) => ["locutora", "analista", "general", "cronista"].includes(p.personaje.voz)),
+  "cada mercader tiene una persona de la boca de la casa",
+);
+comprueba(new Set(PUESTOS.map((p) => p.personaje.voz)).size >= 3, "no hablan los diez igual");
+comprueba(new Set(PUESTOS.map((p) => p.personaje.voz)).size <= 4, "y no se inventan personas que la casa no tiene");
 
 console.log(`\nRESULTADO: ${ok} comprobaciones, ${mal} fallos\n`);
 if (mal > 0) {

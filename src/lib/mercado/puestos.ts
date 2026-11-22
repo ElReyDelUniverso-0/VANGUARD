@@ -17,6 +17,8 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { EJES, EXPERIENCIAS, type Eje } from "@/lib/experiencia/registro";
+// solo el TIPO: la boca de la casa no entra en el paquete del mercado por esto
+import type { PersonaId } from "@/lib/voz/decir";
 
 /** La pieza que el mercader tiene entre las manos (se dibuja en personaje.tsx). */
 export type Pieza =
@@ -35,6 +37,8 @@ export type Mercader = {
   /** nombre de pila: el puesto no es un icono, es alguien que te atiende */
   nombre: string;
   oficio: string;
+  /** la persona de la boca de la casa con la que habla (lib/voz/decir) */
+  voz: PersonaId;
   /** lo primero que dice al abrir el puesto (en minúscula, sin gritar) */
   saludo: string;
   pieza: Pieza;
@@ -72,60 +76,70 @@ export type Puesto = {
 export const MERCADERES: Record<string, Mercader> = {
   actualidad: {
     nombre: "Nora",
+    voz: "locutora",
     oficio: "la pregonera",
     saludo: "¡Última hora, última hora! Lo que acaba de pasar, con su hora y su fuente.",
     pieza: "pregon",
   },
   geografia: {
     nombre: "Amílcar",
+    voz: "analista",
     oficio: "el cartógrafo",
     saludo: "El planeta entero cabe en esta mesa. Dime un país y te saco su ficha.",
     pieza: "globo",
   },
   historia: {
     nombre: "Elena",
+    voz: "cronista",
     oficio: "la archivista",
     saludo: "Cada papel de este cajón tiene institución y licencia. Nada entra sin procedencia.",
     pieza: "legajo",
   },
   ciencia: {
     nombre: "Teo",
+    voz: "analista",
     oficio: "el boticario",
     saludo: "Aquí no se vende humo: cada frasco trae su DOI o su arXiv, y dice cuánto se sabe.",
     pieza: "matraz",
   },
   datos: {
     nombre: "Rita",
+    voz: "analista",
     oficio: "la contable",
     saludo: "Todo número sale de la balanza con su año, su unidad y su fuente. Pesa antes de creer.",
     pieza: "balanza",
   },
   educacion: {
     nombre: "Ibo",
+    voz: "general",
     oficio: "el librero",
     saludo: "Pasa, pasa. Los cursos se prestan gratis y se devuelven sabiendo algo más.",
     pieza: "libro",
   },
   simulacion: {
     nombre: "Kilombo",
+    voz: "general",
     oficio: "el titiritero",
     saludo: "Mueve tú los hilos: el mundo de esta maqueta hace lo que le pidas, y lo dice.",
     pieza: "maqueta",
   },
   narrativa: {
     nombre: "Vera",
+    voz: "locutora",
     oficio: "la cuentacuentos",
     saludo: "Siéntate. Esto se cuenta despacio, con su autor y su licencia a la vista.",
     pieza: "camara",
   },
   investigacion: {
     nombre: "Sergio",
+    voz: "cronista",
     oficio: "el detective",
     saludo: "Traigo la pregunta, no la respuesta. Lo que no está confirmado, lo digo.",
     pieza: "lupa",
   },
   mundos: {
     nombre: "Aurelio",
+    voz: "cronista",
     oficio: "el alfarero",
     saludo: "El barro es tuyo: lo que hagas aquí también pasa a ser parte de la casa.",
     pieza: "torno",
@@ -181,6 +195,7 @@ export const PUESTOS: Puesto[] = EJES.map((eje) => {
     personaje: MERCADERES[eje.id] ?? {
       nombre: "El mercader",
       oficio: "de este puesto",
+      voz: "locutora",
       saludo: "Pasa y mira lo que hay.",
       pieza: "libro",
     },
