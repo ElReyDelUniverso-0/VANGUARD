@@ -54,8 +54,8 @@ import {
 } from "@/lib/mercado/cesta";
 import { desbloquearSonido, suena, suenaNotas } from "@/lib/sonido/tocar";
 import { EVENTO, debeAnimar, leer, sistemaQuieto } from "@/lib/interfaz/vivo";
-import { decir, pararBoca } from "@/lib/voz/decir";
-import { Personaje } from "./personaje";
+import { decir, leerGustos, pararBoca } from "@/lib/voz/decir";
+import { Emblema } from "./emblema";
 
 const estiloDe = (p: Puesto) =>
   ({ ["--pm-color" as string]: p.color, ["--pm-hondo" as string]: p.hondo }) as CSSProperties;
@@ -102,7 +102,7 @@ function Tarjeta({
         <span className="pm-etiqueta">{p.secciones.length} secc.</span>
         <span className="pm-lona">
           <span className="pm-farol" aria-hidden />
-          <Personaje nombre={p.personaje.nombre} pieza={p.personaje.pieza} color={p.color} semilla={Number(p.numero)} />
+          <Emblema tipo={p.agente.emblema} color={p.color} nombre={p.agente.nombre} />
         </span>
         <span className="pm-letrero">
           <strong>{p.nombre}</strong>
@@ -110,7 +110,7 @@ function Tarjeta({
         </span>
         <span className="pm-pie-puesto">
           <span className="pm-mercader">
-            <em>{p.personaje.nombre}</em>, {p.personaje.oficio}
+            <em>{p.agente.codigo}</em> · {p.agente.oficio}
           </span>
           <span className="pm-ver">{abierto ? "cerrar" : "abrir"}</span>
         </span>
@@ -129,7 +129,7 @@ export function MercadoCliente({ version }: { version?: string }) {
   const [delDia, setDelDia] = useState<string | null>(null);
   const [cesta, setCesta] = useState<Cesta>(cestaVacia);
   const [verCesta, setVerCesta] = useState(false);
-  const [voz, setVoz] = useState(false);
+  const [voz, setVoz] = useState(true);
   const [ronda, setRonda] = useState<number | null>(null);
   const [pregon, setPregon] = useState(0);
   const [pregonPausa, setPregonPausa] = useState(false);
@@ -244,8 +244,11 @@ export function MercadoCliente({ version }: { version?: string }) {
   useEffect(() => {
     if (!puesto || !voz || !sonidoVivo()) return;
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    decir(`${puesto.personaje.nombre}, ${puesto.personaje.oficio}. ${puesto.personaje.saludo}`, {
-      persona: puesto.personaje.voz,
+    // voz gruesa, de respeto: la persona más baja de la casa y el tono todavía
+    // más abajo (0,70), sin prisa. Es el agente el que habla, no un locutor.
+    decir(`${puesto.agente.nombre}. ${puesto.agente.oficio}. ${puesto.agente.saludo}`, {
+      persona: puesto.agente.voz,
+      gustos: { ...leerGustos(), pitch: 0.7, rate: 0.86 },
     });
     return () => pararBoca();
   }, [puesto, voz, sonidoVivo]);
@@ -376,12 +379,19 @@ export function MercadoCliente({ version }: { version?: string }) {
         <span className="pm-arco-rotulo">mercado</span>
       </div>
 
+      {/* la tira de luces de la feria: veinticuatro bombillas que parpadean */}
+      <div className="pm-luces" aria-hidden>
+        {Array.from({ length: 24 }, (_, i) => (
+          <i key={i} style={{ ["--i" as string]: i } as CSSProperties} />
+        ))}
+      </div>
+
       <header className="pm-cabecera">
         <p className="pm-volanta">puesto a puesto · familia a familia</p>
-        <h2 className="pm-titulo">El mercado de Vanguard</h2>
+        <h2 className="pm-titulo">La feria de Vanguard</h2>
         <p className="pm-sub">
-          Diez puestos, diez mercaderes y todas las secciones de cada familia. Abre un puesto y su
-          mercader te enseña lo que vende. Todo lo que se oye aquí es de la casa y se puede callar.
+          Diez puestos, diez agentes de la casa y todas las secciones de cada familia. Abre un puesto
+          y su agente te enseña lo que guarda. Todo lo que se oye aquí es de la casa y se puede callar.
         </p>
 
         <ul className="pm-vivo" aria-label="La plaza en cifras">
@@ -391,7 +401,7 @@ export function MercadoCliente({ version }: { version?: string }) {
           </li>
           <li>
             <strong>{cifras.mercaderes}</strong>
-            <span>mercaderes</span>
+            <span>agentes</span>
           </li>
           <li>
             <strong>{cifras.secciones}</strong>
@@ -419,8 +429,8 @@ export function MercadoCliente({ version }: { version?: string }) {
                     onClick={() => suena("moneda")}
                     tabIndex={vuelta === 1 ? -1 : undefined}
                   >
-                    <b style={{ color: x.puesto.color }}>¡{x.puesto.nombre}!</b> {x.puesto.personaje.nombre},{" "}
-                    {x.puesto.personaje.oficio} — {x.puesto.secciones.length} secciones
+                    <b style={{ color: x.puesto.color }}>¡{x.puesto.nombre}!</b> {x.puesto.agente.codigo},{" "}
+                    {x.puesto.agente.oficio} — {x.puesto.secciones.length} secciones
                   </Link>
                 ))}
               </span>
@@ -477,7 +487,7 @@ export function MercadoCliente({ version }: { version?: string }) {
           </button>
 
           <button type="button" className="pm-tecla" aria-pressed={voz} onClick={alternarVoz}>
-            {voz ? "los mercaderes hablan" : "que hablen"}
+            {voz ? "voces graves · sí" : "voces graves · no"}
           </button>
 
           <button type="button" className="pm-tecla pm-cesta-tecla" aria-expanded={verCesta} onClick={() => setVerCesta((v) => !v)}>
@@ -594,18 +604,12 @@ export function MercadoCliente({ version }: { version?: string }) {
             </button>
 
             <div className="pm-ficha">
-              <Personaje
-                nombre={puesto.personaje.nombre}
-                pieza={puesto.personaje.pieza}
-                color={puesto.color}
-                semilla={Number(puesto.numero)}
-                saluda={montado && !quieto}
-              />
+              <Emblema tipo={puesto.agente.emblema} color={puesto.color} nombre={puesto.agente.nombre} encendida={montado} />
               <div className="pm-bocadillo">
                 <p className="pm-quien">
-                  Puesto {puesto.numero} · {puesto.personaje.nombre}, {puesto.personaje.oficio}
+                  Puesto {puesto.numero} · {puesto.agente.nombre}
                 </p>
-                <p>{puesto.personaje.saludo}</p>
+                <p>{puesto.agente.saludo}</p>
                 <p className="pm-bocadillo-pie">
                   <button type="button" className="pm-tecla pm-tecla-mini" onClick={copiarEnlace}>
                     copiar el enlace del puesto
@@ -679,7 +683,7 @@ export function MercadoCliente({ version }: { version?: string }) {
           </section>
         ) : (
           <p className="pm-vacio pm-vacio-grande">
-            Toca un toldo y el mercader te atiende. O pulsa <strong>dar una vuelta</strong> y la
+            Toca un toldo y el agente te atiende. O pulsa <strong>dar una vuelta</strong> y la
             plaza te enseña los diez puestos en orden, uno por uno.
           </p>
         )}

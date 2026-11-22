@@ -279,3 +279,75 @@ existan en el código y en la piel · que la marquesina desfile de verdad
 (`@keyframes pm-desfila`) y se pare al pasar el ratón · que el toldo, el farolillo
 y el mercader respondan · que los papelitos no tapen nada · que la quietud apague
 **todo** lo que se mueve · que la franja de la portada tenga toldo y pregón.
+
+---
+
+## 10 · v439.3 — LA FERIA DE LOS AGENTES
+
+### 10.1 · Lo que pidió el Dueño, textual
+
+> «Mercado: cámbialo; por personaje, por los logos de Vanguard —el ojo, la V, los
+> mapas, etc.— y que sea un lugar como una feria, una música feliz con luces
+> parpadeando; y los personajes como de Vanguard, sus logos: el ojo, la V, los
+> mapas… Y nada de lo que dices está en Vanguard: despliega bien. Pero antes,
+> mejóralas. Y las voces hazlas tú, gruesas, serias, de respeto, y nombres de
+> agentes.»
+
+Se lee en cuatro mandatos: **emblemas** en vez de mercaderes de dibujo,
+**feria** con **música feliz** y **luces parpadeando**, **voces gruesas** de la
+casa, y **comprobar el despliegue** de verdad.
+
+### 10.2 · Los diez agentes
+
+| Puesto | Agente | Emblema de Vanguard |
+| --- | --- | --- |
+| actualidad | AGENTE 01 · EL OJO | el ojo |
+| geografía | AGENTE 02 · LA CARTA | el mapa con su pin |
+| historia | AGENTE 03 · EL SELLO | el sello con la V |
+| ciencia | AGENTE 04 · EL ÁTOMO | tres órbitas |
+| datos | AGENTE 05 · LA CUENTA | las barras |
+| educación | AGENTE 06 · EL LIBRO | el libro abierto |
+| simulación | AGENTE 07 · EL ORBE | el orbe con meridianos |
+| narrativa | AGENTE 08 · LA ONDA | la onda |
+| investigación | AGENTE 09 · LA LUPA | la lupa |
+| mundos | AGENTE 10 · LA V | la V de la casa |
+
+`AGENTES` sustituye a los viejos mercaderes; `MERCADERES` queda como alias para
+no romper a nadie. **Se retira `personaje.tsx`** y entra `emblema.tsx`: diez
+medallas dibujadas en SVG, con pie de madera y orla de doce bombillas que
+parpadean fuera de fase. La portada repite el emblema en miniatura sobre el toldo.
+
+### 10.3 · Música feliz de feria
+
+`musica.ts` sube de 100 a **120 pulsos** (compás de 2 s, vuelta de 16 s) y pasa
+de contradanza a feria: dos voces, **bajo de madera a dos tiempos** (el om-pa),
+acorde en los tiempos flojos, **pandereta en las corcheas** y **campana en cada
+compás**, más alta al entrar las dos frases (compases 1 y 5). Ganancias por
+debajo de 0,03. Sigue sin sonar sola y se apaga con el botón de la casa.
+
+### 10.4 · Luces que parpadean
+
+Dos capas: la **orla de bombillas** de cada medalla (`pm-bombilla`, 1,9 s, 0,85 s
+con el puesto abierto o bajo el ratón) y la **tira de veinticuatro bombillas**
+que cruza la plaza bajo el arco (`pm-luces`, oro, cian y rosa, con retardo por
+bombilla). Con `prefers-reduced-motion` o con la casa en quietud, se quedan
+encendidas y quietas: la feria no se apaga, deja de parpadear.
+
+### 10.5 · Voces gruesas, de respeto
+
+Los diez agentes hablan con la persona más grave de la casa (`general`) forzada
+a **pitch 0,70** y **rate 0,86**: tono bajo, sin prisa. Y las voces vienen
+**encendidas**, porque el Dueño las pidió; el botón del dock sigue diciendo
+«voces graves · sí» y se apaga con un toque.
+
+### 10.6 · Comprobado
+
+```bash
+npx tsx tools/mercado/probar.mts          # 193 comprobaciones, 0 fallos
+npx tsx tools/interfaz/probar.mts         #  80 comprobaciones, 0 fallos
+npx tsx tools/descubrimiento/probar.mts   #  47 comprobaciones, 0 fallos
+```
+
+Y después, contra producción: se pide `/mercado`, se exige **200** y se busca la
+marca de versión en el HTML servido. No se dice «está desplegado» sin haberlo
+visto.

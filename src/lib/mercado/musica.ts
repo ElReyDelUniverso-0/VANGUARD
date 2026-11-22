@@ -1,14 +1,12 @@
 // ═══════════════════════════════════════════════════════════════════
-// v437.2 · LA MÚSICA DE LA PLAZA — una contradanza que se queda
+// v439.2 · LA MÚSICA DE LA FERIA — alegre, con campanas y a 120
 //
-// Orden del Dueño: «con una música clásica sencilla y que se te quede en la
-// cabeza». Esto es lo que hay aquí: una contradanza compuesta en la casa, en
-// Do mayor, de ocho compases, con la melodía en triángulo, el bajo de madera
-// en los pulsos 1 y 3 (contrabajo de plaza) y una campana en las dos entradas
-// —lo que hace que el oído sepa que la vuelta empieza otra vez—.
-//
-// El gancho está en los compases 4 y 8: Do5 · Sol4 · Mi4 · Do4, y el remate
-// Do5 · Sol4 · Do5. Es corto a propósito: se tararea en una vuelta.
+// El Dueño, textual: «que sea un lugar como una feria, una música feliz con
+// luces parpadeando». La contradanza tranquila de v437.2 se queda como estaba
+// en el corazón (la melodía sigue pegada) pero se sube a **120 pulsos**, se le
+// añade **segunda voz**, **bajo a dos tiempos** (el «om-pa» de feria), un
+// acorde en los tiempos flojos, una **campana en cada compás** y una pandereta
+// en las corcheas. La vuelta dura 16 s y vuelve a empezar.
 //
 // REGLAS DE LA CASA QUE ESTA MÚSICA RESPETA:
 //   · Sin assets: no hay mp3, ni wav, ni URL. Se sintetiza con lib/sound.ts.
@@ -20,16 +18,16 @@
 
 import type { NotaVoz } from "@/lib/sound";
 
-/** Pulsos por minuto. A 100, el pulso dura 0,6 s y un compás de 4/4 dura 2,4 s. */
-export const BPM = 100;
+/** Pulsos por minuto. A 120, el pulso dura 0,5 s y un compás de 4/4 dura 2 s. */
+export const BPM = 120;
 export const PULSOS_POR_COMPAS = 4;
 /** Segundos que dura un pulso. */
 export const SEGUNDO_POR_PULSO = 60 / BPM;
-/** Segundos que dura un compás (2,4 s). */
+/** Segundos que dura un compás (2 s). */
 export const DURACION_COMPAS = PULSOS_POR_COMPAS * SEGUNDO_POR_PULSO;
 /** Compases de la vuelta. */
 export const TOTAL_COMPASES = 8;
-/** Lo que tarda la contradanza en volver a empezar (19,2 s). */
+/** Lo que tarda la feria en volver a empezar (16 s). */
 export const DURACION_VUELTA = TOTAL_COMPASES * DURACION_COMPAS;
 
 const SEMITONOS: Record<string, number> = {
@@ -55,8 +53,7 @@ const SEMITONOS: Record<string, number> = {
 export function hz(nombre: string): number {
   const m = /^(Do|Re|Mi|Fa|Sol|La|Si)(#?)(-?\d)$/.exec((nombre || "").trim());
   if (!m) return 440;
-  // La4 = 440 Hz es el ancla: el semitono 0 es La, no Do. Con esto Do4 sale
-  // 261,63 y Do5 523,25 — las cuentas de verdad, no un número a ojo.
+  // La4 = 440 Hz es el ancla: el semitono 0 es La, no Do.
   const semis = (SEMITONOS[`${m[1]}${m[2]}`] ?? 9) + (Number(m[3]) - 4) * 12 - 9;
   return Math.round(440 * Math.pow(2, semis / 12) * 100) / 100;
 }
@@ -65,23 +62,22 @@ export function hz(nombre: string): number {
 type Golpe = [string, number];
 
 /**
- * La melodía, compás a compás. Cuatro negras por compás salvo donde la frase
- * pide aire (compás 2 y 8): el fraseo es lo que la vuelve cantable.
+ * La melodía, compás a compás: negras y corcheas, saltarina, en Do mayor.
+ * El gancho sigue en el compás 4 (Do5 · Sol4 · Mi4 · Do4) y remata en el 8.
  */
 const MELODIA: Golpe[][] = [
-  [["Do5", 1], ["La4", 1], ["Sol4", 1], ["Mi4", 1]],
-  [["Sol4", 1.5], ["Mi4", 0.5], ["Do4", 2]],
-  [["Re5", 1], ["Si4", 1], ["Sol4", 1], ["Re4", 1]],
+  [["Do5", 0.5], ["Sol4", 0.5], ["Mi4", 0.5], ["Sol4", 0.5], ["Do5", 1], ["Mi5", 1]],
+  [["Re5", 0.5], ["Si4", 0.5], ["Sol4", 1], ["Re5", 1], ["Si4", 1]],
+  [["Mi5", 0.5], ["Do5", 0.5], ["Sol4", 1], ["Do5", 1], ["Mi5", 1]],
   [["Do5", 1], ["Sol4", 1], ["Mi4", 1], ["Do4", 1]],
-  [["Mi4", 1], ["Sol4", 1], ["Do5", 1], ["Sol4", 1]],
-  [["Fa4", 1], ["La4", 1], ["Do5", 1], ["La4", 1]],
-  [["Re5", 1], ["Si4", 1], ["Sol4", 1], ["Si4", 1]],
-  [["Do5", 2], ["Sol4", 1], ["Do5", 1]],
+  [["Fa4", 0.5], ["La4", 0.5], ["Do5", 1], ["La4", 1], ["Fa4", 1]],
+  [["Sol4", 0.5], ["Si4", 0.5], ["Re5", 1], ["Si4", 1], ["Sol4", 1]],
+  [["Mi5", 0.5], ["Re5", 0.5], ["Do5", 0.5], ["Si4", 0.5], ["Do5", 2]],
+  [["Do5", 1], ["Sol4", 1], ["Do5", 1], ["Mi5", 1]],
 ];
 
-/** El bajo, por compás: [pulso 1, pulso 3]. Fundamental y quinta. */
+/** El bajo a dos tiempos: [pulso 1, pulso 3]. Fundamental y quinta. */
 const BAJOS: [string, string][] = [
-  ["Do3", "Sol3"],
   ["Do3", "Sol3"],
   ["Sol3", "Re4"],
   ["Do3", "Sol3"],
@@ -89,12 +85,25 @@ const BAJOS: [string, string][] = [
   ["Fa3", "Do4"],
   ["Sol3", "Re4"],
   ["Do3", "Sol3"],
+  ["Do3", "Sol3"],
+];
+
+/** El acorde de los tiempos flojos (2 y 4): el «pa» del om-pa. */
+const ACORDES: string[][] = [
+  ["Mi4", "Do5"],
+  ["Re4", "Si4"],
+  ["Mi4", "Sol4"],
+  ["Mi4", "Do5"],
+  ["La4", "Fa4"],
+  ["Si4", "Re5"],
+  ["Sol4", "Si4"],
+  ["Mi4", "Sol4"],
 ];
 
 /** El grado de cada compás, para poder leer la armonía en pantalla. */
-const GRADOS = ["I", "I", "V", "I", "I", "IV", "V", "I"];
+const GRADOS = ["I", "V", "I", "I", "IV", "V", "I", "I"];
 
-/** La vuelta va de Do3 a Do5: ni un extremo, ni un chillido. */
+/** La vuelta va de Do3 a Mi5: ni un extremo, ni un chillido. */
 export const TECHO_HZ = 1200;
 export const SUELO_HZ = 80;
 
@@ -102,22 +111,22 @@ function dentroDeRango(f: number): number {
   return Math.max(SUELO_HZ, Math.min(TECHO_HZ, f));
 }
 
-/** Un compás, con sus notas puestas en su sitio dentro del compás. */
+/** Un compás, con todas sus voces puestas en su sitio. */
 export function notasDeCompas(indice: number): NotaVoz[] {
   const i = ((Math.trunc(indice) % TOTAL_COMPASES) + TOTAL_COMPASES) % TOTAL_COMPASES;
   const melodia = MELODIA[i];
   const bajo = BAJOS[i];
+  const acorde = ACORDES[i];
   const notas: NotaVoz[] = [];
 
-  // la melodía — triángulo, con un poco de sala: suena a caja de música grande
+  // la melodía — triángulo, con un poco de sala: caja de música de feria
   let pulso = 0;
   for (const [nombre, largos] of melodia) {
-    const f = dentroDeRango(hz(nombre));
     notas.push({
       tipo: "tono",
-      f,
-      d: Math.max(0.14, largos * SEGUNDO_POR_PULSO * 0.9),
-      g: 0.024,
+      f: dentroDeRango(hz(nombre)),
+      d: Math.max(0.12, largos * SEGUNDO_POR_PULSO * 0.88),
+      g: 0.026,
       cuando: pulso * SEGUNDO_POR_PULSO,
       onda: "triangle",
       verb: 0.12,
@@ -125,17 +134,30 @@ export function notasDeCompas(indice: number): NotaVoz[] {
     pulso += largos;
   }
 
-  // el bajo — madera: dos golpes, pulsos 1 y 3
-  notas.push({ tipo: "madera", f: dentroDeRango(hz(bajo[0])), d: 0.5, g: 0.03, cuando: 0 });
-  notas.push({ tipo: "madera", f: dentroDeRango(hz(bajo[1])), d: 0.45, g: 0.026, cuando: 2 * SEGUNDO_POR_PULSO });
+  // el bajo del om-pa — madera: pulsos 1 y 3
+  notas.push({ tipo: "madera", f: dentroDeRango(hz(bajo[0])), d: 0.42, g: 0.03, cuando: 0 });
+  notas.push({ tipo: "madera", f: dentroDeRango(hz(bajo[1])), d: 0.38, g: 0.026, cuando: 2 * SEGUNDO_POR_PULSO });
 
-  // la pandereta de la plaza — en los pulsos 2 y 4, y muy por debajo
-  for (const p of [1, 3]) notas.push({ tipo: "ruido", d: 0.05, g: 0.007, cuando: p * SEGUNDO_POR_PULSO });
-
-  // la campana de la entrada: compases 1 y 5 (los dos arranques de frase)
-  if (i === 0 || i === 4) {
-    notas.push({ tipo: "campana", f: dentroDeRango(hz(i === 0 ? "Do5" : "Mi5")), d: 0.8, g: 0.018, cuando: 0 });
+  // el «pa»: acorde corto en los tiempos flojos, muy por debajo
+  for (const p of [1, 3]) {
+    for (const n of acorde) {
+      notas.push({ tipo: "tono", f: dentroDeRango(hz(n)), d: 0.16, g: 0.012, cuando: p * SEGUNDO_POR_PULSO, onda: "square", verb: 0.06 });
+    }
   }
+
+  // la pandereta de feria: corcheas, dos niveles
+  for (let c = 0; c < PULSOS_POR_COMPAS * 2; c++) {
+    notas.push({ tipo: "ruido", d: 0.035, g: c % 2 === 0 ? 0.005 : 0.003, cuando: (c * SEGUNDO_POR_PULSO) / 2 });
+  }
+
+  // la campana: una por compás, más alta en la entrada de cada frase
+  notas.push({
+    tipo: "campana",
+    f: dentroDeRango(hz(i === 0 || i === 4 ? "Do5" : i % 2 === 0 ? "Sol5" : "Mi5")),
+    d: i === 0 || i === 4 ? 0.7 : 0.45,
+    g: i === 0 || i === 4 ? 0.02 : 0.013,
+    cuando: 0,
+  });
 
   return notas;
 }
@@ -162,5 +184,5 @@ export function nombreDeGrado(indice: number): string {
   return GRADOS[i] ?? "I";
 }
 
-/** Cuántas notas suenan en una vuelta (la prueba lo usa como medida). */
+/** Cuántas notas suenan en una vuelta. */
 export const NOTAS_POR_VUELTA = melodiaCompleta().length;

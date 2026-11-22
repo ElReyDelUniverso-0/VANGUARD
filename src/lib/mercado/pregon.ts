@@ -27,7 +27,7 @@ export type Pregon = {
 /** Las diez líneas del pregón, derivadas de los puestos (nada escrito a mano). */
 export function pregones(): Pregon[] {
   return PUESTOS.map((p) => ({
-    texto: `¡${p.nombre}! ${p.personaje.nombre}, ${p.personaje.oficio}: ${p.lema.toLowerCase()} — ${p.secciones.length} secciones abiertas.`,
+    texto: `¡${p.nombre}! ${p.agente.codigo}, ${p.agente.oficio}: ${p.lema.toLowerCase()} — ${p.secciones.length} secciones abiertas.`,
     puesto: p,
     href: `/mercado#puesto-${p.id}`,
   }));

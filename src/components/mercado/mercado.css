@@ -1244,3 +1244,98 @@ html[data-vg-anim="desactivadas"] .pm-pregon-cinta {
   .mp-toldo-grande { height: 22px; }
   .mp-pregon b { font-size: 14.5px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v439.2 · LA FERIA — emblemas de Vanguard y luces parpadeando
+   Orden del Dueño: «por personaje, por los logos de Vanguard (el ojo, la V,
+   los mapas…) y que sea como una feria, con luces parpadeando».
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* la medalla con el emblema */
+.pm-emblema {
+  width: 112px;
+  height: 140px;
+  display: block;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.5));
+}
+.pm-bombilla {
+  animation: pm-parpadea 1.9s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes pm-parpadea {
+  0%, 100% { opacity: 0.22; }
+  45% { opacity: 1; }
+  60% { opacity: 0.55; }
+}
+/* encendida (puesto abierto) o bajo el ratón: parpadea más vivo */
+.pm-emblema-on .pm-bombilla,
+.pm-puesto:hover .pm-bombilla {
+  animation-duration: 0.85s;
+}
+
+/* la tira de luces de la feria, de lado a lado */
+.pm-luces {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 4px 0 16px;
+  padding: 0 2px;
+  height: 26px;
+  border-top: 2px solid rgba(232, 197, 106, 0.35);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+}
+.pm-luces i {
+  width: 9px;
+  height: 11px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 30%, #fff8dd, var(--pm-oro) 60%, #8a6a24);
+  box-shadow: 0 0 12px 3px rgba(232, 197, 106, 0.6);
+  animation: pm-parpadea 1.7s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -0.09s);
+}
+.pm-luces i:nth-child(3n) {
+  background: radial-gradient(circle at 40% 30%, #e8fbff, #5de6f7 60%, #1c6b7a);
+  box-shadow: 0 0 12px 3px rgba(93, 230, 247, 0.55);
+}
+.pm-luces i:nth-child(4n) {
+  background: radial-gradient(circle at 40% 30%, #ffe6f2, #f472b6 60%, #7a2448);
+  box-shadow: 0 0 12px 3px rgba(244, 114, 182, 0.5);
+}
+
+/* la feria, más viva: fondo con más luz y toldos que ya no son planos */
+.pm-pagina {
+  background:
+    radial-gradient(900px 420px at 50% -10%, rgba(232, 197, 106, 0.16), transparent 70%),
+    radial-gradient(600px 320px at 12% 20%, rgba(93, 230, 247, 0.1), transparent 70%),
+    radial-gradient(600px 320px at 88% 30%, rgba(244, 114, 182, 0.1), transparent 70%),
+    var(--pm-noche);
+}
+.pm-titulo { text-shadow: 0 0 26px rgba(232, 197, 106, 0.25); }
+
+/* el emblema de la portada, pequeño, dentro del toldo */
+.mp-toldo-emblema { width: 30px; height: 38px; margin: 0 auto -6px; filter: none; }
+.mp-toldo { padding-top: 8px; }
+.mp-toldo span { margin-top: 2px; }
+
+/* quietud: las luces se quedan encendidas y quietas */
+@media (prefers-reduced-motion: reduce) {
+  .pm-bombilla,
+  .pm-luces i { animation: none !important; opacity: 0.85; }
+}
+html[data-vg-mov="quieto"] .pm-bombilla,
+html[data-vg-mov="quieto"] .pm-luces i,
+html[data-vg-anim="desactivadas"] .pm-bombilla,
+html[data-vg-anim="desactivadas"] .pm-luces i {
+  animation: none !important;
+  opacity: 0.85;
+}
+
+@media (max-width: 760px) {
+  .pm-emblema { width: 84px; height: 105px; }
+  .pm-luces i { width: 7px; height: 9px; }
+  .pm-luces i:nth-child(2n) { display: none; }
+  .mp-toldo-emblema { width: 22px; height: 28px; }
+}

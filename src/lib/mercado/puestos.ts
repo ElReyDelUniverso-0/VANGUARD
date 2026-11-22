@@ -1,47 +1,55 @@
 // ═══════════════════════════════════════════════════════════════════
-// v437.2 · LOS PUESTOS DEL MERCADO — una familia, un puesto, un mercader
+// v439.2 · LOS PUESTOS DE LA FERIA — un agente y un emblema por familia
 //
-// Orden del Dueño: «las 10 familias ahora son todos los módulos de Vanguard;
-// haz que la presentación sea un módulo aparte, El Mercado de Vanguard, con
-// estética de mercado, cada módulo con un personaje que lo presente, y que se
-// enseñe cada módulo perfectamente con sus secciones».
+// Cambio de rumbo del Dueño, textual: «mercado: cámbialo; por personaje, por
+// los logos de Vanguard — el ojo, la V, los mapas, etc. — y que sea un lugar
+// como una feria, con música feliz y luces parpadeando; y las voces hazlas tú,
+// voces gruesas, sería de respeto, y nombre de agentes».
 //
-// QUÉ ES ESTE FICHERO: datos puros (sin React, sin DOM) para que el mercado se
-// pueda probar en node. No escribe ni una ruta a mano: lee la fuente única de
-// las familias (`lib/experiencia/registro`) y le añade lo único que aquí es
-// escritura propia — el mercader de cada puesto.
+// Así que aquí ya no hay mercaderes de dibujo: hay DIEZ AGENTES de la casa
+// (AGENTE 01 … AGENTE 10) y cada uno lleva delante su EMBLEMA —una pieza de la
+// identidad de Vanguard: el ojo, la carta, el sello, el átomo, la cuenta, el
+// libro, el orbe, la onda, la lupa y la V—. El nombre y el oficio son los de la
+// casa; el emblema se dibuja en `components/mercado/emblema.tsx`.
 //
-// REGLA: `EMPLEADOS` tiene que cubrir los diez ejes. La prueba del mercado
-// falla si falta un mercader, si dos comparten nombre, oficio, pieza o saludo,
-// o si una sección apunta a una ruta que no existe en `src/app`.
+// Lo demás sigue siendo verdad y no se toca: los datos salen de
+// `lib/experiencia/registro` (la fuente única de las diez familias) y las
+// secciones son sus rutas reales.
+//
+// Este archivo es PURO (sin React, sin DOM) para probarlo en node.
 // ═══════════════════════════════════════════════════════════════════
 
 import { EJES, EXPERIENCIAS, type Eje } from "@/lib/experiencia/registro";
 // solo el TIPO: la boca de la casa no entra en el paquete del mercado por esto
 import type { PersonaId } from "@/lib/voz/decir";
 
-/** La pieza que el mercader tiene entre las manos (se dibuja en personaje.tsx). */
-export type Pieza =
-  | "pregon"
-  | "globo"
-  | "legajo"
-  | "matraz"
-  | "balanza"
+/** Los diez emblemas de la casa. Se dibujan en personaje→emblema.tsx. */
+export type Emblema =
+  | "ojo"
+  | "mapa"
+  | "sello"
+  | "atomo"
+  | "barras"
   | "libro"
-  | "maqueta"
-  | "camara"
+  | "orbe"
+  | "onda"
   | "lupa"
-  | "torno";
+  | "uve";
 
-export type Mercader = {
-  /** nombre de pila: el puesto no es un icono, es alguien que te atiende */
+/** Un agente de la casa: nombre, oficio, voz y emblema. */
+export type Agente = {
+  /** el nombre con el que firma: «AGENTE 01 · EL OJO» */
   nombre: string;
+  /** el código suelto, para el rótulo: «AGENTE 01» */
+  codigo: string;
+  /** qué hace, en una línea llana */
   oficio: string;
+  /** lo que dice al abrir el puesto (registro grave, sin marketing) */
+  saludo: string;
+  /** el emblema de Vanguard que lleva delante */
+  emblema: Emblema;
   /** la persona de la boca de la casa con la que habla (lib/voz/decir) */
   voz: PersonaId;
-  /** lo primero que dice al abrir el puesto (en minúscula, sin gritar) */
-  saludo: string;
-  pieza: Pieza;
 };
 
 export type Seccion = { nombre: string; href: string; detalle: string; cifra?: string };
@@ -63,88 +71,105 @@ export type Puesto = {
   cifras: { valor: string; etiqueta: string }[];
   /** la puerta + todas las experiencias reales de la familia */
   secciones: Seccion[];
-  personaje: Mercader;
+  /** el agente que atiende el puesto */
+  agente: Agente;
 };
 
 /**
- * Los diez mercaderes. Uno por eje, y cada oficio es el de su familia: la
- * pregonera cuenta lo que pasa, el cartógrafo reparte el planeta, la archivista
- * guarda el papel, el boticario mide, la contable pesa, el librero presta, el
- * titiritero mueve el mundo, la cuentacuentos graba, el detective pregunta y el
- * alfarero deja que lo hagas tú.
+ * Los diez agentes. Todos hablan con la persona grave de la casa («general»,
+ * la más baja de tono) y el mercado le baja el tono todavía más al decir: voz
+ * gruesa, de respeto, sin prisa y sin griterío.
+ *
+ * Los emblemas no se repiten y son los de la casa: el ojo que mira, la carta
+ * del planeta, el sello del archivo, el átomo de la ciencia, la cuenta de los
+ * datos, el libro de la escuela, el orbe de los escenarios, la onda de la voz,
+ * la lupa del expediente y la V de Vanguard.
  */
-export const MERCADERES: Record<string, Mercader> = {
+export const AGENTES: Record<string, Agente> = {
   actualidad: {
-    nombre: "Nora",
-    voz: "locutora",
-    oficio: "la pregonera",
-    saludo: "¡Última hora, última hora! Lo que acaba de pasar, con su hora y su fuente.",
-    pieza: "pregon",
+    nombre: "AGENTE 01 · EL OJO",
+    codigo: "AGENTE 01",
+    oficio: "mira lo que acaba de pasar",
+    saludo: "Aquí no entra el rumor. Entra la hora, la fuente y el cable. Mira tú mismo.",
+    emblema: "ojo",
+    voz: "general",
   },
   geografia: {
-    nombre: "Amílcar",
-    voz: "analista",
-    oficio: "el cartógrafo",
-    saludo: "El planeta entero cabe en esta mesa. Dime un país y te saco su ficha.",
-    pieza: "globo",
+    nombre: "AGENTE 02 · LA CARTA",
+    codigo: "AGENTE 02",
+    oficio: "mide el planeta ficha a ficha",
+    saludo: "El planeta, medido. Cada país con su frontera y su dato; nada dibujado a ojo.",
+    emblema: "mapa",
+    voz: "general",
   },
   historia: {
-    nombre: "Elena",
-    voz: "cronista",
-    oficio: "la archivista",
-    saludo: "Cada papel de este cajón tiene institución y licencia. Nada entra sin procedencia.",
-    pieza: "legajo",
+    nombre: "AGENTE 03 · EL SELLO",
+    codigo: "AGENTE 03",
+    oficio: "guarda el archivo con procedencia",
+    saludo: "Papel con institución, licencia y fecha. Lo que no tiene procedencia, no entra.",
+    emblema: "sello",
+    voz: "general",
   },
   ciencia: {
-    nombre: "Teo",
-    voz: "analista",
-    oficio: "el boticario",
-    saludo: "Aquí no se vende humo: cada frasco trae su DOI o su arXiv, y dice cuánto se sabe.",
-    pieza: "matraz",
+    nombre: "AGENTE 04 · EL ÁTOMO",
+    codigo: "AGENTE 04",
+    oficio: "rastrea hasta el origen",
+    saludo: "Cada hallazgo con su identificador y su nivel de evidencia. La duda también se publica.",
+    emblema: "atomo",
+    voz: "general",
   },
   datos: {
-    nombre: "Rita",
-    voz: "analista",
-    oficio: "la contable",
-    saludo: "Todo número sale de la balanza con su año, su unidad y su fuente. Pesa antes de creer.",
-    pieza: "balanza",
+    nombre: "AGENTE 05 · LA CUENTA",
+    codigo: "AGENTE 05",
+    oficio: "pesa cada número con su fuente",
+    saludo: "El número sale con su año, su unidad y su fuente. Sin eso, aquí no vale.",
+    emblema: "barras",
+    voz: "general",
   },
   educacion: {
-    nombre: "Ibo",
+    nombre: "AGENTE 06 · EL LIBRO",
+    codigo: "AGENTE 06",
+    oficio: "presta lo que enseña la casa",
+    saludo: "Cursos, lecciones y ejercicios. Se aprende conectando, no memorizando.",
+    emblema: "libro",
     voz: "general",
-    oficio: "el librero",
-    saludo: "Pasa, pasa. Los cursos se prestan gratis y se devuelven sabiendo algo más.",
-    pieza: "libro",
   },
   simulacion: {
-    nombre: "Kilombo",
+    nombre: "AGENTE 07 · EL ORBE",
+    codigo: "AGENTE 07",
+    oficio: "mueve el mundo y mira qué pasa",
+    saludo: "Mueve las reglas y observa. El resultado es un modelo, y la casa lo dice.",
+    emblema: "orbe",
     voz: "general",
-    oficio: "el titiritero",
-    saludo: "Mueve tú los hilos: el mundo de esta maqueta hace lo que le pidas, y lo dice.",
-    pieza: "maqueta",
   },
   narrativa: {
-    nombre: "Vera",
-    voz: "locutora",
-    oficio: "la cuentacuentos",
-    saludo: "Siéntate. Esto se cuenta despacio, con su autor y su licencia a la vista.",
-    pieza: "camara",
+    nombre: "AGENTE 08 · LA ONDA",
+    codigo: "AGENTE 08",
+    oficio: "cuenta con la voz y la imagen",
+    saludo: "La crónica lleva su autor y su licencia. La casa también cuenta, y lo confiesa.",
+    emblema: "onda",
+    voz: "general",
   },
   investigacion: {
-    nombre: "Sergio",
-    voz: "cronista",
-    oficio: "el detective",
-    saludo: "Traigo la pregunta, no la respuesta. Lo que no está confirmado, lo digo.",
-    pieza: "lupa",
+    nombre: "AGENTE 09 · LA LUPA",
+    codigo: "AGENTE 09",
+    oficio: "va de la pregunta al expediente",
+    saludo: "Primero la pregunta; después el expediente. Lo que no está confirmado, se marca.",
+    emblema: "lupa",
+    voz: "general",
   },
   mundos: {
-    nombre: "Aurelio",
-    voz: "cronista",
-    oficio: "el alfarero",
-    saludo: "El barro es tuyo: lo que hagas aquí también pasa a ser parte de la casa.",
-    pieza: "torno",
+    nombre: "AGENTE 10 · LA V",
+    codigo: "AGENTE 10",
+    oficio: "abre la casa a lo que crees",
+    saludo: "La V de la casa. Lo que creas aquí también es Vanguard, y lleva tu nombre.",
+    emblema: "uve",
+    voz: "general",
   },
 };
+
+/** Nombre viejo del catálogo, conservado para no romper otras tandas. */
+export const MERCADERES = AGENTES;
 
 /** Lleva un color de familia a la sombra del mostrador (nunca a otro tono). */
 export function hondo(color: string): string {
@@ -160,8 +185,7 @@ export function hondo(color: string): string {
 
 /**
  * Dos cifras por puesto como mucho (la misma ley del registro): si la familia
- * no trae cifras, el puesto cuenta lo que vende — una cifra calculada, no un
- * adorno escrito a mano.
+ * no trae cifras, el puesto cuenta lo que vende — una cifra calculada.
  */
 function cifrasDe(eje: Eje, secciones: Seccion[]): { valor: string; etiqueta: string }[] {
   if (eje.cifras.length > 0) return eje.cifras.slice(0, 2);
@@ -173,11 +197,15 @@ function seccionesDe(eje: Eje): Seccion[] {
   const puerta: Seccion = { nombre: eje.nombre, href: eje.puerta, detalle: eje.promesa };
   const resto: Seccion[] = eje.experiencias
     .filter((x) => x.href !== eje.puerta)
-    .map((x) => (x.cifra ? { nombre: x.nombre, href: x.href, detalle: x.detalle, cifra: x.cifra } : { nombre: x.nombre, href: x.href, detalle: x.detalle }));
+    .map((x) =>
+      x.cifra
+        ? { nombre: x.nombre, href: x.href, detalle: x.detalle, cifra: x.cifra }
+        : { nombre: x.nombre, href: x.href, detalle: x.detalle },
+    );
   return [puerta, ...resto];
 }
 
-/** La plaza entera: diez puestos, en el orden de la casa. */
+/** La feria entera: diez puestos, en el orden de la casa. */
 export const PUESTOS: Puesto[] = EJES.map((eje) => {
   const secciones = seccionesDe(eje);
   return {
@@ -192,21 +220,21 @@ export const PUESTOS: Puesto[] = EJES.map((eje) => {
     hondo: hondo(eje.color),
     cifras: cifrasDe(eje, secciones),
     secciones,
-    personaje: MERCADERES[eje.id] ?? {
-      nombre: "El mercader",
-      oficio: "de este puesto",
-      voz: "locutora",
+    agente: AGENTES[eje.id] ?? {
+      nombre: "AGENTE 00 · EL PUESTO",
+      codigo: "AGENTE 00",
+      oficio: "atiende este puesto",
       saludo: "Pasa y mira lo que hay.",
-      pieza: "libro",
+      emblema: "uve",
+      voz: "general",
     },
   };
 });
 
-/** Todas las secciones del mercado, en un solo índice (la puerta de cada una). */
-export const SECCIONES: (Seccion & { puesto: string; puestoNombre: string; color: string })[] =
-  PUESTOS.flatMap((p) =>
-    p.secciones.map((s) => ({ ...s, puesto: p.id, puestoNombre: p.nombre, color: p.color })),
-  );
+/** Todas las secciones de la feria, en un solo índice. */
+export const SECCIONES: (Seccion & { puesto: string; puestoNombre: string; color: string })[] = PUESTOS.flatMap(
+  (p) => p.secciones.map((s) => ({ ...s, puesto: p.id, puestoNombre: p.nombre, color: p.color })),
+);
 
 export function puestoDeId(id: string): Puesto | null {
   return PUESTOS.find((p) => p.id === id) ?? null;
@@ -226,7 +254,7 @@ export function llano(texto: string): string {
 export type Hallazgo = { puesto: Puesto; secciones: Seccion[] };
 
 /**
- * El buscador de la plaza: por familia, lema, mercader, oficio, sección o ruta.
+ * El buscador de la feria: por familia, lema, agente, emblema, sección o ruta.
  * Devuelve los puestos que responden y, dentro, solo las secciones que
  * responden (o todas, si lo que coincide es el puesto).
  */
@@ -236,7 +264,7 @@ export function buscar(consulta: string): Hallazgo[] {
   const salida: Hallazgo[] = [];
   for (const p of PUESTOS) {
     const delPuesto = llano(
-      [p.nombre, p.lema, p.promesa, p.numero, p.personaje.nombre, p.personaje.oficio, p.personaje.saludo].join(" "),
+      [p.nombre, p.lema, p.promesa, p.numero, p.agente.nombre, p.agente.codigo, p.agente.oficio, p.agente.emblema, p.agente.saludo].join(" "),
     );
     const coincidePuesto = delPuesto.includes(q) || q.split(" ").every((t) => delPuesto.includes(t));
     const secciones = p.secciones.filter((s) => llano([s.nombre, s.detalle, s.href].join(" ")).includes(q));
@@ -246,15 +274,17 @@ export function buscar(consulta: string): Hallazgo[] {
   return salida;
 }
 
-/** Las cifras de la plaza, derivadas — nunca escritas a mano. */
+/** Las cifras de la feria, derivadas — nunca escritas a mano. */
 export function cifrasMercado() {
   return {
     puestos: PUESTOS.length,
     mercaderes: PUESTOS.length,
+    agentes: PUESTOS.length,
     secciones: SECCIONES.length,
     familias: EJES.length,
     experiencias: EXPERIENCIAS.length,
     rutas: new Set(SECCIONES.map((s) => s.href)).size,
+    emblemas: new Set(PUESTOS.map((p) => p.agente.emblema)).size,
   };
 }
 

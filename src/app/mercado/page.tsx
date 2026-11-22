@@ -3,7 +3,7 @@
 //
 // Orden del Dueño, textual: «haz que la presentación sea un módulo aparte donde
 // se llame el mercado de vanguard, que tenga estética de mercado, donde presente
-// cada módulo con un personaje enseñando cada uno, interactúe, con una música
+// cada módulo con su agente de la casa enseñándolo, interactivo, con una música
 // clásica sencilla y que se te quede en la cabeza… enseña cada módulo
 // perfectamente con sus secciones… y quítalos del menú principal».
 //
@@ -56,8 +56,8 @@ export default function MercadoPage() {
 
       <footer className="pm-pie">
         <span>
-          Hoy atiende el puesto {delDia.numero} · {delDia.nombre}, con {delDia.personaje.nombre},{" "}
-          {delDia.personaje.oficio}. Y el pregón de hoy dice: «{pregon.texto}»
+          Hoy atiende el puesto {delDia.numero} · {delDia.nombre}, con {delDia.agente.nombre},{" "}
+          {delDia.agente.oficio}. Y el pregón de hoy dice: «{pregon.texto}»
         </span>
         <Link href="/mercado#plaza">volver a la plaza ↑</Link>
       </footer>
@@ -70,7 +70,7 @@ export default function MercadoPage() {
               <span className="pm-seccion-txt">
                 <Link href={p.puerta}>{p.nombre}</Link>
                 <p>
-                  {p.personaje.nombre}, {p.personaje.oficio} · {p.secciones.length} secciones
+                  {p.agente.nombre}, {p.agente.oficio} · {p.secciones.length} secciones
                 </p>
               </span>
             </li>

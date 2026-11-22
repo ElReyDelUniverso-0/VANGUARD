@@ -14,6 +14,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import "./mercado.css";
 import { PUESTOS, cifrasMercado } from "@/lib/mercado/puestos";
+import { Emblema } from "@/components/mercado/emblema";
 import { pregonDelDia } from "@/lib/mercado/pregon";
 
 export function MercadoPortada() {
@@ -37,7 +38,7 @@ export function MercadoPortada() {
       <div className="mp-franja-cab">
         <h2 id="mp-franja-h">El mercado de Vanguard</h2>
         <p>
-          {cifras.puestos} puestos · {cifras.mercaderes} mercaderes · {cifras.secciones} secciones
+          {cifras.puestos} puestos · {cifras.agentes} agentes · {cifras.emblemas} emblemas · {cifras.secciones} secciones
         </p>
       </div>
 
@@ -55,8 +56,9 @@ export function MercadoPortada() {
               className="mp-toldo"
               href={`/mercado#puesto-${p.id}`}
               style={{ ["--mp-color" as string]: p.color } as CSSProperties}
-              title={`${p.nombre} · ${p.personaje.nombre}, ${p.personaje.oficio}`}
+              title={`${p.nombre} · ${p.agente.nombre}, ${p.agente.oficio}`}
             >
+              <Emblema tipo={p.agente.emblema} color={p.color} nombre={p.agente.nombre} className="mp-toldo-emblema" />
               <span>{p.nombre}</span>
             </Link>
           </li>
@@ -65,9 +67,9 @@ export function MercadoPortada() {
 
       <div className="mp-franja-pie">
         <p>
-          Diez familias, diez puestos y un mercader en cada uno que enseña lo suyo, con todas sus
-          secciones. Pregón en la entrada, ronda guiada, cesta para apuntar y música propia de la
-          plaza, si la quieres.
+          Diez familias, diez puestos y un agente de la casa en cada uno, con su emblema delante y
+          todas sus secciones. Pregón en la entrada, ronda guiada, cesta para apuntar y música de
+          feria, si la quieres.
         </p>
         <Link className="mp-entrar" href="/mercado">
           entrar al mercado →

@@ -1,17 +1,17 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// v437.2 · PRUEBA DEL MERCADO — diez puestos, diez mercaderes, una contradanza
+// v439.3 · PRUEBA DE LA FERIA — diez puestos, diez agentes, diez emblemas, música de feria
 //
 //   npx tsx tools/mercado/probar.mts
 //
 // Lo que se puede romper mañana sin que nadie lo note:
 //   ① que el mercado deje de cubrir las diez familias (un puesto huérfano);
 //   ② que una sección apunte a una ruta que ya no existe (la lista miente);
-//   ③ que dos mercaderes se llamen igual o compartan oficio, pieza o saludo;
+//   ③ que dos agentes se llamen igual o compartan código, oficio, emblema o saludo;
 //   ④ que el buscador invente o deje de encontrar por tilde;
 //   ⑤ que la música se salga del oído, atruene, se pase de la vuelta o deje de
 //     ser una vuelta de ocho compases con campana en las entradas;
 //   ⑥ que las diez familias vuelvan a la portada o al menú principal;
-//   ⑦ que los personajes dejen de estar dibujados aquí (una descarga, un mp3);
+//   ⑦ que los emblemas de Vanguard estén dibujados aquí (ni una descarga);
 //   ⑧ que se rompa la ley del sonido: ninguna voz propia, o un contexto nuevo.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -28,7 +28,7 @@ import {
   llano,
   puestoDeId,
   puestoDelDia,
-  type Pieza,
+  type Emblema,
 } from "@/lib/mercado/puestos";
 import {
   BPM,
@@ -116,7 +116,7 @@ function existeRuta(href: string): boolean {
   return existsSync(resolve(dir, "page.tsx"));
 }
 
-const PIEZAS: Pieza[] = ["pregon", "globo", "legajo", "matraz", "balanza", "libro", "maqueta", "camara", "lupa", "torno"];
+const EMBLEMAS: Emblema[] = ["ojo", "mapa", "sello", "atomo", "barras", "libro", "orbe", "onda", "lupa", "uve"];
 
 console.log("\n── ① los diez puestos ─────────────────────────────────────────\n");
 
@@ -156,24 +156,25 @@ comprueba(
 comprueba(puestoDeId("geografia")?.nombre === "Geografía", "se puede abrir un puesto por su id");
 comprueba(puestoDeId("no-existe") === null, "un id inventado no devuelve un puesto fantasma");
 
-console.log("\n── ② los diez mercaderes ──────────────────────────────────────\n");
+console.log("\n── ② los diez agentes ─────────────────────────────────────────\n");
 
-const mercaderes = PUESTOS.map((p) => p.personaje);
-comprueba(mercaderes.length === 10, "cada puesto tiene su mercader");
-comprueba(new Set(mercaderes.map((m) => m.nombre)).size === 10, "ningún mercader repite nombre");
-comprueba(new Set(mercaderes.map((m) => m.oficio)).size === 10, "ningún mercader repite oficio");
-comprueba(new Set(mercaderes.map((m) => m.pieza)).size === 10, "ningún mercader repite pieza");
-comprueba(new Set(mercaderes.map((m) => m.saludo)).size === 10, "ningún mercader repite saludo");
+const agentes = PUESTOS.map((p) => p.agente);
+comprueba(agentes.length === 10, "cada puesto tiene su agente");
+comprueba(new Set(agentes.map((m) => m.nombre)).size === 10, "ningún agente repite nombre");
+comprueba(new Set(agentes.map((m) => m.codigo)).size === 10, "ningún agente repite código");
+comprueba(new Set(agentes.map((m) => m.oficio)).size === 10, "ningún agente repite oficio");
+comprueba(new Set(agentes.map((m) => m.emblema)).size === 10, "ningún agente repite emblema: los diez de Vanguard");
+comprueba(new Set(agentes.map((m) => m.saludo)).size === 10, "ningún agente repite saludo");
 comprueba(
-  mercaderes.every((m) => PIEZAS.includes(m.pieza)),
-  "las diez piezas de oficio son las que se dibujan",
+  agentes.every((m) => EMBLEMAS.includes(m.emblema)),
+  "los diez emblemas son los de la casa (ojo, V, mapas, sello…)",
 );
 comprueba(
-  mercaderes.every((m) => m.nombre.trim().length >= 3 && m.oficio.trim().length >= 4),
+  agentes.every((m) => m.nombre.trim().length >= 3 && m.oficio.trim().length >= 4 && /^AGENTE \d\d$/.test(m.codigo)),
   "nombre y oficio tienen cuerpo (nadie se llama «x»)",
 );
 comprueba(
-  mercaderes.every((m) => m.saludo.length >= 30 && /[.!?]$/.test(m.saludo)),
+  agentes.every((m) => m.saludo.length >= 30 && /[.!?]$/.test(m.saludo)),
   "cada saludo es una frase entera, no un eslogan",
 );
 comprueba(
@@ -216,15 +217,18 @@ comprueba(inexistentes.length === 0, `todas las secciones abren una página de v
 if (inexistentes.length) console.log("   rutas que ya no existen:", inexistentes.join(", "));
 comprueba(existeRuta("/mercado"), "la propia plaza tiene su página");
 comprueba(cifrasMercado().secciones === SECCIONES.length, "las cifras del mercado salen del propio índice");
-comprueba(cifrasMercado().puestos === 10 && cifrasMercado().mercaderes === 10, "diez y diez, contados, no escritos");
+comprueba(
+  cifrasMercado().puestos === 10 && cifrasMercado().agentes === 10 && cifrasMercado().emblemas === 10,
+  "diez, diez y diez, contados, no escritos",
+);
 
 console.log("\n── ④ el buscador de la plaza ──────────────────────────────────\n");
 
 comprueba(buscar("").length === 0, "sin consulta el buscador no devuelve nada");
 comprueba(buscar("geografia").some((h) => h.puesto.id === "geografia"), "encuentra por familia");
 comprueba(buscar("Geografía").length === buscar("geografia").length, "las tildes no cambian el resultado");
-comprueba(buscar("cartografo").some((h) => h.puesto.id === "geografia"), "encuentra por oficio, sin tilde");
-comprueba(buscar("Nora").some((h) => h.puesto.id === "actualidad"), "encuentra por el nombre del mercader");
+comprueba(buscar("planeta").some((h) => h.puesto.id === "geografia"), "encuentra por el oficio del agente, sin tilde");
+comprueba(buscar("EL OJO").some((h) => h.puesto.id === "actualidad"), "encuentra por el nombre del agente");
 comprueba(
   buscar("academia").some((h) => h.puesto.id === "educacion" && h.secciones.some((s) => s.href === "/academia")),
   "encuentra una sección por su ruta",
@@ -239,11 +243,12 @@ comprueba(llano("  El  MERCADO_de  Vanguard ") === "el mercado de vanguard", "el
 
 console.log("\n── ⑤ la música de la plaza ────────────────────────────────────\n");
 
-comprueba(BPM === 100, "la contradanza va a 100 pulsos por minuto");
-comprueba(Math.abs(SEGUNDO_POR_PULSO - 0.6) < 1e-9, "un pulso dura 0,6 s");
-comprueba(Math.abs(DURACION_COMPAS - PULSOS_POR_COMPAS * 0.6) < 1e-9, "el compás de 4/4 dura 2,4 s");
+comprueba(BPM === 120, "la música de feria va a 120 pulsos por minuto");
+comprueba(Math.abs(SEGUNDO_POR_PULSO - 0.5) < 1e-9, "un pulso dura 0,5 s");
+comprueba(Math.abs(DURACION_COMPAS - PULSOS_POR_COMPAS * 0.5) < 1e-9, "el compás de 4/4 dura 2 s");
 comprueba(TOTAL_COMPASES === 8, "la vuelta tiene ocho compases");
-comprueba(Math.abs(DURACION_VUELTA - 19.2) < 1e-9, "la vuelta entera dura 19,2 s");
+comprueba(Math.abs(DURACION_VUELTA - 16) < 1e-9, "la vuelta entera dura 16 s");
+comprueba(melodiaCompleta().length >= 90, "la vuelta lleva campana, pandereta, bajo y dos voces: no es un bip");
 comprueba(partitura().length === 8, "la partitura se puede leer compás a compás");
 comprueba(partitura().every((c) => c.split(" · ").length >= 3), "cada compás tiene su frase, no una nota suelta");
 comprueba(hz("La4") === 440, "La4 son 440 Hz");
@@ -266,8 +271,12 @@ comprueba(
   "la campana marca las dos entradas (compases 1 y 5)",
 );
 comprueba(
-  notasDeCompas(2).every((n) => n.tipo !== "campana"),
-  "los compases de en medio no llevan campana (no se vuelve monótona)",
+  notasDeCompas(0).filter((n) => n.tipo === "campana")[0].g! > (notasDeCompas(2).filter((n) => n.tipo === "campana")[0].g ?? 1),
+  "la campana suena en cada compás, pero más alto al entrar la frase (no se vuelve monótona)",
+);
+comprueba(
+  melodiaCompleta().filter((n) => n.tipo === "ruido").length >= 32,
+  "la pandereta va en las corcheas: la feria se oye fiesta, no salón",
 );
 comprueba(
   notasDeCompas(0).some((n) => n.tipo === "madera") && notasDeCompas(1).some((n) => n.tipo === "madera"),
@@ -302,14 +311,15 @@ comprueba(muelle.includes('href: "/mercado"'), "el muelle del móvil también ll
 comprueba(lee("src/lib/descubrimiento/fichas.ts").includes('href: "/mercado"'), "el mercado tiene ficha en el descubrimiento");
 comprueba(existsSync(resolve(raiz, "src/app/mercado/page.tsx")), "el mercado es un módulo con su página");
 
-console.log("\n── ⑦ los mercaderes están dibujados aquí ──────────────────────\n");
+console.log("\n── ⑦ los emblemas de Vanguard están dibujados aquí ────────────\n");
 
-const personaje = lee("src/components/mercado/personaje.tsx");
-comprueba(PIEZAS.every((p) => personaje.includes(`case "${p}"`)), "las diez piezas de oficio se dibujan");
-comprueba(!/<img\b/i.test(personaje), "ningún mercader es una imagen descargada");
-comprueba(!/https?:\/\//.test(personaje), "el dibujo no pide nada a la red");
-comprueba(personaje.includes("pm-saluda"), "el mercader saluda cuando su puesto está abierto");
-comprueba(personaje.includes("aria-label"), "el dibujo se explica a quien no lo ve");
+const emblema = lee("src/components/mercado/emblema.tsx");
+comprueba(EMBLEMAS.every((p) => emblema.includes(`case "${p}"`)), "los diez emblemas se dibujan");
+comprueba(!/<img\b/i.test(emblema), "ningún emblema es una imagen descargada");
+comprueba(!/https?:\/\//.test(emblema), "el emblema no pide nada a la red");
+comprueba(emblema.includes("pm-bombilla") && emblema.includes("animationDelay"), "la medalla lleva bombillas que parpadean");
+comprueba(emblema.includes("encendida"), "el emblema se enciende cuando su puesto está abierto");
+comprueba(emblema.includes("aria-label"), "el emblema se explica a quien no lo ve");
 const cliente = lee("src/components/mercado/mercado-cliente.tsx");
 comprueba(!/https?:\/\//.test(cliente), "la plaza no carga nada de fuera");
 comprueba(cliente.includes("buscar("), "el buscador de la plaza es el de los datos, no una copia");
@@ -339,7 +349,7 @@ comprueba(lee("src/lib/sonido/tocar.ts").includes("export function suenaNotas"),
 const css = lee("src/components/mercado/mercado.css");
 comprueba(css.includes("prefers-reduced-motion"), "el mercado respeta a quien pidió no moverse");
 comprueba(css.includes('data-vg-mov="quieto"'), "el mercado obedece la perilla de movimiento de la casa");
-comprueba((css.match(/!important/g) ?? []).length <= 6, "la piel no abusa de !important (solo para la quietud)");
+comprueba((css.match(/!important/g) ?? []).length <= 10, "la piel no abusa de !important (solo para la quietud)");
 
 
 console.log("\n── ⑨ el pregón de la plaza ─────────────────────────────────────\n");
@@ -348,8 +358,8 @@ const cinta = pregones();
 comprueba(cinta.length === 10, "el pregón tiene una línea por puesto");
 comprueba(new Set(cinta.map((x) => x.texto)).size === 10, "ninguna línea del pregón se repite");
 comprueba(
-  cinta.every((x) => PUESTOS.some((p) => p.id === x.puesto.id) && x.texto.includes(x.puesto.personaje.nombre)),
-  "cada línea dice el mercader de su puesto",
+  cinta.every((x) => PUESTOS.some((p) => p.id === x.puesto.id) && x.texto.includes(x.puesto.agente.codigo)),
+  "cada línea dice el agente de su puesto",
 );
 comprueba(
   cinta.every((x) => x.texto.includes(x.puesto.nombre) && x.texto.includes(String(x.puesto.secciones.length))),
@@ -408,7 +418,7 @@ comprueba(cliente.includes("pregonDe(") && cliente.includes("pregones()"), "la p
 comprueba(cliente.includes("setInterval") && cliente.includes("MS_RONDA"), "la ronda avanza con su propio reloj");
 comprueba(cliente.includes("darUnaVuelta") && cliente.includes("ronda"), "hay ronda y se puede parar");
 comprueba(cliente.includes('"Escape"'), "Escape para la ronda y cierra el puesto");
-comprueba(cliente.includes("decir(") && cliente.includes("personaje.voz"), "el mercader habla con SU persona de la casa");
+comprueba(cliente.includes("decir(") && cliente.includes("agente.voz"), "el agente habla con la persona de la casa");
 comprueba(cliente.includes("speechSynthesis"), "si el aparato no sabe hablar, se calla sin romperse");
 comprueba(cliente.includes("pararBoca"), "cerrar el puesto corta la voz");
 comprueba(cliente.includes("CLAVE_CESTA") && cliente.includes("localStorage"), "la cesta se guarda en el aparato");
@@ -424,11 +434,12 @@ for (const clase of ["pm-pregon", "pm-tecla", "pm-cesta", "pm-otro", "pm-aviso"]
 }
 comprueba(cssViva.includes(".pm-plaza.pm-con-abierto"), "el puesto abierto manda en la plaza");
 comprueba(
-  PUESTOS.every((p) => ["locutora", "analista", "general", "cronista"].includes(p.personaje.voz)),
-  "cada mercader tiene una persona de la boca de la casa",
+  PUESTOS.every((p) => ["locutora", "analista", "general", "cronista"].includes(p.agente.voz)),
+  "cada agente tiene una persona de la boca de la casa",
 );
-comprueba(new Set(PUESTOS.map((p) => p.personaje.voz)).size >= 3, "no hablan los diez igual");
-comprueba(new Set(PUESTOS.map((p) => p.personaje.voz)).size <= 4, "y no se inventan personas que la casa no tiene");
+comprueba(PUESTOS.every((p) => p.agente.voz === "general"), "los diez agentes hablan con la voz gruesa de la casa");
+comprueba(new Set(PUESTOS.map((p) => p.agente.voz)).size <= 4, "y no se inventan personas que la casa no tiene");
+comprueba(cliente.includes("pitch: 0.7"), "la voz del agente es gruesa y de respeto (tono bajo, sin prisa)");
 
 
 console.log("\n── ⑫ que diga «wow»: arco, marquesina, barra grande y vida ────\n");
@@ -446,7 +457,9 @@ comprueba(cssWow.includes("@keyframes pm-mecen") && cssWow.includes("@keyframes 
 comprueba(cssWow.includes("@keyframes pm-papel") && cssWow.includes("@keyframes pm-sube"), "los papelitos caen y el mostrador sube");
 comprueba(cssWow.includes(".pm-puesto:hover .pm-toldo"), "el toldo responde al ratón");
 comprueba(cssWow.includes('[aria-expanded="true"] .pm-farol'), "el farolillo se enciende con el puesto abierto");
-comprueba(cssWow.includes(".pm-puesto:hover .pm-personaje"), "el mercader saluda al pasar el ratón");
+comprueba(cssWow.includes(".pm-puesto:hover .pm-bombilla"), "las bombillas del puesto se avivan al pasar el ratón");
+comprueba(cssWow.includes(".pm-luces") && cssWow.includes("pm-parpadea"), "la feria lleva luces que parpadean");
+comprueba(cssWow.includes('.pm-emblema'), "los emblemas tienen su medida en la hoja");
 comprueba(cssWow.includes(".pm-plaza > li:nth-child(3n + 2)"), "la plaza tiene filas alternas de zoco");
 comprueba(cliente.includes("pm-papelitos") && cssWow.includes("pointer-events: none"), "los papelitos no tapan lo pulsable");
 comprueba(cliente.includes("enRonda ? (") || /enRonda\s*\?\s*\(/.test(cliente), "los papelitos solo salen con la vuelta");

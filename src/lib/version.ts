@@ -7293,8 +7293,41 @@
 // devuelve al salir; saludo según la hora y vibración en los dos golpes.
 // (anterior) export const APP_VERSION = "v439.1";
 // (anterior) export const APP_CODENAME = "EL SELLO DE SALIDA, DE VERDAD";
-export const APP_VERSION = "v439.2";
-export const APP_CODENAME = "LA ENTRADA SE VE EN EL TELÉFONO";
+// v439.3 · LA FERIA DE LOS AGENTES — orden del Dueño, textual: «mercado:
+// cámbialo; por personaje, por los logos de Vanguard — el ojo, la V, los
+// mapas, etc.— y que sea un lugar como una feria, una música feliz con luces
+// parpadeando; y las voces hazlas tú, gruesas, serias, de respeto, y nombres
+// de agentes».
+// ① YA NO HAY MERCADERES DE DIBUJO: hay DIEZ AGENTES DE LA CASA, uno por
+//    puesto, con código y oficio —AGENTE 01 EL OJO (actualidad), 02 LA CARTA
+//    (geografía), 03 EL SELLO (historia), 04 EL ÁTOMO (ciencia), 05 LA CUENTA
+//    (datos), 06 EL LIBRO (educación), 07 EL ORBE (simulación), 08 LA ONDA
+//    (narrativa), 09 LA LUPA (investigación), 10 LA V (mundos)—. Se retira
+//    personaje.tsx (384 líneas de mercaderes ilustrados) y entra emblema.tsx.
+// ② LOS DIEZ EMBLEMAS DE VANGUARD, dibujados aquí en SVG: el ojo, la carta con
+//    su pin, el sello con la V, el átomo de tres órbitas, las barras, el libro
+//    abierto, el orbe con meridianos, la onda, la lupa y la V de la casa. Cada
+//    puesto lleva delante su MEDALLA de feria, con pie de madera y una orla de
+//    doce bombillas que parpadean fuera de fase (1,9 s; 0,85 s con el puesto
+//    abierto o bajo el ratón). La portada repite el emblema en miniatura sobre
+//    cada toldo.
+// ③ MÚSICA FELIZ: la contradanza pasa a música de feria a 120 pulsos (16 s la
+//    vuelta), con dos voces, bajo de madera a dos tiempos, acorde en los
+//    tiempos flojos, pandereta en las corcheas y campana en cada compás —más
+//    alta al entrar las dos frases—. Ganancias por debajo de 0,03: se oye sin
+//    aturdir. Sigue sin sonar sola: hace falta el toque.
+// ④ VOCES GRUESAS, DE RESPETO: los diez agentes hablan con la persona más
+//    grave de la casa (`general`) forzada a pitch 0,70 y rate 0,86 —tono bajo,
+//    sin prisa— y las voces vienen encendidas, porque el Dueño las pidió.
+// ⑤ LA TIRA DE LUCES: veinticuatro bombillas cruzan la plaza bajo el arco, oro,
+//    cian y rosa, cada una con su retardo; se quedan encendidas y quietas con
+//    movimiento reducido o la casa en quietud.
+// ⑥ LO QUE YA ESTABA SIGUE: arco, pregón, dock, cesta, buscador, enlace directo,
+//    cifras vivas y la prueba del mercado, ahora con 193 comprobaciones.
+export const APP_VERSION = "v439.3";
+export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
+// (anterior) export const APP_VERSION = "v439.2";
+// (anterior) export const APP_CODENAME = "LA ENTRADA SE VE EN EL TELÉFONO";
 // (anterior) export const APP_VERSION = "v439.0";
 // (anterior) export const APP_CODENAME = "LA GRAN ENTRADA";
 // (anterior) export const APP_VERSION = "v431.5";
