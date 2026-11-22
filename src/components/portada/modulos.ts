@@ -176,7 +176,7 @@ export const MODULOS: Modulo[] = [
     pestanas: [
             { href: "/mi-universo", label: "Mi universo", img: "/imagenes-reales/satelite.jpg", txt: "Tus puertas repartidas en grupos, con tu memoria de aparato: lo que ya viste, lo que marcaste y lo que aprendió de ti." },
             { href: "/objetivos", label: "Objetivos", img: "/imagenes-reales/pentagono.jpg", txt: "Misiones, retos y torneos: lo que hay que hacer hoy." },
-            { href: "/universo", label: "Colecciones", img: "/imagenes-reales/dubai.jpg", txt: "Créditos, colecciones y tu base personal." },
+            { href: "/universo", label: "El universo diario", img: "/imagenes-reales/dubai.jpg", txt: "Créditos, colecciones y tu base personal." },
             { href: "/creadores", label: "La Forja", img: "/imagenes-reales/control.jpg", txt: "Publica mapas, escenarios, investigaciones, simulaciones y proyectos con tu nombre." },
             { href: "/mision", label: "Misión 100", img: "/imagenes-reales/pentagono.jpg", txt: "Reparte Vanguard y suma reclutas." },
             { href: "/perfil", label: "Mi perfil", img: "/imagenes-reales/control.jpg", txt: "Tu carnet de agente, tu código y tus permisos." },
@@ -186,7 +186,7 @@ export const MODULOS: Modulo[] = [
             { href: "/calidad", label: "Calidad", img: "/imagenes-reales/panama.jpg", txt: "La auditoría de la casa, con sus defectos abiertos." },
             { href: "/torre", label: "Torre de control", img: "/imagenes-reales/control.jpg", txt: "La salud real del arranque, noche a noche." },
             { href: "/directorio", label: "Directorio", img: "/imagenes-reales/sumeria.jpg", txt: "Todas las puertas de la casa, buscables, con tus favoritos y tus recientes." },
-            { href: "/colecciones", label: "Colecciones", img: "/imagenes-reales/pentagono.jpg", txt: "Recorridos guiados por temas: de la pregunta a las salas que la responden." },
+            { href: "/colecciones", label: "Recorridos guiados", img: "/imagenes-reales/pentagono.jpg", txt: "Cinco a siete paradas por tema, en orden y con el porqué de cada una." },
             { href: "/catalogo", label: "Catálogo", img: "/imagenes-reales/sumeria.jpg", txt: "El índice de lo que ya existe en Vanguard." },
             { href: "/nucleo", label: "Núcleo", img: "/imagenes-reales/control.jpg", txt: "El censo de módulos y la búsqueda global." },
             { href: "/escudo", label: "Escudo", img: "/imagenes-reales/gps.jpg", txt: "El buscador de llaves: que ningún secreto se publique." },
