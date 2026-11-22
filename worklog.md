@@ -144,6 +144,42 @@ el otro botón en el medio; elimínalos a los dos.»
   (`vg-orbe-zona`), **emisora = 0** (`vxe-emisora`); bg `rgb(6,8,12)` negro oscuro intacto;
   **0 errores JS**. Las dos voces no aparecen en ningún lado.
 
+## v439.0 · ORDEN GLOBAL (todo Vanguard, menos densidad y botones)
+
+**Mandato del Dueño:** «Vanguard tiene mucha información/texto, demasiados botones, todo
+agrupado y apilado y es feo — ordenar todo Vanguard.»
+
+- **Diagnóstico:** la portada y /modulos repetían un trío de botones sueltos
+  (Mundos · Travesía · Directorio) con estilos distintos; el spot de 30 s era un bloque
+  promocional apilado a continuación del tráiler; y el foco de Academia/Motores era un
+  bloque Tailwind con seis insignias y ocho botones, ajeno al estilo de la casa.
+- **Cambios:**
+  - **`src/components/portada/barra-explorar.tsx` (nuevo):** `BarraExplorar` — una sola
+    barra con las tres puertas (Mundos · Travesía · Directorio), un solo estilo.
+  - **`src/app/portada.css`:** estilos `.vx-barra*` + `.vxp-spot-c` + estilos unificados
+    para el nuevo foco (`.vx-foco*`).
+  - **`src/app/page.tsx`:** se reemplazan los tres botones por `<BarraExplorar />`; el
+    spot de 30 s se une DENTRO de la sección del tráiler (elimina el bloque promocional
+    apilado); se limpia la descripción del `<details>` plegado.
+  - **`src/app/modulos/page.tsx`:** los mismos tres botones sueltos → `<BarraExplorar />`.
+  - **`src/components/portada/foco-academia-motores.tsx`:** reformulado al estilo de la
+    casa: un solo bloque «Información Perfecta» + dos pilares (Academia, Motores), con
+    sellos mínimos, chips de pestañas y una puerta principal por pilar.
+- **Contrato:** `scripts/pruebas-experiencia.mjs` actualizado para la arquitectura
+  actual (la portada muestra las familias como la franja del mercado `MercadoPortada`,
+  no como el bloque completo del ecosistema) → **PASA 159/0**.
+- **Commit:** `709de94` (rebase sobre `ffb03b0` v436.7, conflicto auto-resuelto con
+  cambios conservados). Push OK.
+- **Deploy Vercel:** `dpl_Dv6AFcboDqW9pXaipvqXCWfQFnTh` (commit `709de94`) → **READY/PROMOTED**,
+  alias `vanguard-kq9r.vercel.app`. Build: `prisma generate` + **`tsc --noEmit` PASS** +
+  `next build` OK (1358 páginas estáticas).
+- **Auditoría headless PASS (producción, `verify-tools/audit-orden.mjs`):** `/` y
+  `/ecosistema` → HTTP 200; **BarraExplorar con 3 puertas** en `/`; el **spot vive dentro
+  de la sección del tráiler**; foco reformado (1 banner + 2 pilares); **0 botones sueltos
+  viejos**; **0 errores JS**. `/modulos` → redirect 308 a `/orden` (config preexistente)
+  y `/orden` carga la orden de batalla. Las **10 familias-tráiler** de `/ecosistema`
+  intactas. **11/11 comprobaciones**.
+
 ## Task: DESPEDIDA DEL DUEÑO — la llave queda en la casa (2026-11-22)
 
 - **Agent:** AGENT 2 (Ingeniero Jefe de Sistemas e Implementación) — último registro del bucle.
