@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v439.0",
+    nombre: "LA GRAN ENTRADA — la puerta de la casa, pulida hasta el «wow»",
+    tipo: "luxe",
+    hitos: [
+      "EL DUEÑO: «no he visto nada de lo que agregaste; mejóralo tanto y púlelo más, que diga WOW». Dos causas reales: la entrada v438.0 salía UNA vez por sesión (una pestaña ya abierta no la volvía a enseñar) y sin gesto el navegador callaba la voz.",
+      "AHORA SALE: en la primera carga de cada sesión y en la PORTADA cada vez que se llega de fuera o se recarga. «?intro» en la dirección la fuerza siempre.",
+      "LA PUERTA: si el navegador no deja sonar sin un toque, el arranque espera con un botón dorado «ENTRAR A VANGUARD 🔊 con sonido» (y «Entrar sin sonido»). El toque arranca el espectáculo con el audio desde el primer fotograma, en sincronía exacta. Si nadie toca en 9 s, entra en silencio.",
+      "EL ARRANQUE: bandas de cine con HUD (coordenadas de Santo Domingo, EN VIVO, la versión), los anillos que se dibujan, chispas que el ojo cerrado absorbe mientras respira, y «iniciando sistema 0→100 %».",
+      "EL ESPECTÁCULO (5,5 s): el ojo se abre, los ocho símbolos entran en órbita; a 1,30 s el impacto — destello, doble onda, rayos de luz que giran, sacudida, las chispas estallan — y VANGUARD cae letra a letra en metal con aberración cromática y un reflejo que la recorre; la voz dice «¡VANGUARD!» y luego «El mundo entero… en vivo»; cifras que cuentan solas (249 países, 8000+ lenguas, 24 h); «acceso autorizado»; el ojo parpadea, la pupila se dilata y, con un segundo golpe, EL IRIS SE ABRE EN CÍRCULO y descubre la casa.",
+      "EL SONIDO (public/sonidos/intro-vanguard.mp3, 86 KB, 6,2 s): todo por código salvo las dos líneas de voz — dron, subida, latidos, el párpado, impacto con metal y acorde, campanas, eco, el lema y el segundo golpe.",
+      "SIGUE SIENDO RESPETUOSA: «Saltar ›» y Escape, nunca a robots ni en iframes ni en pruebas automáticas, el sonido apagado del Dueño se respeta, la quietud del sistema quita destellos y sacudidas, ocho idiomas, y sin JavaScript se retira sola.",
+    ],
+  },
+  {
     version: "v438.2",
     nombre: "EL SELLO DE SALIDA — la puerta que le faltaba a cada módulo, y que lo rompe",
     tipo: "nav",

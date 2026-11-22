@@ -7245,8 +7245,15 @@
 //    de otra tanda) y el pie de la plaza dice qué versión estás viendo.
 // Quietud respetada de punta a punta: sin movimiento no hay mecido, ni desfile,
 // ni papelitos, ni cascada, y el mercado sigue entero. 186 comprobaciones.
-export const APP_VERSION = "v438.3";
-export const APP_CODENAME = "EL MERCADO SE ENCIENDE";
+// v439.0 · LA GRAN ENTRADA — el Dueño: «no he visto nada de lo que agregaste;
+// mejóralo, púlelo, que diga WOW». La entrada v438.0 pasa a dos tiempos
+// (arranque + espectáculo de 5,5 s sincronizado con el audio), con LA PUERTA
+// «ENTRAR A VANGUARD 🔊» cuando el navegador no deja sonar sin un toque, y
+// sale en la portada cada vez que se llega de fuera o se recarga.
+// (anterior) export const APP_VERSION = "v438.3";
+// (anterior) export const APP_CODENAME = "EL MERCADO SE ENCIENDE";
+export const APP_VERSION = "v439.0";
+export const APP_CODENAME = "LA GRAN ENTRADA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7318,7 +7325,8 @@ export const APP_CODENAME = "EL MERCADO SE ENCIENDE";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v438.2";
+export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE
+// (anterior) export const APP_VERSION_ANTERIOR = "v438.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.1"; // LA PLAZA VIVA // LA PLAZA VIVA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.0"; // LA ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.2"; // EL MERCADO DE VANGUARD
