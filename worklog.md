@@ -285,3 +285,43 @@ Orden fijo en `NAV_PRIMARIO` (Orden/Buscar/Mercado/Redacción/Mundo/Saber/Casa).
   íconos en viewport (y=16), sin errores de JS. **audit-menu 10/10 PASS.**
 - Móvil 390px: cabecera nav display none, `.vx-tabbar` flex (7 tabs), sin errores.
 - Test contrato: **174 PASS / 0 FAIL**.
+
+## v442.0 · DARK HISTORY — ARCHIVO DE LOS HECHOS MÁS OSCUROS (2026-11-22)
+
+**Tarea del Dueño:** construir **DARK HISTORY** para Vanguard — un **archivo histórico
+interactivo** dedicado a los acontecimientos más oscuros de la humanidad: **genocidios,
+atrocidades históricas, experimentos científicos no éticos, tragedias históricas, abusos
+institucionales y casos de injusticia**. Requerido: **fotografías y documentos históricos**,
+**mapas y cronologías**, **biografías y contexto**, **fuentes académicas y documentales**.
+Expedientes completos, educativos, visualmente atractivos. **NO convertir el sufrimiento en
+espectáculo.**
+
+**Implementación (server puro — patrón /historia v274 y verdad-cruda v295):**
+- **`src/lib/dark-history.ts`** (1.466 líneas): los **17 expedientes documentados**
+  (DH-01 … DH-17) en **6 categorías** (GENOCIDIO / ATROCIDAD / EXPERIMENTO / TRAGEDIA /
+  ABUSO_INSTITUCIONAL / INJUSTICIA): El Holocausto, genocidio armenio, Ruanda, Camboya
+  (Jemer Rojo), Herero/Namaqua, masacre de Nankín, Srebrenica, estudio de Tuskegee,
+  experimentos médicos nazis, Unidad 731, hambruna de Bengala, Holodomor, el Gulag,
+  apartheid, caso Dreyfus, Scottsboro Boys, Emmett Till. Cada expediente: codigo, años,
+  lugar con **lat/lng reales**, resumen, contexto histórico, **cifra de víctimas con rango y
+  fuente**, **cronología**, **biografías**, **documentos citados** (con cita textual de
+  documentos públicos) y **fuentes** (ONU, tribunales penales internacionales, archivos
+  nacionales, instituciones académicas). Todo **nada inventado**; fotos son **fotos reales
+  de contexto geográfico** (`public/imagenes-reales/*.jpg`), nunca ilustraciones del hecho.
+  Funciones derivadas: `censoPorCategoria()`, `rangoAnios()`, `lineaDarkHistory()`,
+  `cronologiaDe()` (cero cifras escritas a mano — herencia v256).
+- **`src/app/dark-history/page.tsx`** (462 líneas, **server puro**: `Metadata` +
+  `jsonLdSeguro` + `PortadaSala` + `MiniMapa` + `LineaDeTiempo` + grid de expedientes):
+  portada con cifras derivadas; **mapa** con los **17 puntos reales** (MiniMapa, servidor);
+  **cronología global** en un eje (LineaDeTiempo); censo por categoría; luego los
+  expedientes por categoría, cada uno con foto de contexto, resumen, contexto, cifra con
+  fuente, cronología local, biografías, documentos y fuentes citadas; `EnlacesNucleo`;
+  `noscript` (funciona sin JS).
+- **`src/components/portada/modulos.ts`**: pestana **DARK HISTORY** añadida al módulo
+  **saber** (junto a `/historia`).
+- **`src/lib/seo/secciones.ts`**: prefijo **`/dark-history`** registrado bajo `educacion`
+  (sitemap `sitemap-educacion.xml`).
+
+**Verificación:** esbuild parsea los 4 archivos sin errores de sintaxis; deploy Vercel +
+verificación en producción (curl `/dark-history` HTTP 200, puppeteer: títulos, 17
+expedientes, mapa SVG, cronología, fuentes). Ver worklog de la verificación en línea.

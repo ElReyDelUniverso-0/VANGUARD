@@ -105,6 +105,7 @@ export const SECCIONES: Seccion[] = [
       "/editorial",
       "/investigacion",
       "/historia",
+      "/dark-history", // v442.0 · DARK HISTORY — el archivo de los hechos más oscuros
       "/glosario",
       "/aprender",
       "/armeria",

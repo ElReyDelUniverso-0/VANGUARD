@@ -132,6 +132,7 @@ export const MODULOS: Modulo[] = [
             { href: "/investigacion", label: "Investigación", img: "/assets/real/radar-1.jpg", txt: "Dossiers sistémicos conectados: comprender, investigar, visualizar, comparar y simular." },
             { href: "/editorial", label: "Redacción", img: "/imagenes-reales/arco.jpg", txt: "Artículos con fuentes en diez áreas: geopolítica, historia, economía, conflictos y más." },
             { href: "/historia", label: "Historia", img: "/imagenes-reales/muroberlin.jpg", txt: "Las guerras que enseñaron a leer las de hoy." },
+            { href: "/dark-history", label: "DARK HISTORY", img: "/imagenes-reales/chernobyl.jpg", txt: "El archivo de los hechos más oscuros de la humanidad: genocidios, atrocidades, experimentos no éticos, tragedias, abusos institucionales e injusticias." },
             { href: "/traductor", label: "Traductor", img: "/imagenes-reales/estambul.jpg", txt: "Las noticias del mundo en tu idioma." },
             { href: "/ciencia", label: "Centro", img: "/imagenes-reales/sumeria.jpg", txt: "Buscador, cifras y la taxonomía editorial del centro." },
             { href: "/ciencia/explorador", label: "Explorador", img: "/assets/real/radar-1.jpg", txt: "Elige una idea y recorre sus pasos: qué añadió cada publicación y qué no demuestra." },
