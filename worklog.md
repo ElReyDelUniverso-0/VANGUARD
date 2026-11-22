@@ -186,12 +186,35 @@ agrupado y apilado y es feo — ordenar todo Vanguard.»
   (config preexistente) y `/orden` carga la orden de batalla; `/ecosistema` con las
   **10 familias-tráiler** intactas; **0 errores JS**. **11/11 comprobaciones PASS**.
 - **Notas:**
-  - **El idioma chino que vio el Dueño NO es basura:** `src/lib/i18n.ts` tiene
+  - **El idioma chino que vio el Dueño NO era basura:** `src/lib/i18n.ts` tenía
     `detectLang()` (mapea `navigator.languages` a es/en/pt/fr/de/it/ru/zh, fallback `es`)
     y `ensureLangDetected()` (auto-detección 1× por página si el usuario no eligió idioma
     a mano). El navegador del Dueño detectó `zh` → la entrada `intro-vanguard.tsx`
-    muestra «系统启动中 · 授权通过 · 进入 Vanguard». 8 idiomas soportados; si el Dueño
-    quiere español siempre, basta con elegir el idioma a mano en la entrada.
+    mostraba «系统启动中 · 授权通过 · 进入 Vanguard». 8 idiomas soportados.
+
+## v439.5 · LA CASA SE SIGUE EN ESPAÑOL (2026-11-22)
+
+**Mandato del Dueño:** «las letras tienen en chino, no estás escribiendo en español».
+
+- **Diagnóstico:** la auto-detección del navegador (v42) estaba activa: un navegador
+  con idioma `zh-CN` transformaba todo el chrome de Vanguard al chino, sin que el Dueño
+  lo hubiera pedido. La página lo guardaba en `localStorage` (`vanguard-lang-v1`) y lo
+  repetía en cada visita.
+- **Cambios:**
+  - **`src/lib/i18n.ts`:** `ensureLangDetected()` ya NO consulta el navegador: si el
+    piloto no eligió idioma a mano (`autoDetected=true`), **siempre arranca en español**.
+  - **`src/components/intro/intro-vanguard.tsx`:** la entrada solo muestra el idioma
+    guardado si el piloto lo eligió **a mano** (`autoDetected=false`); de lo contrario
+    arranca en español (no toca `data-vi-idioma`).
+  - **`src/lib/voz/idiomas.ts`:** `idiomaActual()` (voz) aplica la misma regla: solo
+    sigue un idioma guardado si fue elegido manualmente.
+- **Contrato:** `scripts/pruebas-experiencia.mjs` → **PASA 159/0**.
+- **Commit:** `ce978fd`. Push OK. Deploy `dpl_5B2dw4vaJLi44B7RFPY6ZcCSKVHS` →
+  **READY/PROMOTED**.
+- **Verificación en producción (puppeteer `verify-tools/audit-idioma.mjs`):** con el
+  navegador forzado a `zh-CN`, el documento se sirve con `<html lang="es">`, **ningún
+  fragmento en chino visible**, barra de exploración con 3 puertas, **0 botones viejos**
+  y **0 errores JS**. ✅
 
 ## Task: DESPEDIDA DEL DUEÑO — la llave queda en la casa (2026-11-22)
 
