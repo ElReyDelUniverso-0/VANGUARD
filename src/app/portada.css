@@ -2066,7 +2066,7 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
 /* v439.10: el muelle (también .vx-nav) es position:fixed. El menú DE LA
    CABECERA debe ser un hijo normal del header: aquí se resetea la
    posición y el fondo para que no se desplace a la esquina inferior. */
-.vx-cab .vx-nav{position:static;top:auto;right:auto;bottom:auto;left:auto;z-index:auto;width:auto;max-width:none;height:auto;padding:0;border:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;transition:none}
+.vx-cab .vx-nav{position:static;top:auto;right:auto;bottom:auto;left:auto;z-index:auto;width:auto;max-width:none;height:auto;min-height:0;flex-direction:row;flex-wrap:nowrap;gap:2px;padding:0;border:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;transition:none}
 .vx-cab .vx-nav a{white-space:nowrap}
 /* v439.10 · EL MENÚ VUELVE A LA CABECERA — animado, con símbolos, fijo.
    Antes se escondía a propósito («menos menú»), pero el Dueño pidió el
