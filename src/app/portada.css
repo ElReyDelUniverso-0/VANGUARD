@@ -93,7 +93,7 @@ body:has(.vx) { background: #06080c; }
   background: linear-gradient(90deg, transparent, rgba(232,197,106,.55) 30%, rgba(232,197,106,.55) 70%, transparent);
 }
 .vx-cab[data-oculta="1"] { transform: translateY(-100%); }
-.vx-cab-in { display: flex; align-items: center; gap: 22px; height: 64px; }
+.vx-cab-in { display: flex; align-items: center; gap: 22px; height: 78px; }
 .vx-logo { display: flex; align-items: center; gap: 10px; }
 .vx-logo svg { width: 34px; height: 34px; filter: drop-shadow(0 0 10px rgba(232,197,106,.25)); }
 .vx-logo-t { display: flex; flex-direction: column; line-height: 1; }
@@ -2063,16 +2063,14 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
    apropiado. La especificidad (.vx-cab .vx-nav) gana a `.vx-nav` y a
    `.vx-nav:hover` sin importar el orden.
    ═══════════════════════════════════════════════════════════════════ */
-.vx-cab .vx-nav{position:static;top:auto;right:auto;bottom:auto;left:auto;z-index:auto;width:auto;max-width:none;height:auto;padding:0;border:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:2px;justify-content:center;overflow:visible;transition:none}
-.vx-cab .vx-nav:hover,.vx-cab .vx-nav:focus-within,.vx-cab .vx-nav[data-plegada="1"]:hover{width:auto}
+.vx-cab .vx-nav{position:static;top:auto;right:auto;bottom:auto;left:auto;z-index:auto;width:auto;max-width:none;height:auto;padding:0;border:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;transition:none}
 .vx-cab .vx-nav a{white-space:nowrap}
-/* Y SE QUEDA FUERA DE LA CABECERA, a propósito: en 1440 px los seis botones
-   no caben entre el logo y el racimo de la derecha (GUÍA TÁCTICA · MUNDOS ·
-   RADIO · BUSCAR · ojo · EN VIVO) y se montaban encima del logo. La casa ya
-   navega por la barra del módulo (segunda fila) y por el muelle de la
-   izquierda, y la orden vigente es «menos menú»: la fila de secciones no
-   vuelve. Lo que se arregla aquí es que DEJE DE APARECER EN LA ESQUINA. */
-.vx-cab .vx-nav{display:none}
+/* v439.10 · EL MENÚ VUELVE A LA CABECERA — animado, con símbolos, fijo.
+   Antes se escondía a propósito («menos menú»), pero el Dueño pidió el
+   menú: animado, con los símbolos característicos, cómodo y llamativo, y
+   ROTADO (fijo): siempre el mismo, para todos. En escritorio (>=980 px)
+   se muestra el menú de secciones; en móvil sigue el tabbar con símbolos. */
+@media (min-width: 980px){ .vx-cab .vx-nav{display:flex} }
 
 /* ═══════════════════════════════════════════════════════════════════
    v439.6 · LA VOTACIÓN DEL MUNDO
