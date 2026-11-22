@@ -154,9 +154,10 @@ export function Emblema({ tipo, color, nombre, encendida = false, className = ""
       <Simbolo tipo={tipo} color={color} />
 
       {/* el pie de la medalla: la feria está montada sobre madera */}
-      <path d="M42 112 h36 l-4 10 H46 Z" fill="#4a3320" />
-      <rect x="34" y="122" width="52" height="7" rx="3" fill="#6b4a2a" />
-      <path d="M40 124 h40" stroke={CREMA} strokeWidth="1" strokeOpacity="0.25" />
+      <rect x="55" y="96" width="10" height="18" rx="2" fill="#4a3320" />
+      <rect x="30" y="113" width="60" height="9" rx="3.5" fill="#6b4a2a" />
+      <rect x="36" y="115.5" width="48" height="1.6" rx="0.8" fill={CREMA} opacity="0.22" />
+      <circle cx="60" cy="107" r="2.2" fill={color} opacity="0.8" />
     </svg>
   );
 }
