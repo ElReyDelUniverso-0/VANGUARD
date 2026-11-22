@@ -109,7 +109,7 @@ export function Escena({ tecnica, paleta, semilla, glifo, conFoto = false }: Esc
       const desplaz = cy + (rnd() - 0.5) * 40;
       let d = `M0 ${r1(desplaz)}`;
       for (let x = 0; x <= ANCHO; x += 24) d += ` Q${x + 12} ${r1(desplaz - amp)} ${x + 24} ${r1(desplaz)}`;
-      piezas.push(<path key={`o${i}`} d={d} transform={`translate(0 ${r1(Math.sin(fre * 100) * 0)}`} {...trazo} opacity={0.14 + i * 0.09} strokeWidth={1.2} />);
+      piezas.push(<path key={`o${i}`} d={d} transform={`translate(0 ${r1(Math.sin(fre * 100) * 0)})`} {...trazo} opacity={0.14 + i * 0.09} strokeWidth={1.2} />);
     }
     piezas.push(<line key="eje" x1={0} y1={r1(cy)} x2={ANCHO} y2={r1(cy)} stroke={paleta.filo} strokeWidth={0.8} opacity={0.3} />);
   } else if (tecnica === "barras") {

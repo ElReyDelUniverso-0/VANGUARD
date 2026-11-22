@@ -196,7 +196,7 @@ export function emblemaSVG(emblema: Emblema, tam = 132): string {
     `<title>${e.lema}</title>`,
     `<path d="${forma}" fill="rgba(8,10,16,.55)" stroke="${metal}" stroke-width="2.2"/>`,
     aro,
-    `<g transform="translate(30 24) scale(2.5)">${trazos.join("")}</g>`,
+    `<g transform="translate(30,24) scale(2.5)">${trazos.join("")}</g>`,
     `<text x="60" y="98" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="17" letter-spacing="3" fill="${metal}">${e.monograma}</text>`,
     `</svg>`,
   ].join("");
