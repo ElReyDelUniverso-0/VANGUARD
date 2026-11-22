@@ -7453,8 +7453,15 @@
 // Y no lo tapa nada: sube a z-index 10020 —por encima de la entrada (48), de la
 // cortina y de la capa del golpe (9999)—, el cartel a 10030 y la placa a 10040.
 // Si el Dueño abre la casa y mira la pantalla, el sello está.
-export const APP_VERSION = "v440.2";
-export const APP_CODENAME = "EL SELLO, TAMBIÉN EN LA PORTADA";
+// v440.3 · VANGUARD CINEMATIC EXPERIENCE — el Dueño pidió cinco piezas
+// cinematográficas que aparezcan mientras se explora, cada una en su momento:
+// el ojo (salas especiales), la V (salas descubiertas / logros), el planeta
+// (mapas), el radar (novedades reales de la bitácora) y los portales (el
+// catálogo). Un lienzo, un rAF, escena perezosa, saltable, sin repetirse.
+// (anterior) export const APP_VERSION = "v440.2";
+// (anterior) export const APP_CODENAME = "EL SELLO, TAMBIÉN EN LA PORTADA";
+export const APP_VERSION = "v440.3";
+export const APP_CODENAME = "VANGUARD CINEMATIC EXPERIENCE";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7532,7 +7539,8 @@ export const APP_CODENAME = "EL SELLO, TAMBIÉN EN LA PORTADA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v440.1"; // LA ENTRADA, FLUIDA
+export const APP_VERSION_ANTERIOR = "v440.2"; // EL SELLO, TAMBIÉN EN LA PORTADA
+// (anterior) export const APP_VERSION_ANTERIOR = "v440.1"; // LA ENTRADA, FLUIDA
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE

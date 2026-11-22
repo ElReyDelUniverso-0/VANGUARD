@@ -93,6 +93,7 @@ import { Progreso } from "@/components/vida/progreso";
 import { Aurora } from "@/components/vida/aurora";
 // v438.0 LA ENTRADA: la Cortina v422.3 se jubila — la entrada del logo la sustituye
 import { IntroVanguard } from "@/components/intro/intro-vanguard";
+import { CineVanguard } from "@/components/cine/cine-vanguard";
 import "@/components/intro/intro-vanguard.css";
 import { Orbita } from "@/components/vida/orbita";
 import { Clasificacion } from "@/components/operacion/clasificacion";
@@ -328,6 +329,10 @@ document.documentElement.setAttribute('data-vg-anim',n);}catch(e){document.docum
             «¡VANGUARD!», ANTES de que cargue nada. HTML/CSS de servidor + un
             guion vanilla; una vez por sesión y nunca eterna (ver el archivo). */}
         <IntroVanguard />
+        {/* v440.3 VANGUARD CINEMATIC EXPERIENCE — cinco piezas (ojo, V, planeta,
+            radar, portales) que aparecen cada una en SU momento mientras se
+            explora, nunca durante la entrada. La escena se carga perezosa. */}
+        <CineVanguard />
         {/* ════════════════════════════════════════════════════════════
             v360.0 LA CASA QUE RESPIRA — el aire vive en TODA la casa.
             La aurora v16 solo existía en la portada SPA; las páginas

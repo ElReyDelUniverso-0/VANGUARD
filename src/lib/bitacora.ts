@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v440.3",
+    nombre: "VANGUARD CINEMATIC EXPERIENCE — cinco piezas que aparecen mientras exploras",
+    tipo: "luxe",
+    hitos: [
+      "EL DESPERTAR DEL OJO: la primera vez que entras en una sala especial (Zona Cero, Espía, Biblioteca oscura, Servicios, Consola). La pantalla se oscurece, un ojo enorme se dibuja, se abre con un destello, un anillo de escaneo cruza la pantalla, los países de verdad (Natural Earth) y las salas del módulo lo rodean, y queda el sello. Después, un ojo centinela se queda en la sala, sigue el puntero, parpadea y reacciona a las novedades; si lo tocas, repite la pieza.",
+      "EL NACIMIENTO DE LA V: al descubrir 5, 12, 25, 45 y 70 salas (cuenta real, en tu aparato), o cuando un módulo avisa de un logro con el evento «vg:logro». Cientos de partículas forman dos estructuras, se unen en la V, la luz recorre sus bordes y aparece VANGUARD. El material cambia por módulo: metal (El saber), cristal (El mundo), líneas digitales (La redacción), partículas (La casa).",
+      "EL PLANETA VANGUARD: al entrar en mapas, globo, países o mundos vivos (una vez por semana). Una esfera pequeña, la cámara se acerca, aparecen la tierra, la retícula, las coordenadas, las rutas entre ciudades y se encienden los cinco mundos; tres ventanas muestran salas reales del módulo El mundo y la cámara se zambulle en el mapa.",
+      "EL RADAR DE LOS ACONTECIMIENTOS: cuando la casa tiene versión nueva desde tu última visita. El barrido revela puntos, se conectan en red y se destacan las TRES últimas novedades reales de esta bitácora; el radar se convierte en el sello.",
+      "EL UNIVERSO DE LOS MÓDULOS: al abrir /modulos o /catalogo (cada tres días). Fragmentos salen de la V y se vuelven portales, uno por módulo real, con su estado: SIN EXPLORAR, ACTUALIZADO (si sus salas salen en la bitácora reciente) o cuántas salas llevas. Tocar un portal te lleva; si no, la cámara entra por el menos explorado y te deja la puerta.",
+      "DESTELLOS: tras tres minutos explorando aparecen sorpresas pequeñas que no tapan nada (anillo de expansión, el ojo en la esquina, la V de partículas, un radar con tus salas descubiertas, un portal hacia el módulo que aún no abriste). Cada una sale primero una vez; nunca más de cuatro por sesión.",
+      "REGLAS: nunca durante la entrada, 90 s entre piezas, máximo tres por sesión, todas saltables (botón o Escape) y con sonido sintetizado bajito que se puede apagar. Con movimiento reducido no hay película (el radar deja una tarjeta quieta con las novedades). La escena se carga solo cuando toca, y en teléfonos lentos baja sola la resolución y los puntos.",
+    ],
+  },
+  {
 
     version: "v440.2",
     nombre: "EL SELLO, TAMBIÉN EN LA PORTADA — el botón que se escondía en la única página que el Dueño abre",
