@@ -325,3 +325,14 @@ espectáculo.**
 **Verificación:** esbuild parsea los 4 archivos sin errores de sintaxis; deploy Vercel +
 verificación en producción (curl `/dark-history` HTTP 200, puppeteer: títulos, 17
 expedientes, mapa SVG, cronología, fuentes). Ver worklog de la verificación en línea.
+
+**Verificación en producción — ESTADO PENDIENTE (bloque externo, no del código):**
+- Commit **`c8448b2`** (v442.0 DARK HISTORY) **pusheado OK** a `main` (remote `5be747e..c8448b2`).
+- La fila de builds de Vercel tuvo deploys concurrentes del Dueño (v441.2-v441.4) que
+  **cancelaron** el build automático de este commit (patrón conocido).
+- Se intentó re-disparo vía API `create_deployment` → **denegado**:
+  **«Your Team exceeded our fair use limits and has been blocked» (HTTP 402)**.
+- Todo el sitio en producción responde **HTTP 402 · DEPLOYMENT_DISABLED · "Payment required"**
+  (`/`, `/historia`, `/dark-history`): el **equipo Vercel del Dueño fue bloqueado por límite
+  de uso**. El código está completo y pusheado; el deploy automático por push a `main` se
+  disparará cuando el bloque se levante. Re-verificar en línea tras el levantamiento.
