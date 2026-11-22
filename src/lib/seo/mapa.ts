@@ -34,6 +34,8 @@ import { ORGANIZACIONES } from "@/lib/planeta/organizaciones";
 import { COLECCIONES } from "@/lib/planeta/directorio";
 // v420.3 EL ATLAS DE INFRAESTRUCTURA — el catálogo, el explorador, las grandes obras y cada ficha de obra
 import { CATALOGO_INFRA } from "@/lib/infraestructura/catalogo";
+// v441.3 ABANDONED WORLD — el atlas y una ficha por lugar
+import { LUGARES as LUGARES_ABANDONADOS } from "@/lib/abandonados/lugares";
 // v421.0 LAS FICHAS DE DATOS DE CADA PAÍS — el catálogo del Banco Mundial ya
 // dice qué países tienen hoja de datos; el mapa no inventa ni uno.
 import { catalogoPaises } from "@/lib/mundial/banco";
@@ -717,6 +719,19 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
     })),
     ...CATALOGO_INFRA.map((o) => ({
       url: `${SITE_URL}/infraestructura/obra/${o.id}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    // v441.3 ABANDONED WORLD — el atlas y una entrada por ficha de lugar
+    {
+      url: `${SITE_URL}/abandonados`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    },
+    ...LUGARES_ABANDONADOS.map((l) => ({
+      url: `${SITE_URL}/abandonados/lugar/${l.id}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,

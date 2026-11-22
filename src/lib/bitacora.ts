@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v441.3",
+    nombre: "ABANDONED WORLD — el atlas de los lugares que el mundo dejó atrás",
+    tipo: "mundo",
+    hitos: [
+      "EL DUEÑO: «Construye ABANDONED WORLD para Vanguard: un atlas interactivo de lugares abandonados y estructuras olvidadas, con mapa mundial, ciudades fantasma, hospitales históricos abandonados, hoteles y parques desiertos, instalaciones industriales, fotografías documentales, historia de cada lugar, razones del abandono, cronologías, galería visual y fichas expandibles». Y una condición: lugares documentados y públicos, sin animar a entrar ilegalmente ni a explorar con peligro.",
+      "35 LUGARES DOCUMENTADOS EN 19 PAÍSES: 15 ciudades fantasma (Prípiat, Kolmanskop, Bodie, Craco, Oradour-sur-Glane, Hashima, Varosha, Centralia, Kayaköy, Pyramiden, Humberstone, Fordlândia, Belchite, Villa Epecuén, Armero), 6 hospitales y sanatorios (Beelitz, isla Ellis, Danvers, Waverly Hills, Poveglia, Sanatorio Durán), 6 hoteles y parques (Hotel del Salto, Spreepark, Six Flags Nueva Orleans, Nara Dreamland, Grossinger's, Kupari) y 8 industrias y estructuras (Kennecott, Teufelsberg, Buzludzha, Völklingen, Michigan Central, City Hall del metro de Nueva York, fuertes Maunsell, radar Duga).",
+      "CADA FICHA: historia, por qué se abandonó, cronología con fechas, estado actual (incluido lo que ya no existe: Nara Dreamland, Danvers, Six Flags y Kupari están demolidos; Michigan Central reabrió en 2024) y «cómo conocerlo con seguridad»: visita oficial, solo desde el exterior, cerrado o transformado. Fuentes enlazadas en cada ficha.",
+      "MIRA, NO ENTRES: aviso visible arriba y en cada ficha. El atlas no da rutas, huecos ni accesos; solo museos, visitas guiadas y miradores públicos, y advierte de los riesgos (radiación, derrumbes, zonas militares, lugares de memoria).",
+      "94 FOTOGRAFÍAS DOCUMENTALES de Wikimedia Commons con licencias libres, cada una con su autor, su licencia y su página de origen; ninguna imagen generada. Recomprimidas (≤820 px) y en miniatura para la galería; las de las fichas solo se descargan al abrir la ficha.",
+      "MAPA MUNDIAL ligero: Natural Earth 110m como SVG estático (~120 KB, cacheado), puntos por categoría que abren su ficha; en el teléfono el mapa se desliza en horizontal. Filtros por categoría sin volver a pintar nada (un atributo y CSS) y que funcionan sin JavaScript (?cat=).",
+      "35 PÁGINAS ESTÁTICAS /abandonados/lugar/[id] con datos estructurados (LandmarksOrHistoricalBuildings), sitemap, sección «mapas» y entrada en el registro de módulos y el índice de mapas.",
+    ],
+  },
+  {
     version: "v440.5",
     nombre: "GLOBAL DANGER — el observatorio mundial de riesgos, con la fuente a la vista",
     tipo: "mundo",

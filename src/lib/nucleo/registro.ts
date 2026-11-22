@@ -1163,6 +1163,22 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:infraestructura", "fnt:atlas"],
     alias: "atlas infraestructura aeronaves puertos ferrocarril puentes tuneles centrales energia presas embalses agua educacion sanitaria hospitales edificios emblematicos obras ingenieria civil catalogo",
   },
+  // ── v441.3 ABANDONED WORLD ─────────────────────────────────────────
+  // Atlas de lugares abandonados documentados: mapa mundial, galería y 35
+  // fichas desplegables. Solo vías oficiales y puntos públicos.
+  {
+    id: "mod:abandonados",
+    nombre: "ABANDONED WORLD",
+    lema: "Los lugares que el mundo dejó atrás",
+    descripcion:
+      "Atlas interactivo de lugares abandonados y estructuras olvidadas: ciudades fantasma, hospitales históricos, hoteles y parques desiertos e instalaciones industriales. Mapa mundial, filtros por categoría, galería documental con fotos de licencia libre y fichas con historia, razones del abandono, cronología, estado actual y cómo conocerlos por vías oficiales. No promueve la entrada ilegal ni la exploración peligrosa. v441.3.",
+    categoria: "MUNDO",
+    ruta: "/abandonados",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:mapas"],
+    alias: "abandoned world lugares abandonados ciudades fantasma pueblos fantasma ruinas hospitales abandonados sanatorios hoteles abandonados parques abandonados industria abandonada pripiat chernobil urbex historia",
+  },
   {
     id: "mod:infra-gran-obra",
     nombre: "EL CATALÓGO DE GRANDAS OBRAS",

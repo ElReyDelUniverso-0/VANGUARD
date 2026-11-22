@@ -163,6 +163,16 @@ export const MAPAS: MapaDeLaCasa[] = [
     modulo: "El mundo",
   },
   {
+    id: "abandonados",
+    ruta: "/abandonados",
+    nombre: "Abandoned World",
+    pregunta: "¿dónde están las ciudades fantasma y los lugares que el mundo dejó atrás?",
+    vista: "2D",
+    motor: "atlas georreferenciado de lugares abandonados documentados",
+    fuente: "Wikipedia y fuentes citadas en cada ficha; fotos de Wikimedia Commons",
+    modulo: "El mundo",
+  },
+  {
     id: "lingua-mapa",
     ruta: "/lingua/mapa",
     nombre: "El mapa de las lenguas",

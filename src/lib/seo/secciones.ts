@@ -82,6 +82,8 @@ export const SECCIONES: Seccion[] = [
       "/mundo",
       "/mundos",
       "/infraestructura",
+      // v441.3 ABANDONED WORLD — atlas de lugares abandonados
+      "/abandonados",
     ],
   },
   {

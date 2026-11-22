@@ -7503,8 +7503,16 @@
 //      de peligro» sumando cosas distintas y no usa el miedo como reclamo.
 // (anterior) export const APP_VERSION = "v440.4";
 // (anterior) export const APP_CODENAME = "EL ESCAPARATE DEL MERCADO";
-export const APP_VERSION = "v440.5";
-export const APP_CODENAME = "GLOBAL DANGER";
+// v441.3 · ABANDONED WORLD — el atlas de los lugares que el mundo dejó atrás
+//   /abandonados: mapa mundial SVG (Natural Earth como estático), filtros por
+//   categoría sin re-render (data-filtro + CSS), galería documental y 35 fichas
+//   desplegables con historia, razones, cronología, estado y «cómo conocerlo con
+//   seguridad». /abandonados/lugar/[id]: 35 fichas estáticas con JSON-LD.
+//   94 fotos de Wikimedia Commons con autor y licencia. No enseña a colarse.
+// (anterior) export const APP_VERSION = "v440.5";
+// (anterior) export const APP_CODENAME = "GLOBAL DANGER";
+export const APP_VERSION = "v441.3";
+export const APP_CODENAME = "ABANDONED WORLD";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7582,7 +7590,8 @@ export const APP_CODENAME = "GLOBAL DANGER";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v440.4"; // EL ESCAPARATE DEL MERCADO
+export const APP_VERSION_ANTERIOR = "v440.5"; // GLOBAL DANGER
+// (anterior) export const APP_VERSION_ANTERIOR = "v440.4"; // EL ESCAPARATE DEL MERCADO
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.2"; // EL SELLO, TAMBIÉN EN LA PORTADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
