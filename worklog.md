@@ -154,7 +154,7 @@ agrupado y apilado y es feo — ordenar todo Vanguard.»
   promocional apilado a continuación del tráiler; y el foco de Academia/Motores era un
   bloque Tailwind con seis insignias y ocho botones, ajeno al estilo de la casa.
 - **Cambios:**
-  - **`src/components/portada/barra-explorar.tsx` (nuevo):** `BarraExplorar` — una sola
+  - **`src/components/portada/barra-explora.tsx` (nuevo):** `BarraExplorar` — una sola
     barra con las tres puertas (Mundos · Travesía · Directorio), un solo estilo.
   - **`src/app/portada.css`:** estilos `.vx-barra*` + `.vxp-spot-c` + estilos unificados
     para el nuevo foco (`.vx-foco*`).
@@ -168,17 +168,30 @@ agrupado y apilado y es feo — ordenar todo Vanguard.»
 - **Contrato:** `scripts/pruebas-experiencia.mjs` actualizado para la arquitectura
   actual (la portada muestra las familias como la franja del mercado `MercadoPortada`,
   no como el bloque completo del ecosistema) → **PASA 159/0**.
-- **Commit:** `709de94` (rebase sobre `ffb03b0` v436.7, conflicto auto-resuelto con
-  cambios conservados). Push OK.
-- **Deploy Vercel:** `dpl_Dv6AFcboDqW9pXaipvqXCWfQFnTh` (commit `709de94`) → **READY/PROMOTED**,
-  alias `vanguard-kq9r.vercel.app`. Build: `prisma generate` + **`tsc --noEmit` PASS** +
-  `next build` OK (1358 páginas estáticas).
-- **Auditoría headless PASS (producción, `verify-tools/audit-orden.mjs`):** `/` y
-  `/ecosistema` → HTTP 200; **BarraExplorar con 3 puertas** en `/`; el **spot vive dentro
-  de la sección del tráiler**; foco reformado (1 banner + 2 pilares); **0 botones sueltos
-  viejos**; **0 errores JS**. `/modulos` → redirect 308 a `/orden` (config preexistente)
-  y `/orden` carga la orden de batalla. Las **10 familias-tráiler** de `/ecosistema`
-  intactas. **11/11 comprobaciones**.
+- **1ª instancia (`709de94`):** deploy `dpl_Dv6AFcboDqW9pXaipvqXCWfQFnTh` READY/PROMOTED,
+  **pero commits posteriores revertieron el código en main** — el deployment ya no
+  representaba lo que había en producción.
+- **Re-aplicación (2026-11-22, por mandato del Dueño: «lo que dices no está desplegado»):**
+  el código se re-aplicó completo sobre el main actual (`page.tsx`, `barra-explora.tsx`
+  reconstruido, resto ya intacto). Build falló con **TS17008** (un `</section>` perdido
+  al editar) → commit `2192ca2/f4b5280` lo restaura; rebase sobre commits móviles del
+  Dueño y push OK.
+- **Deploy Vercel (definitivo):** `dpl_DkGYuihumWsvjoPZ8aoPgVCkGXdL` (commit **`f4b5280`**)
+  → **READY/PROMOTED**, alias `vanguard-kq9r.vercel.app`. Build: `prisma generate` +
+  **`tsc --noEmit` PASS** + `next build` OK.
+- **Verificación en PRODUCCIÓN (curl + auditoría headless `verify-tools/audit-orden.mjs`):**
+  `/` HTTP 200 con **BarraExplorar con 3 puertas** (Mundos · Travesía · Directorio,
+  `vx-barra` presente, **0 botones sueltos viejos**); el **spot vive dentro de la sección
+  del tráiler**; foco reformado (1 banner + 2 pilares); `/modulos` → redirect a `/orden`
+  (config preexistente) y `/orden` carga la orden de batalla; `/ecosistema` con las
+  **10 familias-tráiler** intactas; **0 errores JS**. **11/11 comprobaciones PASS**.
+- **Notas:**
+  - **El idioma chino que vio el Dueño NO es basura:** `src/lib/i18n.ts` tiene
+    `detectLang()` (mapea `navigator.languages` a es/en/pt/fr/de/it/ru/zh, fallback `es`)
+    y `ensureLangDetected()` (auto-detección 1× por página si el usuario no eligió idioma
+    a mano). El navegador del Dueño detectó `zh` → la entrada `intro-vanguard.tsx`
+    muestra «系统启动中 · 授权通过 · 进入 Vanguard». 8 idiomas soportados; si el Dueño
+    quiere español siempre, basta con elegir el idioma a mano en la entrada.
 
 ## Task: DESPEDIDA DEL DUEÑO — la llave queda en la casa (2026-11-22)
 
