@@ -19,6 +19,11 @@
 // CUÁNDO: la primera carga de cada sesión, y la portada cada vez que se llega
 // de fuera o se recarga. `?intro` la fuerza. Nunca a robots, iframes ni
 // pruebas automáticas; respeta el sonido apagado del Dueño y la quietud.
+// v439.2: el MODO LIGERO automático (todo teléfono táctil ≤760 px) ponía
+// `animation-duration: 0.001ms !important` a TODO, también a la entrada: en
+// el teléfono saltaba al final y no se veía NADA. Mientras dura, la entrada
+// aparta `data-vx-ligero` / `data-vg-anim=desactivadas` y los devuelve al
+// salir; sólo la elección EXPRESA del aparato (vx435-config) la apaga.
 // Sin JavaScript se retira sola a los 2,5 s: la entrada JAMÁS se queda puesta.
 // ═══════════════════════════════════════════════════════════════════════════
 import type { ReactNode } from "react";
@@ -64,16 +69,17 @@ const IDIOMAS: Lang[] = ["es", "en", "pt", "fr", "de", "it", "ru", "zh"];
 interface Textos {
   lema1: string; lema2: string; entrar: string; sonido: string; mudo: string; saltar: string;
   iniciando: string; listo: string; sistema: string; vivo: string; paises: string; lenguas: string; horas: string;
+  dias: string; tardes: string; noches: string;
 }
 const TEXTOS: Record<Lang, Textos> = {
-  es: { lema1: "El mundo entero", lema2: "en vivo", entrar: "Entrar a Vanguard", sonido: "con sonido", mudo: "Entrar sin sonido", saltar: "Saltar", iniciando: "Iniciando sistema", listo: "Acceso autorizado", sistema: "Sistema global", vivo: "En vivo", paises: "países", lenguas: "lenguas", horas: "h en vivo" },
-  en: { lema1: "The whole world", lema2: "live", entrar: "Enter Vanguard", sonido: "with sound", mudo: "Enter without sound", saltar: "Skip", iniciando: "Starting system", listo: "Access granted", sistema: "Global system", vivo: "Live", paises: "countries", lenguas: "languages", horas: "h live" },
-  pt: { lema1: "O mundo inteiro", lema2: "ao vivo", entrar: "Entrar no Vanguard", sonido: "com som", mudo: "Entrar sem som", saltar: "Pular", iniciando: "Iniciando sistema", listo: "Acesso autorizado", sistema: "Sistema global", vivo: "Ao vivo", paises: "países", lenguas: "línguas", horas: "h ao vivo" },
-  fr: { lema1: "Le monde entier", lema2: "en direct", entrar: "Entrer dans Vanguard", sonido: "avec le son", mudo: "Entrer sans le son", saltar: "Passer", iniciando: "Démarrage du système", listo: "Accès autorisé", sistema: "Système global", vivo: "En direct", paises: "pays", lenguas: "langues", horas: "h en direct" },
-  de: { lema1: "Die ganze Welt", lema2: "live", entrar: "Vanguard betreten", sonido: "mit Ton", mudo: "Ohne Ton eintreten", saltar: "Überspringen", iniciando: "System startet", listo: "Zugang gewährt", sistema: "Globales System", vivo: "Live", paises: "Länder", lenguas: "Sprachen", horas: "h live" },
-  it: { lema1: "Il mondo intero", lema2: "in diretta", entrar: "Entra in Vanguard", sonido: "con audio", mudo: "Entra senza audio", saltar: "Salta", iniciando: "Avvio del sistema", listo: "Accesso autorizzato", sistema: "Sistema globale", vivo: "In diretta", paises: "paesi", lenguas: "lingue", horas: "h in diretta" },
-  ru: { lema1: "Весь мир", lema2: "в прямом эфире", entrar: "Войти в Vanguard", sonido: "со звуком", mudo: "Войти без звука", saltar: "Пропустить", iniciando: "Запуск системы", listo: "Доступ разрешён", sistema: "Глобальная система", vivo: "В эфире", paises: "стран", lenguas: "языков", horas: "ч в эфире" },
-  zh: { lema1: "整个世界", lema2: "实时", entrar: "进入 Vanguard", sonido: "开启声音", mudo: "静音进入", saltar: "跳过", iniciando: "系统启动中", listo: "授权通过", sistema: "全球系统", vivo: "直播", paises: "个国家", lenguas: "种语言", horas: "小时直播" },
+  es: { lema1: "El mundo entero", lema2: "en vivo", entrar: "Entrar a Vanguard", sonido: "con sonido", mudo: "Entrar sin sonido", saltar: "Saltar", iniciando: "Iniciando sistema", listo: "Acceso autorizado", sistema: "Sistema global", vivo: "En vivo", paises: "países", lenguas: "lenguas", horas: "h en vivo", dias: "Buenos días", tardes: "Buenas tardes", noches: "Buenas noches" },
+  en: { lema1: "The whole world", lema2: "live", entrar: "Enter Vanguard", sonido: "with sound", mudo: "Enter without sound", saltar: "Skip", iniciando: "Starting system", listo: "Access granted", sistema: "Global system", vivo: "Live", paises: "countries", lenguas: "languages", horas: "h live", dias: "Good morning", tardes: "Good afternoon", noches: "Good evening" },
+  pt: { lema1: "O mundo inteiro", lema2: "ao vivo", entrar: "Entrar no Vanguard", sonido: "com som", mudo: "Entrar sem som", saltar: "Pular", iniciando: "Iniciando sistema", listo: "Acesso autorizado", sistema: "Sistema global", vivo: "Ao vivo", paises: "países", lenguas: "línguas", horas: "h ao vivo", dias: "Bom dia", tardes: "Boa tarde", noches: "Boa noite" },
+  fr: { lema1: "Le monde entier", lema2: "en direct", entrar: "Entrer dans Vanguard", sonido: "avec le son", mudo: "Entrer sans le son", saltar: "Passer", iniciando: "Démarrage du système", listo: "Accès autorisé", sistema: "Système global", vivo: "En direct", paises: "pays", lenguas: "langues", horas: "h en direct", dias: "Bonjour", tardes: "Bon après-midi", noches: "Bonsoir" },
+  de: { lema1: "Die ganze Welt", lema2: "live", entrar: "Vanguard betreten", sonido: "mit Ton", mudo: "Ohne Ton eintreten", saltar: "Überspringen", iniciando: "System startet", listo: "Zugang gewährt", sistema: "Globales System", vivo: "Live", paises: "Länder", lenguas: "Sprachen", horas: "h live", dias: "Guten Morgen", tardes: "Guten Tag", noches: "Guten Abend" },
+  it: { lema1: "Il mondo intero", lema2: "in diretta", entrar: "Entra in Vanguard", sonido: "con audio", mudo: "Entra senza audio", saltar: "Salta", iniciando: "Avvio del sistema", listo: "Accesso autorizzato", sistema: "Sistema globale", vivo: "In diretta", paises: "paesi", lenguas: "lingue", horas: "h in diretta", dias: "Buongiorno", tardes: "Buon pomeriggio", noches: "Buonasera" },
+  ru: { lema1: "Весь мир", lema2: "в прямом эфире", entrar: "Войти в Vanguard", sonido: "со звуком", mudo: "Войти без звука", saltar: "Пропустить", iniciando: "Запуск системы", listo: "Доступ разрешён", sistema: "Глобальная система", vivo: "В эфире", paises: "стран", lenguas: "языков", horas: "ч в эфире", dias: "Доброе утро", tardes: "Добрый день", noches: "Добрый вечер" },
+  zh: { lema1: "整个世界", lema2: "实时", entrar: "进入 Vanguard", sonido: "开启声音", mudo: "静音进入", saltar: "跳过", iniciando: "系统启动中", listo: "授权通过", sistema: "全球系统", vivo: "直播", paises: "个国家", lenguas: "种语言", horas: "小时直播", dias: "早上好", tardes: "下午好", noches: "晚上好" },
 };
 
 function T({ k }: { k: keyof Textos }) {
@@ -105,6 +111,17 @@ try{
   }
   sessionStorage.setItem(K,'1');
 }catch(e){ if(navigator.webdriver){no();return;} }
+var cfg={}; try{cfg=JSON.parse(localStorage.getItem('vx435-config')||'{}')||{};}catch(e){}
+if(!forzar&&(cfg.ligero==='si'||cfg.anim==='desactivadas')){no();return;}
+var hh=new Date().getHours(); H.setAttribute('data-vi-hora',hh>=5&&hh<12?'m':(hh>=12&&hh<19?'t':'n'));
+var guarda={}, mo=null;
+function proteger(){ try{
+  if(H.hasAttribute('data-vx-ligero')){ guarda.l=H.getAttribute('data-vx-ligero'); H.removeAttribute('data-vx-ligero'); }
+  var va=H.getAttribute('data-vg-anim'); if(va==='desactivadas'){ guarda.a=va; H.setAttribute('data-vg-anim','completas'); }
+}catch(e){} }
+function soltar(){ try{ if(mo){mo.disconnect(); mo=null;} if(guarda.l!=null){ H.setAttribute('data-vx-ligero',guarda.l); } if(guarda.a){ H.setAttribute('data-vg-anim',guarda.a); } H.removeAttribute('data-vi-hora'); }catch(e){} }
+proteger();
+try{ mo=new MutationObserver(proteger); mo.observe(H,{attributes:true,attributeFilter:['data-vx-ligero','data-vg-anim']}); }catch(e){}
 var quieto=false; try{quieto=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
 if(quieto) H.setAttribute('data-vi-quieto','1');
 try{var lg=JSON.parse(localStorage.getItem('vanguard-lang-v1')||'{}'); lg=lg&&lg.state&&lg.state.lang; if(/^(es|en|pt|fr|de|it|ru|zh)$/.test(lg||'')) H.setAttribute('data-vi-idioma',lg);}catch(e){}
@@ -118,13 +135,14 @@ if(!mudo){ try{ a=new Audio('/sonidos/intro-vanguard.mp3'); a.preload='auto'; a.
 function go(){
   if(cerrada||(fase!=='a'&&fase!=='puerta')) return;
   fase='go'; tGo=ya(); H.removeAttribute('data-vi-puerta'); H.setAttribute('data-vi','go');
-  T(function(){ if(!cerrada){ cerrada=true; quitar(); H.setAttribute('data-vi','fuera'); } },5600);
+  T(function(){ if(!cerrada){ cerrada=true; quitar(); H.setAttribute('data-vi','fuera'); soltar(); } },5600);
+  if(!quieto&&navigator.vibrate){ T(function(){ try{navigator.vibrate([70,40,140]);}catch(e){} },1300); T(function(){ try{navigator.vibrate([40,30,90]);}catch(e){} },4750); }
 }
 function cerrar(){
   if(cerrada) return; cerrada=true; relojes.forEach(clearTimeout); quitar();
   H.removeAttribute('data-vi-puerta'); H.setAttribute('data-vi','fin');
   try{ if(a&&suena){ var v=a.volume, i=setInterval(function(){ v-=0.1; if(v<=0){clearInterval(i); a.pause();} else a.volume=v; },40); } }catch(e){}
-  setTimeout(function(){H.setAttribute('data-vi','fuera');},620);
+  setTimeout(function(){H.setAttribute('data-vi','fuera'); soltar();},620);
 }
 function sonarDesde(s){ if(!a) return false; try{ a.currentTime=s; var pm=a.play(); suena=true; if(pm&&pm.catch) pm.catch(function(){suena=false;}); return true; }catch(e){ return false; } }
 function puerta(){ if(cerrada||fase!=='a') return; fase='puerta'; H.setAttribute('data-vi-puerta','1'); T(function(){ if(fase==='puerta') go(); },9000); }
@@ -324,7 +342,7 @@ export function IntroVanguard() {
             </ul>
             <div className="vi-estado" aria-hidden>
               <span className="vi-estado-a"><T k="iniciando" /> <b className="vi-pct" /></span>
-              <span className="vi-estado-b"><T k="listo" /></span>
+              <span className="vi-estado-b"><T k="listo" /><span className="vi-saludo"> · <span className="vi-sal m"><T k="dias" /></span><span className="vi-sal t"><T k="tardes" /></span><span className="vi-sal n"><T k="noches" /></span></span></span>
             </div>
             <div className="vi-carga" aria-hidden><i /></div>
           </div>

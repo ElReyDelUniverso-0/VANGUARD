@@ -7285,8 +7285,16 @@
 // ⑥ Se midió en el navegador: 8/8 salidas con animación de 1000 ms, placa con
 //    su frase, residuo nulo, 0 errores de consola; y se grabó la película de
 //    las ocho (VANGUARD/v437-Sello-Salida/el-sello-8-finales.webm).
-export const APP_VERSION = "v439.1";
-export const APP_CODENAME = "EL SELLO DE SALIDA, DE VERDAD";
+// v439.2 · LA ENTRADA SE VE EN EL TELÉFONO — el Dueño: «no está ahí, nada
+// de lo que describiste está en Vanguard». Tenía razón: el MODO LIGERO
+// automático (todo teléfono táctil ≤760 px) ponía `animation-duration:
+// 0.001ms !important` a todo, también a la entrada, que saltaba al final en
+// un milisegundo. Ahora la entrada aparta el modo ligero mientras dura y lo
+// devuelve al salir; saludo según la hora y vibración en los dos golpes.
+// (anterior) export const APP_VERSION = "v439.1";
+// (anterior) export const APP_CODENAME = "EL SELLO DE SALIDA, DE VERDAD";
+export const APP_VERSION = "v439.2";
+export const APP_CODENAME = "LA ENTRADA SE VE EN EL TELÉFONO";
 // (anterior) export const APP_VERSION = "v439.0";
 // (anterior) export const APP_CODENAME = "LA GRAN ENTRADA";
 // (anterior) export const APP_VERSION = "v431.5";
@@ -7360,7 +7368,8 @@ export const APP_CODENAME = "EL SELLO DE SALIDA, DE VERDAD";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
+export const APP_VERSION_ANTERIOR = "v439.1"; // EL SELLO DE SALIDA, DE VERDAD
+// (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.1"; // LA PLAZA VIVA // LA PLAZA VIVA

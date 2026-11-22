@@ -546,3 +546,11 @@ html[data-vi-idioma="de"] #vg-intro .vi-t[lang="de"],
 html[data-vi-idioma="it"] #vg-intro .vi-t[lang="it"],
 html[data-vi-idioma="ru"] #vg-intro .vi-t[lang="ru"],
 html[data-vi-idioma="zh"] #vg-intro .vi-t[lang="zh"] { display: inline; }
+
+/* v439.2 · el saludo según la hora del aparato */
+#vg-intro .vi-saludo { display: none; }
+html[data-vi-hora] #vg-intro .vi-saludo { display: inline; }
+#vg-intro .vi-sal { display: none; }
+html[data-vi-hora="m"] #vg-intro .vi-sal.m,
+html[data-vi-hora="t"] #vg-intro .vi-sal.t,
+html[data-vi-hora="n"] #vg-intro .vi-sal.n { display: inline; }

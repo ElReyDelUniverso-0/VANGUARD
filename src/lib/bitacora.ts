@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v439.2",
+    nombre: "LA ENTRADA SE VE EN EL TELÉFONO — el fallo de verdad, encontrado",
+    tipo: "luxe",
+    hitos: [
+      "EL DUEÑO: «no está ahí; nada de lo que describiste está en Vanguard». Tenía razón. La entrada estaba en el HTML, pero en el teléfono no se veía.",
+      "LA CAUSA: el MODO LIGERO automático (pantallas.css) se enciende en TODO teléfono táctil de hasta 760 px y pone `animation-duration: 0.001ms !important` a todos los elementos. La entrada vive de animaciones: con eso saltaba a su último fotograma (el iris abierto, la cortina fuera) en un milisegundo. Las pruebas en un navegador de escritorio no lo veían.",
+      "EL ARREGLO: mientras dura la entrada, su guion aparta `data-vx-ligero` (y `data-vg-anim=desactivadas`) y vigila que nadie lo vuelva a poner; al salir los devuelve tal cual. La casa sigue ligera; la entrada se ve entera. Sólo la elección EXPRESA del aparato (ajustes: ligero «sí» o animaciones desactivadas) la apaga.",
+      "MÁS: el cartel final dice «Acceso autorizado · Buenos días / Buenas tardes / Buenas noches» según la hora del aparato, en los ocho idiomas, y el teléfono VIBRA en los dos golpes (el impacto de VANGUARD y la apertura del iris) cuando se entra con el toque.",
+    ],
+  },
+  {
     version: "v439.1",
     nombre: "EL SELLO DE SALIDA, DE VERDAD — el sello se ve, y el módulo se rompe con golpe de escena",
     tipo: "nav",
