@@ -21,6 +21,17 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v440.1",
+    nombre: "LA ENTRADA, FLUIDA — ya no se traba en el teléfono",
+    tipo: "luxe",
+    hitos: [
+      "EL DUEÑO: «la animación está bugeada, se traba y no se ve bien».",
+      "LA CAUSA: todo el logo era UN solo SVG y dentro giraban sin parar los rayos, los dos anillos y la órbita de los ocho símbolos, con un desenfoque de 26 px aplicado encima: el teléfono tenía que repintarlo y desenfocarlo 60 veces por segundo. Además el cielo movía su fondo repintándolo, una máscara cubría toda la entrada para el final, y letras y frases animaban desenfoques y espaciado. Mientras la casa carga por debajo el hilo principal está ocupado, y todo eso se congelaba a tirones.",
+      "EL ARREGLO: el logo se parte en capas — halo, rayos, base, dos anillos, órbita (cada símbolo en su capa, contra-girando), ondas, ojo y ojo cerrado — y TODO lo que se mueve es transform u opacity sobre su propia capa, que la tarjeta gráfica mueve aunque el hilo principal esté ocupado. El cielo se desliza en vez de repintarse, la salida es un acercamiento que se desvanece (sin máscara) y el brillo de letras y frases es fijo.",
+      "MEDIDO (CPU a 1/4, teléfono 390 px, 3 s del espectáculo): de 2475 ms a 450 ms pintando y rasterizando. Se ve igual; ahora corre suave.",
+    ],
+  },
+  {
 
     version: "v439.9",
     nombre: "EL SELLO, PULIDO — se le quita lo de botón y se le pone lo de medalla",

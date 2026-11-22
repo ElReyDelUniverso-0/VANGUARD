@@ -213,7 +213,22 @@ export function IntroVanguard() {
                 ))}
               </div>
 
-              <svg className="vi-logo" viewBox="0 0 520 520" aria-hidden focusable="false">
+              {/* v439.9 · cada capa que GIRA vive en su propio <div>: la tarjeta gráfica
+                  la mueve sin volver a pintar el SVG (antes todo el lienzo se repintaba
+                  60 veces por segundo con un desenfoque encima y el teléfono se trababa) */}
+              <div className="vi-halo-capa" aria-hidden />
+              <div className="vi-giro rayos" aria-hidden>
+                <svg className="vi-svg" viewBox="0 0 520 520" aria-hidden focusable="false">
+                  <g stroke="#e8c56a" strokeLinecap="round">
+                  {RAYOS.map((g) => (
+                    <line key={g} x1={C} y1={g % 30 === 0 ? 74 : 94} x2={C} y2={g % 30 === 0 ? 118 : 122}
+                      strokeWidth={g % 30 === 0 ? 2.2 : 1} strokeOpacity={g % 30 === 0 ? 0.75 : 0.35}
+                      transform={`rotate(${g} ${C} ${C})`} />
+                  ))}
+                </g>
+                </svg>
+              </div>
+              <svg className="vi-svg vi-base" viewBox="0 0 520 520" aria-hidden focusable="false">
                 <defs>
                   <radialGradient id="vi-luzg" cx="50%" cy="50%" r="50%">
                     <stop offset="0" stopColor="#fff6d6" stopOpacity=".9" />
@@ -244,53 +259,48 @@ export function IntroVanguard() {
                     <path d="M98 260 Q260 118 422 260 Q260 402 98 260Z" />
                   </clipPath>
                 </defs>
-
-                <circle cx={C} cy={C} r="250" fill="url(#vi-luzg)" className="vi-halo" />
-                <g className="vi-rayos" stroke="#e8c56a" strokeLinecap="round">
-                  {RAYOS.map((g) => (
-                    <line key={g} x1={C} y1={g % 30 === 0 ? 74 : 94} x2={C} y2={g % 30 === 0 ? 118 : 122}
-                      strokeWidth={g % 30 === 0 ? 2.2 : 1} strokeOpacity={g % 30 === 0 ? 0.75 : 0.35}
-                      transform={`rotate(${g} ${C} ${C})`} />
-                  ))}
-                </g>
                 <polygon points={estrella(C, C, 196, 70, 4)} fill="url(#vi-punta)" className="vi-estrella" />
                 <polygon points={estrella(C, C, 152, 62, 4, 45)} fill="url(#vi-punta)" className="vi-estrella b" />
-
                 <circle cx={C} cy={C} r="200" pathLength={1} className="vi-trazo" />
                 <circle cx={C} cy={C} r="186" pathLength={1} className="vi-trazo b" />
-                <g className="vi-anillo" fill="none" stroke="url(#vi-oro)">
+              </svg>
+              <div className="vi-giro anillo" aria-hidden>
+                <svg className="vi-svg" viewBox="0 0 520 520" aria-hidden focusable="false"><g fill="none" stroke="url(#vi-oro)">
                   <circle cx={C} cy={C} r="228" strokeWidth="1.2" strokeDasharray="2 9" opacity=".7" />
                   <circle cx={C} cy={C} r="238" strokeWidth=".8" strokeDasharray="38 14 4 14" opacity=".45" />
-                </g>
-                <g className="vi-anillo b" fill="none" stroke="#e8c56a">
+                </g></svg>
+              </div>
+              <div className="vi-giro anillo-b" aria-hidden>
+                <svg className="vi-svg" viewBox="0 0 520 520" aria-hidden focusable="false"><g fill="none" stroke="#e8c56a">
                   <circle cx={C} cy={C} r="214" strokeWidth="1" strokeDasharray="1 5" opacity=".5" />
-                </g>
-
-                <g className="vi-orbita">
-                  {SIMBOLOS.map((s, i) => {
-                    const ang = (i / SIMBOLOS.length) * Math.PI * 2 - Math.PI / 2;
-                    const x = C + 222 * Math.cos(ang);
-                    const y = C + 222 * Math.sin(ang);
-                    return (
-                      <g key={s.id} transform={`translate(${x.toFixed(1)} ${y.toFixed(1)})`}>
-                        <g className="vi-sim-giro">
-                          <g className="vi-sim" style={{ animationDelay: `${0.55 + i * 0.08}s` }}>
+                </g></svg>
+              </div>
+              <div className="vi-orbita" aria-hidden>
+                {SIMBOLOS.map((s, i) => {
+                  const ang = (i / SIMBOLOS.length) * Math.PI * 2 - Math.PI / 2;
+                  const x = 50 + (222 / 5.2) * Math.cos(ang);
+                  const y = 50 + (222 / 5.2) * Math.sin(ang);
+                  return (
+                    <div key={s.id} className="vi-sim-pos" style={{ left: `${x.toFixed(2)}%`, top: `${y.toFixed(2)}%` }}>
+                      <div className="vi-sim-giro">
+                        <div className="vi-sim" style={{ animationDelay: `${0.55 + i * 0.08}s` }}>
+                          <svg viewBox="-24 -24 48 48" aria-hidden focusable="false">
                             <circle r="21" className="vi-sim-fondo" />
                             <g className="vi-sim-trazo">{s.dibujo}</g>
-                          </g>
-                        </g>
-                      </g>
-                    );
-                  })}
-                </g>
-
-                <circle cx={C} cy={C} r="120" className="vi-onda" />
-                <circle cx={C} cy={C} r="120" className="vi-onda b" />
-                <circle cx={C} cy={C} r="120" className="vi-pulso p1" />
-                <circle cx={C} cy={C} r="120" className="vi-pulso p2" />
-                <circle cx={C} cy={C} r="120" className="vi-pulso p3" />
-                <circle cx={C} cy={C} r="120" className="vi-pulso p4" />
-
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <i className="vi-onda" aria-hidden />
+              <i className="vi-onda b" aria-hidden />
+              <i className="vi-pulso p1" aria-hidden />
+              <i className="vi-pulso p2" aria-hidden />
+              <i className="vi-pulso p3" aria-hidden />
+              <i className="vi-pulso p4" aria-hidden />
+              <svg className="vi-svg vi-ojo" viewBox="0 0 520 520" aria-hidden focusable="false">
                 <g className="vi-abre">
                   <g className="vi-parpadeo">
                     <g className="vi-pestanas" stroke="#e8c56a" strokeLinecap="round" opacity=".85">
@@ -325,13 +335,15 @@ export function IntroVanguard() {
                     <path d="M84 260 Q260 420 436 260" fill="none" stroke="#e8c56a" strokeOpacity=".25" strokeWidth="1.2" />
                   </g>
                 </g>
-                {/* el ojo cerrado que respira durante el arranque */}
-                <path d="M98 260 Q260 272 422 260 Q260 248 98 260Z" className="vi-cerrado" />
-
-                {[[C, 64], [456, C], [C, 456], [64, C]].map(([x, y], i) => (
-                  <polygon key={i} points={estrella(x, y, 13, 3, 4)} fill="#fff6d6" className={`vi-destello d${i}`} />
-                ))}
               </svg>
+              {[[50, 12.31], [87.69, 50], [50, 87.69], [12.31, 50]].map(([x, y], i) => (
+                <div key={i} className={`vi-destello d${i}`} style={{ left: `${x}%`, top: `${y}%` }} aria-hidden>
+                  <svg viewBox="-14 -14 28 28" focusable="false"><polygon points={estrella(0, 0, 13, 3, 4)} fill="#fff6d6" /></svg>
+                </div>
+              ))}
+              <div className="vi-cerrado-capa" aria-hidden>
+                <svg className="vi-svg" viewBox="0 0 520 520" aria-hidden focusable="false"><path d="M98 260 Q260 272 422 260 Q260 248 98 260Z" className="vi-cerrado" /></svg>
+              </div>
             </div>
 
             <p className="vi-titulo" data-texto="VANGUARD" aria-label="VANGUARD">

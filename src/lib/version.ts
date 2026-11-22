@@ -7429,8 +7429,17 @@
 // ⑥ PRUEBA: 95 comprobaciones en tools/portadas/probar.mts — que las 50
 //    declaran su ruta, que la ruta existe en el atlas, que /historia cae en su
 //    técnica, que no se pierde ninguna prop y que la reserva es estable.
-export const APP_VERSION = "v440.0";
-export const APP_CODENAME = "LA MISMA PORTADA EN TODAS LAS SALAS";
+// v440.1 · LA ENTRADA, FLUIDA — el Dueño: «la animación está bugeada, se traba
+// y no se ve bien». El SVG entero se repintaba en cada fotograma (anillos,
+// rayos y órbita girando dentro, con un desenfoque de 26 px encima), el cielo
+// repintaba su fondo y una máscara cubría toda la entrada: con la casa
+// cargando debajo, el teléfono se atascaba. Ahora cada capa que se mueve es
+// transform/opacity sobre su propia capa. Medido con la CPU a 1/4: de 2475 ms
+// a 450 ms de pintado en 3 s.
+// (anterior) export const APP_VERSION = "v440.0";
+// (anterior) export const APP_CODENAME = "LA MISMA PORTADA EN TODAS LAS SALAS";
+export const APP_VERSION = "v440.1";
+export const APP_CODENAME = "LA ENTRADA, FLUIDA";
 // (anterior) export const APP_VERSION = "v439.9";
 // (anterior) export const APP_CODENAME = "EL SELLO, PULIDO";
 // (anterior) export const APP_VERSION = "v439.3";
@@ -7510,7 +7519,8 @@ export const APP_CODENAME = "LA MISMA PORTADA EN TODAS LAS SALAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v439.8"; // LAS FRASES DE VANGUARD
+export const APP_VERSION_ANTERIOR = "v440.0"; // LA MISMA PORTADA EN TODAS LAS SALAS
+// (anterior) export const APP_VERSION_ANTERIOR = "v439.8"; // LAS FRASES DE VANGUARD
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE
