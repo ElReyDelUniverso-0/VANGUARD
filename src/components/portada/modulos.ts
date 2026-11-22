@@ -108,6 +108,10 @@ export const MODULOS: Modulo[] = [
             { href: "/infraestructura", label: "Atlas infraestructura", img: "/imagenes-reales/satelite.jpg", txt: "Aeropuertos, puertos, puentes, presas, centrales y edificios emblemáticos: el catálogo mundial con sus nueve campos por obra." },
             { href: "/mapas/taller", label: "Taller de mapas", img: "/imagenes-reales/satelite.jpg", txt: "Crea un mapa 2D o 3D con tus puntos, tus fichas y tus fuentes, y expórtalo en GeoJSON, JSON o HTML." },
             { href: "/mapas/indice", label: "El índice de mapas", img: "/imagenes-reales/gps.jpg", txt: "Todas las superficies de mapa de la casa, una por una, con su motor y su fuente." },
+            // v436.9 · SALAS QUE ESTABAN ENTERRADAS (misión de reorganización).
+            // /inteligencia tenía página y funcionaba, pero no la nombraba ningún
+            // módulo: sólo se llegaba escribiendo la dirección.
+            { href: "/inteligencia", label: "Cámara de inteligencia", img: "/imagenes-reales/cia.jpg", txt: "El centro de investigación con fuentes: qué se sabe, quién lo dice y qué falta por saber." },
     ],
   },
   {
@@ -155,6 +159,9 @@ export const MODULOS: Modulo[] = [
             { href: "/academia/certificados", label: "Certificados", txt: "Validación criptográfica SHA-256 de diplomas." },
             { href: "/academia/glosario", label: "Glosario", txt: "Términos doctrinales, militares y de OSINT." },
             { href: "/academia/historial", label: "Historial", txt: "Tus intentos, calificaciones y tiempo dedicado." },
+            // v436.9 · SALAS QUE ESTABAN ENTERRADAS (misión de reorganización).
+            { href: "/labs", label: "Laboratorio de sistemas", img: "/imagenes-reales/haarp.jpg", txt: "Quince simuladores de sistemas: se tocan la física, la economía y la red sin salir de la casa." },
+            { href: "/memoria", label: "Archivo de la memoria", img: "/imagenes-reales/enigma.jpg", txt: "Documentos, fotografías y mapas históricos: la memoria que sostiene lo que se cuenta." },
     ],
   },
   {
@@ -187,6 +194,16 @@ export const MODULOS: Modulo[] = [
       { href: "/orden", label: "El orden de batalla", img: "/imagenes-reales/control.jpg", txt: "Todas las salas de la casa con su código, en un solo cuerpo." },
       { href: "/config", label: "Ajustes", img: "/imagenes-reales/control.jpg", txt: "Pantalla grande o pequeña, modo ligero, densidad, letra y fondo: se guarda en tu aparato." },
             { href: "/cuaderno", label: "El Cuaderno", txt: "Tu anotador: escribir, señalar, unir con hilos y verlo en un mapa 3D." },
+            // v436.9 · SALAS QUE ESTABAN ENTERRADAS (misión de reorganización).
+            // Tenían página, funcionaban y nadie las nombraba: el cristal por el
+            // que se mira la propia casa se había quedado sin puerta.
+            { href: "/arquitectura", label: "Arquitectura de la casa", img: "/imagenes-reales/control.jpg", txt: "Qué existe, cómo se conecta y qué falta: el plano de Vanguard por dentro." },
+            { href: "/datos", label: "Catálogo de datos", img: "/imagenes-reales/satelite.jpg", txt: "De dónde sale cada cifra de la casa, con su fuente al lado." },
+            { href: "/sistema", label: "El sistema", img: "/imagenes-reales/gps.jpg", txt: "Contratos, datos y diagnóstico: lo que sostiene la casa cuando nadie mira." },
+            { href: "/ecosistema", label: "El ecosistema", img: "/imagenes-reales/berlaymont.jpg", txt: "Las diez familias de Vanguard, en una sola vista." },
+            { href: "/espacio", label: "Tu espacio", img: "/imagenes-reales/dubai.jpg", txt: "Proyectos, sesiones e historial: tu mesa de trabajo dentro de la casa." },
+            { href: "/navegacion", label: "Navegación adaptativa", img: "/imagenes-reales/shanghai.jpg", txt: "Diez espacios de trabajo para llegar a cualquier sala en dos toques." },
+            { href: "/mercado", label: "El mercado", img: "/imagenes-reales/singapur.jpg", txt: "Las diez familias, puesto a puesto: qué se compra, qué se cambia y con qué créditos." },
     ],
   },
 ];
