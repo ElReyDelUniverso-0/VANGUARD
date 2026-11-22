@@ -1920,3 +1920,26 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
 @media (prefers-reduced-motion: reduce) {
   .vx-mas-cuerpo { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v436.6 — LA CABECERA NO ES EL MUELLE (colisión de clases, arreglada)
+
+   QUÉ PASABA: la navegación de secciones de la cabecera se llama `.vx-nav`
+   desde la v1, y en la v405.10 el muelle flotante de herramientas recibió
+   EL MISMO nombre de clase. Como la regla del muelle viene después en este
+   archivo, se comía a la cabecera: los seis botones (Orden · Buscar ·
+   Redacción · Mundo · Saber · Casa) dejaban el header y aparecían
+   amontonados en una caja de 58 px en la esquina inferior izquierda, encima
+   del muelle de verdad y con las letras sangrando fuera de la caja.
+
+   QUÉ HACE ESTO: devuelve esos seis botones a la cabecera sin renombrar
+   nada — ni una clase, ni un componente, ni una regla del muelle. Solo
+   deshace, para lo que está DENTRO de `.vx-cab`, lo que el muelle se había
+   apropiado. La especificidad (.vx-cab .vx-nav) gana a `.vx-nav` y a
+   `.vx-nav:hover` sin importar el orden.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-cab .vx-nav{position:static;top:auto;right:auto;bottom:auto;left:auto;z-index:auto;width:auto;max-width:none;height:auto;padding:0;border:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:2px;justify-content:center;overflow:visible;transition:none}
+.vx-cab .vx-nav:hover,.vx-cab .vx-nav:focus-within,.vx-cab .vx-nav[data-plegada="1"]:hover{width:auto}
+.vx-cab .vx-nav a{white-space:nowrap}
+@media (max-width:979px){.vx-cab .vx-nav{display:none}}
+@media (min-width:980px){.vx-cab .vx-nav{display:flex}}

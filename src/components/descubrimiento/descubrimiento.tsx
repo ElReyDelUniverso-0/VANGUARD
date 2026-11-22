@@ -78,9 +78,12 @@ export function Descubrimiento() {
       // a quien acaba de llegar se le explica la sala; al veterano, no
       const pct = pctDescubierto(actualizado);
       suena("sala-nueva");
+      // v436.6 — EL PANEL YA NO SE ABRE SOLO. Orden del Dueño: al entrar, el
+      // panel de descubrimiento se abría encima del muelle de herramientas y
+      // tapaba la sala. La guía sigue ahí, en el lanzador de la izquierda con
+      // su anillo de progreso: se abre cuando el lector la pide, no antes.
       if (!actualizado.modoLibre && !actualizado.avisosApagados && pct < 30 && ficha && !enLista(ruta, SIN_AVISO)) {
         setCara("sala");
-        setAbierto(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

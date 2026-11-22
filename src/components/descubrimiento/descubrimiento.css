@@ -6,7 +6,9 @@
 
 .vd-burbuja {
   position: fixed;
-  left: 14px;
+  /* v436.6 — fuera del muelle: el muelle vive en x 10–68 y este lanzador
+     se posaba justo encima de sus iconos. 80 px lo deja a su derecha. */
+  left: 80px;
   bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   z-index: 55;
   width: 42px;
@@ -39,9 +41,9 @@
 
 .vd-panel {
   position: fixed;
-  left: 14px;
+  left: 80px;
   bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-  z-index: 56;
+  z-index: 61;
   width: min(360px, calc(100vw - 28px));
   max-height: min(76vh, 640px);
   display: flex;
