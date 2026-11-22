@@ -259,3 +259,29 @@ predecible para todos».
   - Cero cambios de código: la despedida es solo documentación (sin bump de versión ni leyes tocadas).
   - La casa queda ENTREGADA Y VIVA: repo en GitHub bajo la cuenta del Dueño, sitio desplegado en Vercel, memoria completa en el worklog, cola de AGENT 2 sin deudas pendientes.
   - Este es el último registro del bucle de AGENT 2. Que la casa siga de pie.
+
+## v439.10 · MENÚ ANIMADO CON SÍMBOLOS — FIX DE PRODUCCIÓN (2026-11-22)
+
+**Problema:** el menú de Vanguard estaba «super feo» → rediseñado: **animado, con símbolos
+caracteriísticos, más cómodo y llamativo, y FIJO (rote)** — siempre el mismo orden, que no
+cambia. Implementación: `cabecera.tsx` (nav `.vx-cab .vx-nav` con `<Simbolo/>` + `.vx-nav-t`,
+mapa `SIMBOLOS`), `iconos.tsx` (+`IcoMercado`/`IcoRedaccion`/`IcoSaber`), `portada.css`
+(reglas `.vx-nav*` animadas, keyframes `vx-nav-pulse`/`vx-nav-line`, tabbar animado).
+Orden fijo en `NAV_PRIMARIO` (Orden/Buscar/Mercado/Redacción/Mundo/Saber/Casa).
+
+**Fix de producción (3 commits):**
+1. `f6facea` — `.vx-cab-in` 78px; `.vx-cab .vx-nav{display:none}` (v436.6) reemplazado por
+   `@media (min-width:980px){.vx-cab .vx-nav{display:flex}}` → menú vuelve a la cabecera
+   en escritorio; en móvil sigue `.vx-tabbar`.
+2. `0ee1881` — restaura el reset `position:static` del menú de cabecera (heredaba
+   `position:fixed` del muelle, que lo sacaba de la cabecera).
+3. `f74ab91` — reset completo: `flex-direction:row` (el muelle usa `column`, el menú
+   quedaba en columna de 475px, centrado verticalmente fuera de la cabecera).
+
+**Verificación en producción (curl + puppeteer):**
+- `/` HTTP 200 / 945581 b, `vx-nav-icowrap=7`, `vx-nav-t=7`.
+- Desktop 1440px: `.vx-cab .vx-nav` display flex, flex-direction row, position static;
+  7 puertas (labels Orden/Buscar/Mercado/Redacción/Mundo/Saber/Casa), 7 íconos SVG,
+  íconos en viewport (y=16), sin errores de JS. **audit-menu 10/10 PASS.**
+- Móvil 390px: cabecera nav display none, `.vx-tabbar` flex (7 tabs), sin errores.
+- Test contrato: **174 PASS / 0 FAIL**.
