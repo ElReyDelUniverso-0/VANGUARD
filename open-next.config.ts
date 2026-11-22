@@ -5,7 +5,11 @@
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache";
 
-export default defineCloudflareConfig({
+const config = defineCloudflareConfig({
   incrementalCache: staticAssetsIncrementalCache,
   enableCacheInterception: true,
 });
+
+// El repo trae bun.lock y OpenNext elegiría «bun run build»; la casa se
+// construye con npm (package-lock.json es el que usaba Vercel).
+export default { ...config, buildCommand: "npm run build" };
