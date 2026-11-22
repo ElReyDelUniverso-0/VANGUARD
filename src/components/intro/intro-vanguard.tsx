@@ -124,7 +124,10 @@ proteger();
 try{ mo=new MutationObserver(proteger); mo.observe(H,{attributes:true,attributeFilter:['data-vx-ligero','data-vg-anim']}); }catch(e){}
 var quieto=false; try{quieto=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
 if(quieto) H.setAttribute('data-vi-quieto','1');
-try{var lg=JSON.parse(localStorage.getItem('vanguard-lang-v1')||'{}'); lg=lg&&lg.state&&lg.state.lang; if(/^(es|en|pt|fr|de|it|ru|zh)$/.test(lg||'')) H.setAttribute('data-vi-idioma',lg);}catch(e){}
+// v439.5 · LA CASA SE SIGUE EN ESPAÑOL: solo se usa el idioma guardado si el
+// piloto eligió uno A MANO (autoDetected=false). Si el guardia anterior lo
+// dejó en auto (autoDetected=true), se muestra español sin tocar el atributo.
+try{var lg=JSON.parse(localStorage.getItem('vanguard-lang-v1')||'{}'); var lgst=lg&&lg.state; if(lgst&&lgst.autoDetected===false&&/^(es|en|pt|fr|de|it|ru|zh)$/.test(lgst.lang||'')) H.setAttribute('data-vi-idioma',lgst.lang);}catch(e){}
 H.setAttribute('data-vi','a');
 function ya(){return (window.performance&&performance.now)?performance.now():Date.now();}
 var t0=ya(), fase='a', cerrada=false, tGo=0, relojes=[];

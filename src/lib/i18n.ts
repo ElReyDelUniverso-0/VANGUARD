@@ -43,6 +43,11 @@ export function detectLang(): Lang {
 // aunque su navegador estuviera en otro idioma. Ahora corre una vez por
 // página en el montaje: si el usuario nunca eligió idioma a mano
 // (autoDetected=true), aplica el idioma del navegador; si eligió, se respeta.
+//
+// v439.5 · LA CASA SE SIGUE EN ESPAÑOL. La auto-detección del navegador
+// (que podía traer el chrome en chino u otro idioma sin que el Dueño lo
+// pidiera) queda APAGADA: todos entran en español. Si el piloto elige
+// otro idioma a mano, su elección se respeta y se guarda.
 let _langAutoRan = false;
 export function ensureLangDetected() {
   if (typeof window === "undefined") return;
@@ -51,8 +56,8 @@ export function ensureLangDetected() {
   try {
     const st = useLangStore.getState();
     if (!st.autoDetected) return; // eligió a mano: su palabra es ley
-    const d = detectLang();
-    if (d && d !== st.lang) useLangStore.setState({ lang: d });
+    // v439.5: el navegador NO decide el idioma de la casa — el español sí.
+    useLangStore.setState({ lang: "es" });
   } catch {
     /* el idioma jamás tumba la página */
   }

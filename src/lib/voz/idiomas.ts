@@ -790,9 +790,13 @@ export function idiomaActual(): IdiomaVozId {
   try {
     const crudo = window.localStorage.getItem("vanguard-lang-v1");
     if (crudo) {
-      const j = JSON.parse(crudo) as { state?: { lang?: string } };
+      const j = JSON.parse(crudo) as { state?: { lang?: string; autoDetected?: boolean } };
       const guardado = j?.state?.lang;
-      if (esIdiomaVoz(guardado)) return guardado;
+      // v439.5 · LA CASA SE SIGUE EN ESPAÑOL: si el idioma guardado vino de la
+      // auto-detección (autoDetected=true), no se sigue — la casa habla español
+      // salvo que el piloto lo eligió a mano.
+      const manual = j?.state?.autoDetected === false;
+      if (manual && esIdiomaVoz(guardado)) return guardado;
     }
   } catch {
     /* modo privado o JSON roto: se sigue al ② */
