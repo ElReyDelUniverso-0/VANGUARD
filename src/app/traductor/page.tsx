@@ -98,7 +98,7 @@ export default function TraductorPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="traductor" />
         {/* v402.2 — portada de sala: cifras de los idiomas y del glosario */}
-        <PortadaSala
+        <PortadaSala ruta="/traductor"
           imagen="/imagenes-reales/gps.jpg"
           alt="Mapa del mundo con rutas de datos iluminadas sobre servidores en la noche"
           volanta="Inteligencia · Traductor"

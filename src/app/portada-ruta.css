@@ -175,3 +175,38 @@ html[data-vg-mov="quieto"] .vp-portada * {
 .vp-portada + * {
   scroll-margin-top: 60px;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v440.0 · LAS PORTADAS VIEJAS, CON EL MARCO NUEVO
+   Las 50 salas que ya usaban <PortadaSala> (components/vanguard) heredan
+   este marco sin tocar una sola página: la ficha sale de su título.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.vp-portada--sala {
+  min-height: 380px;
+  margin: 0 0 22px;
+  border: 1px solid color-mix(in srgb, var(--vp-luz) 22%, transparent);
+  border-radius: 2px;
+}
+.vp-portada--sala .vp-txt {
+  max-width: 820px;
+}
+.vp-portada--sala .vp-lema {
+  max-width: 62ch;
+}
+/* la fotografía de la sala manda menos que en las nuevas: aquí ya hay dibujo
+   propio y el texto tiene que leerse */
+.vp-portada--sala .vp-foto img {
+  opacity: 0.3;
+}
+/* el índice de anclas y las cifras que vienen detrás pisan el borde inferior */
+.vx-ps .vp-portada--sala + * {
+  margin-top: 14px;
+}
+
+@media (max-width: 760px) {
+  .vp-portada--sala {
+    min-height: 280px;
+    border-radius: 0;
+  }
+}

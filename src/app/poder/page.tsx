@@ -118,7 +118,7 @@ export default function PoderPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/poder"
         imagen="/imagenes-reales/kremlin.jpg"
         alt="Sillón de despacho vacío junto a una ventana con luz fría"
         volanta="LA CASA · PODER MILITAR"

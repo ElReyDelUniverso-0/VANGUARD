@@ -154,7 +154,7 @@ export default async function PulsoMundialPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="pulso" />
         {/* v402.2 — portada de sala: cifras de la instantánea del Banco Mundial y de la cronología */}
-        <PortadaSala
+        <PortadaSala ruta="/pulso-mundial"
           imagen="/imagenes-reales/satelite.jpg"
           alt="Analistas señalan rutas sobre un gran mapa del mundo iluminado"
           volanta="Inteligencia · Pulso mundial"

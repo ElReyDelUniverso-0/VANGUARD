@@ -341,7 +341,7 @@ export default async function ServiciosPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
-      <PortadaSala
+      <PortadaSala ruta="/servicios"
         imagen="/imagenes-reales/cia.jpg"
         alt="Dos manos sobre un mapa de operaciones iluminado por una lámpara de escritorio"
         volanta="LA CASA · SERVICIOS"

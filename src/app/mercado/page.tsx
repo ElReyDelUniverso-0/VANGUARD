@@ -36,7 +36,7 @@ export default function MercadoPage() {
 
   return (
     <main className="pm-pagina">
-      <PortadaSala
+      <PortadaSala ruta="/mercado"
         imagen="/imagenes-reales/estambul.jpg"
         alt="Puestos de un bazar cubierto, con sus toldos y sus mercaderes atendiendo"
         volanta="Módulo · el mercado"

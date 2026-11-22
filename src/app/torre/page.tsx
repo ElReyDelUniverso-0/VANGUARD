@@ -78,7 +78,7 @@ export default async function TorrePage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         {/* v402.0 — portada de sala (Estado de Vanguard). Sin cifras inventadas:
             todas salen del parte de la Torre. */}
-        <PortadaSala
+        <PortadaSala ruta="/torre"
           imagen="/imagenes-reales/control.jpg"
           alt="Sala de operaciones con pantallas de control en la penumbra"
           volanta="Estado de Vanguard · Torre de control"

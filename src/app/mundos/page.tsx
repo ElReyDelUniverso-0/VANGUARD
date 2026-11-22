@@ -148,7 +148,7 @@ export default function MundosPage() {
     <main className="min-h-screen bg-[#05060b] text-foreground">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
 
-      <PortadaSala
+      <PortadaSala ruta="/mundos"
         imagen="/imagenes-reales/satelite.jpg"
         alt="El planeta visto desde la órbita, con las luces de las costas encendidas"
         volanta="Geografía · Los mundos"

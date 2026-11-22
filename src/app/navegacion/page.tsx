@@ -61,7 +61,7 @@ export default function NavegacionPage() {
   return (
     <>
       <main className="mx-auto max-w-[1408px] px-4 pb-16 pt-6 sm:px-6">
-        <PortadaSala
+        <PortadaSala ruta="/navegacion"
           imagen="/imagenes-reales/control.jpg"
           alt="Cartografía iluminada sobre una mesa de operaciones"
           volanta="LA CASA · NAVEGACIÓN"

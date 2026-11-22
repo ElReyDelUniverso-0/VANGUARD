@@ -170,7 +170,7 @@ export default async function CrucePage() {
 
   return (
     <>
-      <PortadaSala
+      <PortadaSala ruta="/cruce"
         imagen="/imagenes-reales/satelite.jpg"
         alt="El planeta visto desde arriba, con una línea marcando la distancia de un punto a otro"
         volanta="EL CRUCE · LO QUE PASÓ HOY, MEDIDO DESDE CASA"

@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function DescubrirPage() {
   return (
     <main className="dsc-pag">
-      <PortadaSala
+      <PortadaSala ruta="/descubrir"
         imagen="/imagenes-reales/control.jpg"
         alt="Centralita antigua con luces rojas, mandos y notas sobre la mesa"
         volanta="Descubrir · la guía de la casa"

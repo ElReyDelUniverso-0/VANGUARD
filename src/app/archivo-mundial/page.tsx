@@ -85,7 +85,7 @@ export default function ArchivoMundialPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/archivo-mundial"
         imagen="/imagenes-reales/area51.jpg"
         alt="Cajas de archivo numeradas en un depósito con luz cenital"
         volanta="LA CASA · ARCHIVO"

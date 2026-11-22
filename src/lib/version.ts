@@ -7405,8 +7405,34 @@
 // filetes de expediente.
 // (anterior) export const APP_VERSION = "v439.8";
 // (anterior) export const APP_CODENAME = "LAS FRASES DE VANGUARD";
-export const APP_VERSION = "v439.9";
-export const APP_CODENAME = "EL SELLO, PULIDO";
+// v440.0 · LA MISMA PORTADA EN TODAS LAS SALAS — segunda mitad del mandato del
+// Dueño sobre las portadas: «sí, con las portadas viejas».
+// ① CINCUENTA DE UN GOLPE, SIN REESCRIBIR UNA SOLA PÁGINA: 50 de las 52 salas
+//    que ya tenían portada usaban el MISMO componente (components/vanguard/
+//    portada-sala.tsx, de v367.10). Se le cambia el cuerpo, no la API: todas
+//    heredan el marco del atlas —dibujo de la casa, esquinas, rótulo, lema y
+//    numeración de sala— y ninguna pierde lo que ya daba (cifras, anclas,
+//    puntos, nota, alt obligatorio y su h1).
+// ② SU FICHA, NO UNA DE RESERVA: cada página recibe la prop nueva `ruta`
+//    («/historia») y con ella coge SU ficha del censo: su tono, su técnica y su
+//    glifo. Si falta la prop, se busca por el título; y si tampoco, hay una
+//    ficha de reserva estable sacada de la huella del nombre. Nunca una al azar.
+// ③ LA FOTOGRAFÍA REAL DE CADA SALA sigue detrás, ahora al 30 % y fundida con
+//    el degradado de la casa; el dibujo va encima como estructura. Se conserva
+//    fetchPriority en las que son LCP.
+// ④ LA PROPIEDAD QUE NO SE TOCA: el componente sigue siendo de SERVIDOR (cero
+//    JavaScript, cero hidratación) y sigue leyendo las cifras que cada sala
+//    calcula en el render. Nada se inventa aquí.
+// ⑤ EL CENSO CRECE SOLO: la prueba del atlas descubrió dos rutas nuevas que
+//    otros agentes habían añadido (/visita y /votacion) y ya tienen ficha.
+//    94 rutas, 94 fichas, 36 salas con portada nueva y 50 re-vestidas.
+// ⑥ PRUEBA: 95 comprobaciones en tools/portadas/probar.mts — que las 50
+//    declaran su ruta, que la ruta existe en el atlas, que /historia cae en su
+//    técnica, que no se pierde ninguna prop y que la reserva es estable.
+export const APP_VERSION = "v440.0";
+export const APP_CODENAME = "LA MISMA PORTADA EN TODAS LAS SALAS";
+// (anterior) export const APP_VERSION = "v439.9";
+// (anterior) export const APP_CODENAME = "EL SELLO, PULIDO";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";

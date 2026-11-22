@@ -75,3 +75,51 @@ npx tsx tools/descubrimiento/probar.mts   #  47 comprobaciones, 0 fallos
 2. Seguir metiendo fotografías en `/public/portadas` (6 de 92 hoy).
 3. Las cinco salas inmersivas (`/clásico`, `/vanguard2`, `/vértigo`, `/offline`,
    `/entrar`) tienen su propia ley visual y se tratan aparte.
+
+---
+
+## 8 · v440.0 — las portadas viejas, con el marco nuevo
+
+Segunda mitad del mandato: «sí, con las portadas viejas».
+
+### 8.1 · El hallazgo que lo hizo posible
+
+De las 52 salas con portada propia, **50 usaban el mismo componente**:
+`src/components/vanguard/portada-sala.tsx` (v367.10). Así que unificar no era
+reescribir 50 páginas: era **cambiarle el cuerpo a un componente sin tocarle la
+API**.
+
+### 8.2 · Qué se cambió y qué no
+
+| Cambia | No cambia |
+| --- | --- |
+| el héroe: ahora es el marco del atlas (dibujo, esquinas, rótulo, numeración) | las props: `imagen`, `alt`, `volanta`, `titulo`, `sumario`, `cifras`, `puntos`, `anclas`, `nota`, `nivel`, `acento`, `prioritaria` |
+| la fotografía pasa al 30 %, fundida | el `alt` obligatorio y el `fetchPriority` de las que son LCP |
+| aparece la prop opcional `ruta` | el componente sigue siendo de **servidor**: cero JavaScript |
+| — | las cifras: se siguen calculando en el render de cada sala |
+
+### 8.3 · De dónde sale la ficha de cada sala
+
+```
+(ruta ? portadaDeRuta(ruta) : null)  →  fichaPorNombre(titulo)  →  fichaDeReserva(nombre)
+```
+
+1. **La ruta** (`ruta="/historia"`) — la vía buena: su ficha exacta del censo.
+2. **El título** — si la prop falta, se busca sin acentos, sin artículo y sin
+   signos («La Voz» → `voz`).
+3. **La reserva** — estable, sacada de la huella del nombre: nunca un dibujo al
+   azar que cambie al recargar.
+
+### 8.4 · El censo crece solo
+
+La prueba del atlas pilló dos rutas que otros agentes habían añadido mientras
+esto se hacía: **`/visita`** y **`/votacion`**. Ya tienen ficha. Por eso la
+prueba compara contra el disco y no contra una lista escrita a mano.
+
+**94 rutas · 94 fichas · 36 salas con portada nueva · 50 salas re-vestidas.**
+
+### 8.5 · Comprobado
+
+```bash
+npx tsx tools/portadas/probar.mts         # 95 comprobaciones, 0 fallos
+```

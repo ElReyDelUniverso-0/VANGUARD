@@ -123,7 +123,7 @@ export default async function EscenariosPage() {
 
   return (
     <>
-    <PortadaSala
+    <PortadaSala ruta="/escenarios"
       imagen="/assets/real/jet-1.jpg"
       alt="Sala de simulación con pantallas que muestran escenarios y variables"
       volanta="LA CASA · EL ESTRATEGA"

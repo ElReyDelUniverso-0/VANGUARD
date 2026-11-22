@@ -298,7 +298,7 @@ export default async function NucleoPage({
 
   return (
     <>
-    <PortadaSala
+    <PortadaSala ruta="/nucleo"
       imagen="/imagenes-reales/losangeles.jpg"
       alt="Paneles de datos iluminados en una sala de control en penumbra"
       volanta="LA CASA · EL NÚCLEO"

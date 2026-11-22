@@ -91,7 +91,7 @@ export default function OscuraPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/oscura"
         imagen="/imagenes-reales/area51.jpg"
         alt="Pasillo de archivo en penumbra con estanterías que se pierden en la oscuridad"
         volanta="LA CASA · ARCHIVO OSCURO"

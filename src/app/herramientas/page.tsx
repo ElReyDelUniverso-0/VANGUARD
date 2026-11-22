@@ -129,7 +129,7 @@ export default async function HerramientasPage() {
 
   return (
     <>
-      <PortadaSala
+      <PortadaSala ruta="/herramientas"
         imagen="/assets/real/radar-1.jpg"
         alt="Antena de radar barriendo el horizonte: la casa escuchando las fuentes abiertas del mundo"
         volanta="EL TALLER · FUENTES EXTERNAS"

@@ -223,7 +223,7 @@ export default async function HistoriaPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
-      <PortadaSala
+      <PortadaSala ruta="/historia"
         imagen="/imagenes-reales/muroberlin.jpg"
         alt="Libros y mapas antiguos apilados bajo una lámpara de latón"
         volanta="LA CASA · LA MEMORIA"

@@ -215,7 +215,7 @@ export default async function VerGuerraPage() {
   const sinPuerta = FRENTES.filter((f) => !FRENTE_A_TEATRO[f.id]).map((f) => f.name);
   return (
     <>
-    <PortadaSala
+    <PortadaSala ruta="/ver-guerra"
       imagen="/imagenes-reales/portaaviones.jpg"
       alt="Columna de vehículos blindados envuelta en polvo al atardecer"
       volanta="LA CASA · EL FRENTE"

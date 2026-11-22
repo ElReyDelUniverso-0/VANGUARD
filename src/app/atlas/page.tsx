@@ -115,7 +115,7 @@ export default function AtlasPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/atlas"
         imagen="/imagenes-reales/satelite.jpg"
         alt="Mapa antiguo desplegado sobre una mesa con una lámpara encendida"
         volanta="LA CASA · GEOGRAFÍA"

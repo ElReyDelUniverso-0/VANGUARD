@@ -46,7 +46,7 @@ export default async function Teatro3DPage({
     <main className="min-h-screen bg-[#05060b] text-foreground">
       {/* v402.2 — portada de sala (módulo Mapa 3D). Fuera la cabecera propia y su
           barra de botones repetida: la carcasa ya da cabecera y pestañas. */}
-      <PortadaSala
+      <PortadaSala ruta="/teatro-3d"
         imagen="/assets/real/jet-1.jpg"
         alt="Simulador de mando con pantallas tácticas en penumbra"
         volanta="Mapa 3D · Arsenal 3D"

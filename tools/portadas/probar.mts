@@ -14,6 +14,8 @@ import { resolve } from "node:path";
 import {
   GLIFOS,
   PORTADAS,
+  fichaDeReserva,
+  fichaPorNombre,
   TECNICAS,
   huella,
   paleta,
@@ -161,6 +163,45 @@ const layout = lee("src/app/layout.tsx");
 comprueba((layout.match(/<PortadaRuta \/>/g) ?? []).length === 1, "el layout la monta una sola vez");
 comprueba(layout.includes('import "./portada-ruta.css"'), "la casa carga su hoja");
 comprueba(layout.indexOf("<PortadaRuta />") < layout.indexOf("{children}"), "va antes del contenido de la página");
+
+// ── ⑬ LAS PORTADAS VIEJAS, CON EL MARCO NUEVO ────────────────────────
+console.log("\n── ⑬ las 50 portadas viejas hablan el mismo idioma ───────────\n");
+const paginasConSala: string[] = [];
+const sinRuta: string[] = [];
+for (const r of reales) {
+  const f = `src/app/${r}/page.tsx`;
+  if (!hay(f)) continue;
+  const t = lee(f);
+  if (!t.includes("vanguard/portada-sala")) continue;
+  paginasConSala.push(r);
+  if (!/<PortadaSala[^>]*\sruta="/.test(t)) sinRuta.push(r);
+}
+console.log(`   ${paginasConSala.length} salas usan <PortadaSala>\n`);
+comprueba(paginasConSala.length >= 45, "son casi todas las que tenían portada propia");
+comprueba(sinRuta.length === 0, `cada una declara su ruta en el atlas${sinRuta.length ? ` (faltan: ${sinRuta.join(", ")})` : ""}`);
+comprueba(
+  paginasConSala.every((r) => PORTADAS.some((p) => p.ruta === r)),
+  "las rutas declaradas existen en el atlas: ninguna portada se queda sin ficha",
+);
+const fichaHistoria = portadaDeRuta("/historia");
+comprueba(Boolean(fichaHistoria) && fichaHistoria!.tecnica === "curvas", "/historia cae en su técnica, no en una de reserva");
+
+const vieja = lee("src/components/vanguard/portada-sala.tsx");
+comprueba(vieja.includes("portadaDeRuta") && vieja.includes("Escena"), "la portada vieja monta el atlas y el dibujante nuevos");
+comprueba(vieja.includes("vp-portada--sala"), "usa el mismo marco que las salas nuevas");
+comprueba(vieja.includes('ruta?: string'), "acepta la ruta como prop opcional (nada se rompe si falta)");
+comprueba(vieja.includes("fichaDeReserva"), "y si una sala no está en el censo, tiene una ficha estable de reserva");
+for (const prop of ["imagen", "alt", "volanta", "titulo", "sumario", "cifras", "puntos", "anclas", "nota", "nivel"]) {
+  comprueba(vieja.includes(`${prop}`), `conserva la prop «${prop}»: ninguna sala pierde lo que ya daba`);
+}
+comprueba(vieja.includes('nivel === "h1"'), "respeta el nivel del título: una sola h1 por página");
+comprueba(vieja.includes("fetchPriority"), "la fotografía de la sala sigue cargando primero cuando toca");
+comprueba(!/https?:\/\//.test(vieja), "no pide nada a la red");
+comprueba(css.includes(".vp-portada--sala"), "la piel tiene su bloque para las 50");
+comprueba(fichaPorNombre("La Voz")?.ruta === "voz", "el título de una sala también encuentra su ficha");
+comprueba(fichaPorNombre("zzzz-sala-inexistente") === null, "un título que no existe no inventa ficha");
+comprueba(fichaDeReserva("Sala rara").tecnica.length > 2, "la reserva siempre trae técnica válida");
+comprueba(huella(fichaDeReserva("Sala rara").ruta) === huella(fichaDeReserva("Sala rara").ruta), "y es estable: no cambia de dibujo al recargar");
 
 console.log(`\nRESULTADO: ${total} comprobaciones, ${fallos.length} fallos\n`);
 if (fallos.length) {

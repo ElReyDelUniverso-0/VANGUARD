@@ -133,7 +133,7 @@ export default async function EnVivoPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/en-vivo"
         imagen="/imagenes-reales/satelite.jpg"
         alt="Estudio de directo con pantallas encendidas y mesa de control"
         volanta="LA CASA · EL PULSO"

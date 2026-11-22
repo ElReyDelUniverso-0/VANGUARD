@@ -72,7 +72,7 @@ export default async function CentinelaPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         {/* v402.2 — portada de sala: cifras del parte del día (cables vivos) */}
-        <PortadaSala
+        <PortadaSala ruta="/centinela"
           imagen="/imagenes-reales/satelite.jpg"
           alt="Sala de vigilancia con un gran indicador circular sobre el mapa del mundo"
           volanta="Inteligencia · Centinela"

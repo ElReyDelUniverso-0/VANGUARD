@@ -154,7 +154,7 @@ export default async function EspiaPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="espia" />
         {/* v402.2 — portada de sala: cifras del radar (escuchas, movimientos, teatros) */}
-        <PortadaSala
+        <PortadaSala ruta="/espia"
           imagen="/imagenes-reales/cia.jpg"
           alt="Figura con gabardina y maletín bajo una farola, con la ciudad en llamas al fondo"
           volanta="Inteligencia · Modo espía"

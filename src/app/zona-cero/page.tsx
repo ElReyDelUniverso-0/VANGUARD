@@ -207,7 +207,7 @@ export default async function ZonaCeroPage() {
       </a>
     </nav>
     <div id="teatro-global" style={{ scrollMarginTop: 72 }} />
-    <PortadaSala
+    <PortadaSala ruta="/zona-cero"
       nivel="p"
       prioritaria={false}
       imagen="/imagenes-reales/nuclear.jpg"

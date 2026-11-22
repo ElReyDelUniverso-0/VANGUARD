@@ -198,7 +198,7 @@ export default function CuadernoPage() {
     <main className="cuds">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
 
-      <PortadaSala
+      <PortadaSala ruta="/cuaderno"
         nivel="h1"
         prioritaria
         imagen="/imagenes-reales/control.jpg"

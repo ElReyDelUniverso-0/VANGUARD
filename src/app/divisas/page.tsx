@@ -104,7 +104,7 @@ export default async function DivisasPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/divisas"
         imagen="/imagenes-reales/shanghai.jpg"
         alt="Billetes y monedas de varios países extendidos sobre una mesa oscura"
         volanta="LA CASA · DINERO"

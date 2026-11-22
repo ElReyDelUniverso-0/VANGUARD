@@ -52,7 +52,7 @@ export default function EspacioPage() {
   return (
     <>
       <main className="mx-auto max-w-[1408px] px-4 pb-16 pt-6 sm:px-6">
-        <PortadaSala
+        <PortadaSala ruta="/espacio"
           imagen="/imagenes-reales/panama.jpg"
           alt="Mesa de trabajo con planos, instrumentos y libretas abiertas"
           volanta="LA CASA · TU MESA"

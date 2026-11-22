@@ -83,7 +83,7 @@ export default function PerfilPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         {/* v402.2 — portada de sala: cifras del carnet (lib/perfil-jugador) */}
-        <PortadaSala
+        <PortadaSala ruta="/perfil"
           imagen="/imagenes-reales/control.jpg"
           alt="Taquilla abierta con un uniforme colgado en un vestuario en penumbra"
           volanta="Juego · Mi perfil"

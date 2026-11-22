@@ -166,7 +166,7 @@ export default async function RostrosPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
-      <PortadaSala
+      <PortadaSala ruta="/rostros"
         imagen="/imagenes-reales/control.jpg"
         alt="Retrato en penumbra de un rostro iluminado de lado"
         volanta="LA CASA · ROSTROS"

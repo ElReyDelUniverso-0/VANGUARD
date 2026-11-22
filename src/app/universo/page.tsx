@@ -25,7 +25,7 @@ export default async function UniversoPage({
     <main className="min-h-screen bg-[#05060b] text-foreground">
       {/* v402.2 — portada de sala (módulo Juego). Fuera la cabecera propia en inglés
           y su barra de botones: la carcasa ya da cabecera y pestañas. */}
-      <PortadaSala
+      <PortadaSala ruta="/universo"
         imagen="/imagenes-reales/dubai.jpg"
         alt="Cofre del tesoro con monedas y un catalejo sobre un mapa antiguo"
         volanta="Juego · Colecciones"

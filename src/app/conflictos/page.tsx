@@ -136,7 +136,7 @@ export default async function ConflictosPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/conflictos"
         imagen="/imagenes-reales/portaaviones.jpg"
         alt="Manos sobre un mapa de operaciones con líneas de frente dibujadas a lápiz"
         volanta="LA CASA · EL TABLERO"

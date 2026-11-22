@@ -70,7 +70,7 @@ export default function CentroResiliencia() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
 
-      <PortadaSala
+      <PortadaSala ruta="/resiliencia"
         imagen="/imagenes-reales/panama.jpg"
         alt="Manos que sostienen mantas, agua embotellada y linternas sobre una mesa de trabajo"
         volanta="VANGUARD · CENTRO CIVIL"

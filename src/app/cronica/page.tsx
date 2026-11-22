@@ -80,7 +80,7 @@ export default async function CronicaPage() {
         {/* v402.0 LA CRÓNICA, PERFECCIONADA — modelo «The Morning» (NYT) y Axios
             Smart Brevity: cinco claves con foto, luego teatro por teatro, luego
             quién firmó. Alimentada por los cables VIVOS (antes salía en cero). */}
-        <PortadaSala
+        <PortadaSala ruta="/cronica"
           imagen="/imagenes-reales/suez.jpg"
           alt="Mesa de briefing nocturna con carpetas, mapa y lámpara encendida"
           volanta={`Conflictos · Crónica del ${fechaCorta(parte.consultadoEn)}`}

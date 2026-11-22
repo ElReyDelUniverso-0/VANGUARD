@@ -93,7 +93,7 @@ export default function VerdadCrudaPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <PortadaSala
+      <PortadaSala ruta="/verdad-cruda"
         imagen="/imagenes-reales/chernobyl.jpg"
         alt="Documentos apilados bajo una luz dura sobre una mesa metálica"
         volanta="LA CASA · VERDAD CRUDA"

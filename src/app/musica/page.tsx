@@ -82,7 +82,7 @@ export default function MusicaPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         {/* v402.2 — portada de sala: cifras del catálogo real y de las radios */}
-        <PortadaSala
+        <PortadaSala ruta="/musica"
           imagen="/imagenes-reales/dubai.jpg"
           alt="Sala de instrumentos con guitarras alineadas bajo la luna llena"
           volanta="Inteligencia · Música y radio"

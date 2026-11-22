@@ -191,7 +191,7 @@ export default async function GuerraHoyPage() {
           congelada: «hace 14 días»); ② se acabó el <a> dentro de <Link>
           (enlace dentro de enlace = error #418 de hidratación).
           ════════════════════════════════════════════════════════════════ */}
-      <PortadaSala
+      <PortadaSala ruta="/guerra-hoy"
         imagen="/imagenes-reales/portaaviones.jpg"
         alt="Mesa de mando con un mapa de frentes iluminado en la penumbra"
         volanta="Módulo · Conflictos"

@@ -82,7 +82,7 @@ export type FichaPortada = {
 };
 
 /**
- * El censo. 93 rutas con página, 93 fichas: ni una sala sin nombre ni sin
+ * El censo. 94 rutas con página, 94 fichas: ni una sala sin nombre ni sin
  * color. Las palabras de los lemas son las de la casa, no relleno.
  * (/visita no lleva portada: es un redirect a la experiencia estática.)
  */
@@ -177,6 +177,7 @@ export const PORTADAS: FichaPortada[] = [
   { ruta: "verdad-cruda", nombre: "Verdad cruda", lema: "Lo que no conviene adornar, sin adornarlo", tono: 330, tecnica: "ojo", glifo: "ojo", auto: false },
   { ruta: "vertigo", nombre: "Vértigo", lema: "El torrente de la casa, en piezas cortas", tono: 300, tecnica: "onda", glifo: "rayo", auto: false },
   { ruta: "visita", nombre: "La Visita", lema: "El recorrido guiado que se abre en su propia ventana", tono: 66, tecnica: "sello", glifo: "brújula", auto: false },
+  { ruta: "votacion", nombre: "La votación del mundo", lema: "La pregunta del día, decidida entre todos", tono: 214, tecnica: "diana", glifo: "balanza", auto: true },
   { ruta: "voz", nombre: "La Voz", lema: "La boca de la casa: personas, tonos y pausas", tono: 272, tecnica: "onda", glifo: "radio", auto: false },
   { ruta: "worlds", nombre: "Worlds", lema: "Los mundos, en su nombre de fuera", tono: 316, tecnica: "orbita", glifo: "orbe", auto: false },
   { ruta: "zona-cero", nombre: "Zona cero", lema: "El punto donde empezó todo", tono: 350, tecnica: "diana", glifo: "llama", auto: false },
@@ -273,4 +274,50 @@ export function portadaDeRuta(ruta: string | null | undefined): FichaPortada | n
 /** Solo las que la carcasa pinta sola, por orden de censo. */
 export function portadasAuto(): FichaPortada[] {
   return PORTADAS.filter((p) => p.auto);
+}
+
+// ── buscar una ficha por el NOMBRE que pinta la sala ─────────────────
+// Las 50 salas que ya tenían portada propia le pasan al componente su título
+// («Atlas», «Historia», «La Voz»…). Aquí se busca la ficha del atlas por ese
+// nombre, sin acentos, sin artículo y sin signos, para que cada una caiga en
+// SU color y SU dibujo sin tocar una sola página.
+function llano(texto: string): string {
+  return (texto || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/^(el|la|los|las)\s+/, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+export function fichaPorNombre(nombre: string): FichaPortada | null {
+  const n = llano(nombre);
+  if (n.length < 3) return null;
+  const exacta = PORTADAS.find((p) => llano(p.nombre) === n) ?? PORTADAS.find((p) => llano(p.ruta) === n);
+  if (exacta) return exacta;
+  if (n.length < 4) return null;
+  return (
+    PORTADAS.find((p) => llano(p.nombre).startsWith(n) || n.startsWith(llano(p.nombre))) ??
+    PORTADAS.find((p) => llano(p.nombre).includes(n)) ??
+    null
+  );
+}
+
+/**
+ * La ficha de reserva: si una sala no está en el censo (o su título no se
+ * parece a ninguno), igualmente merece su color y su dibujo, y no uno al azar
+ * sino uno estable: el que sale de la huella de su nombre.
+ */
+export function fichaDeReserva(nombre: string): FichaPortada {
+  const base = nombre && nombre.trim() ? nombre.trim() : "sala de la casa";
+  const h = huella(base);
+  return {
+    ruta: `reserva/${llano(base) || "sala"}`,
+    nombre: base,
+    lema: "Sala de la casa",
+    tono: h % 360,
+    tecnica: TECNICAS[h % TECNICAS.length],
+    glifo: GLIFOS[Math.floor(h / 7) % GLIFOS.length],
+    auto: false,
+  };
 }

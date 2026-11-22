@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function MiUniversoPage() {
   return (
     <main className="min-h-screen bg-[#05060b] text-foreground">
-      <PortadaSala
+      <PortadaSala ruta="/mi-universo"
         imagen="/imagenes-reales/portaaviones.jpg"
         alt="Mapa de operaciones sobre una mesa oscura"
         volanta="Mi espacio · Personal"
