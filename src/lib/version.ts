@@ -7377,8 +7377,16 @@
 //    el disco, unicidad de técnica/glifo/color, semillas, 28 glifos dibujados,
 //    fotografías que existen y son JPEG de verdad, y que el layout la monta una
 //    sola vez.
-export const APP_VERSION = "v439.7";
-export const APP_CODENAME = "LA CASA SE PONE PORTADA";
+// v439.8 · LAS FRASES DE VANGUARD — el Dueño: «crea más animaciones al
+// inicio con frases de Vanguard, más pulidas y mejoradas». La entrada gana un
+// acto entero: «Un solo mundo» · «Todas las lenguas» · «Toda la verdad» ·
+// «El ojo que nunca duerme», dichas por la voz, cada una con su entrada
+// propia, raya de luz, onda desde la pupila, golpe y vibración; y el arranque
+// teclea su consola («Conectando 249 países… OK»). Audio nuevo de 11,4 s.
+// (anterior) export const APP_VERSION = "v439.7";
+// (anterior) export const APP_CODENAME = "LA CASA SE PONE PORTADA";
+export const APP_VERSION = "v439.8";
+export const APP_CODENAME = "LAS FRASES DE VANGUARD";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7456,7 +7464,8 @@ export const APP_CODENAME = "LA CASA SE PONE PORTADA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v439.3"; // LA FERIA DE LOS AGENTES
+export const APP_VERSION_ANTERIOR = "v439.7"; // LA CASA SE PONE PORTADA
+// (anterior) export const APP_VERSION_ANTERIOR = "v439.3"; // LA FERIA DE LOS AGENTES
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE

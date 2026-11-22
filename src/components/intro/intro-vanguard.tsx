@@ -8,13 +8,16 @@
 //       ojo cerrado respira y el sistema cuenta «iniciando…».
 //       Si el navegador prohíbe sonar sin gesto aparece LA PUERTA: «ENTRAR A
 //       VANGUARD 🔊». El toque arranca el espectáculo con sonido, sincronizado.
-//   B · ESPECTÁCULO (5,5 s, en sincronía exacta con el audio)
+//   B · ESPECTÁCULO (10,7 s, en sincronía exacta con el audio)
 //       0,40 el ojo se abre · 0,55 los ocho símbolos entran en órbita
 //       1,30 IMPACTO: destello, doble onda, rayos de luz, sacudida, las chispas
 //            estallan y «VANGUARD» cae letra a letra con la voz «¡VANGUARD!»
 //       2,05 la voz: «El mundo entero… en vivo» · cifras que cuentan solas
-//       4,05 el ojo parpadea · 4,30 la cámara se acerca a la pupila
-//       4,75 SEGUNDO GOLPE: el iris se abre en círculo y descubre la casa
+//       4,35 / 5,65 / 6,75 / 7,70 (v439.8) EL ACTO DE LAS FRASES, con voz:
+//            «Un solo mundo» · «Todas las lenguas» · «Toda la verdad» ·
+//            «El ojo que nunca duerme» — cada una con su golpe, su onda y su raya
+//       9,25 el ojo parpadea · 9,50 la cámara se acerca a la pupila
+//       9,95 SEGUNDO GOLPE: el iris se abre en círculo y descubre la casa
 //
 // CUÁNDO: la primera carga de cada sesión, y la portada cada vez que se llega
 // de fuera o se recarga. `?intro` la fuerza. Nunca a robots, iframes ni
@@ -70,16 +73,17 @@ interface Textos {
   lema1: string; lema2: string; entrar: string; sonido: string; mudo: string; saltar: string;
   iniciando: string; listo: string; sistema: string; vivo: string; paises: string; lenguas: string; horas: string;
   dias: string; tardes: string; noches: string;
+  f1: string; f2: string; f3: string; f4: string; b1: string; b2: string; b3: string; b4: string;
 }
 const TEXTOS: Record<Lang, Textos> = {
-  es: { lema1: "El mundo entero", lema2: "en vivo", entrar: "Entrar a Vanguard", sonido: "con sonido", mudo: "Entrar sin sonido", saltar: "Saltar", iniciando: "Iniciando sistema", listo: "Acceso autorizado", sistema: "Sistema global", vivo: "En vivo", paises: "países", lenguas: "lenguas", horas: "h en vivo", dias: "Buenos días", tardes: "Buenas tardes", noches: "Buenas noches" },
-  en: { lema1: "The whole world", lema2: "live", entrar: "Enter Vanguard", sonido: "with sound", mudo: "Enter without sound", saltar: "Skip", iniciando: "Starting system", listo: "Access granted", sistema: "Global system", vivo: "Live", paises: "countries", lenguas: "languages", horas: "h live", dias: "Good morning", tardes: "Good afternoon", noches: "Good evening" },
-  pt: { lema1: "O mundo inteiro", lema2: "ao vivo", entrar: "Entrar no Vanguard", sonido: "com som", mudo: "Entrar sem som", saltar: "Pular", iniciando: "Iniciando sistema", listo: "Acesso autorizado", sistema: "Sistema global", vivo: "Ao vivo", paises: "países", lenguas: "línguas", horas: "h ao vivo", dias: "Bom dia", tardes: "Boa tarde", noches: "Boa noite" },
-  fr: { lema1: "Le monde entier", lema2: "en direct", entrar: "Entrer dans Vanguard", sonido: "avec le son", mudo: "Entrer sans le son", saltar: "Passer", iniciando: "Démarrage du système", listo: "Accès autorisé", sistema: "Système global", vivo: "En direct", paises: "pays", lenguas: "langues", horas: "h en direct", dias: "Bonjour", tardes: "Bon après-midi", noches: "Bonsoir" },
-  de: { lema1: "Die ganze Welt", lema2: "live", entrar: "Vanguard betreten", sonido: "mit Ton", mudo: "Ohne Ton eintreten", saltar: "Überspringen", iniciando: "System startet", listo: "Zugang gewährt", sistema: "Globales System", vivo: "Live", paises: "Länder", lenguas: "Sprachen", horas: "h live", dias: "Guten Morgen", tardes: "Guten Tag", noches: "Guten Abend" },
-  it: { lema1: "Il mondo intero", lema2: "in diretta", entrar: "Entra in Vanguard", sonido: "con audio", mudo: "Entra senza audio", saltar: "Salta", iniciando: "Avvio del sistema", listo: "Accesso autorizzato", sistema: "Sistema globale", vivo: "In diretta", paises: "paesi", lenguas: "lingue", horas: "h in diretta", dias: "Buongiorno", tardes: "Buon pomeriggio", noches: "Buonasera" },
-  ru: { lema1: "Весь мир", lema2: "в прямом эфире", entrar: "Войти в Vanguard", sonido: "со звуком", mudo: "Войти без звука", saltar: "Пропустить", iniciando: "Запуск системы", listo: "Доступ разрешён", sistema: "Глобальная система", vivo: "В эфире", paises: "стран", lenguas: "языков", horas: "ч в эфире", dias: "Доброе утро", tardes: "Добрый день", noches: "Добрый вечер" },
-  zh: { lema1: "整个世界", lema2: "实时", entrar: "进入 Vanguard", sonido: "开启声音", mudo: "静音进入", saltar: "跳过", iniciando: "系统启动中", listo: "授权通过", sistema: "全球系统", vivo: "直播", paises: "个国家", lenguas: "种语言", horas: "小时直播", dias: "早上好", tardes: "下午好", noches: "晚上好" },
+  es: { lema1: "El mundo entero", lema2: "en vivo", entrar: "Entrar a Vanguard", sonido: "con sonido", mudo: "Entrar sin sonido", saltar: "Saltar", iniciando: "Iniciando sistema", listo: "Acceso autorizado", sistema: "Sistema global", vivo: "En vivo", paises: "países", lenguas: "lenguas", horas: "h en vivo", dias: "Buenos días", tardes: "Buenas tardes", noches: "Buenas noches", f1: "Un solo mundo", f2: "Todas las lenguas", f3: "Toda la verdad", f4: "El ojo que nunca duerme", b1: "Conectando 249 países", b2: "Traduciendo 8000 lenguas", b3: "Sincronizando satélites", b4: "Despertando el ojo" },
+  en: { lema1: "The whole world", lema2: "live", entrar: "Enter Vanguard", sonido: "with sound", mudo: "Enter without sound", saltar: "Skip", iniciando: "Starting system", listo: "Access granted", sistema: "Global system", vivo: "Live", paises: "countries", lenguas: "languages", horas: "h live", dias: "Good morning", tardes: "Good afternoon", noches: "Good evening", f1: "One world", f2: "Every language", f3: "The whole truth", f4: "The eye that never sleeps", b1: "Connecting 249 countries", b2: "Translating 8000 languages", b3: "Syncing satellites", b4: "Waking the eye" },
+  pt: { lema1: "O mundo inteiro", lema2: "ao vivo", entrar: "Entrar no Vanguard", sonido: "com som", mudo: "Entrar sem som", saltar: "Pular", iniciando: "Iniciando sistema", listo: "Acesso autorizado", sistema: "Sistema global", vivo: "Ao vivo", paises: "países", lenguas: "línguas", horas: "h ao vivo", dias: "Bom dia", tardes: "Boa tarde", noches: "Boa noite", f1: "Um só mundo", f2: "Todas as línguas", f3: "Toda a verdade", f4: "O olho que nunca dorme", b1: "Conectando 249 países", b2: "Traduzindo 8000 línguas", b3: "Sincronizando satélites", b4: "Despertando o olho" },
+  fr: { lema1: "Le monde entier", lema2: "en direct", entrar: "Entrer dans Vanguard", sonido: "avec le son", mudo: "Entrer sans le son", saltar: "Passer", iniciando: "Démarrage du système", listo: "Accès autorisé", sistema: "Système global", vivo: "En direct", paises: "pays", lenguas: "langues", horas: "h en direct", dias: "Bonjour", tardes: "Bon après-midi", noches: "Bonsoir", f1: "Un seul monde", f2: "Toutes les langues", f3: "Toute la vérité", f4: "L’œil qui ne dort jamais", b1: "Connexion de 249 pays", b2: "Traduction de 8000 langues", b3: "Synchronisation satellites", b4: "Réveil de l’œil" },
+  de: { lema1: "Die ganze Welt", lema2: "live", entrar: "Vanguard betreten", sonido: "mit Ton", mudo: "Ohne Ton eintreten", saltar: "Überspringen", iniciando: "System startet", listo: "Zugang gewährt", sistema: "Globales System", vivo: "Live", paises: "Länder", lenguas: "Sprachen", horas: "h live", dias: "Guten Morgen", tardes: "Guten Tag", noches: "Guten Abend", f1: "Eine Welt", f2: "Alle Sprachen", f3: "Die ganze Wahrheit", f4: "Das Auge, das nie schläft", b1: "Verbinde 249 Länder", b2: "Übersetze 8000 Sprachen", b3: "Synchronisiere Satelliten", b4: "Das Auge erwacht" },
+  it: { lema1: "Il mondo intero", lema2: "in diretta", entrar: "Entra in Vanguard", sonido: "con audio", mudo: "Entra senza audio", saltar: "Salta", iniciando: "Avvio del sistema", listo: "Accesso autorizzato", sistema: "Sistema globale", vivo: "In diretta", paises: "paesi", lenguas: "lingue", horas: "h in diretta", dias: "Buongiorno", tardes: "Buon pomeriggio", noches: "Buonasera", f1: "Un solo mondo", f2: "Tutte le lingue", f3: "Tutta la verità", f4: "L’occhio che non dorme mai", b1: "Connessione di 249 paesi", b2: "Traduzione di 8000 lingue", b3: "Sincronizzazione satelliti", b4: "Risveglio dell’occhio" },
+  ru: { lema1: "Весь мир", lema2: "в прямом эфире", entrar: "Войти в Vanguard", sonido: "со звуком", mudo: "Войти без звука", saltar: "Пропустить", iniciando: "Запуск системы", listo: "Доступ разрешён", sistema: "Глобальная система", vivo: "В эфире", paises: "стран", lenguas: "языков", horas: "ч в эфире", dias: "Доброе утро", tardes: "Добрый день", noches: "Добрый вечер", f1: "Один мир", f2: "Все языки", f3: "Вся правда", f4: "Око, которое не спит", b1: "Подключение 249 стран", b2: "Перевод 8000 языков", b3: "Синхронизация спутников", b4: "Пробуждение ока" },
+  zh: { lema1: "整个世界", lema2: "实时", entrar: "进入 Vanguard", sonido: "开启声音", mudo: "静音进入", saltar: "跳过", iniciando: "系统启动中", listo: "授权通过", sistema: "全球系统", vivo: "直播", paises: "个国家", lenguas: "种语言", horas: "小时直播", dias: "早上好", tardes: "下午好", noches: "晚上好", f1: "一个世界", f2: "所有语言", f3: "全部真相", f4: "永不闭上的眼睛", b1: "正在连接 249 个国家", b2: "正在翻译 8000 种语言", b3: "正在同步卫星", b4: "正在唤醒天眼" },
 };
 
 function T({ k }: { k: keyof Textos }) {
@@ -138,8 +142,8 @@ if(!mudo){ try{ a=new Audio('/sonidos/intro-vanguard.mp3'); a.preload='auto'; a.
 function go(){
   if(cerrada||(fase!=='a'&&fase!=='puerta')) return;
   fase='go'; tGo=ya(); H.removeAttribute('data-vi-puerta'); H.setAttribute('data-vi','go');
-  T(function(){ if(!cerrada){ cerrada=true; quitar(); H.setAttribute('data-vi','fuera'); soltar(); } },5600);
-  if(!quieto&&navigator.vibrate){ T(function(){ try{navigator.vibrate([70,40,140]);}catch(e){} },1300); T(function(){ try{navigator.vibrate([40,30,90]);}catch(e){} },4750); }
+  T(function(){ if(!cerrada){ cerrada=true; quitar(); H.setAttribute('data-vi','fuera'); soltar(); } },10800);
+  if(!quieto&&navigator.vibrate){ T(function(){ try{navigator.vibrate([70,40,140]);}catch(e){} },1300); T(function(){ try{navigator.vibrate([40,30,90]);}catch(e){} },9950); [4350,5650,6750,7700].forEach(function(ms){ T(function(){ try{navigator.vibrate(30);}catch(e){} },ms); }); }
 }
 function cerrar(){
   if(cerrada) return; cerrada=true; relojes.forEach(clearTimeout); quitar();
@@ -166,7 +170,7 @@ function alClic(e){
   if(c('#vg-intro-salta')){ e.preventDefault(); cerrar(); return; }
   if(c('#vi-mudo')){ e.preventDefault(); if(fase==='puerta'){ fase='a'; go(); } return; }
   if(fase==='puerta'){ e.preventDefault(); entrarConSonido(); return; }
-  if(fase==='go'&&a&&!suena){ var s=(ya()-tGo)/1000; if(s<4.4) sonarDesde(s); }
+  if(fase==='go'&&a&&!suena){ var s=(ya()-tGo)/1000; if(s<9.6) sonarDesde(s); }
 }
 function alTecla(e){
   if(e.key==='Escape'){ cerrar(); return; }
@@ -282,6 +286,10 @@ export function IntroVanguard() {
 
                 <circle cx={C} cy={C} r="120" className="vi-onda" />
                 <circle cx={C} cy={C} r="120" className="vi-onda b" />
+                <circle cx={C} cy={C} r="120" className="vi-pulso p1" />
+                <circle cx={C} cy={C} r="120" className="vi-pulso p2" />
+                <circle cx={C} cy={C} r="120" className="vi-pulso p3" />
+                <circle cx={C} cy={C} r="120" className="vi-pulso p4" />
 
                 <g className="vi-abre">
                   <g className="vi-parpadeo">
@@ -333,21 +341,32 @@ export function IntroVanguard() {
                 </span>
               ))}
             </p>
-            <p className="vi-lema">
-              <span className="vi-lema-1"><T k="lema1" /></span>
-              <span className="vi-lema-sep"> · </span>
-              <span className="vi-lema-2"><T k="lema2" /></span>
-            </p>
-            <ul className="vi-cifras" aria-hidden>
-              <li style={{ ["--vi-meta" as string]: 249 }}><b className="vi-num" /><T k="paises" /></li>
-              <li style={{ ["--vi-meta" as string]: 8000 }}><b className="vi-num mas" /><T k="lenguas" /></li>
-              <li style={{ ["--vi-meta" as string]: 24 }}><b className="vi-num" /><T k="horas" /></li>
-            </ul>
-            <div className="vi-estado" aria-hidden>
-              <span className="vi-estado-a"><T k="iniciando" /> <b className="vi-pct" /></span>
-              <span className="vi-estado-b"><T k="listo" /><span className="vi-saludo"> · <span className="vi-sal m"><T k="dias" /></span><span className="vi-sal t"><T k="tardes" /></span><span className="vi-sal n"><T k="noches" /></span></span></span>
+            <div className="vi-info">
+              <div className="vi-info-a">
+              <p className="vi-lema">
+                <span className="vi-lema-1"><T k="lema1" /></span>
+                <span className="vi-lema-sep"> · </span>
+                <span className="vi-lema-2"><T k="lema2" /></span>
+              </p>
+              <ul className="vi-cifras" aria-hidden>
+                <li style={{ ["--vi-meta" as string]: 249 }}><b className="vi-num" /><T k="paises" /></li>
+                <li style={{ ["--vi-meta" as string]: 8000 }}><b className="vi-num mas" /><T k="lenguas" /></li>
+                <li style={{ ["--vi-meta" as string]: 24 }}><b className="vi-num" /><T k="horas" /></li>
+              </ul>
+              <div className="vi-estado" aria-hidden>
+                <span className="vi-estado-a"><T k="iniciando" /> <b className="vi-pct" /></span>
+                <span className="vi-estado-b"><T k="listo" /><span className="vi-saludo"> · <span className="vi-sal m"><T k="dias" /></span><span className="vi-sal t"><T k="tardes" /></span><span className="vi-sal n"><T k="noches" /></span></span></span>
+              </div>
+              <div className="vi-carga" aria-hidden><i /></div>
+              </div>
+              {/* v439.8 · EL ACTO DE LAS FRASES */}
+              <div className="vi-frases" aria-hidden>
+                <p className="vi-frase f1"><T k="f1" /></p>
+                <p className="vi-frase f2"><T k="f2" /></p>
+                <p className="vi-frase f3"><T k="f3" /></p>
+                <p className="vi-frase f4"><T k="f4" /></p>
+              </div>
             </div>
-            <div className="vi-carga" aria-hidden><i /></div>
           </div>
         </div>
 
@@ -359,6 +378,14 @@ export function IntroVanguard() {
           <span>18.48°N · 69.93°W</span>
           <span className="vi-vivo"><i /> <T k="vivo" /></span>
           <span>{APP_VERSION}</span>
+        </div>
+
+        {/* v439.8 · el registro del arranque, como una consola que despierta */}
+        <div className="vi-log" aria-hidden>
+          <p className="l1"><span className="vi-log-p">›</span> <T k="b1" /> <b>OK</b></p>
+          <p className="l2"><span className="vi-log-p">›</span> <T k="b2" /> <b>OK</b></p>
+          <p className="l3"><span className="vi-log-p">›</span> <T k="b3" /> <b>OK</b></p>
+          <p className="l4"><span className="vi-log-p">›</span> <T k="b4" /> <b>OK</b></p>
         </div>
 
         <div className="vi-flash" aria-hidden />

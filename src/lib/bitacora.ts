@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v439.8",
+    nombre: "LAS FRASES DE VANGUARD — la entrada gana un acto, con voz",
+    tipo: "luxe",
+    hitos: [
+      "EL DUEÑO: «crea más animaciones al inicio con frases de Vanguard, más pulidas y mejoradas».",
+      "EL ACTO DE LAS FRASES: tras «El mundo entero · en vivo», cuatro frases grandes en oro, dichas por la voz de la casa — «UN SOLO MUNDO» (nace de la luz), «TODAS LAS LENGUAS» (barrido lateral), «TODA LA VERDAD» (cae con peso y rebota) y «EL OJO QUE NUNCA DUERME» (se queda hasta que el ojo parpadea y el iris abre la casa). Cada una con un brillo de oro que la recorre, dos rayas de luz, una onda desde la pupila, el latido del emblema, un golpe grave con campanas y una vibración corta en el teléfono.",
+      "LA CONSOLA DEL ARRANQUE: arriba a la izquierda el sistema teclea «› Conectando 249 países OK · Traduciendo 8000 lenguas OK · Sincronizando satélites OK · Despertando el ojo OK» con su cursor; también mientras espera el toque de LA PUERTA.",
+      "EL SONIDO (11,4 s): el lema se aprieta («en vivo» llega a 3,6 s, con su texto), cama de acorde que late a 120 durante las frases, soplo + golpe + campanas por frase, y el parpadeo y el segundo golpe se mueven a 9,25 y 9,95 s. La entrada dura ahora unos 11 s; «Saltar ›» y Escape siguen ahí.",
+      "Las frases y la consola, en los ocho idiomas de la casa (la voz, en español). En «quietud» se retiran las rayas y las ondas.",
+    ],
+  },
+  {
     version: "v439.6",
     nombre: "EL SELLO, EN TODAS PARTES — el fallo de montaje que lo escondía",
     tipo: "nav",
