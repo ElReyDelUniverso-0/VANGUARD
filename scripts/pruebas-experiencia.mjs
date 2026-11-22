@@ -137,6 +137,27 @@ ok(leer("src/lib/bitacora.ts").includes('version: "v422.1"'), "la bitácora no t
 const h1 = (portada.match(/<h1/g) ?? []).length + (leer("src/components/experiencia/entrada.tsx").match(/<h1/g) ?? []).length;
 ok(h1 === 1, `la portada debe tener un solo h1 y tiene ${h1}`);
 
+// ── ⑦ v439.6 LA VOTACIÓN DEL MUNDO ────────────────────────────────
+// Algo nuevo, original, nunca antes visto: una pregunta del día para
+// todo el planeta. Determinista (hash de la fecha) → sólido y predecible.
+ok(existsSync(join(RAIZ, "src/lib/votacion-dia.ts")), "no existe src/lib/votacion-dia.ts");
+ok(existsSync(join(RAIZ, "src/app/votacion/page.tsx")), "no existe /votacion");
+const votacionLib = leer("src/lib/votacion-dia.ts");
+ok(votacionLib.includes("hashStr"), "la votación no tiene el hash determinista");
+ok(votacionLib.includes("diaClave"), "la votación no deriva la clave del día");
+ok(votacionLib.includes("votacionDelDia"), "la votación no elige la pregunta del día");
+ok(votacionLib.includes("resultadosBase"), "la votación no tiene el tablero base");
+ok(votacionLib.includes("aplicarVoto"), "la votación no aplica el voto del piloto");
+ok(votacionLib.includes("votacionDeManana"), "la votación no puede predecir la de mañana");
+ok(votacionLib.includes("localStorage"), "la votación no guarda el voto del piloto");
+ok(existsSync(join(RAIZ, "src/components/portada/votacion-tarjeta.tsx")), "no existe la tarjeta de votación");
+ok(portada.includes('from "@/components/portada/votacion-tarjeta"'), "la portada no monta la votación");
+ok(portada.includes("<VotacionTarjeta"), "la votación no se renderiza en la portada");
+const paginaVotacion = leer("src/app/votacion/page.tsx");
+ok(paginaVotacion.includes("votacionDelDia"), "/votacion no usa la pregunta del día");
+ok(paginaVotacion.includes("votacionDeManana"), "/votacion no muestra la de mañana (predecible)");
+ok(leer("src/app/portada.css").includes(".vx-vot-card"), "portada.css no tiene estilos de la votación");
+
 // ── resultado ───────────────────────────────────────────────────────
 if (fallos.length) {
   console.error(`\n✖ ${fallos.length} fallos de ${pasadas + fallos.length} comprobaciones`);

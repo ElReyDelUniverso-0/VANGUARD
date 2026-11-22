@@ -2029,3 +2029,64 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
    izquierda, y la orden vigente es «menos menú»: la fila de secciones no
    vuelve. Lo que se arregla aquí es que DEJE DE APARECER EN LA ESQUINA. */
 .vx-cab .vx-nav{display:none}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v439.6 · LA VOTACIÓN DEL MUNDO
+   Una pregunta del día para todo el planeta. Estilo de la casa: negro
+   oscuro, oro, tipografía marca. Determinista y predecible.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-vot-card{
+  background:linear-gradient(180deg,var(--vx-card2) 0%,var(--vx-card) 100%);
+  border:1px solid var(--vx-line);
+  border-radius:14px;
+  padding:22px;
+  box-shadow:0 10px 40px rgba(0,0,0,.55);
+}
+.vx-vot-enc{margin-bottom:18px}
+.vx-vot-enc--grande{margin-bottom:22px}
+.vx-vot-q{margin:8px 0 0;font-size:clamp(20px,2.2vw,26px);font-weight:800;letter-spacing:-.02em;line-height:1.25}
+.vx-vot-q-sm{margin:8px 0 6px;font-size:17px;font-weight:700;line-height:1.3}
+.vx-vot-sub{margin:8px 0 0;font-size:14px;color:var(--vx-mut);line-height:1.5}
+.vx-vot-board{display:flex;flex-direction:column;gap:12px}
+.vx-vot-opt{position:relative;border:1px solid var(--vx-line);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.02)}
+.vx-vot-opt--Tuyo{border-color:var(--vx-gold);box-shadow:0 0 0 1px rgba(232,197,106,.35),0 6px 22px rgba(0,0,0,.4)}
+.vx-vot-opt--Gano .vx-vot-txt{color:var(--vx-gold)}
+.vx-vot-boton{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 15px;background:none;border:0;cursor:pointer;color:inherit;font-family:inherit;
+  text-align:left;
+}
+.vx-vot-boton:disabled{cursor:default;opacity:.75}
+.vx-vot-txt{font-size:15px;font-weight:600}
+.vx-vot-pct{font-family:var(--vx-marca);font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--vx-gold);flex:none}
+.vx-vot-barra{height:8px;background:rgba(255,255,255,.06);overflow:hidden}
+.vx-vot-barra span{display:block;height:100%;background:linear-gradient(90deg,var(--vx-gold) 0%,#f5c542 100%);border-radius:0 4px 4px 0;transition:width .5s ease}
+.vx-vot-pie{
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;
+  margin-top:16px;font-size:13px;color:var(--vx-mut);
+}
+.vx-vot-pie b{color:var(--vx-gold)}
+.vx-vot-anim{font-family:var(--vx-marca);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--vx-mut)}
+.vx-vot-entrar{
+  display:inline-block;margin-top:16px;padding:11px 18px;border:1px solid var(--vx-gold);
+  border-radius:8px;color:var(--vx-gold);font-family:var(--vx-marca);font-size:12px;
+  font-weight:700;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;
+  transition:background .2s,color .2s;
+}
+.vx-vot-entrar:hover{background:var(--vx-gold);color:var(--vx-fondo)}
+
+/* sala completa */
+.vx-vot-sala{padding-top:24px}
+.vx-vot-crumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--vx-mut);margin-bottom:18px}
+.vx-vot-crumb a{color:var(--vx-gold);text-decoration:none}
+.vx-vot-crumb a:hover{text-decoration:underline}
+.vx-vot-board--grande{margin-top:4px}
+.vx-vot-doble{display:grid;grid-template-columns:1fr;gap:14px;margin-top:26px}
+@media (min-width:860px){.vx-vot-doble{grid-template-columns:1fr 1fr}}
+.vx-vot-manana,.vx-vot-reglas{
+  border:1px solid var(--vx-line);border-radius:12px;padding:18px;background:rgba(255,255,255,.02);
+}
+.vx-vot-reglas ul{margin:8px 0 0;padding-left:18px;color:var(--vx-mut);font-size:13px;line-height:1.7}
+.vx-vot-pie-fin{margin-top:22px;font-size:14px}
+.vx-vot-pie-fin a{color:var(--vx-gold);text-decoration:none}
+.vx-vot-pie-fin a:hover{text-decoration:underline}

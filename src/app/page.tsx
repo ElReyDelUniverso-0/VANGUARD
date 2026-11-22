@@ -36,6 +36,7 @@ import { TituloSeccion } from "@/components/portada/titulo-seccion";
 import { SpotPortada } from "@/components/portada/spot-portada";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
 import { BarraExplorar } from "@/components/portada/barra-explorar";
+import { VotacionTarjeta } from "@/components/portada/votacion-tarjeta";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 // v406.0 LA TRAVESÍA — el hilo (continúa donde lo dejaste) y la puerta a la entrada inmersiva
 import { HiloPortada } from "@/components/travesia/hilo-portada";
@@ -254,6 +255,12 @@ export default async function Portada() {
             en /mercado, cada una en su puesto con su mercader. La portada solo
             enseña la franja con los diez toldos (una fila) y la entrada. */}
         <MercadoPortada />
+
+        {/* v439.6 · LA VOTACIÓN DEL MUNDO — algo nuevo, original y nunca antes
+            visto: una pregunta del día para todo el planeta. Determinista y
+            predecible: el tablero es el mismo para todos por fecha, y la
+            pregunta de mañana ya se sabe hoy. */}
+        <VotacionTarjeta />
 
         <section id="mapa" className="vx-sec vxp-ancla" aria-label="Mapa de conflictos">
           <TituloSeccion sello="Sección 07 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
