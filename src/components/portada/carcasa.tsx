@@ -94,7 +94,16 @@ function Pestanas({ ruta }: { ruta: string }) {
     if (el && carril) carril.scrollLeft = el.offsetLeft - carril.clientWidth / 2 + el.clientWidth / 2;
   }, [ruta]);
   if (!m) return null;
-  const activa = (h: string) => ruta === h || ruta.startsWith(h + "/");
+  // v436.7d · UNA SOLA PESTAÑA ENCENDIDA. Antes bastaba con que la ruta
+  // empezara por el href: en /mapas/taller se encendían «Centro de mapas» y
+  // «Taller de mapas» a la vez (dos subrayados y el carril centrado en la
+  // última, que dejaba la primera cortada por la izquierda). Ahora gana la
+  // coincidencia MÁS LARGA, que es la sala en la que estás de verdad.
+  const coincide = (h: string) => ruta === h || ruta.startsWith(h + "/");
+  const viva = m.destacadas
+    .filter((h) => coincide(h))
+    .sort((a, b) => b.length - a.length)[0];
+  const activa = (h: string) => h === viva;
   return (
     <nav className="vx-pest" aria-label={`Módulo ${m.nombre}`}>
       <div className="vx-wrap vx-pest-in">

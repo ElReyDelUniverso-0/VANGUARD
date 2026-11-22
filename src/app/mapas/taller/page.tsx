@@ -83,6 +83,12 @@ const CSS = `
    x 10–68, y esta sala empezaba en x 12. Aquí se aparta, como el resto de la
    casa. En pantalla pequeña el muelle no existe y el margen vuelve a cero. */
 .vxtl-page{padding-left:82px}
+/* v436.7d · el cartel de bienvenida de la casa (fixed abajo a la derecha)
+   caía justo encima del formulario del taller / de las tarjetas del índice.
+   Aquí estorba: se retira sólo en estas dos salas. */
+body:has(.vxtl-page) .vg-primera-vez,
+body:has(.vxi-page) .vg-primera-vez{display:none!important}
+
 @media (max-width:979px){.vxtl-page{padding-left:12px}}
 `;
 

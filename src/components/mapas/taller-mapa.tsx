@@ -393,7 +393,7 @@ export function TallerMapa() {
 
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.6fr) minmax(280px, 1fr)", gap: 14 }}>
         {/* el planeta */}
-        <div style={{ border: `1px solid ${borde}`, background: "#070c12", borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ position: "relative", border: `1px solid ${borde}`, background: "#070c12", borderRadius: 4, overflow: "hidden" }}>
           {vista === "2d" ? (
             <svg
               viewBox={`0 0 ${W} ${H}`}
@@ -461,6 +461,34 @@ export function TallerMapa() {
             </svg>
           ) : (
             <Globo markers={marcadores} arcs={arcos} bordes graticulas autoRotate height="min(58vh, 520px)" minHeight={320} onGlobeClick={clic3D} />
+          )}
+
+          {/* v436.7d · el lienzo en blanco no dice nada: se le pide el primer punto */}
+          {doc.puntos.length === 0 && doc.trazos.length === 0 && (
+            <div
+              aria-hidden
+              style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}
+            >
+              <span
+                style={{
+                  fontFamily: "ui-monospace, ui-monospace, monospace",
+                  fontSize: 12,
+                  letterSpacing: ".14em",
+                  textTransform: "uppercase",
+                  textAlign: "center",
+                  lineHeight: 1.7,
+                  color: "#f2b74a",
+                  border: "1px solid rgba(242,183,74,.32)",
+                  background: "rgba(8,12,16,.78)",
+                  padding: "9px 15px",
+                  borderRadius: 3,
+                }}
+              >
+                Toca el {vista === "2d" ? "plano" : "globo"} donde quieras el primer punto
+                <br />
+                <span style={{ color: "#8697aa" }}>o arranca con una plantilla de arriba</span>
+              </span>
+            </div>
           )}
         </div>
 

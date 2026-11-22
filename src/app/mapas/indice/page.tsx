@@ -81,6 +81,12 @@ const CSS = `
 @media (prefers-reduced-motion:reduce){.vxi-sello i{animation:none}}
 /* v436.7b — EL MUELLE NO TAPA EL HÉROE (misma cura que en el taller). */
 .vxi-page{padding-left:82px}
+/* v436.7d · el cartel de bienvenida de la casa (fixed abajo a la derecha)
+   caía justo encima del formulario del taller / de las tarjetas del índice.
+   Aquí estorba: se retira sólo en estas dos salas. */
+body:has(.vxtl-page) .vg-primera-vez,
+body:has(.vxi-page) .vg-primera-vez{display:none!important}
+
 @media (max-width:979px){.vxi-page{padding-left:12px}}
 `;
 
