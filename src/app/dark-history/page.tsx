@@ -81,7 +81,7 @@ const RANGO = rangoAnios();
 // el censo por categoría, derivado de la fuente
 const CENSO = CATEGORIAS.map((c) => ({
   categoria: c,
-  n: EVENTOS.filter((e) => e.categoria === c.id).length,
+  n: EVENTOS.filter((e) => e.categoría === c.id).length,
 }));
 
 // la línea compuesta COMPLETA en JS (lección v256)
@@ -93,7 +93,7 @@ const TRAMOS_TIEMPO = EVENTOS.map((e) => ({
   nombre: `${e.codigo} · ${e.nombre}`,
   desde: e.desde,
   hasta: e.hasta,
-  era: e.categoria,
+  era: e.categoría,
   nota: e.lugar,
 }));
 
@@ -113,7 +113,7 @@ const PUNTO_CATEGORIA: Record<Categoria, string> = Object.fromEntries(
 const PUNTOS_MAPA = EVENTOS.map((e) => ({
   lat: e.lat,
   lng: e.lng,
-  color: PUNTO_CATEGORIA[e.categoria],
+  color: PUNTO_CATEGORIA[e.categoría],
   nombre: `${e.codigo} · ${e.nombre}`,
 }));
 
@@ -293,7 +293,7 @@ export default async function DarkHistoryPage() {
         </p>
 
         {CENSO.map((grupo) => {
-          const items = EVENTOS.filter((e) => e.categoria === grupo.categoria.id);
+          const items = EVENTOS.filter((e) => e.categoría === grupo.categoria.id);
           if (items.length === 0) return null;
           return (
             <section key={grupo.categoria.id} className="mt-12" aria-label={grupo.categoria.nombre}>
