@@ -628,9 +628,9 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
                 </p>
               </figure>
               <figure className="vxgh-foto" style={{ margin: 0 }}>
-                <img src="/imagenes-reales/khmer.jpg" alt="Memorial del genocidio jemer en Camboya" loading="lazy" />
+                <img src="/imagenes-reales/khmer.jpg" alt="Templos de Angkor, en Camboya" loading="lazy" />
                 <p>
-                  <b>Camboya</b>El genocidio jemer: el caso que enseñó al mundo a contar víctimas civiles.
+                  <b>Camboya</b>El país del genocidio jemer: el caso que enseñó al mundo a contar víctimas civiles.
                 </p>
               </figure>
               <figure className="vxgh-foto" style={{ margin: 0 }}>

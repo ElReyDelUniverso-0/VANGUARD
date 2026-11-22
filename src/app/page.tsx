@@ -273,7 +273,7 @@ export default async function Portada() {
             fuerza y los tres países donde más se muere, cada cifra con su
             fuente. Componente de servidor sobre la instantánea real. */}
         <section id="guerra" className="vx-sec vxp-ancla" aria-label="War & Humanity">
-          <TituloSeccion sello="Sala nueva · El mundo" titulo="War & Humanity: el mapa de las guerras, con el número al lado" sub="Muertos en combate, desplazados y refugiados, país por país y año por año, con su fuente y su año." enlace="/war-humanity" textoEnlace="Abrir la sala" />
+          <TituloSeccion sello="Sala nueva · El mundo" titulo="Dónde se muere y cuántos han tenido que huir" sub="La sala nueva del centro mundial: cada cifra con su fuente, su año y su límite." enlace="/war-humanity" textoEnlace="Abrir la sala" />
           <TiraWarHumanity />
         </section>
 

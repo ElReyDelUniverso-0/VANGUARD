@@ -58,7 +58,7 @@ export function TiraWarHumanity() {
       <style>{CSS}</style>
       <span className="vx-mira vx-esquinas" aria-hidden />
       <div className="vxwh-tira-txt">
-        <span className="vx-sello">Sala nueva · War &amp; Humanity</span>
+        <span className="vx-sello">Centro mundial · guerras y crisis humanitarias</span>
         <h2 id="vxwh-t">
           El mapa de las guerras, <em>con el número al lado</em>.
         </h2>
