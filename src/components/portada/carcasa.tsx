@@ -94,12 +94,17 @@ function Pestanas({ ruta }: { ruta: string }) {
     if (!el || !carril) return;
     // v436.7d · si las pestañas caben enteras, el carril NO se mueve: centrar la
     // activa empujaba la primera fuera por la izquierda («NTRO DE MAPAS»).
+    // v436.7e · y si la activa YA se ve, tampoco: moverse de más era justo lo
+    // que dejaba la primera pestaña a medias («NTRO DE MAPAS»).
     const sobra = carril.scrollWidth - carril.clientWidth;
-    if (sobra <= 4) {
+    if (sobra <= 1) {
       carril.scrollLeft = 0;
       return;
     }
-    const destino = el.offsetLeft - carril.clientWidth / 2 + el.clientWidth / 2;
+    const izq = el.offsetLeft;
+    const der = izq + el.offsetWidth;
+    if (izq >= carril.scrollLeft && der <= carril.scrollLeft + carril.clientWidth) return;
+    const destino = izq - carril.clientWidth / 2 + el.clientWidth / 2;
     carril.scrollLeft = Math.max(0, Math.min(sobra, destino));
   }, [ruta]);
   if (!m) return null;
