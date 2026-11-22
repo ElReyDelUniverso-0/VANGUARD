@@ -1941,5 +1941,10 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
 .vx-cab .vx-nav{position:static;top:auto;right:auto;bottom:auto;left:auto;z-index:auto;width:auto;max-width:none;height:auto;padding:0;border:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:2px;justify-content:center;overflow:visible;transition:none}
 .vx-cab .vx-nav:hover,.vx-cab .vx-nav:focus-within,.vx-cab .vx-nav[data-plegada="1"]:hover{width:auto}
 .vx-cab .vx-nav a{white-space:nowrap}
-@media (max-width:979px){.vx-cab .vx-nav{display:none}}
-@media (min-width:980px){.vx-cab .vx-nav{display:flex}}
+/* Y SE QUEDA FUERA DE LA CABECERA, a propósito: en 1440 px los seis botones
+   no caben entre el logo y el racimo de la derecha (GUÍA TÁCTICA · MUNDOS ·
+   RADIO · BUSCAR · ojo · EN VIVO) y se montaban encima del logo. La casa ya
+   navega por la barra del módulo (segunda fila) y por el muelle de la
+   izquierda, y la orden vigente es «menos menú»: la fila de secciones no
+   vuelve. Lo que se arregla aquí es que DEJE DE APARECER EN LA ESQUINA. */
+.vx-cab .vx-nav{display:none}
