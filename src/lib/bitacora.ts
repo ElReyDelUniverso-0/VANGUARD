@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v438.2",
+    nombre: "EL SELLO DE SALIDA — la puerta que le faltaba a cada módulo, y que lo rompe",
+    tipo: "nav",
+    hitos: [
+      "LO QUE FALTABA: no había manera de volver a la portada desde un módulo. Ninguna. El Dueño lo dijo así: «nunca hay un botón para salir de un módulo a Vanguard». Ahora lo hay en todos, y no es una X: son ocho sigilos de la casa.",
+      "EL SELLO (components/vanguard/salida-modulo.tsx): primer hijo de la barra de pestañas, o sea en todos los módulos y en ninguna portada (conCarcasa ya excluía /, /entrar, /lectura, /clasico, /vanguard2, /vertigo, /offline y /api). 40×40 en el teléfono —el suelo de v418.2 sube de 24 a 40 con el mismo !important que ya usaba la cabecera— y 81×46 con su palabra SALIR en el escritorio. Nombre accesible y llegada por teclado: es un <button>, no un adorno.",
+      "OCHO MANERAS DE ACABAR CON EL MÓDULO: quema (arde con brasa desde abajo), funde (se derrite hacia abajo), astilla (clip-path en mil pedazos con un cono de esquirlas), colapso (se cierra a una línea como un expediente), devora (un ojo negro se lo traga), glitch (se corrompe a tirones), desintegra (se vuelve polen) e implosión (se lo lleva su propio sello). No es un dibujito encima: las animaciones van sobre `body > *`, sobre la página de verdad.",
+      "IMPREDECIBLE, PERO NO TRAMPOSO: el efecto se sortea en el clic —jamás en el render, que rompe la hidratación con #418— y el sigilo que gira (ojo, rombo, aguja, espiral, hexágono, mira, alas, nudo, cada uno a su velocidad y sentido) se sortea al montar. El mismo final no sale dos veces seguidas: el anterior se recuerda en la pestaña y también entre recargas.",
+      "780 ms DE DESTRUCCIÓN Y VIAJE: se rompe, se dice lo que ha pasado («QUEMADO · arde hasta dejar sólo ceniza») y se entra en la portada. Un cerrojo a 2200 ms impide que la casa se quede colgada aunque el viaje tarde, y al volver el atributo queda limpio.",
+      "CALMA DE VERDAD, Y UN FALLO ARREGLADO: con prefers-reduced-motion, con data-vg-anim=desactivadas, en modo ligero o en quietud no se anima: se sale en el acto (~0,25 s). El modo ligero tenía `animation-duration: 0.001ms !important` sobre todo, así que fingir la destrucción dejaba medio segundo de pantalla muerta; ahora se detecta y se sale sin teatro.",
+      "UNA VOZ NUEVA: `destruir` —ruido que cae, madera grave, campana que se va lejos— con el portero de siempre (sin gesto, sin sonido o en calma, no suena). La placa de la frase cuelga de <body> en su propio portal y queda fuera de las animaciones: si no, se leía borrosa justo cuando tiene que contar lo que pasa.",
+      "MEDIDO EN EL NAVEGADOR (Playwright, /radio a 390 y 320 px): 8 de 8 salidas llegan a / con el atributo limpio, animación de 780 ms de verdad, placa visible con su frase, 0 errores de consola; sello 40×46 en el teléfono y 81×46 en el escritorio; teclado y calma, en el acto.",
+    ],
+  },
+  {
     version: "v438.0",
     nombre: "LA ENTRADA — el logo, el ojo y la voz «¡VANGUARD!» antes que todo",
     tipo: "luxe",

@@ -42,6 +42,8 @@ import "./vida.css";
 import "./operacion.css";
 // v435.0 DOS MAQUETAS — la versión de pantalla pequeña manda la última palabra.
 import "./pantallas.css";
+// v437.2 EL SELLO DE SALIDA — la puerta del módulo y sus ocho destrucciones.
+import "./salida.css";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";

@@ -7213,8 +7213,13 @@
 //    uno al suyo. Abrir un puesto no recarga la página (history.replaceState).
 // ⑥ LA PLAZA RESPONDE: el puesto abierto manda y los demás se retiran un paso
 //    (se recuperan al tocarlos). 156 comprobaciones en tools/mercado/probar.mts.
-export const APP_VERSION = "v438.1";
-export const APP_CODENAME = "LA PLAZA VIVA";
+// (anterior) export const APP_VERSION = "v438.1";
+// (anterior) export const APP_CODENAME = "LA PLAZA VIVA";
+// v438.2 · EL SELLO DE SALIDA — la puerta que le faltaba a cada módulo.
+// (anterior) export const APP_VERSION = "v437.2";
+// (anterior) export const APP_CODENAME = "EL MERCADO DE VANGUARD";
+export const APP_VERSION = "v438.2";
+export const APP_CODENAME = "EL SELLO DE SALIDA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7286,7 +7291,8 @@ export const APP_CODENAME = "LA PLAZA VIVA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v438.0"; // LA ENTRADA
+export const APP_VERSION_ANTERIOR = "v438.1"; // LA PLAZA VIVA
+// (anterior) export const APP_VERSION_ANTERIOR = "v438.0"; // LA ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.2"; // EL MERCADO DE VANGUARD
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.1"; // EL ESTUDIO EN TU IDIOMA
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.0"; // EL ESTUDIO EN TU IDIOMA

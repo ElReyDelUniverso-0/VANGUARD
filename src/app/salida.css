@@ -1,0 +1,341 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v437.2 · EL SELLO DE SALIDA — la hoja de la destrucción
+   Todo lo de aquí es CSS puro sobre la propia página: cuando el sello elige
+   una forma de acabar con el módulo, `html[data-vg-salida="X"]` rompe el
+   contenido de verdad (no hay un dibujito encima tapando el desastre).
+   Reglas:
+     · 780 ms, una sola vez, y la casa navega igual aunque la animación no
+       llegue a terminar (el cerrojo vive en el componente, no aquí).
+     · Con `prefers-reduced-motion`, con el movimiento apagado o en modo calma
+       NADA se anima: esta hoja se calla entera.
+     · Nada de !important: la casa no necesita gritar.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── el sello, dentro de la barra del módulo ──────────────────────── */
+.vxs-sello {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  min-width: 38px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--vx-line, rgba(232, 197, 106, 0.22));
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.1), rgba(6, 8, 12, 0.2));
+  color: var(--vx-gold, #e8c56a);
+  cursor: pointer;
+  opacity: 1;
+  position: relative;
+  isolation: isolate;
+}
+.vxs-sello:hover,
+.vxs-sello:focus-visible {
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.24), rgba(6, 8, 12, 0.4));
+  color: #fff3cf;
+  outline: 0;
+  box-shadow: inset 0 0 0 1px rgba(232, 197, 106, 0.55);
+}
+.vxs-sello:active { transform: translateY(1px); }
+.vxs-sello-glifo {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  animation: vxs-gira 9s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(232, 197, 106, 0.35));
+}
+.vxs-sello:hover .vxs-sello-glifo,
+.vxs-sello:focus-visible .vxs-sello-glifo { animation-duration: 1.4s; }
+.vxs-sello-txt {
+  font-family: var(--vx-mono, ui-monospace, "SF Mono", monospace);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+/* cada glifo gira a su aire: derecha, revés, despacio, rápido */
+.vxs-sello-glifo[data-giro="14"] { animation-duration: 11s; }
+.vxs-sello-glifo[data-giro="-20"] { animation-duration: 7s; animation-direction: reverse; }
+.vxs-sello-glifo[data-giro="9"] { animation-duration: 13s; }
+.vxs-sello-glifo[data-giro="-12"] { animation-duration: 5.5s; animation-direction: reverse; }
+.vxs-sello-glifo[data-giro="17"] { animation-duration: 8.5s; }
+.vxs-sello-glifo[data-giro="-25"] { animation-duration: 4.5s; animation-direction: reverse; }
+.vxs-sello-glifo[data-giro="11"] { animation-duration: 10s; }
+.vxs-sello-glifo[data-giro="-15"] { animation-duration: 6.5s; animation-direction: reverse; }
+
+@keyframes vxs-gira {
+  to { transform: rotate(360deg); }
+}
+
+/* ── lo que se dice al salir ──────────────────────────────────────── */
+.vxs-sello-dicho {
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  margin: 0;
+  padding: 12px 18px;
+  max-width: min(84vw, 460px);
+  text-align: center;
+  font-family: var(--vx-mono, ui-monospace, monospace);
+  font-size: 12.5px;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff3cf;
+  /* la frase tiene que leerse aunque debajo siga ardiendo el módulo: el fondo
+     va casi opaco y el borde dorado separa la placa de la página. */
+  background: rgba(4, 6, 10, 0.96);
+  border: 1px solid rgba(232, 197, 106, 0.62);
+  box-shadow: 0 0 0 1px rgba(4, 6, 10, 0.9), 0 14px 50px rgba(0, 0, 0, 0.6),
+    0 0 46px rgba(232, 197, 106, 0.16);
+  pointer-events: none;
+  /* el portal la cuelga de <body>, así que nada la tapa */
+  isolation: isolate;
+  animation: vxs-dicho 780ms ease-out both;
+}
+@keyframes vxs-dicho {
+  0% { opacity: 0; transform: translate(-50%, -42%) scale(0.95); }
+  16% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  /* se queda entera hasta el final: la frase es la que cuenta lo que ha pasado
+     y no puede irse a medio leer */
+  72% { opacity: 1; transform: translate(-50%, -52%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -58%) scale(1.02); }
+}
+
+/* ── lo que NO se rompe: la capa y la placa de la frase ──────────────
+   La placa también cuelga de <body> (portal), así que sin esta excepción
+   se la comían la quema, el glitch y las demás: se leería borrosa y a
+   medio desvanecer justo cuando tiene que contar lo que pasa. */
+/* ── la capa que se ve mientras la casa se rompe ──────────────────── */
+.vxs-capa {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: all;
+  overflow: hidden;
+  contain: strict;
+}
+.vxs-capa > span {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+}
+
+/* ═══ 1 · QUEMA ══════════════════════════════════════════════════════ */
+html[data-vg-salida="quema"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-quema-pagina 780ms cubic-bezier(0.6, 0, 0.8, 0.4) both;
+}
+@keyframes vxs-quema-pagina {
+  0% { filter: none; }
+  35% { filter: brightness(1.45) sepia(0.5) hue-rotate(-18deg) saturate(2.4) contrast(1.15); }
+  72% { filter: brightness(1.9) sepia(1) hue-rotate(-28deg) saturate(3) contrast(1.5); transform: translateY(-4px) scale(1.01); }
+  100% { filter: brightness(0.08) sepia(1) saturate(0.4); transform: translateY(-22px) scale(1.02); opacity: 0; }
+}
+html[data-vg-salida="quema"] .vxs-capa-fuego {
+  opacity: 1;
+  background:
+    radial-gradient(120% 70% at 50% 108%, rgba(255, 214, 120, 0.85) 0%, rgba(255, 120, 40, 0.6) 32%, rgba(120, 20, 0, 0.35) 58%, transparent 76%),
+    linear-gradient(0deg, rgba(255, 160, 60, 0.2), transparent 60%);
+  animation: vxs-fuego 780ms ease-in both;
+  mix-blend-mode: screen;
+}
+@keyframes vxs-fuego {
+  0% { transform: translateY(60%) scaleY(0.4); opacity: 0; }
+  40% { opacity: 1; }
+  100% { transform: translateY(-12%) scaleY(1.15); opacity: 0.9; }
+}
+
+/* ═══ 2 · FUNDE ══════════════════════════════════════════════════════ */
+html[data-vg-salida="funde"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-funde-pagina 780ms cubic-bezier(0.5, 0, 0.9, 0.6) both;
+  transform-origin: 50% 0%;
+}
+@keyframes vxs-funde-pagina {
+  0% { transform: none; filter: none; }
+  45% { transform: translateY(3%) scaleY(1.06); filter: blur(1.5px) saturate(0.7) brightness(0.95); }
+  100% { transform: translateY(14%) scaleY(1.24) skewX(-2.5deg); filter: blur(8px) saturate(0.25) brightness(0.35); opacity: 0; }
+}
+html[data-vg-salida="funde"] .vxs-capa-lineas {
+  opacity: 0.9;
+  background: repeating-linear-gradient(180deg, rgba(232, 197, 106, 0.16) 0 2px, transparent 2px 9px);
+  animation: vxs-gotea 780ms ease-in both;
+}
+@keyframes vxs-gotea {
+  0% { transform: translateY(-40%); opacity: 0; }
+  50% { opacity: 0.75; }
+  100% { transform: translateY(30%); opacity: 0; }
+}
+
+/* ═══ 3 · ASTILLA ════════════════════════════════════════════════════ */
+html[data-vg-salida="astilla"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-astilla-pagina 780ms cubic-bezier(0.5, 0, 0.9, 0.55) both;
+}
+@keyframes vxs-astilla-pagina {
+  0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: none; opacity: 1; }
+  40% { clip-path: polygon(4% 6%, 96% 2%, 100% 94%, 0 98%); }
+  100% { clip-path: polygon(40% 44%, 55% 41%, 52% 56%, 38% 58%); transform: rotate(9deg) scale(0.55); opacity: 0; filter: blur(2px); }
+}
+html[data-vg-salida="astilla"] .vxs-capa-astillas {
+  opacity: 1;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 6%, rgba(232, 197, 106, 0.22) 6% 8%, transparent 8% 18%,
+    rgba(93, 230, 247, 0.16) 18% 20%, transparent 20% 35%, rgba(232, 197, 106, 0.2) 35% 37%,
+    transparent 37% 52%, rgba(255, 255, 255, 0.12) 52% 54%, transparent 54% 70%,
+    rgba(232, 197, 106, 0.18) 70% 72%, transparent 72% 88%, rgba(93, 230, 247, 0.14) 88% 90%, transparent 90%
+  );
+  animation: vxs-astillas 780ms ease-out both;
+  mix-blend-mode: screen;
+}
+@keyframes vxs-astillas {
+  0% { transform: scale(0.6) rotate(0deg); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: scale(2.4) rotate(26deg); opacity: 0; }
+}
+
+/* ═══ 4 · COLAPSO ════════════════════════════════════════════════════ */
+html[data-vg-salida="colapso"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-colapso-pagina 780ms cubic-bezier(0.75, 0, 0.9, 0.5) both;
+  transform-origin: 50% 50%;
+}
+@keyframes vxs-colapso-pagina {
+  0% { transform: none; filter: none; }
+  55% { transform: scaleY(0.08) scaleX(1.05); filter: brightness(2.4) contrast(1.3); opacity: 0.95; }
+  100% { transform: scaleY(0.002) scaleX(1.1); opacity: 0; }
+}
+html[data-vg-salida="colapso"] .vxs-capa-lineas {
+  opacity: 1;
+  background: linear-gradient(90deg, transparent, #fff3cf 18%, #ffffff 50%, #fff3cf 82%, transparent);
+  height: 2px;
+  inset: 50% 0 auto 0;
+  animation: vxs-linea 780ms ease-out both;
+  box-shadow: 0 0 26px rgba(255, 243, 207, 0.8);
+}
+@keyframes vxs-linea {
+  0% { transform: scaleX(0.1); opacity: 0; }
+  50% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+/* ═══ 5 · DEVORA ═════════════════════════════════════════════════════ */
+html[data-vg-salida="devora"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-devora-pagina 780ms cubic-bezier(0.7, 0, 0.85, 0.5) both;
+  transform-origin: 50% 50%;
+}
+@keyframes vxs-devora-pagina {
+  0% { transform: none; filter: none; }
+  35% { transform: scale(0.96) rotate(1deg); filter: brightness(0.9); }
+  100% { transform: scale(0.35) rotate(10deg); filter: blur(7px) brightness(0.05); opacity: 0; }
+}
+html[data-vg-salida="devora"] .vxs-capa-nucleo {
+  inset: 50% auto auto 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.92;
+  background: radial-gradient(circle, #000 0 58%, rgba(232, 197, 106, 0.9) 60% 63%, rgba(232, 197, 106, 0.16) 68%, transparent 74%);
+  animation: vxs-traga 780ms cubic-bezier(0.6, 0, 0.8, 0.4) both;
+}
+@keyframes vxs-traga {
+  0% { width: 10px; height: 10px; opacity: 0; }
+  30% { width: 120px; height: 120px; opacity: 1; }
+  100% { width: 260vmax; height: 260vmax; opacity: 1; }
+}
+
+/* ═══ 6 · GLITCH ═════════════════════════════════════════════════════ */
+html[data-vg-salida="glitch"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-glitch-pagina 780ms steps(1, end) both;
+}
+@keyframes vxs-glitch-pagina {
+  0% { transform: none; filter: none; opacity: 1; }
+  12% { transform: translate(-8px, 2px) skewX(4deg); filter: contrast(1.7) saturate(2.2) hue-rotate(18deg); }
+  26% { transform: translate(7px, -3px); filter: contrast(2.2) saturate(1.4) hue-rotate(-22deg) invert(0.08); }
+  44% { transform: translate(-5px, 1px) skewX(-3deg); filter: contrast(2.6) saturate(3); opacity: 0.9; }
+  62% { transform: translate(10px, 0); filter: brightness(1.8) contrast(2.2); opacity: 0.7; }
+  80% { transform: translate(-14px, 4px); filter: brightness(2.6) contrast(3); opacity: 0.45; }
+  100% { transform: translate(0, 0); filter: brightness(3) blur(4px); opacity: 0; }
+}
+html[data-vg-salida="glitch"] .vxs-capa-lineas {
+  opacity: 1;
+  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px 4px);
+  animation: vxs-barrido 780ms linear both;
+  mix-blend-mode: screen;
+}
+@keyframes vxs-barrido {
+  0% { transform: translateY(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* ═══ 7 · DESINTEGRA ═════════════════════════════════════════════════ */
+html[data-vg-salida="desintegra"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-desintegra-pagina 780ms cubic-bezier(0.4, 0, 0.9, 0.5) both;
+}
+@keyframes vxs-desintegra-pagina {
+  0% { filter: none; opacity: 1; transform: none; }
+  50% { filter: brightness(2.4) contrast(1.7) saturate(0.4); opacity: 0.8; transform: translateY(-3px); }
+  100% { filter: brightness(3.2) contrast(2.2) blur(3px); opacity: 0; transform: translateY(-16px) scale(1.02); }
+}
+html[data-vg-salida="desintegra"] .vxs-capa-astillas {
+  opacity: 0.9;
+  background-image: radial-gradient(circle, rgba(255, 243, 207, 0.9) 0 1px, transparent 1.6px);
+  background-size: 14px 14px;
+  animation: vxs-polen 780ms ease-out both;
+}
+@keyframes vxs-polen {
+  0% { transform: translateY(0) scale(1); opacity: 0; mask-image: linear-gradient(0deg, #000 0%, #000 100%); }
+  35% { opacity: 1; }
+  100% { transform: translateY(-30%) scale(1.04); opacity: 0; }
+}
+
+/* ═══ 8 · IMPLOSIÓN ══════════════════════════════════════════════════ */
+html[data-vg-salida="implosion"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) {
+  animation: vxs-implosion-pagina 780ms cubic-bezier(0.8, 0, 0.9, 0.6) both;
+  transform-origin: 8% 10%;
+}
+@keyframes vxs-implosion-pagina {
+  0% { transform: none; filter: none; }
+  40% { transform: scale(0.82) rotate(-4deg); filter: brightness(1.4) contrast(1.3); }
+  100% { transform: scale(0.01) rotate(-24deg); filter: brightness(2.6) blur(2px); opacity: 0.1; }
+}
+html[data-vg-salida="implosion"] .vxs-capa-nucleo {
+  inset: 10% auto auto 8%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  background: radial-gradient(circle, #fff 0 24%, rgba(232, 197, 106, 0.85) 30%, transparent 70%);
+  animation: vxs-chupa 780ms ease-in both;
+}
+@keyframes vxs-chupa {
+  0% { width: 8px; height: 8px; opacity: 0; }
+  35% { width: 46vmax; height: 46vmax; opacity: 0.55; }
+  100% { width: 6px; height: 6px; opacity: 1; }
+}
+
+/* ── cuando el aparato pide calma, esta hoja se calla ──────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .vxs-sello-glifo { animation: none; }
+  html[data-vg-salida] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) { animation: none; }
+  .vxs-capa > span,
+  .vxs-sello-dicho { animation: none; opacity: 0; }
+}
+html[data-vg-anim="desactivadas"] .vxs-sello-glifo { animation: none; }
+html[data-vg-anim="desactivadas"] body > *:not([data-vg-salida-capa]):not(.vxs-sello-dicho) { animation: none; }
+
+/* ── el teléfono: el sello no le roba la fila a las salas ──────────── */
+@media (max-width: 640px) {
+  .vxs-sello { padding: 0 7px; }
+  .vxs-sello-txt { display: none; }
+  /* El suelo de v418.2 (movil.css) fija `min-width: 24px !important` en TODO
+     lo pulsable; para crecer por encima de ese suelo hace falta el mismo
+     !important — no es decoración, es el suelo subiendo de 24 a 40, igual que
+     hace la cabecera con sus 34. */
+  :not(#vx-suelo) .vxs-sello { min-width: 40px !important; }
+}

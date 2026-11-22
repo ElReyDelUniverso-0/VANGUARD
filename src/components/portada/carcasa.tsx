@@ -15,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Cabecera, BarraMovil } from "./cabecera";
 import { moduloDe, portadaDe } from "./modulos";
+import { SalidaModulo } from "@/components/vanguard/salida-modulo";
 
 // v432.0 UN SOLO MUNDO: /cuartel sale de la lista — el juego deja de ser «otro
 // mundo» con su propia cabecera y entra bajo la misma carcasa, la misma piel y
@@ -97,6 +98,9 @@ function Pestanas({ ruta }: { ruta: string }) {
   return (
     <nav className="vx-pest" aria-label={`Módulo ${m.nombre}`}>
       <div className="vx-wrap vx-pest-in">
+        {/* v437.2 · la puerta para salir del módulo. Antes no había ninguna: el
+            sello hace su trabajo (y de paso rompe el módulo por el camino). */}
+        <SalidaModulo />
         <Link href={portadaDe(m)} className="vx-pest-mod" data-on={ruta === portadaDe(m) ? "1" : "0"} aria-label={`Portada del módulo ${m.nombre}`}>
           <i aria-hidden />
           <span className="vx-pest-largo">{m.nombre}</span>

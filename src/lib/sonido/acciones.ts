@@ -257,6 +257,17 @@ export const ACCIONES = {
       N({ tipo: "tono", f: 523.25, d: 0.55, g: 0.016, cuando: 0.02, onda: "triangle", verb: 0.12 }),
     ],
   },
+  // ── la salida del módulo (v437.2) ───────────────────────────────────────
+  "destruir": {
+    que: "el módulo que se rompe: un ruido que cae, madera grave y una campana que se va lejos",
+    familia: "mixta",
+    cada: 1400,
+    notas: [
+      N({ tipo: "ruido", d: 0.18, g: 0.03 }),
+      N({ tipo: "madera", f: 98, d: 0.3, g: 0.045, cuando: 0.04 }),
+      N({ tipo: "campana", f: 73.42, d: 0.9, g: 0.028, cuando: 0.14 }),
+    ],
+  },
   silencio: {
     que: "apagar el sonido: un toque que se queda sin aire",
     familia: "cuerpo",
