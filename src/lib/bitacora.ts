@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v439.1",
+    nombre: "EL SELLO DE SALIDA, DE VERDAD — el sello se ve, y el módulo se rompe con golpe de escena",
+    tipo: "nav",
+    hitos: [
+      "LO QUE DIJO EL DUEÑO: «no he visto nada de lo que agregaste, mejóralo tanto y púl elo más, que diga wow». Y tenía razón: el sello de v438.2 era un glifo de 22 px sin palabra en el teléfono, y en modo ligero la casa apagaba la animación con un `!important` y sólo quedaba medio segundo de pantalla negra. Dos fallos de verdad.",
+      "EL SELLO SE VE: pastilla con aro de oro que gira, anillo de luz y la palabra SALIR escrita también en el teléfono —99×32 px medidos a 390, 108×34 en el escritorio—. La primera vez en la sesión late tres veces y se cuelga un cartel justo debajo, medido con getBoundingClientRect, que dice «SALIR DEL MÓDULO / y volver a Vanguard · el módulo se rompe por el camino». Después no vuelve a molestar.",
+      "EL GOLPE DE ESCENA: destello desde el punto exacto del sello, dos ondas de choque (oro y cian), treinta chispas con ángulo, alcance y retardo sorteados, y el sigilo enorme que nace en el botón, viaja al centro de la pantalla y allí gira y crece hasta tragarse la casa. El desplazamiento se calcula con las coordenadas reales del botón (calc con 50vw), así que funciona en cualquier pantalla. 1000 ms, ni uno más.",
+      "LAS OCHO FIRMAS, RETOCADAS: la página tiembla al principio —el temblor va dentro de cada firma, porque dos animaciones que tocan `transform` a la vez se pisan— y cada final gana su estela: llamas más altas, astillas con más luz, el ojo que devora, el polen de la desintegración. La implosión ahora colapsa HACIA el sello, no hacia el centro: se lo lleva su propio botón.",
+      "LA PLACA, REHECHA: el verbo en oro a 15 px con su brillo y la línea debajo en gris, doble marco, fondo casi opaco. Se queda entera hasta el 78 % del golpe y sólo entonces se retira.",
+      "EL MODO LIGERO YA NO SE QUEDA MUDO: donde la casa apaga toda animación con `animation-duration: 0.001ms !important` (pantallas.css y vivo.css) se hace EL CORTE —340 ms de destello, la página al negro, el sigilo y la placa—, ganando por especificidad al `*` universal. Con «reducir movimiento» se sigue saliendo en el acto: la accesibilidad manda.",
+      "MEDIDO Y GRABADO: 8 de 8 salidas con animación de 1000 ms de verdad, placa con su frase, atributo limpio al volver, 0 errores de consola; sello 99×32 a 390 y a 320; teclado; ligero 0,59 s y quietud 0,61 s (el corte), reduced-motion 0,28 s. La película de las ocho salidas quedó en VANGUARD/v437-Sello-Salida/el-sello-8-finales.webm.",
+    ],
+  },
+  {
     version: "v439.0",
     nombre: "LA GRAN ENTRADA — la puerta de la casa, pulida hasta el «wow»",
     tipo: "luxe",

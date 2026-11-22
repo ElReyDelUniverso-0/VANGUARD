@@ -7252,8 +7252,43 @@
 // sale en la portada cada vez que se llega de fuera o se recarga.
 // (anterior) export const APP_VERSION = "v438.3";
 // (anterior) export const APP_CODENAME = "EL MERCADO SE ENCIENDE";
-export const APP_VERSION = "v439.0";
-export const APP_CODENAME = "LA GRAN ENTRADA";
+// v439.1 · EL SELLO DE SALIDA, DE VERDAD — el golpe de escena que pedía el
+// Dueño cuando dijo: «no he visto nada de lo que agregaste, mejóralo tanto y
+// púl elo más, que diga wow».
+// ① EL SELLO SE VE (components/vanguard/salida-modulo.tsx): deja de ser un
+//    glifo tímido y pasa a ser una pastilla con aro de oro que gira, anillo de
+//    luz y la palabra SALIR escrita TAMBIÉN en el teléfono (99×32 medidos a
+//    390 px). La primera vez en la sesión, a los 2,6 s late tres veces y a los
+//    3 s se cuelga debajo —medido, no a ojo— un cartel: «SALIR DEL MÓDULO / y
+//    volver a Vanguard · el módulo se rompe por el camino». Dura 5,2 s y no
+//    vuelve a molestar en toda la sesión.
+// ② EL GOLPE: pulsarlo ya no es una animación, es una escena. Destello desde
+//    el punto exacto del sello, dos ondas de choque (oro y cian), treinta
+//    chispas que salen del botón con ángulo, alcance y retardo sorteados, el
+//    sigilo del sello enorme que NACE EN EL BOTÓN, viaja al centro —el
+//    desplazamiento se calcula con las coordenadas reales, así vale en
+//    cualquier pantalla— y allí gira y se hace tres veces más grande hasta
+//    tragarse la casa, más un viñeteado que se cierra. 1000 ms.
+// ③ LAS OCHO FIRMAS, retocadas: la página entera tiembla al principio (el
+//    temblor va dentro de cada firma: dos animaciones que tocan `transform` a
+//    la vez se pisan), y cada final gana su estela —llamas más altas, astillas
+//    con más luz, el ojo que devora, el polen de la desintegración—. La
+//    implosión colapsa hacia el sello, no hacia el centro: se lo lleva el
+//    propio botón, que es la gracia.
+// ④ LA PLACA, REHECHA: el verbo en oro a 15 px con su brillo, la línea debajo
+//    en gris, doble marco. Se queda entera hasta el 78 % y se va al final.
+// ⑤ CALMA CON MATIZ: con prefers-reduced-motion se sale en el acto (nada de
+//    teatro). En modo ligero y en quietud —donde la casa apaga toda animación
+//    con `!important`— se hace EL CORTE: 340 ms de destello, la página al
+//    negro, el sigilo y la placa, sin desenfoques ni partículas, ganando por
+//    especificidad al `*` de pantallas.css. Antes, ahí no se veía nada.
+// ⑥ Se midió en el navegador: 8/8 salidas con animación de 1000 ms, placa con
+//    su frase, residuo nulo, 0 errores de consola; y se grabó la película de
+//    las ocho (VANGUARD/v437-Sello-Salida/el-sello-8-finales.webm).
+export const APP_VERSION = "v439.1";
+export const APP_CODENAME = "EL SELLO DE SALIDA, DE VERDAD";
+// (anterior) export const APP_VERSION = "v439.0";
+// (anterior) export const APP_CODENAME = "LA GRAN ENTRADA";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7325,7 +7360,8 @@ export const APP_CODENAME = "LA GRAN ENTRADA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE
+export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
+// (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.2";
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.1"; // LA PLAZA VIVA // LA PLAZA VIVA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.0"; // LA ENTRADA
