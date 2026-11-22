@@ -41,7 +41,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { suena } from "@/lib/sonido/tocar";
-import { conCarcasa } from "@/components/portada/carcasa";
 
 type EfectoId = "quema" | "funde" | "astilla" | "colapso" | "devora" | "glitch" | "desintegra" | "implosion";
 
@@ -105,6 +104,11 @@ function hacerChispas(): Chispa[] {
 export function SalidaModulo() {
   const ruta = usePathname();
   const router = useRouter();
+  // v440.0 · NI UNA PÁGINA SIN SELLO. En la portada no hay módulo del que
+  // salir: el sello rompe la portada y la vuelve a empezar. Pero está, se ve y
+  // se toca — el Dueño abrió Vanguard por la puerta de casa, no encontró la
+  // puerta y con razón dijo que no existía.
+  const enPortada = ruta === "/";
   const [sigilo, setSigilo] = useState(0);
   const [efecto, setEfecto] = useState<EfectoId | null>(null);
   const [chispas, setChispas] = useState<Chispa[]>([]);
@@ -175,11 +179,9 @@ export function SalidaModulo() {
 
   useEffect(() => limpiar, [limpiar]);
 
-  // Al llegar a una sala sin carcasa (la portada, por ejemplo) el sello ya no
-  // existe: el atributo de la destrucción se retira en el acto, sin esperar al
-  // cerrojo. Antes quedaba puesto en <html> durante más de un segundo.
+  // Al cambiar de sala se retira todo en el acto, sin esperar al cerrojo: el
+  // atributo de la destrucción no puede sobrevivir a la página que rompió.
   useEffect(() => {
-    if (conCarcasa(ruta)) return;
     const raiz = document.documentElement;
     raiz.removeAttribute("data-vg-salida");
     raiz.removeAttribute("data-vg-salida-corta");
@@ -259,7 +261,14 @@ export function SalidaModulo() {
     if (corte) raiz.setAttribute("data-vg-salida-corta", "1");
 
     const ms = corte ? CORTE : DURACION;
-    temporizadores.current.push(window.setTimeout(() => router.push("/"), ms));
+    // desde la portada no se «sale» a ningún sitio: se rompe la portada y la
+    // casa vuelve a empezar por la puerta grande (con su entrada y su voz).
+    temporizadores.current.push(
+      window.setTimeout(() => {
+        if (enPortada) window.location.assign("/");
+        else router.push("/");
+      }, ms)
+    );
     // el cerrojo: pase lo que pase, la casa no se queda colgada
     temporizadores.current.push(
       window.setTimeout(() => {
@@ -267,11 +276,10 @@ export function SalidaModulo() {
         limpiar();
       }, ms + 1400)
     );
-  }, [router, limpiar]);
+  }, [router, limpiar, enPortada]);
 
   const g = SIGILOS[sigilo] ?? SIGILOS[0];
 
-  if (!conCarcasa(ruta)) return null;
 
   const capa =
     efecto && typeof document !== "undefined"
@@ -328,8 +336,12 @@ export function SalidaModulo() {
         data-pulsado={pulsado ? "1" : undefined}
         data-efecto={efecto ?? undefined}
         onClick={salir}
-        aria-label="Salir de este módulo y volver a Vanguard"
-        title="Salir de este módulo: el módulo se rompe y vuelves a Vanguard"
+        aria-label={enPortada ? "Romper la portada y volver a empezar" : "Salir de este módulo y volver a Vanguard"}
+        title={
+          enPortada
+            ? "Romper la portada: se rompe y la casa vuelve a empezar"
+            : "Salir de este módulo: el módulo se rompe y vuelves a Vanguard"
+        }
       >
         <span className="vxs-sello-anillo" aria-hidden="true" />
         <span className="vxs-sello-glifo" aria-hidden="true" data-giro={g.giro}>
@@ -353,8 +365,12 @@ export function SalidaModulo() {
               aria-hidden="true"
               style={punto ? { top: punto.y, right: punto.x } : undefined}
             >
-              <b>Salir del módulo</b>
-              <span>y volver a Vanguard · el módulo se rompe por el camino</span>
+              <b>{enPortada ? "La portada del sello" : "Salir del módulo"}</b>
+              <span>
+                {enPortada
+                  ? "púlsalo y la portada se rompe · la casa vuelve a empezar"
+                  : "y volver a Vanguard · el módulo se rompe por el camino"}
+              </span>
               <span className="vxs-llama-hilo" aria-hidden="true" />
             </p>,
             document.body

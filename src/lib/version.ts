@@ -7438,10 +7438,23 @@
 // a 450 ms de pintado en 3 s.
 // (anterior) export const APP_VERSION = "v440.0";
 // (anterior) export const APP_CODENAME = "LA MISMA PORTADA EN TODAS LAS SALAS";
-export const APP_VERSION = "v440.1";
-export const APP_CODENAME = "LA ENTRADA, FLUIDA";
+// (anterior) export const APP_VERSION = "v440.1";
+// (anterior) export const APP_CODENAME = "LA ENTRADA, FLUIDA";
 // (anterior) export const APP_VERSION = "v439.9";
 // (anterior) export const APP_CODENAME = "EL SELLO, PULIDO";
+// v440.2 · EL SELLO, TAMBIÉN EN LA PORTADA — «pero eso no lo veo en Vanguard».
+// Y era literal: el sello se montaba en toda la casa MENOS en la portada, y el
+// Dueño abre Vanguard por su portada. `conCarcasa("/")` devolvía null y ahí se
+// acababa todo. Ocho rutas medidas en producción: siete con su sello de 58 px,
+// la portada con cero.
+//   · en un módulo: se rompe el módulo y vuelves a Vanguard (como siempre);
+//   · en la portada: no hay módulo que romper, así que rompe la portada y la
+//     casa vuelve a empezar por la puerta grande, con su entrada y su voz.
+// Y no lo tapa nada: sube a z-index 10020 —por encima de la entrada (48), de la
+// cortina y de la capa del golpe (9999)—, el cartel a 10030 y la placa a 10040.
+// Si el Dueño abre la casa y mira la pantalla, el sello está.
+export const APP_VERSION = "v440.2";
+export const APP_CODENAME = "EL SELLO, TAMBIÉN EN LA PORTADA";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7519,8 +7532,7 @@ export const APP_CODENAME = "LA ENTRADA, FLUIDA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v440.0"; // LA MISMA PORTADA EN TODAS LAS SALAS
-// (anterior) export const APP_VERSION_ANTERIOR = "v439.8"; // LAS FRASES DE VANGUARD
+export const APP_VERSION_ANTERIOR = "v440.1"; // LA ENTRADA, FLUIDA
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE

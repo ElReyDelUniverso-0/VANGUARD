@@ -27,7 +27,9 @@
   right: 12px;
   top: 45%;
   transform: translateY(-50%);
-  z-index: 9500;
+  /* Por encima de la entrada (z-48), de la cortina y de la capa del golpe: si
+     el Dueño abre la casa y mira, el sello tiene que estar ahí sí o sí. */
+  z-index: 10020;
   display: grid;
   grid-auto-flow: row;
   justify-items: center;
@@ -254,7 +256,7 @@
 /* el cartel de la primera vez: vidrio, hilo de oro y una mecha que se consume */
 .vxs-llama {
   position: fixed;
-  z-index: 9998;
+  z-index: 10030;
   margin: 0;
   padding: 11px 15px 13px;
   max-width: min(78vw, 300px);
@@ -720,7 +722,7 @@ html[data-vg-salida-corta="1"] .vxs-sello {
   position: fixed;
   left: 50%;
   top: 44%;
-  z-index: 10000;
+  z-index: 10040;
   margin: 0;
   padding: 13px 20px 14px;
   max-width: min(86vw, 470px);

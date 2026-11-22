@@ -21,6 +21,20 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+
+    version: "v440.2",
+    nombre: "EL SELLO, TAMBIÉN EN LA PORTADA — el botón que se escondía en la única página que el Dueño abre",
+    tipo: "nav",
+    hitos: [
+      "EL DUEÑO, tercer aviso: «pero eso no lo veo en Vanguard, seguro que está». Y tenía razón otra vez, por algo que se puede medir: el sello se montaba en toda la casa MENOS en la portada —`conCarcasa('/')` devolvía null— y el Dueño abre Vanguard por su portada. Ocho rutas medidas en producción: /radio, /mercado, /orden, /en-vivo, /modulo/redaccion, /mapa y /juego con su sello de 58 px; `/` con cero.",
+      "AHORA EL SELLO EXISTE EN TODAS LAS PÁGINAS SIN EXCEPCIÓN. En un módulo hace lo de siempre (se rompe el módulo y vuelves a Vanguard). En la portada no hay módulo: el sello ROMPE LA PORTADA y la casa vuelve a empezar por la puerta grande, con su entrada y su voz.",
+      "NADA LO TAPA: sube a z-index 10020 —por encima de la entrada (48), de la cortina y de la capa del golpe (9999)—; el cartel va a 10030 y la placa del final a 10040, que no se pisan porque el sello vive en el borde derecho.",
+      "EL CARTEL DE LA PORTADA dice lo que va a pasar: «La portada del sello · púlsalo y la portada se rompe · la casa vuelve a empezar». En módulo, el de siempre.",
+      "Al cambiar de sala el atributo de la destrucción se retira en el acto, sin cerrojo: la página que se rompió ya no existe.",
+      "Medido en producción: /, /radio, /mercado, /orden, /en-vivo, /modulo/redaccion, /mapa y /juego — 58×58 y `elementFromPoint` devolviendo el propio sello en las ocho.",
+    ],
+  },
+  {
     version: "v440.1",
     nombre: "LA ENTRADA, FLUIDA — ya no se traba en el teléfono",
     tipo: "luxe",
