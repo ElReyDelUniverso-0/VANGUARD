@@ -216,6 +216,35 @@ agrupado y apilado y es feo — ordenar todo Vanguard.»
   fragmento en chino visible**, barra de exploración con 3 puertas, **0 botones viejos**
   y **0 errores JS**. ✅
 
+
+## v439.6 · LA VOTACIÓN DEL MUNDO (2026-11-22)
+
+**Mandato del Dueño:** «necesita algo nuevo original nunca antes visto — créalo, sólido y
+predecible para todos».
+
+- **Qué es:** una pregunta geopolítica **DEL DÍA para todo el planeta**. Algo nuevo,
+  original y nunca antes visto en Vanguard. En la portada (tarjeta) y en la sala
+  completa `/votacion`.
+- **SÓLIDO y PREDECIBIL (el corazón del sistema):** nada aleatorio en runtime. Todo se
+  deriva determinísticamente de la fecha (`YYYY-MM-DD`) con hash djb2
+  (`src/lib/votacion-dia.ts`):
+  - todos los visitantes del planeta ven la **misma** pregunta;
+  - el tablero base es el **mismo** para todos, por fecha;
+  - **predecible**: la pregunta de MAÑANA ya se sabe hoy (`votacionDeManana()`).
+- **El voto real:** el piloto toca una opción (una vez por día, `localStorage`) y suma
+  uno real al conteo; la casa **no infla**: lo que se ve sin votar es 100% determinista.
+- **Archivos:** `src/lib/votacion-dia.ts` (lógica), `src/components/portada/votacion-tarjeta.tsx`
+  (portada), `src/app/votacion/page.tsx` (sala completa), estilos `.vx-vot*` en
+  `src/app/portada.css`, y la sección montada en `src/app/page.tsx`.
+- **Contrato:** `scripts/pruebas-experiencia.mjs` → **PASA 174/0** (15 comprobaciones
+  nuevas de la votación).
+- **Commit:** `2b358df`. Push OK (rebase sobre commits del Dueño). Deploy Vercel
+  `dpl_92oBvoAC36GLWnECfFwy8dKoythB` → **READY/PROMOTED**.
+- **Auditoría headless en producción (`verify-tools/audit-votacion.mjs`):** pregunta del
+  día visible en la portada (4 opciones); votar marca «tu voto»; sala `/votacion`
+  completa; pregunta de mañana ya visible (predecible); **mismísima pregunta en dos
+  cargas** (determinismo — igual para todos); **0 errores JS**. **7/7 PASS**.
+
 ## Task: DESPEDIDA DEL DUEÑO — la llave queda en la casa (2026-11-22)
 
 - **Agent:** AGENT 2 (Ingeniero Jefe de Sistemas e Implementación) — último registro del bucle.
