@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v439.6",
+    nombre: "EL SELLO, EN TODAS PARTES — el fallo de montaje que lo escondía",
+    tipo: "nav",
+    hitos: [
+      "LO QUE DIJO EL DUEÑO, otra vez: «no está en Vanguard definitivamente, despliégalo, hazlo más visible». Y tenía razón por un motivo que se puede medir: el sello se montaba DENTRO de la barra de pestañas (.vx-pest-in), y esa barra no se pinta en todas las páginas. `curl /mercado | grep vxs-sello` devolvía 0 — justo el módulo más nuevo y más visitado.",
+      "AHORA CUELGA DEL LAYOUT, como hijo de <body>: existe en toda la casa que tiene carcasa, tenga barra de pestañas o no. /radio, /mercado, /orden, /en-vivo: 1 sello en cada una, comprobado en el HTML servido.",
+      "FLOTA Y SE VE: círculo de 58 px en el teléfono (62 en escritorio) pegado al borde derecho, a media altura —donde el pulgar llega y no tapa nada fijo—, con aro de oro girando, anillo de luz, el sigilo de la casa y la palabra SALIR debajo. Respira con un halo cada 4,6 s.",
+      "EL CARTEL DE LA PRIMERA VEZ, TAMBIÉN EN MODO LIGERO: su animación se completaba en 0,001 ms por el !important de la casa y se quedaba con la opacidad del último fotograma, o sea invisible. En ligero y quietud ahora se pinta sin animación y se retira con el temporizador: el aviso se ve siempre.",
+      "EL SELLO TIENE SU PROPIA MUERTE: al ser hijo de <body>, la firma de la página le habría pisado el transform que lo centra; se le excluye de las ocho y se le da su animación (se enciende, crece y se apaga en 1000 ms; 340 en el corte).",
+      "MEDIDO: sello 58×58 a 390 y 62×62 a 1440, con la palabra SALIR y el cartel presentes en /mercado y /radio; 8/8 salidas correctas; 0 errores de consola.",
+    ],
+  },
+  {
     version: "v439.2",
     nombre: "LA ENTRADA SE VE EN EL TELÉFONO — el fallo de verdad, encontrado",
     tipo: "luxe",

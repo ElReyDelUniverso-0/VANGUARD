@@ -47,6 +47,7 @@ import "./salida.css";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
+import { SalidaModulo } from "@/components/vanguard/salida-modulo";
 // v405.10 · LA BARRA ADAPTATIVA: las herramientas del espacio en el que estás.
 // Se monta una sola vez aquí y aparece en todas las salas que no son inmersivas.
 import { BarraAdaptativa } from "@/components/vanguard/navegacion/barra-adaptativa";
@@ -980,6 +981,11 @@ try{
             pantalla salta la cabecera y el teletipo de una vez (WCAG 2.4.1). */}
         <a href="#vg-contenido" className="vx-saltar">Saltar al contenido</a>
         <Carcasa />
+        {/* v441.1 · EL SELLO DE SALIDA vive aquí, colgado de <body>, y no de la
+            barra de pestañas: la barra NO se pinta en todas las páginas
+            (/mercado, por ejemplo, no la tenía) y por eso el Dueño entraba a un
+            módulo y no encontraba la puerta. Flota, se ve y está en todo. */}
+        <SalidaModulo />
         {/* v405.10: el muelle contextual — se adapta a la sala en la que estás */}
         <BarraAdaptativa />
         <Registrador />

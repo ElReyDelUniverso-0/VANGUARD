@@ -7324,8 +7324,30 @@
 //    movimiento reducido o la casa en quietud.
 // ⑥ LO QUE YA ESTABA SIGUE: arco, pregón, dock, cesta, buscador, enlace directo,
 //    cifras vivas y la prueba del mercado, ahora con 193 comprobaciones.
-export const APP_VERSION = "v439.3";
-export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
+// v439.6 · EL SELLO, EN TODAS PARTES — la puerta que el Dueño seguía sin ver.
+// «No está en Vanguard definitivamente, despliégalo, hazlo más visible».
+// Y era verdad, por una razón que se puede medir: el sello se montaba DENTRO de
+// la barra de pestañas (`.vx-pest-in`), y esa barra no se pinta en todas las
+// páginas — /mercado, la más nueva, no la tiene: `curl /mercado | grep
+// vxs-sello` daba 0. El Dueño entraba justo donde no estaba.
+// ① SE MONTA EN EL LAYOUT, colgado de <body>: existe en TODA la casa (todas las
+//    salas con carcasa), tenga barra de pestañas o no. Fuera de la barra, fuera
+//    del contexto de apilado que lo encerraba.
+// ② FLOTA, y se ve: círculo de 58 px (62 en escritorio) pegado al borde derecho
+//    a media altura, con aro de oro que gira, anillo de luz, el sigilo de la
+//    casa y la palabra SALIR debajo, respirando con un halo cada 4,6 s. El
+//    pulgar llega y el ojo lo encuentra sin buscarlo.
+// ③ EL CARTEL TAMBIÉN EN MODO LIGERO: su animación terminaba en el acto con el
+//    `animation-duration: 0.001ms !important` de la casa y se quedaba invisible
+//    en el último fotograma. Ahora, en ligero y quietud, se pinta sin animación
+//    y se retira con el temporizador: el aviso de la primera vez se ve siempre.
+// ④ EL SELLO TIENE SU PROPIA MUERTE: como ya es hijo de <body>, la firma de la
+//    página le habría movido el `transform` que lo centra; se le da su propia
+//    animación (se enciende, crece y se apaga) y se le excluye de las ocho.
+export const APP_VERSION = "v439.6";
+export const APP_CODENAME = "EL SELLO, EN TODAS PARTES";
+// (anterior) export const APP_VERSION = "v439.3";
+// (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
 // (anterior) export const APP_CODENAME = "LA ENTRADA SE VE EN EL TELÉFONO";
 // (anterior) export const APP_VERSION = "v439.0";
@@ -7401,7 +7423,8 @@ export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v439.1"; // EL SELLO DE SALIDA, DE VERDAD
+export const APP_VERSION_ANTERIOR = "v439.3"; // LA FERIA DE LOS AGENTES
+// (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.2";

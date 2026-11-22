@@ -1,13 +1,15 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-22",
-  "paginas": 191,
+  "paginas": 192,
   "rutasApi": 142,
-  "total": 333,
+  "total": 334,
   "bienConectadas": 181,
-  "huerfanas": [],
+  "huerfanas": [
+    "/visita"
+  ],
   "paginasConReferencias": 191,
-  "mediaReferencias": 14.1,
+  "mediaReferencias": 14.05,
   "rutas": [
     {
       "ruta": "/",
@@ -2087,7 +2089,7 @@
     {
       "ruta": "/directorio",
       "tipo": "pagina",
-      "referencias": 15,
+      "referencias": 16,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/ecosistema/page.tsx",
@@ -2172,7 +2174,7 @@
     {
       "ruta": "/entrar",
       "tipo": "pagina",
-      "referencias": 14,
+      "referencias": 15,
       "desde": [
         "app/mi-universo/universo-cliente.tsx",
         "components/descubrimiento/descubrimiento.tsx",
@@ -2912,7 +2914,7 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 68,
+      "referencias": 69,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -2923,7 +2925,7 @@
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 68,
+      "referencias": 69,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -3393,6 +3395,12 @@
         "app/noticia/[id]/page.tsx",
         "app/objetivos/page.tsx"
       ]
+    },
+    {
+      "ruta": "/visita",
+      "tipo": "pagina",
+      "referencias": 0,
+      "desde": []
     },
     {
       "ruta": "/voz",

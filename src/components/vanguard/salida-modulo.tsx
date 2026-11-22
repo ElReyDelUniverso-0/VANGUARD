@@ -139,7 +139,9 @@ export function SalidaModulo() {
       // el cartel se cuelga JUSTO debajo del sello, medido, no a ojo
       try {
         const r = boton.current?.getBoundingClientRect();
-        if (r) setPunto({ x: Math.max(8, r.left), y: r.bottom + 10 });
+        // el sello vive en el borde derecho: el cartel se cuelga a su izquierda,
+        // medido desde el borde derecho de la pantalla para no salirse nunca
+        if (r) setPunto({ x: Math.max(10, window.innerWidth - r.left + 12), y: Math.max(64, r.top - 4) });
       } catch {
         setPunto(null);
       }
@@ -171,6 +173,17 @@ export function SalidaModulo() {
   }, []);
 
   useEffect(() => limpiar, [limpiar]);
+
+  // Al llegar a una sala sin carcasa (la portada, por ejemplo) el sello ya no
+  // existe: el atributo de la destrucción se retira en el acto, sin esperar al
+  // cerrojo. Antes quedaba puesto en <html> durante más de un segundo.
+  useEffect(() => {
+    if (conCarcasa(ruta)) return;
+    const raiz = document.documentElement;
+    raiz.removeAttribute("data-vg-salida");
+    raiz.removeAttribute("data-vg-salida-corta");
+    setEfecto(null);
+  }, [ruta]);
 
   const salir = useCallback(() => {
     if (saliendo.current) return;
@@ -322,7 +335,7 @@ export function SalidaModulo() {
             <p
               className="vxs-llama"
               aria-hidden="true"
-              style={punto ? { top: punto.y, left: punto.x } : undefined}
+              style={punto ? { top: punto.y, right: punto.x } : undefined}
             >
               <b>Salir del módulo</b>
               <span>y volver a Vanguard · el módulo se rompe por el camino</span>
