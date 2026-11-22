@@ -21,6 +21,7 @@
 //      no se disimula con una estimación.
 // ═══════════════════════════════════════════════════════════════════
 import instantanea from "./instantanea.json";
+import { PAISES_GEO } from "@/lib/geo-paises";
 
 export type Fuente = {
   id: string;
@@ -41,6 +42,20 @@ export type Instantanea = {
 };
 
 export const SNAP = instantanea as unknown as Instantanea;
+
+// ── LA LISTA QUE IMPIDE QUE UN AGREGADO SE HAGA PASAR POR PAÍS ──────────
+// El Banco Mundial devuelve, mezclados con los países, agregados suyos: FCV
+// («Estados frágiles y afectados por conflictos»), IDA, LDC, el mundo entero…
+// y con ellos el mapa se llenaba de «países» sin coordenadas y el ranking lo
+// encabezaba FCV con la suma de medio planeta. La instantánea ya se generó
+// filtrando contra los 217 países reales del Banco; para la lectura EN VIVO la
+// criba es ésta: sólo pasa un código que tenga geografía en la casa o que ya
+// estuviera en la instantánea depurada.
+const ISO3_VALIDOS = new Set<string>([
+  ...PAISES_GEO.map((p) => p.iso3),
+  ...Object.keys(SNAP.combate),
+]);
+export const esPais = (iso: string): boolean => ISO3_VALIDOS.has(iso.toUpperCase());
 
 export type Procedencia = {
   /** true si la cifra viene de la consulta en vivo, false si es la instantánea */
@@ -88,6 +103,7 @@ export async function cargarCombate(): Promise<{ datos: Record<string, Record<st
     const iso = f.countryiso3code;
     const v = f.value;
     if (!iso || v === null || v === undefined || !f.date) continue;
+    if (!esPais(iso)) continue; // fuera agregados: FCV, IDA, LDC, WLD…
     if (!datos[iso]) datos[iso] = {};
     datos[iso][f.date] = v;
   }
@@ -118,6 +134,7 @@ export async function cargarDesplazamiento(): Promise<{
     for (const it of items) {
       const iso = String(it.coo_iso ?? "");
       if (!iso || iso === "-" || iso === "unk") continue;
+      if (!esPais(iso)) continue; // fuera agregados y códigos que no son país
       nuevo[iso] = {
         anio: num(it.year),
         refugiados: num(it.refugees),
