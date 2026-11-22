@@ -35,10 +35,10 @@ import { gruposHistorias } from "@/lib/portada/frentes";
 import { TituloSeccion } from "@/components/portada/titulo-seccion";
 import { SpotPortada } from "@/components/portada/spot-portada";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
-import { BotonMundos } from "@/components/mundos/puerta-mundos";
+import { BarraExplorar } from "@/components/portada/barra-explorar";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 // v406.0 LA TRAVESÍA — el hilo (continúa donde lo dejaste) y la puerta a la entrada inmersiva
-import { HiloPortada, BotonTravesia, BotonDirectorio } from "@/components/travesia/hilo-portada";
+import { HiloPortada } from "@/components/travesia/hilo-portada";
 import { DescubreHoy, NovedadesPortada } from "@/components/portada/portada-nueva";
 // v436.7 · EL TALLER DE MAPAS, en la portada: una herramienta que se ve antes de
 // que nadie la busque. Componente de servidor: cero JavaScript extra.
@@ -238,10 +238,16 @@ export default async function Portada() {
 
 
         {/* v432.0 · EL TRÁILER — Vanguard explicado en 80 segundos, a la vista
-            (no plegado): capítulos que saltan a cada sala del vídeo. */}
+            (no plegado): capítulos que saltan a cada sala del vídeo. v439.0
+            ORDEN: el spot de 30 segundos (que vivía apilado a continuación)
+            vive ahora DENTRO de esta sección, para que no haya dos promos
+            apilando bloques. */}
         <section id="trailer" className="vx-sec vxp-ancla" aria-label="El tráiler de Vanguard">
           <TituloSeccion sello="Sección · El tráiler" titulo="Vanguard en 80 segundos" sub="Todo lo que hay en esta casa, contado con sus propias pantallas." enlace="/trailer" textoEnlace="Sala de proyección" />
           <TrailerVanguard compacto />
+          <div className="vxp-spot-c">
+            <SpotPortada />
+          </div>
         </section>
 
         {/* v437.2 · EL MERCADO — las diez familias ya no se despliegan aquí: viven
@@ -296,23 +302,14 @@ export default async function Portada() {
         <section id="modulos" className="vx-sec vxp-ancla" aria-label="Los módulos de Vanguard">
           <TituloSeccion sello={`Sección 06 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Países en cifras, conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
           <ModulosRejilla compacta />
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: 12, marginTop: 18 }}>
-            <BotonMundos />
-            <BotonTravesia />
-            <BotonDirectorio />
-          </div>
-        </section>
-
-        <section className="vx-sec" aria-label="Vanguard en 30 segundos">
-          <TituloSeccion sello="Sección · El spot" titulo="Vanguard en 30 segundos" sub="Lo que es esta casa, contado con sus propias pantallas." />
-          <SpotPortada />
+          <BarraExplorar />
         </section>
 
         {/* ── LO DEMÁS, PLEGADO ─────────────────────────────────────────
             Existe todo lo de antes (historias por frente, destacadas, descubre,
-            módulos, el spot, los teatros por región, la bitácora y las salas),
-            pero no se le echa encima a quien entra. Se abre con un clic, sin
-            JavaScript: es un <details> de verdad. ── */}
+            los teatros por región, la bitácora y las salas), pero no se le
+            echa encima a quien entra. Se abre con un clic, sin JavaScript:
+            es un <details> de verdad. ── */}
         <details className="vx-mas">
           <summary>
             <span className="vx-mas-rotulo">todo lo demás de la portada</span>

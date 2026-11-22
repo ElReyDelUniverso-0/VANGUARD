@@ -110,10 +110,13 @@ ok(/leccionesAcademia\(\)/.test(registro), "las lecciones no se cuentan desde lo
 // ── ⑥ la portada monta lo nuevo y deja de montar lo viejo ───────────
 const portada = leer("src/app/page.tsx");
 ok(portada.includes('from "@/components/experiencia/entrada"'), "la portada no monta la entrada");
-ok(portada.includes('from "@/components/experiencia/ecosistema"'), "la portada no monta el ecosistema");
+// v437.2: las diez familias se muestran en la portada como la franja del
+// MERCADO (MercadoPortada), no como el bloke completo del ecosistema; el
+// ecosistema completo vive en /ecosistema y su componente se monta allí.
+ok(portada.includes('from "@/components/mercado/mercado-portada"'), "la portada no monta la franja del mercado");
 ok(portada.includes('from "@/components/experiencia/portada-viva"'), "la portada no monta la portada viva");
 ok(portada.includes("<Entrada"), "la entrada no se renderiza");
-ok(portada.includes("<Ecosistema"), "el ecosistema no se renderiza");
+ok(portada.includes("<MercadoPortada"), "la franja del mercado no se renderiza");
 ok(portada.includes("<PortadaViva"), "la portada viva no se renderiza");
 ok(!portada.includes("<AreasRejilla"), "la portada sigue montando las ocho áreas (compiten con el ecosistema)");
 ok(!portada.includes("<HeroeVanguard"), "la portada sigue montando el héroe viejo (la entrada lo sustituye)");

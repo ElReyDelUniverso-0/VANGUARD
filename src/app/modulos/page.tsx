@@ -2,11 +2,10 @@
 // v402.6 LOS NUEVE MÓDULOS — /modulos: el índice de la casa.
 // Todo lo que Vanguard tiene además de noticias, módulo a módulo.
 // ============================================================
-import { BotonTravesia, BotonDirectorio } from "@/components/travesia/hilo-portada";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
-import { BotonMundos } from "@/components/mundos/puerta-mundos";
+import { BarraExplorar } from "@/components/portada/barra-explorar";
 import { MODULOS, MODULOS_PUBLICOS } from "@/components/portada/modulos";
 // v403.8 LA PUERTA: el mapa de TODAS las salas de la casa, no solo las 46 de
 // los módulos. Las 155 del cuartel, en sus 20 constelaciones, con su puerta.
@@ -32,12 +31,7 @@ export default function Modulos() {
           <p>
             {MODULOS_PUBLICOS.length} módulos y {SALAS} salas para entender el mundo: elige por dónde entrar.
           </p>
-          <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
-            <BotonMundos />
-            {/* v406.0 LA TRAVESÍA: los mismos módulos, recorridos espacio a espacio */}
-            <BotonTravesia />
-            <BotonDirectorio />
-          </div>
+          <BarraExplorar />
         </div>
       </section>
       <section className="vx-sec" aria-label="Mapa de todas las salas" id="mapa">

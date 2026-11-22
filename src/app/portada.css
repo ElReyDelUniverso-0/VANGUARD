@@ -318,6 +318,87 @@ body:has(.vx) { background: #06080c; }
 .vx-btn-sec { color: var(--vx-gold); background: rgba(232,197,106,.06); border-color: var(--vx-line2); box-shadow: none; }
 .vx-btn-sec:hover { background: rgba(232,197,106,.12); box-shadow: none; }
 
+/* ═══════════════════════════════════════════════════════════════════
+   v439.0 ORDEN — BARRA DE EXPLORACIÓN (una sola, en toda la casa)
+   Los botones sueltos de antes (Mundos · Travesía · Directorio) se
+   apilaban sin orden en cada página. Ahora es una barra unificada:
+   tres puertas, un solo estilo, un solo ritmo.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-barra { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.vx-barra--c { margin-top: 14px; }
+.vx-barra--ancho { margin-top: 22px; }
+.vx-barra-a {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+  flex: 1 1 180px; min-width: 170px; padding: 13px 16px; border-radius: 3px;
+  border: 1px solid var(--vx-line); background: var(--vx-card);
+  color: var(--vx-tx2); text-decoration: none;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.vx-barra-a:hover { transform: translateY(-2px); border-color: var(--vx-gold); background: var(--vx-card2); }
+.vx-barra-a b { font-family: var(--vx-marca); font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--vx-gold); }
+.vx-barra-a span { font-size: 13px; color: var(--vx-mut); }
+
+/* v439.0 ORDEN — el spot vive dentro de la sección del tráiler: aire entre
+   la cinta de 80 segundos y la de 30, sin dos bloques promocionales
+   apilados. */
+.vxp-spot-c { margin-top: 18px; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v439.0 ORDEN — FOCO PÚBLICO (Academy · Motores)
+   El bloque viejo era Tailwind apilado con seis insignias y ocho
+   botones. Ahora: una sola tarjeta por pilar, sellos mínimos y el
+   estilo oscuro-oro del resto de la casa.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-foco { padding: 40px 0 0; }
+.vx-foco-banner {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 22px 24px; border-radius: 4px;
+  border: 1px solid rgba(94, 234, 212, .25);
+  background: linear-gradient(135deg, #031525 0%, #020c18 55%, #01060e 100%);
+}
+.vx-foco-banner-c { max-width: 62ch; }
+.vx-foco-banner-s {
+  display: inline-block; font-family: var(--vx-marca); font-size: 10px; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; color: #5eead4; margin-bottom: 8px;
+}
+.vx-foco-banner h2 { margin: 0 0 6px; font-size: clamp(20px, 2.4vw, 28px); font-weight: 800; letter-spacing: -.02em; }
+.vx-foco-banner p { margin: 0; font-size: 14.5px; color: var(--vx-mut); }
+.vx-foco-banner-btn { flex: none; background: #5eead4; color: #031525; border-color: #5eead4; }
+.vx-foco-banner-btn:hover { filter: brightness(1.1); }
+
+.vx-foco-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 16px; }
+@media (min-width: 900px) { .vx-foco-grid { grid-template-columns: 1fr 1fr; } }
+.vx-foco-pilar {
+  display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid var(--vx-line); border-radius: 4px; background: var(--vx-card);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.vx-foco-pilar:hover { transform: translateY(-3px); border-color: var(--vx-line2); box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+.vx-foco-pilar-img { position: relative; aspect-ratio: 16 / 7; overflow: hidden; background: var(--vx-card2); }
+.vx-foco-sello {
+  position: absolute; top: 12px; left: 14px;
+  font-family: var(--vx-marca); font-size: 9.5px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: #e8c56a; background: rgba(6,8,12,.8); border: 1px solid var(--vx-line2);
+  padding: 4px 8px; border-radius: 2px;
+}
+.vx-foco-pilar-c { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.vx-foco-pilar-c h3 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.vx-foco-pilar-c p { margin: 0; font-size: 14px; color: var(--vx-mut); }
+.vx-foco-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.vx-foco-chips a {
+  font-family: var(--vx-marca); font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--vx-tx2);
+  border: 1px solid var(--vx-line); padding: 6px 10px; border-radius: 2px;
+  transition: border-color .2s ease, color .2s ease;
+}
+.vx-foco-chips a:hover { border-color: var(--vx-gold); color: var(--vx-gold); }
+.vx-foco-ir {
+  margin-top: auto; padding-top: 8px;
+  font-family: var(--vx-marca); font-size: 11px; font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--vx-gold);
+}
+.vx-foco-ir:hover { text-shadow: 0 0 12px rgba(232,197,106,.6); }
+
 /* ─────────────── SALAS ─────────────── */
 .vx-salas { display: grid; gap: 14px; grid-template-columns: 1fr; }
 @media (min-width: 640px) { .vx-salas { grid-template-columns: 1fr 1fr; } }
