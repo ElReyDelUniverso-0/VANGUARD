@@ -7522,15 +7522,6 @@
 //   94 fotos de Wikimedia Commons con autor y licencia. No enseña a colarse.
 // (anterior) export const APP_VERSION = "v440.5";
 // (anterior) export const APP_CODENAME = "GLOBAL DANGER";
-// v442.0 · LA OSCURIDAD PROFUNDA — la piel nueva de toda la casa
-//   Negro más hondo y viñeta en cada página; sombras detrás de las imágenes;
-//   un clima de fondo que se turna al azar (lluvia, tormenta, sol, niebla,
-//   nieve, estrellas, aurora, brasas), tenue y con máscara, nunca en la
-//   entrada; y los módulos que salen de la oscuridad al tocarlos.
-// (anterior) export const APP_VERSION = "v441.5";
-// (anterior) export const APP_CODENAME = "GLOBAL DANGER, PULIDO";
-export const APP_VERSION = "v442.0";
-export const APP_CODENAME = "LA OSCURIDAD PROFUNDA";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7608,7 +7599,37 @@ export const APP_CODENAME = "LA OSCURIDAD PROFUNDA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v441.5"; // GLOBAL DANGER, pulido
+// v442.0 · LOS SÍMBOLOS VIVOS — la casa decorada con sus signos y los signos
+//   con vida. El mandato del Dueño: «analiza los símbolos que tiene Vanguard,
+//   decora toda la casa con ellos, crea símbolos ÚNICOS… pero cada símbolo
+//   tiene vida».
+//   ① LOS SIGNOS ÚNICOS (src/lib/simbolos-vivos/modelo.ts): los cuatro
+//      módulos, el gran ojo, la zona cero, el mercado, la radio, el cuaderno,
+//      el universo, la academia, la memoria, la guerra, el orden y la lupa —
+//      dibujados a mano en un lienzo de 48, cero imágenes, cero iconos.
+//   ② LA FÁBRICA DE SIGNOS: sigiloDe(id) compone un signo determinista
+//      (djb2 con finalizador) para CUALQUIER sala o puerta: dos salas nunca
+//      comparten signo y el mismo id siempre pinta el mismo. Medido: 2.000
+//      ids seguidos → 2.000 signos distintos; 100 rutas reales → 99.
+//   ③ LA VIDA (src/lib/simbolos-vivos/estado.ts): cuatro humores que salen
+//      de la casa real, no del azar — reciente (nunca entrado o recién
+//      actualizado → chispas de «?»), ira (tarea empezada y sin terminar en
+//      ese módulo → temblor, rojo y rayo), importante (pulso determinista
+//      de la casa o evento nuevo de la bitácora → temblor suave, anillo de
+//      energía, cambio de posición y ojos que miran a los lados) y calma
+//      (respira). Visitas, pulso y fuego viven en localStorage (vg-vida-v1).
+//   ④ DECORADA ENTERA: el menú de la cabecera, las tarjetas de módulo de la
+//      portada, el vestíbulo de cada módulo (una isla de signo por sala) y
+//      la franja nueva de la portada con los cuatro signos vivos.
+//   ⑤ LA SALA NUEVA /simbolos: el gran ojo, los módulos, las salas con su
+//      signo y los cuatro humores provocados a mano para leer el lenguaje.
+//   ⑥ LEYES: animación solo transform/opacity (60 FPS), se apaga con
+//      prefers-reduced-motion, cero dependencias nuevas y las cadenas nuevas
+//      en los 8 idiomas.
+export const APP_VERSION = "v442.0";
+export const APP_CODENAME = "LOS SÍMBOLOS VIVOS";
+export const APP_VERSION_ANTERIOR = "v442.0"; // LA OSCURIDAD PROFUNDA
+// (anterior) export const APP_VERSION_ANTERIOR = "v441.5"; // GLOBAL DANGER, pulido
 // (anterior) export const APP_VERSION_ANTERIOR = "v441.4"; // la franja de portada dice cómo se actualiza
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.5"; // GLOBAL DANGER
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.4"; // EL ESCAPARATE DEL MERCADO

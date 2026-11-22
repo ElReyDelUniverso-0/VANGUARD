@@ -7,6 +7,9 @@
 import Link from "next/link";
 import { MODULOS_PUBLICOS, portadaDe } from "./modulos";
 import { PortadaHermosaModulo } from "./portadas-hermosas";
+// v442.0 · cada módulo lleva su SÍMBOLO VIVO: único, con sus ojos y con su
+// humor (recién entrado, tarea a medias, pulso de la casa o calma).
+import { SigiloVivo } from "@/components/vanguard/simbolos-vivos";
 
 export function ModulosRejilla({ excepto, compacta = false }: { excepto?: string; compacta?: boolean }) {
   const lista = MODULOS_PUBLICOS.filter((m) => m.id !== excepto);
@@ -25,6 +28,7 @@ export function ModulosRejilla({ excepto, compacta = false }: { excepto?: string
             </div>
             <div className="vx-mod-cab">
               <span className="vx-mod-num">{String(n).padStart(2, "0")}</span>
+              <SigiloVivo id={m.id} tam={30} />
               {vivos > 0 && (
                 <span className="vx-mod-vivo">
                   <span className="vx-punto" /> En vivo

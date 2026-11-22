@@ -642,6 +642,28 @@ const FR: Dict = {
   "worlds.resultados": "{cuenta} résultats",
   "worlds.expPlural": "expériences",
   "worlds.en": "dans",
+  // v442.0 · LOS SÍMBOLOS VIVOS
+  "simbolos.sello": "Identité · Les symboles de la maison",
+  "simbolos.titulo": "La salle des symboles",
+  "simbolos.sumario": "Chaque module et chaque salle a son propre symbole, dessiné par code et unique. Et le symbole vit : il respire, lance des étincelles d'interrogation, lance le signe de la colère ou s'éveille avec de l'énergie et les yeux qui regardent de côté.",
+  "simbolos.granojo": "Le grand œil de Vanguard",
+  "simbolos.granojoTxt": "Le symbole de toute la maison. Là, il est {estado} : les quatre modules et les salles ci-dessous respirent avec lui. Quand quelque chose d'important arrive, l'œil tremble, lance un anneau d'énergie, change de position et regarde de côté.",
+  "simbolos.modulos": "Les quatre modules, vivants",
+  "simbolos.salas": "Les salles, chacune avec son propre symbole",
+  "simbolos.estados": "Les quatre humeurs d'un symbole",
+  "simbolos.estado.calma": "Calme",
+  "simbolos.estado.calmaTxt": "Rien ne se passe : le symbole respire, lent et immobile, sans bruit.",
+  "simbolos.estado.reciente": "Récent",
+  "simbolos.estado.recienteTxt": "Vous n'y êtes jamais entré ou il vient d'être mis à jour : des étincelles d'interrogation sautent autour du symbole.",
+  "simbolos.estado.ira": "Colère",
+  "simbolos.estado.iraTxt": "Une tâche commencée reste inachevée dans le module : le symbole tremble, devient rouge et lance l'éclair de la colère.",
+  "simbolos.estado.importante": "Important",
+  "simbolos.estado.importanteTxt": "Quelque chose se passe : le symbole tremble doucement, lance un anneau d'énergie, change de position et les yeux de Vanguard regardent de côté.",
+  "simbolos.portada.titulo": "Les symboles de la maison sont vivants",
+  "simbolos.portada.sub": "Quatre symboles uniques, dessinés par code, qui respirent avec vous : des étincelles « ? » là où vous n'êtes jamais entré, le signe de la colère là où vous avez laissé une tâche à moitié faite, et du feu quand la maison a quelque chose à dire.",
+  "simbolos.portada.cta": "La salle des symboles",
+  "simbolos.volver": "L'ordre de bataille",
+
 };
 
 export default FR;

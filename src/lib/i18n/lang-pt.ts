@@ -642,6 +642,28 @@ const PT: Dict = {
   "worlds.resultados": "{cuenta} resultados",
   "worlds.expPlural": "experiências",
   "worlds.en": "em",
+  // v442.0 · LOS SÍMBOLOS VIVOS
+  "simbolos.sello": "Identidade · Os símbolos da casa",
+  "simbolos.titulo": "A sala dos símbolos",
+  "simbolos.sumario": "Cada módulo e cada sala tem um símbolo próprio, desenhado por código e único. E o símbolo vive: respira, solta faíscas de interrogação, lança o sinal da ira ou acorda com energia e com os olhos olhando para os lados.",
+  "simbolos.granojo": "O grande olho de Vanguard",
+  "simbolos.granojoTxt": "O símbolo da casa inteira. Agora mesmo ele está {estado}: os quatro módulos e as salas abaixo respiram com ele. Quando algo importante acontece, o olho treme, solta um anel de energia, muda de posição e olha para os lados.",
+  "simbolos.modulos": "Os quatro módulos, vivos",
+  "simbolos.salas": "As salas, cada uma com seu próprio símbolo",
+  "simbolos.estados": "Os quatro humores de um símbolo",
+  "simbolos.estado.calma": "Calma",
+  "simbolos.estado.calmaTxt": "Nada acontece: o símbolo respira, lento e parado, sem ruído.",
+  "simbolos.estado.reciente": "Recente",
+  "simbolos.estado.recienteTxt": "Você nunca entrou ou acabou de atualizar: faíscas de interrogação saltam ao redor do símbolo.",
+  "simbolos.estado.ira": "Ira",
+  "simbolos.estado.iraTxt": "Há uma tarefa começada sem terminar dentro do módulo: o símbolo treme, fica vermelho e lança o raio da ira.",
+  "simbolos.estado.importante": "Importante",
+  "simbolos.estado.importanteTxt": "Algo está acontecendo: o símbolo treme suavemente, solta um anel de energia, muda de posição e os olhos de Vanguard olham para os lados.",
+  "simbolos.portada.titulo": "Os símbolos da casa têm vida",
+  "simbolos.portada.sub": "Quatro símbolos únicos, desenhados por código, respirando com você: faíscas de «?» onde você nunca entrou, o sinal da ira onde deixou uma tarefa pela metade e fogo quando a casa tem algo a dizer.",
+  "simbolos.portada.cta": "A sala dos símbolos",
+  "simbolos.volver": "A ordem de batalha",
+
 };
 
 export default PT;

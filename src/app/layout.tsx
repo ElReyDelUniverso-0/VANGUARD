@@ -50,6 +50,8 @@ import { OscuridadVanguard } from "@/components/oscuridad/oscuridad-vanguard";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
+// v442.0 · LOS SÍMBOLOS VIVOS — la vida de los signos de toda la casa
+import { VidaGlobal } from "@/components/vanguard/simbolos-vivos";
 import { SalidaModulo } from "@/components/vanguard/salida-modulo";
 // v439.4 LA PORTADA DE CADA SALA — el atlas de portadas y su piel
 import "./portada-ruta.css";
@@ -1006,6 +1008,10 @@ try{
         {/* v405.10: el muelle contextual — se adapta a la sala en la que estás */}
         <BarraAdaptativa />
         <Registrador />
+        {/* v442.0 · LOS SÍMBOLOS VIVOS — el corazón de los signos de la casa:
+            visita lo que pisas, late con el pulso determinista y enciende el
+            módulo que tiene algo que decir. Monta, además, su hoja de vida. */}
+        <VidaGlobal />
         {/* v431.4: el interruptor de cara, en todas partes */}
         <Caras />
         {/* v434.2: se eliminan las dos voces de la casa (radio + el orbe/mente en

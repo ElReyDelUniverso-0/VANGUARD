@@ -642,6 +642,28 @@ const ZH: Dict = {
   "worlds.resultados": "{cuenta} 个结果",
   "worlds.expPlural": "项体验",
   "worlds.en": "位于",
+  // v442.0 · LOS SÍMBOLOS VIVOS
+  "simbolos.sello": "身份 · 房子的符号",
+  "simbolos.titulo": "符号之厅",
+  "simbolos.sumario": "每个模块和每个房间都有自己的符号，由代码绘制且独一无二。符号是活的：它会呼吸、迸出问号的火花、发出愤怒之兆，或带着能量醒来，眼睛望向两侧。",
+  "simbolos.granojo": "Vanguard 的巨眼",
+  "simbolos.granojoTxt": "整个房子的符号。现在它处于 {estado}：下面四个模块和房间与它一起呼吸。当重要的事情发生时，眼睛会颤抖、释放能量环、改变位置并望向两侧。",
+  "simbolos.modulos": "四个模块，活着",
+  "simbolos.salas": "房间，每个都有自己的符号",
+  "simbolos.estados": "符号的四种情绪",
+  "simbolos.estado.calma": "平静",
+  "simbolos.estado.calmaTxt": "什么都没有发生：符号缓慢而安静地呼吸，没有噪音。",
+  "simbolos.estado.reciente": "新近",
+  "simbolos.estado.recienteTxt": "你从未进入，或它刚刚更新：问号的火花在符号周围跳动。",
+  "simbolos.estado.ira": "愤怒",
+  "simbolos.estado.iraTxt": "模块里还有一件开始但未完成的任务：符号颤抖、变红并发出愤怒的闪电。",
+  "simbolos.estado.importante": "重要",
+  "simbolos.estado.importanteTxt": "有事情发生：符号轻轻颤抖、释放能量环、改变位置，Vanguard 的眼睛望向两侧。",
+  "simbolos.portada.titulo": "房子的符号是活的",
+  "simbolos.portada.sub": "四个由代码绘制的独特符号，与你一起呼吸：在你从未进入的地方有「?」火花，在你把任务做到一半的地方有愤怒之兆，当房子有话要说时则有火焰。",
+  "simbolos.portada.cta": "符号之厅",
+  "simbolos.volver": "战斗序列",
+
 };
 
 export default ZH;

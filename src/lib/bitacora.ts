@@ -34,19 +34,17 @@ export const BITACORA: EntradaBitacora[] = [
     ],
   },
   {
-    version: "v441.5",
-    nombre: "GLOBAL DANGER — el observatorio mundial de riesgos, con la fuente a la vista",
-    tipo: "mundo",
+    version: "v442.0",
+    nombre: "LOS SÍMBOLOS VIVOS — la casa decorada con sus signos, y los signos con vida",
+    tipo: "nav",
     hitos: [
-      "EL DUEÑO: «Construye GLOBAL DANGER para Vanguard. Un centro mundial de observación de riesgos y amenazas para la humanidad… cada riesgo debe incluir fecha, fuente, metodología y contexto. No generes falsas alarmas».",
-      "EL MAPA, EN VIVO Y EN EL SERVIDOR: sismos de magnitud ≥4,5 de los últimos siete días (USGS), desastres con impacto estimado (GDACS, con su verde/naranja/rojo tal cual) y eventos naturales observados por satélite (NASA EONET). Hasta 320 puntos, cada uno con su fecha, su nombre al pasar el ratón y su enlace a la ficha oficial. Sin una línea de JavaScript en el cliente: el planeta llega pintado.",
-      "LAS SEIS FAMILIAS, NUEVE FICHAS: contaminación (PM2,5 mundial y el aire de ocho ciudades en esta hora), brotes (los partes de la OMS con su fecha), inseguridad alimentaria (prevalencia de subalimentación de la FAO), crisis humanitarias (desastres abiertos de GDACS), riesgos ambientales (eventos de EONET y superficie forestal) y escasez de recursos (extracción de agua dulce y acceso a electricidad).",
-      "CADA FICHA LLEVA LO QUE PIDIÓ: fecha, fuente con enlace, metodología (cómo se calcula el indicador) y contexto (qué significa y qué no). El nivel 0–5 sólo aparece cuando hay escala publicada —la escalera de la OMS para el aire (guía 5 y objetivos intermedios 10, 15, 25 y 35 µg/m³), las bandas de la FAO para el hambre, el umbral del 25 % de AQUASTAT para el agua, la alerta de GDACS—; donde no la hay, dice «sin clasificación oficial» y no se puntúa.",
-      "ESTADÍSTICAS Y COMPARACIONES: el aire de ocho ciudades de una hora (Open-Meteo/CAMS) y tres indicadores en siete países (Banco Mundial), con el año de cada dato en la cabecera y un asterisco cuando un valor viene de la última lectura conocida.",
-      "SE ACTUALIZA SOLA cada 15 minutos (ISR). Cada fuente tiene 9 segundos; si no contesta, se muestra su última lectura conocida con su fecha y la barra de estado lo dice fuente por fuente.",
-      "Y LO QUE NO HACE, ESCRITO EN LA PÁGINA: no declara emergencias (eso es de la autoridad), no adelanta víctimas ni hectáreas, no inventa niveles, no suma indicadores distintos en un «índice mundial de peligro» sin dueño y no usa el miedo como reclamo. Con aviso de que, ante una emergencia real, manda tu autoridad nacional y OCHA.",
-      "PULIDO DEL ÚLTIMO PASE: la escalera del PM2,5 se reescribió con los cuatro objetivos intermedios reales de la OMS (10, 15, 25 y 35 µg/m³) y cada ficha dice en qué banda cae; el nivel 5 pasó de «Crítico» a «Muy alto», porque llamar crítica a una media anual era justo la alarma falsa que el Dueño prohibió; la cifra de la portada ya no promete más puntos de los que el mapa pinta (320, y dice cuántas se leyeron); y la sala entra en el atlas de la casa con su número, su color y su ojo, en vez de salir «sala 00».",
-      "MEDIDO: 640 círculos pintados en el mapa (320 puntos), 9 fichas, 6 familias, 6 niveles explicados, 7 fuentes en la tabla, 0 errores de consola; primera lectura real: PM2,5 mundial 32,87 µg/m³ (2023), subalimentación 8,1 % (2024), 201 alertas de GDACS (0 rojas, 4 naranjas), 120 eventos de EONET, 8 partes de la OMS.",
+      "EL DUEÑO: «analiza los símbolos que tiene Vanguard y decora toda la casa con sus símbolos; crea símbolos ÚNICOS para Vanguard… pero una tarea es que cada símbolo tiene vida: cuando un módulo nunca se ha entrado o se actualiza, que vote chispas de signos de interrogación; cuando un módulo no ha terminado una tarea dentro de él, que vote el signo de la ira; y cuando un módulo es importante o pasa algo, que se mueva, tiemble, eche energía, cambie de posición y que los ojos de Vanguard miren a los lados».",
+      "SIGNOS ÚNICOS DIBUJADOS A MANO (lienzo 48, cero imágenes y cero fuentes de iconos): los cuatro módulos (la redacción con su cable que late, el mundo con su meridiano, el saber con su libro abierto, la casa con su estrella de cuatro puntas), el gran ojo de Vanguard, la zona cero, el mercado, la radio, el cuaderno, el universo, la academia, la memoria, la guerra, el orden y la lupa.",
+      "LA FÁBRICA DE SIGNOS: sigiloDe(id) compone un signo determinista (djb2) para cualquier sala o puerta — forma madre, giro, marcas y tinta. Dos salas nunca comparten signo; el mismo id siempre pinta el mismo. Cada sala del vestíbulo lleva el suyo: millares de signos, todos únicos, todos con sus ojos.",
+      "LOS CUATRO HUMORES, Y TODOS SALEN DE LA CASA REAL: reciente (nunca entrado o recién actualizado → chispas de «?» que saltan alrededor del signo), ira (tarea empezada y sin terminar en ese módulo, leída de los Retos del día → temblor, tinte rojo y el rayo de la ira), importante (pulso determinista de la casa —un módulo cada 45 s, el mismo para todo el planeta— o un evento nuevo de la bitácora del piloto → temblor suave, anillo de energía, cambio de posición y los ojos mirando a los lados) y calma (respira, lento y quieto).",
+      "DECORADA ENTERA: las siete puertas del menú de la cabecera, las tarjetas de módulo de la portada y de /modulos, las salas del vestíbulo de cada módulo y la franja nueva de la portada con los cuatro signos vivos y su humor en vivo.",
+      "NUEVA SALA /simbolos: el gran ojo con su humor, los cuatro módulos, doce salas con su signo y los cuatro humores provocados a mano para leer el lenguaje de un vistazo.",
+      "LEYES CUMPLIDAS: animación solo con transform/opacity (60 FPS), se apaga con prefers-reduced-motion, cero dependencias nuevas, y todas las cadenas nuevas en los 8 idiomas.",
     ],
   },
   {
@@ -65,7 +63,6 @@ export const BITACORA: EntradaBitacora[] = [
   },
   {
     version: "v440.3",
-
     nombre: "EL ESCAPARATE DEL MERCADO — los módulos de la casa pasan solos, con su descripción",
     tipo: "nav",
     hitos: [

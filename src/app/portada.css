@@ -2135,3 +2135,37 @@ html[data-viajando="1"] .vx-nav{box-shadow:0 0 0 1px var(--esp),0 18px 40px rgba
 .vx-vot-pie-fin{margin-top:22px;font-size:14px}
 .vx-vot-pie-fin a{color:var(--vx-gold);text-decoration:none}
 .vx-vot-pie-fin a:hover{text-decoration:underline}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v442.0 · LOS SÍMBOLOS VIVOS — la casa decorada con sus signos.
+   El signo en sí (chispas, ira, energía, ojos) vive en la hoja que
+   monta VidaGlobal; aquí solo su sitio en cada pieza de la casa.
+   ═══════════════════════════════════════════════════════════════════ */
+.vx-hub-signo { position: absolute; top: 12px; right: 12px; z-index: 2; }
+
+/* la franja de la portada: los cuatro signos de la casa, vivos */
+.vxp-signos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.vxp-signo { display: grid; justify-items: center; gap: 8px; padding: 16px 10px 14px; border: 1px solid var(--vx-line); border-radius: 4px; background: rgba(255,255,255,.02); transition: border-color .25s, background .25s, transform .25s; }
+.vxp-signo:hover { border-color: var(--vx-line2); background: rgba(255,255,255,.045); transform: translateY(-3px); }
+.vxp-signo b { font-family: var(--vx-marca); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--vx-tx2); }
+.vxp-signo em { font-family: var(--vx-dato); font-size: 9.5px; font-style: normal; letter-spacing: .1em; text-transform: uppercase; color: var(--vx-mut); }
+.vxp-signo[data-estado="reciente"] em { color: #FFC94D; }
+.vxp-signo[data-estado="ira"] em { color: #FF3B30; }
+.vxp-signo[data-estado="importante"] em { color: #5EEAD4; }
+@media (max-width: 720px) { .vxp-signos { grid-template-columns: repeat(2, 1fr); } }
+
+/* la sala de los símbolos (/simbolos) */
+.vxs-cab { padding: 34px 0 8px; }
+.vxs-cab h1 { margin: 8px 0 6px; font-family: var(--vx-marca); font-size: clamp(24px, 4.6vw, 42px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: linear-gradient(180deg, #fff3c4, #e8c56a 55%, #b8862b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.vxs-cab p { margin: 0; max-width: 68ch; font-size: 15px; line-height: 1.55; color: var(--vx-tx2); }
+.vxs-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 22px 0 8px; }
+.vxs-ficha { display: grid; justify-items: center; gap: 8px; padding: 16px 10px 12px; border: 1px solid var(--vx-line); border-radius: 4px; background: rgba(255,255,255,.02); }
+.vxs-ficha b { font-family: var(--vx-marca); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--vx-tx); text-align: center; }
+.vxs-ficha em { font-family: var(--vx-dato); font-size: 9.5px; font-style: normal; letter-spacing: .1em; text-transform: uppercase; color: var(--vx-mut); }
+.vxs-ficha[data-estado="reciente"] em { color: #FFC94D; }
+.vxs-ficha[data-estado="ira"] em { color: #FF3B30; }
+.vxs-ficha[data-estado="importante"] em { color: #5EEAD4; }
+.vxs-estados { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; padding: 18px 0 8px; }
+.vxs-estado { display: grid; justify-items: center; gap: 8px; padding: 16px; border: 1px dashed var(--vx-line2); border-radius: 4px; }
+.vxs-estado b { font-family: var(--vx-marca); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--vx-gold); }
+.vxs-estado p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--vx-tx2); text-align: center; }

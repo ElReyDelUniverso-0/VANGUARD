@@ -36,6 +36,8 @@ import { gruposHistorias } from "@/lib/portada/frentes";
 import { TituloSeccion } from "@/components/portada/titulo-seccion";
 import { SpotPortada } from "@/components/portada/spot-portada";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
+// v442.0 · LOS SÍMBOLOS VIVOS — la franja con los cuatro signos de la casa
+import { SignosPortada } from "@/components/portada/signos-portada";
 import { BarraExplorar } from "@/components/portada/barra-explorar";
 import { VotacionTarjeta } from "@/components/portada/votacion-tarjeta";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
@@ -321,6 +323,11 @@ export default async function Portada() {
           <ModulosRejilla compacta />
           <BarraExplorar />
         </section>
+
+        {/* v442.0 · LOS SÍMBOLOS VIVOS — los cuatro signos de la casa, con su
+            humor en vivo: chispas de «?», signo de la ira, fuego importante
+            o calma. Cada uno lleva a su módulo. */}
+        <SignosPortada />
 
         {/* ── LO DEMÁS, PLEGADO ─────────────────────────────────────────
             Existe todo lo de antes (historias por frente, destacadas, descubre,

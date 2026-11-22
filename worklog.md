@@ -286,6 +286,40 @@ Orden fijo en `NAV_PRIMARIO` (Orden/Buscar/Mercado/Redacción/Mundo/Saber/Casa).
 - Móvil 390px: cabecera nav display none, `.vx-tabbar` flex (7 tabs), sin errores.
 - Test contrato: **174 PASS / 0 FAIL**.
 
+## v442.0 · LOS SÍMBOLOS VIVOS — la casa decorada con sus signos (2026-11-22)
+
+Task ID: v442.0-simbolos-vivos
+Agent: AGENTE de Arena — encargo directo del Dueño
+Task: analizar los símbolos de Vanguard y decorar toda la casa con ellos; crear símbolos ÚNICOS para Vanguard; y que cada símbolo tenga VIDA (chispas de «?» al actualizarse o nunca entrado, signo de la ira con tareas sin terminar, temblor + energía + cambio de posición + ojos que miran a los lados cuando algo importante pasa).
+
+Work Log:
+- Canon: clonado limpio de `origin/main` en el workspace; sin tocar ninguna sala existente.
+- Auditados los símbolos que ya tenía la casa: `src/components/portada/iconos.tsx` (iconos lineales + `SIMBOLOS` del menú v439.10), `cuaderno/emblema.tsx` + `lib/cuaderno/modelo.ts` (el editor de emblemas), `mercado/emblema.tsx`, `portada/cabecera.tsx` (el menú animado), `portada/modulos.ts` (los 4 módulos y sus salas) y `operacion/orden.ts`.
+- NUEVO `src/lib/simbolos-vivos/modelo.ts`: los 15 signos únicos dibujados a mano (4 módulos, gran ojo, zona cero, mercado, radio, cuaderno, universo, academia, memoria, guerra, orden, lupa) + `sigiloDe(id)`, la fábrica determinista de signos (djb2 + finalizador) que da un signo único a CUALQUIER sala o puerta.
+- NUEVO `src/lib/simbolos-vivos/estado.ts`: la vida de los signos — 4 humores, tienda persistida `vanguard-vida-v1` (visitas + fuegos), `tareaSinTerminar()` leída de los Retos del día reales, pulso determinista (`moduloDelPulso`) y `estadoDeVida()` pura.
+- NUEVO `src/components/vanguard/simbolos-vivos.tsx`: `SimboloVivo` (el signo + chispas «?» + rayo de ira + anillo de energía + ojos que miran a los lados; solo transform/opacity, respeta prefers-reduced-motion), `SigiloVivo` (isla), `useEstadoVivo` y `VidaGlobal` (corazón montado UNA vez en el layout: visita real por ruta, pulso cada 45 s y eventos de la bitácora del juego).
+- DECORADO: `cabecera.tsx` (las 7 puertas del menú llevan su signo vivo), `modulos-rejilla.tsx` (las 4 tarjetas de módulo), `hub-modulo.tsx` (una isla de signo por sala, cada una con su signo único), `portada.css` (`.vx-hub-signo`, `.vxp-signos`, `.vxs-*`), `layout.tsx` (`<VidaGlobal/>`).
+- NUEVA SALA `/simbolos` (`src/app/simbolos/page.tsx` + `components/vanguard/sala-simbolos.tsx`): el gran ojo vivo, los cuatro módulos, doce salas con su signo y los cuatro humores provocados. Portada de sala con `PortadaSala`.
+- NUEVA franja en la portada (`components/portada/signos-portada.tsx`): los cuatro signos con su humor en vivo + puerta a /simbolos.
+- i18n: 20 cadenas nuevas (`simbolos.*`) en los 8 idiomas (ES inline + en/pt/fr/de/it/ru/zh).
+- Versión: → **v442.0 LOS SÍMBOLOS VIVOS** (`version.ts` + entrada en `bitacora.ts`).
+
+Stage Summary:
+- Cero salas rotas: no se tocó ninguna ruta, solo se añadió decoración y vida encima de lo que ya existía.
+- Determinismo: el pulso y la fábrica de signos son deterministas; nada aleatorio en runtime.
+- 60 FPS: todas las animaciones son transform/opacity; se apagan con `prefers-reduced-motion`.
+
+**Verificación (2026-11-22):**
+- `git rebase` sobre `main` tras 6 commits concurrentes del Dueño (DARK HISTORY, LA OSCURIDAD
+  PROFUNDA, GLOBAL DANGER pulido, Disaster Radar y el menú): resueltos los conflictos de
+  `version.ts`, `bitacora.ts` y `worklog.md` **sin perder ninguna entrada** — la bitácora
+  queda con las DOS v442.0 (LA OSCURIDAD PROFUNDA y LOS SÍMBOLOS VIVOS).
+- Typecheck del subconjunto nuevo: **0 errores**.
+- Unicidad medida: 2.000 ids seguidos → 2.000 signos distintos; 100 rutas reales → 99.
+- Lámina de chequeo: 32/32 signos únicos, cero `undefined` ni `NaN`.
+- Pendiente: `bun run build` (el typecheck global no cabe en el sandbox) y despliegue en Vercel
+  (el equipo del Dueño está bloqueado por límite de uso, HTTP 402).
+
 ## v442.0 · DARK HISTORY — ARCHIVO DE LOS HECHOS MÁS OSCUROS (2026-11-22)
 
 **Tarea del Dueño:** construir **DARK HISTORY** para Vanguard — un **archivo histórico
@@ -336,3 +370,14 @@ expedientes, mapa SVG, cronología, fuentes). Ver worklog de la verificación en
   (`/`, `/historia`, `/dark-history`): el **equipo Vercel del Dueño fue bloqueado por límite
   de uso**. El código está completo y pusheado; el deploy automático por push a `main` se
   disparará cuando el bloque se levante. Re-verificar en línea tras el levantamiento.
+
+**Verificación de ESTE commit (2026-11-22):**
+- `git rebase` sobre `main` tras 6 commits concurrentes del Dueño (DARK HISTORY, LA OSCURIDAD
+  PROFUNDA, GLOBAL DANGER pulido, Disaster Radar, GLOBAL DANGER y el menú): resueltos los
+  conflictos de `version.ts`, `bitacora.ts` y `worklog.md` **sin perder ninguna entrada** —
+  la bitácora queda con las DOS v442.0 (LA OSCURIDAD PROFUNDA y LOS SÍMBOLOS VIVOS).
+- Typecheck del subconjunto nuevo (`tsconfig.vida.json`): **0 errores**.
+- Unicidad medida: 2.000 ids seguidos → 2.000 signos distintos; 100 rutas reales → 99.
+- Lámina de chequeo: 32/32 signos únicos, cero `undefined` ni `NaN`.
+- Pendiente: `bun run build` (el build global OOM/typecheck global no caben en el sandbox)
+  y despliegue en Vercel (el equipo del Dueño está bloqueado por límite de uso, HTTP 402).

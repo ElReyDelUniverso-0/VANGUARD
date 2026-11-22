@@ -12,8 +12,11 @@ import { MODULOS_PUBLICOS, entradaDe, moduloDe } from "./modulos";
 import { NAV_PRIMARIO } from "@/lib/operacion/orden";
 import {
   IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo,
-  IcoBuscar, IcoMercado, IcoRedaccion, IcoSaber,
 } from "./iconos";
+// v442.0 · LOS SÍMBOLOS VIVOS — cada puerta del menú lleva su signo único
+// y el signo tiene vida: respira, echa chispas de «?», tiembla de ira o
+// despierta con energía y los ojos mirando a los lados.
+import { SigiloVivo } from "@/components/vanguard/simbolos-vivos";
 // v403.8 LA PUERTA: el buscador universal (⌘K) llega por fin a la cabecera
 // viva. Busca las 155 salas del cuartel, las 46 puertas de los módulos y los
 // cables en vivo. Antes el icono de lupa llevaba a /guerra-hoy: una lupa que
@@ -44,19 +47,18 @@ import { BotonGuiaVisual } from "@/components/vanguard/guia/GuiaVisualTactivaMod
 export const NAV = NAV_PRIMARIO;
 
 /** SÍMBOLO característico de cada puerta del menú (clave: href). */
-const SIMBOLOS: Record<string, typeof IcoInicio> = {
-  "/orden": IcoJuego,
-  "/buscar": IcoBuscar,
-  "/mercado": IcoMercado,
-  "/guerra-hoy": IcoRedaccion,
-  "/mundos": IcoMapa,
-  "/conocimiento": IcoSaber,
-  "/mi-universo": IcoInicio,
+const SIMBOLOS: Record<string, string> = {
+  "/orden": "orden",
+  "/buscar": "buscar",
+  "/mercado": "mercado",
+  "/guerra-hoy": "redaccion",
+  "/mundos": "mundo",
+  "/conocimiento": "saber",
+  "/mi-universo": "casa",
 };
 
 function Simbolo({ href }: { href: string }) {
-  const Ico = SIMBOLOS[href] ?? IcoInicio;
-  return <Ico className="vx-nav-ico" />;
+  return <SigiloVivo id={SIMBOLOS[href] ?? href} tam={21} ojos={false} className="vx-nav-ico" />;
 }
 
 /** la lista vieja (13 módulos) queda disponible por compatibilidad; ya no se pinta */

@@ -642,6 +642,28 @@ const IT: Dict = {
   "worlds.resultados": "{cuenta} risultati",
   "worlds.expPlural": "esperienze",
   "worlds.en": "in",
+  // v442.0 · LOS SÍMBOLOS VIVOS
+  "simbolos.sello": "Identità · I simboli della casa",
+  "simbolos.titulo": "La sala dei simboli",
+  "simbolos.sumario": "Ogni modulo e ogni sala ha un simbolo proprio, disegnato da codice e unico. E il simbolo vive: respira, lancia scintille di interrogativi, lancia il segno dell'ira o si sveglia con energia e con gli occhi che guardano di lato.",
+  "simbolos.granojo": "Il grande occhio di Vanguard",
+  "simbolos.granojoTxt": "Il simbolo dell'intera casa. In questo momento è {estado}: i quattro moduli e le sale qui sotto respirano con lui. Quando succede qualcosa di importante, l'occhio trema, lancia un anello di energia, cambia posizione e guarda di lato.",
+  "simbolos.modulos": "I quattro moduli, vivi",
+  "simbolos.salas": "Le sale, ciascuna con il proprio simbolo",
+  "simbolos.estados": "I quattro umori di un simbolo",
+  "simbolos.estado.calma": "Calma",
+  "simbolos.estado.calmaTxt": "Non succede niente: il simbolo respira, lento e fermo, senza rumore.",
+  "simbolos.estado.reciente": "Recente",
+  "simbolos.estado.recienteTxt": "Non ci sei mai entrato o si è appena aggiornato: scintille di interrogativi saltano intorno al simbolo.",
+  "simbolos.estado.ira": "Ira",
+  "simbolos.estado.iraTxt": "C'è un compito iniziato e non finito dentro il modulo: il simbolo trema, diventa rosso e lancia il fulmine dell'ira.",
+  "simbolos.estado.importante": "Importante",
+  "simbolos.estado.importanteTxt": "Succede qualcosa: il simbolo trema leggero, lancia un anello di energia, cambia posizione e gli occhi di Vanguard guardano di lato.",
+  "simbolos.portada.titulo": "I simboli della casa sono vivi",
+  "simbolos.portada.sub": "Quattro simboli unici, disegnati da codice, che respirano con te: scintille di «?» dove non sei mai entrato, il segno dell'ira dove hai lasciato un compito a metà, e fuoco quando la casa ha qualcosa da dire.",
+  "simbolos.portada.cta": "La sala dei simboli",
+  "simbolos.volver": "L'ordine di battaglia",
+
 };
 
 export default IT;

@@ -642,6 +642,28 @@ const DE: Dict = {
   "worlds.resultados": "{cuenta} Ergebnisse",
   "worlds.expPlural": "Erfahrungen",
   "worlds.en": "in",
+  // v442.0 · LOS SÍMBOLOS VIVOS
+  "simbolos.sello": "Identität · Die Zeichen des Hauses",
+  "simbolos.titulo": "Die Halle der Zeichen",
+  "simbolos.sumario": "Jedes Modul und jeder Raum hat ein eigenes Zeichen, von Code gezeichnet und einzigartig. Und das Zeichen lebt: Es atmet, wirft Fragezeichen-Funken, wirft das Zeichen des Zorns oder erwacht mit Energie und mit seitwärts blickenden Augen.",
+  "simbolos.granojo": "Das große Auge von Vanguard",
+  "simbolos.granojoTxt": "Das Zeichen des ganzen Hauses. Gerade ist es {estado}: die vier Module und die Räume unten atmen mit ihm. Wenn etwas Wichtiges passiert, zittert das Auge, wirft einen Energiering, wechselt die Position und blickt seitwärts.",
+  "simbolos.modulos": "Die vier Module, lebendig",
+  "simbolos.salas": "Die Räume, jeder mit seinem eigenen Zeichen",
+  "simbolos.estados": "Die vier Stimmungen eines Zeichens",
+  "simbolos.estado.calma": "Ruhe",
+  "simbolos.estado.calmaTxt": "Nichts passiert: das Zeichen atmet, langsam und still, ohne Lärm.",
+  "simbolos.estado.reciente": "Neu",
+  "simbolos.estado.recienteTxt": "Sie sind noch nie eingetreten oder es wurde gerade aktualisiert: Fragezeichen-Funken springen um das Zeichen.",
+  "simbolos.estado.ira": "Zorn",
+  "simbolos.estado.iraTxt": "Eine begonnene Aufgabe im Modul ist noch offen: das Zeichen zittert, wird rot und wirft den Blitz des Zorns.",
+  "simbolos.estado.importante": "Wichtig",
+  "simbolos.estado.importanteTxt": "Etwas passiert: das Zeichen zittert leicht, wirft einen Energiering, wechselt die Position und die Augen von Vanguard blicken seitwärts.",
+  "simbolos.portada.titulo": "Die Zeichen des Hauses sind lebendig",
+  "simbolos.portada.sub": "Vier einzigartige Zeichen, von Code gezeichnet, die mit Ihnen atmen: «?»-Funken, wo Sie nie eingetreten sind, das Zeichen des Zorns, wo Sie eine Aufgabe halb fertig gelassen haben, und Feuer, wenn das Haus etwas zu sagen hat.",
+  "simbolos.portada.cta": "Die Halle der Zeichen",
+  "simbolos.volver": "Die Schlachtordnung",
+
 };
 
 export default DE;

@@ -642,6 +642,28 @@ const EN: Dict = {
   "worlds.resultados": "{cuenta} results",
   "worlds.expPlural": "experiences",
   "worlds.en": "in",
+  // v442.0 · LOS SÍMBOLOS VIVOS
+  "simbolos.sello": "Identity · The signs of the house",
+  "simbolos.titulo": "The hall of symbols",
+  "simbolos.sumario": "Every module and every room has its own sign, drawn by code and unique. And the sign is alive: it breathes, throws question-mark sparks, throws the sign of wrath, or wakes with energy and with eyes looking sideways.",
+  "simbolos.granojo": "The great eye of Vanguard",
+  "simbolos.granojoTxt": "The sign of the whole house. Right now it is {estado}: the four modules and the rooms below breathe with it. When something important happens, the eye trembles, throws a ring of energy, shifts position and looks sideways.",
+  "simbolos.modulos": "The four modules, alive",
+  "simbolos.salas": "The rooms, each with its own sign",
+  "simbolos.estados": "The four moods of a sign",
+  "simbolos.estado.calma": "Calm",
+  "simbolos.estado.calmaTxt": "Nothing happens: the sign breathes, slow and still, no noise.",
+  "simbolos.estado.reciente": "Recent",
+  "simbolos.estado.recienteTxt": "You have never entered or it just updated: question-mark sparks jump around the sign.",
+  "simbolos.estado.ira": "Wrath",
+  "simbolos.estado.iraTxt": "A started task is still unfinished inside the module: the sign trembles, turns red and throws the bolt of wrath.",
+  "simbolos.estado.importante": "Important",
+  "simbolos.estado.importanteTxt": "Something is happening: the sign trembles softly, throws a ring of energy, shifts position and Vanguard's eyes look sideways.",
+  "simbolos.portada.titulo": "The signs of the house are alive",
+  "simbolos.portada.sub": "Four unique signs, drawn by code, breathing with you: «?» sparks where you never entered, the sign of wrath where you left a task half done, and fire when the house has something to say.",
+  "simbolos.portada.cta": "The hall of symbols",
+  "simbolos.volver": "The order of battle",
+
 };
 
 export default EN;

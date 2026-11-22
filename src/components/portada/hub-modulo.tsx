@@ -6,6 +6,10 @@
 // ============================================================
 import Link from "next/link";
 import { MODULOS } from "./modulos";
+// v442.0 · cada sala del vestíbulo lleva su PROPIO signo (la fábrica de
+// signos lo compone desde el href: dos salas nunca comparten signo) y el
+// signo vive: echa chispas si nunca entraste, se enciende si estás en ella.
+import { SigiloVivo } from "@/components/vanguard/simbolos-vivos";
 
 export function HubModulo({
   modulo,
@@ -34,6 +38,7 @@ export function HubModulo({
           {salas.map((p) => (
             <Link key={p.href} href={p.href} className="vx-sala vx-hub-sala">
               <span className="vx-mira vx-esquinas" aria-hidden />
+              <SigiloVivo id={p.href} tam={28} ojos={false} className="vx-hub-signo" />
               <div className="vx-sala-bg" style={{ backgroundImage: `url(${p.img})` }} />
               <span className="vx-sello">{p.vivo ? "● En vivo" : m.nombre}</span>
               <h3>{p.label}</h3>

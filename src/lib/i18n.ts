@@ -743,6 +743,30 @@ const ES: Dict = {
   "worlds.resultados": "{cuenta} resultados",
   "worlds.expPlural": "experiencias",
   "worlds.en": "en",
+  // v442.0 · LOS SÍMBOLOS VIVOS — la sala de los signos y su lenguaje
+  "simbolos.sello": "Identidad · Los signos de la casa",
+  "simbolos.titulo": "La sala de los símbolos",
+  "simbolos.sumario":
+    "Cada módulo y cada sala tiene un signo propio, dibujado por código y único. Y el signo vive: respira, echa chispas de interrogación, echa el signo de la ira o despierta con energía y con los ojos mirando a los lados.",
+  "simbolos.granojo": "El gran ojo de Vanguard",
+  "simbolos.granojoTxt":
+    "El signo de la casa entera. Ahora mismo está {estado}: los cuatro módulos y las salas que verás debajo respiran con él. Cuando algo importante pasa, el ojo tiembla, echa un anillo de energía, cambia de posición y mira a los lados.",
+  "simbolos.modulos": "Los cuatro módulos, vivos",
+  "simbolos.salas": "Las salas, cada una con su propio signo",
+  "simbolos.estados": "Los cuatro humores de un signo",
+  "simbolos.estado.calma": "Calma",
+  "simbolos.estado.calmaTxt": "Nada pasa: el signo respira, lento y quieto, sin ruido.",
+  "simbolos.estado.reciente": "Reciente",
+  "simbolos.estado.recienteTxt": "Nunca has entrado o acaba de actualizarse: saltan chispas de signos de interrogación alrededor del signo.",
+  "simbolos.estado.ira": "Ira",
+  "simbolos.estado.iraTxt": "Queda una tarea empezada sin terminar dentro del módulo: el signo tiembla, se tiñe de rojo y echa el rayo de la ira.",
+  "simbolos.estado.importante": "Importante",
+  "simbolos.estado.importanteTxt": "Pasa algo: el signo tiembla suave, echa un anillo de energía, cambia de posición y los ojos de Vanguard miran a los lados.",
+  "simbolos.portada.titulo": "Los signos de la casa tienen vida",
+  "simbolos.portada.sub":
+    "Cuatro signos únicos, dibujados por código, que respiran contigo: chispas de «?» en lo que nunca entraste, el signo de la ira donde dejaste una tarea a medias y fuego cuando la casa tiene algo que decir.",
+  "simbolos.portada.cta": "La sala de los símbolos",
+  "simbolos.volver": "El orden de batalla",
 };
 
 
