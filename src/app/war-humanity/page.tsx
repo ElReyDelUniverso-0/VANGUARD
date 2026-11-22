@@ -43,6 +43,40 @@ import {
 } from "@/lib/guerra/datos";
 import { MapaGuerra, COLOR_INTENSIDAD, type PuntoGuerra } from "@/components/guerra/mapa-guerra";
 
+// Las regiones del atlas vienen en inglés de PAISES_GEO; la sala es en español.
+// No se toca el dato: se traduce la etiqueta al pintarla.
+const LUGAR_ES: Record<string, string> = {
+  Africa: "África",
+  Americas: "América",
+  Asia: "Asia",
+  Europe: "Europa",
+  Oceania: "Oceanía",
+  Antarctica: "Antártida",
+  "Northern Africa": "África del Norte",
+  "Western Africa": "África Occidental",
+  "Middle Africa": "África Central",
+  "Eastern Africa": "África Oriental",
+  "Southern Africa": "África Austral",
+  "Northern America": "América del Norte",
+  "Central America": "América Central",
+  Caribbean: "Caribe",
+  "South America": "América del Sur",
+  "Western Asia": "Asia Occidental",
+  "Central Asia": "Asia Central",
+  "Southern Asia": "Asia del Sur",
+  "Eastern Asia": "Asia Oriental",
+  "South-Eastern Asia": "Sudeste Asiático",
+  "Eastern Europe": "Europa Oriental",
+  "Northern Europe": "Europa del Norte",
+  "Southern Europe": "Europa del Sur",
+  "Western Europe": "Europa Occidental",
+  "Australia and New Zealand": "Australia y Nueva Zelanda",
+  Melanesia: "Melanesia",
+  Micronesia: "Micronesia",
+  Polynesia: "Polinesia",
+};
+const etiquetaLugar = (t: string): string => LUGAR_ES[t] ?? t;
+
 export const revalidate = 86400;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -127,13 +161,16 @@ const CSS = `
 .vxgh-mini div{border:1px solid #1e2a37;background:#080e14;padding:9px 11px}
 .vxgh-mini b{display:block;font-family:ui-monospace,monospace;font-size:17px;color:#dbe6f1}
 .vxgh-mini span{display:block;font-family:ui-monospace,monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#6f8296;margin-top:4px}
-.vxgh-serie{display:flex;align-items:flex-end;gap:4px;height:110px;margin-top:14px;padding-top:8px;border-top:1px solid #1b2734}
+.vxgh-serie{display:flex;align-items:flex-end;gap:4px;height:138px;margin-top:14px;padding-top:8px;border-top:1px solid #1b2734}
 .vxgh-serie div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%}
 .vxgh-serie i{display:block;width:100%;background:linear-gradient(180deg,#f2b74a,#8a5a10);min-height:2px}
 .vxgh-serie i.vacia{background:#1b2734}
 .vxgh-serie span{font-family:ui-monospace,monospace;font-size:8.5px;color:#5f7285}
 .vxgh-nota{padding:11px 16px;border-top:1px solid #1b2734;font-size:12px;color:#7f8fa3;line-height:1.55}
 .vxgh-nota b{color:#cbd8e5}
+.vxgh-scroll{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.vxgh-scroll table{min-width:520px}
+@media (max-width:520px){.vxgh-scroll{border:1px solid rgba(255,255,255,.06)}}
 .vxgh-fotos{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
 @media (max-width:900px){.vxgh-fotos{grid-template-columns:repeat(2,1fr)}}
 .vxgh-foto{border:1px solid #22303f;background:#0a1017;overflow:hidden}
@@ -349,6 +386,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
               Zonas afectadas <span>{filas.length} países con dato</span>
             </h2>
             <div className="vxgh-scroll">
+              <div className="vxgh-scroll">
               <table className="vxgh-tabla">
                 <thead>
                   <tr>
@@ -375,6 +413,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
             <p className="vxgh-nota">
               {vista === "combate"
@@ -421,12 +460,12 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
 
           <div className="vxgh-caja">
             <h2>
-              Ficha <span>{geo?.subregion || geo?.region || ""}</span>
+              Ficha <span>{etiquetaLugar(geo?.subregion || geo?.region || "")}</span>
             </h2>
             <div className="vxgh-ficha">
               <h3>{sel?.nombre ?? "—"}</h3>
               <p>
-                {geo ? `${geo.region} · ${geo.subregion}` : "sin geografía declarada"}
+                {geo ? `${etiquetaLugar(geo.region)} · ${etiquetaLugar(geo.subregion)}` : "sin geografía declarada"}
                 {sel ? ` · ${sel.iso3}` : ""}
               </p>
               <div className="vxgh-mini">
@@ -490,6 +529,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
             </span>
           </div>
           <div style={{ padding: "0 16px 14px" }}>
+            <div className="vxgh-scroll">
             <table className="vxgh-tabla vxgh-tab">
               <thead>
                 <tr>
@@ -518,6 +558,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
                 })}
               </tbody>
             </table>
+            </div>
             <p className="vxgh-nota" style={{ marginTop: 10 }}>
               Las dos columnas de la izquierda y las dos de la derecha no se suman entre sí: son cosas distintas y de fuentes
               distintas. {mundoAnterior ? `El desplazamiento total pasó de ${cifra(mundoAnterior.refugiados + mundoAnterior.desplazadosInternos)} (${mundoAnterior.anio}) a ${cifra((mundoAnio?.refugiados ?? 0) + (mundoAnio?.desplazadosInternos ?? 0))} (${mundoAnio?.anio}).` : ""}
@@ -536,6 +577,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
               dice, año a año, en qué países hubo guerra declarada y con qué intensidad. Se puede filtrar por año con los botones de
               arriba.
             </p>
+            <div className="vxgh-scroll">
             <table className="vxgh-tabla">
               <thead>
                 <tr>
@@ -568,6 +610,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </section>
 
@@ -616,6 +659,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
             Fuentes internacionales <span>{procedencia.vivo ? "API en vivo" : "instantánea guardada"} · {procDesp.nota}</span>
           </h2>
           <div style={{ padding: "12px 16px 6px" }}>
+            <div className="vxgh-scroll">
             <table className="vxgh-tabla vxgh-tab">
               <thead>
                 <tr>
@@ -670,6 +714,7 @@ export default async function GuerraHumanidad({ searchParams }: { searchParams: 
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
           <div style={{ padding: "0 16px 16px" }}>
             <div className="vxgh-aviso">
