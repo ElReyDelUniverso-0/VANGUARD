@@ -21,6 +21,22 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v441.5",
+    nombre: "GLOBAL DANGER — el observatorio mundial de riesgos, con la fuente a la vista",
+    tipo: "mundo",
+    hitos: [
+      "EL DUEÑO: «Construye GLOBAL DANGER para Vanguard. Un centro mundial de observación de riesgos y amenazas para la humanidad… cada riesgo debe incluir fecha, fuente, metodología y contexto. No generes falsas alarmas».",
+      "EL MAPA, EN VIVO Y EN EL SERVIDOR: sismos de magnitud ≥4,5 de los últimos siete días (USGS), desastres con impacto estimado (GDACS, con su verde/naranja/rojo tal cual) y eventos naturales observados por satélite (NASA EONET). Hasta 320 puntos, cada uno con su fecha, su nombre al pasar el ratón y su enlace a la ficha oficial. Sin una línea de JavaScript en el cliente: el planeta llega pintado.",
+      "LAS SEIS FAMILIAS, NUEVE FICHAS: contaminación (PM2,5 mundial y el aire de ocho ciudades en esta hora), brotes (los partes de la OMS con su fecha), inseguridad alimentaria (prevalencia de subalimentación de la FAO), crisis humanitarias (desastres abiertos de GDACS), riesgos ambientales (eventos de EONET y superficie forestal) y escasez de recursos (extracción de agua dulce y acceso a electricidad).",
+      "CADA FICHA LLEVA LO QUE PIDIÓ: fecha, fuente con enlace, metodología (cómo se calcula el indicador) y contexto (qué significa y qué no). El nivel 0–5 sólo aparece cuando hay escala publicada —la escalera de la OMS para el aire (guía 5 y objetivos intermedios 10, 15, 25 y 35 µg/m³), las bandas de la FAO para el hambre, el umbral del 25 % de AQUASTAT para el agua, la alerta de GDACS—; donde no la hay, dice «sin clasificación oficial» y no se puntúa.",
+      "ESTADÍSTICAS Y COMPARACIONES: el aire de ocho ciudades de una hora (Open-Meteo/CAMS) y tres indicadores en siete países (Banco Mundial), con el año de cada dato en la cabecera y un asterisco cuando un valor viene de la última lectura conocida.",
+      "SE ACTUALIZA SOLA cada 15 minutos (ISR). Cada fuente tiene 9 segundos; si no contesta, se muestra su última lectura conocida con su fecha y la barra de estado lo dice fuente por fuente.",
+      "Y LO QUE NO HACE, ESCRITO EN LA PÁGINA: no declara emergencias (eso es de la autoridad), no adelanta víctimas ni hectáreas, no inventa niveles, no suma indicadores distintos en un «índice mundial de peligro» sin dueño y no usa el miedo como reclamo. Con aviso de que, ante una emergencia real, manda tu autoridad nacional y OCHA.",
+      "PULIDO DEL ÚLTIMO PASE: la escalera del PM2,5 se reescribió con los cuatro objetivos intermedios reales de la OMS (10, 15, 25 y 35 µg/m³) y cada ficha dice en qué banda cae; el nivel 5 pasó de «Crítico» a «Muy alto», porque llamar crítica a una media anual era justo la alarma falsa que el Dueño prohibió; la cifra de la portada ya no promete más puntos de los que el mapa pinta (320, y dice cuántas se leyeron); y la sala entra en el atlas de la casa con su número, su color y su ojo, en vez de salir «sala 00».",
+      "MEDIDO: 640 círculos pintados en el mapa (320 puntos), 9 fichas, 6 familias, 6 niveles explicados, 7 fuentes en la tabla, 0 errores de consola; primera lectura real: PM2,5 mundial 32,87 µg/m³ (2023), subalimentación 8,1 % (2024), 201 alertas de GDACS (0 rojas, 4 naranjas), 120 eventos de EONET, 8 partes de la OMS.",
+    ],
+  },
+  {
     version: "v441.3",
     nombre: "ABANDONED WORLD — el atlas de los lugares que el mundo dejó atrás",
     tipo: "mundo",
@@ -32,21 +48,6 @@ export const BITACORA: EntradaBitacora[] = [
       "94 FOTOGRAFÍAS DOCUMENTALES de Wikimedia Commons con licencias libres, cada una con su autor, su licencia y su página de origen; ninguna imagen generada. Recomprimidas (≤820 px) y en miniatura para la galería; las de las fichas solo se descargan al abrir la ficha.",
       "MAPA MUNDIAL ligero: Natural Earth 110m como SVG estático (~120 KB, cacheado), puntos por categoría que abren su ficha; en el teléfono el mapa se desliza en horizontal. Filtros por categoría sin volver a pintar nada (un atributo y CSS) y que funcionan sin JavaScript (?cat=).",
       "35 PÁGINAS ESTÁTICAS /abandonados/lugar/[id] con datos estructurados (LandmarksOrHistoricalBuildings), sitemap, sección «mapas» y entrada en el registro de módulos y el índice de mapas.",
-    ],
-  },
-  {
-    version: "v440.5",
-    nombre: "GLOBAL DANGER — el observatorio mundial de riesgos, con la fuente a la vista",
-    tipo: "mundo",
-    hitos: [
-      "EL DUEÑO: «Construye GLOBAL DANGER para Vanguard. Un centro mundial de observación de riesgos y amenazas para la humanidad… cada riesgo debe incluir fecha, fuente, metodología y contexto. No generes falsas alarmas».",
-      "EL MAPA, EN VIVO Y EN EL SERVIDOR: sismos de magnitud ≥4,5 de los últimos siete días (USGS), desastres con impacto estimado (GDACS, con su verde/naranja/rojo tal cual) y eventos naturales observados por satélite (NASA EONET). Hasta 320 puntos, cada uno con su fecha, su nombre al pasar el ratón y su enlace a la ficha oficial. Sin una línea de JavaScript en el cliente: el planeta llega pintado.",
-      "LAS SEIS FAMILIAS, NUEVE FICHAS: contaminación (PM2,5 mundial y el aire de ocho ciudades en esta hora), brotes (los partes de la OMS con su fecha), inseguridad alimentaria (prevalencia de subalimentación de la FAO), crisis humanitarias (desastres abiertos de GDACS), riesgos ambientales (eventos de EONET y superficie forestal) y escasez de recursos (extracción de agua dulce y acceso a electricidad).",
-      "CADA FICHA LLEVA LO QUE PIDIÓ: fecha, fuente con enlace, metodología (cómo se calcula el indicador) y contexto (qué significa y qué no). El nivel 0–5 sólo aparece cuando hay escala publicada —la escalera de la OMS para el aire (guía 5 y objetivos intermedios 10, 15, 25 y 35 µg/m³), las bandas de la FAO para el hambre, el umbral del 25 % de AQUASTAT para el agua, la alerta de GDACS—; donde no la hay, dice «sin clasificación oficial» y no se puntúa.",
-      "ESTADÍSTICAS Y COMPARACIONES: el aire de ocho ciudades de una hora (Open-Meteo/CAMS) y tres indicadores en siete países (Banco Mundial), con el año de cada dato en la cabecera y un asterisco cuando un valor viene de la última lectura conocida.",
-      "SE ACTUALIZA SOLA cada 15 minutos (ISR). Cada fuente tiene 9 segundos; si no contesta, se muestra su última lectura conocida con su fecha y la barra de estado lo dice fuente por fuente.",
-      "Y LO QUE NO HACE, ESCRITO EN LA PÁGINA: no declara emergencias (eso es de la autoridad), no adelanta víctimas ni hectáreas, no inventa niveles, no suma indicadores distintos en un «índice mundial de peligro» sin dueño y no usa el miedo como reclamo. Con aviso de que, ante una emergencia real, manda tu autoridad nacional y OCHA.",
-      "MEDIDO: 640 círculos pintados en el mapa (320 puntos), 9 fichas, 6 familias, 6 niveles explicados, 7 fuentes en la tabla, 0 errores de consola; primera lectura real: PM2,5 mundial 32,87 µg/m³ (2023), subalimentación 8,1 % (2024), 201 alertas de GDACS (0 rojas, 4 naranjas), 120 eventos de EONET, 8 partes de la OMS.",
     ],
   },
   {

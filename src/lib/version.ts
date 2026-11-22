@@ -7503,6 +7503,17 @@
 //      de peligro» sumando cosas distintas y no usa el miedo como reclamo.
 // (anterior) export const APP_VERSION = "v440.4";
 // (anterior) export const APP_CODENAME = "EL ESCAPARATE DEL MERCADO";
+// v441.5 · GLOBAL DANGER, pulido — la cifra honesta, la escalera real y la sala
+// con su número. Tres deudas que se vieron al mirar la página servida:
+//   ① LA CIFRA DE LA PORTADA ya no promete más de lo que el mapa pinta: dice 320
+//      (el tope) y, si se leyeron más, lo confiesa: «de 426 leídas · el resto, abajo».
+//   ② LA ESCALERA DEL PM2,5 con los cuatro objetivos intermedios REALES de la OMS
+//      (10, 15, 25 y 35 µg/m³) y la banda escrita en cada ficha; el nivel 5 pasa a
+//      llamarse «Muy alto», no «Crítico»: describir una media anual como crítica
+//      era justo la alarma falsa que el Dueño prohibió.
+//   ③ LA SALA ENTRA EN EL ATLAS: /global-danger registrada en portadas/atlas.ts
+//      (tono 348, técnica diana, glifo ojo). Antes salía «SALA 00 DE 94»; ahora
+//      «SALA 40 DE 95», con su color y su emblema.
 // v441.3 · ABANDONED WORLD — el atlas de los lugares que el mundo dejó atrás
 //   /abandonados: mapa mundial SVG (Natural Earth como estático), filtros por
 //   categoría sin re-render (data-filtro + CSS), galería documental y 35 fichas
@@ -7511,8 +7522,8 @@
 //   94 fotos de Wikimedia Commons con autor y licencia. No enseña a colarse.
 // (anterior) export const APP_VERSION = "v440.5";
 // (anterior) export const APP_CODENAME = "GLOBAL DANGER";
-export const APP_VERSION = "v441.3";
-export const APP_CODENAME = "ABANDONED WORLD";
+export const APP_VERSION = "v441.5";
+export const APP_CODENAME = "GLOBAL DANGER, PULIDO";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7590,7 +7601,8 @@ export const APP_CODENAME = "ABANDONED WORLD";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v440.5"; // GLOBAL DANGER
+export const APP_VERSION_ANTERIOR = "v441.4"; // la franja de portada dice cómo se actualiza
+// (anterior) export const APP_VERSION_ANTERIOR = "v440.5"; // GLOBAL DANGER
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.4"; // EL ESCAPARATE DEL MERCADO
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.2"; // EL SELLO, TAMBIÉN EN LA PORTADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";

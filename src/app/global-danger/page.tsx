@@ -205,7 +205,11 @@ export default async function GlobalDangerPage() {
         titulo="Global Danger"
         sumario="El observatorio mundial de riesgos de la casa: el mapa del planeta en vivo y las seis familias que pueden romperle la vida a la gente —aire, brotes, hambre, desastres, ambiente y recursos—, cada cifra con su fecha, su fuente oficial, su metodología y su contexto. Aquí no se grita: se cita."
         cifras={[
-          { valor: `${puntos.length}`, etiqueta: "puntos en el mapa", nota: "USGS · GDACS · EONET" },
+          {
+            valor: `${Math.min(puntos.length, 320)}`,
+            etiqueta: "puntos en el mapa",
+            nota: puntos.length > 320 ? `de ${puntos.length} leídas · el resto, abajo` : "USGS · GDACS · EONET",
+          },
           { valor: `${senales.length}`, etiqueta: "señales vivas", nota: "seis familias" },
           { valor: `${FUENTES.length}`, etiqueta: "fuentes oficiales", nota: "con su licencia" },
           { valor: "15 min", etiqueta: "se regenera", nota: "ISR, sin martillear" },
