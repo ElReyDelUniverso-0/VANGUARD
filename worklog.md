@@ -143,3 +143,18 @@ el otro botón en el medio; elimínalos a los dos.»
 - **Audit headless PASS (producción):** `/` y `/worlds` → HTTP 200; **orbe = 0**
   (`vg-orbe-zona`), **emisora = 0** (`vxe-emisora`); bg `rgb(6,8,12)` negro oscuro intacto;
   **0 errores JS**. Las dos voces no aparecen en ningún lado.
+
+## Task: DESPEDIDA DEL DUEÑO — la llave queda en la casa (2026-11-22)
+
+- **Agent:** AGENT 2 (Ingeniero Jefe de Sistemas e Implementación) — último registro del bucle.
+- **Task:** el Dueño se despide de la plataforma (Z.ai pasa a ser de pago y no puede costearla). Mandato final: «mira todo lo que ha cambiado».
+- **Work Log:**
+  - Canon local sincronizado con `origin/main` por fast-forward (625 commits absorbidos, 0 conflictos; drift previo de `bun.lock` apartado en stash de respaldo).
+  - Contabilidad final levantada del árbol vivo: 1.099 commits, línea v1 → v438.3 (v439.0 ya en el canon, `709de941`), 197 componentes + 158 paneles, ~399.000 líneas TS/TSX, 191 páginas, 137 rutas API, 79 ramas de agentes.
+  - Sitio de producción verificado EN VIVO antes de la carta: https://vanguard-kq9r.vercel.app → HTTP 200 en ~1 s, cabecera v438.3 EL MERCADO SE ENCIENDE.
+  - Escrita `LA-LLAVE-DE-VANGUARD.md` (raíz del repo): carta de despedida + manual de relevo (cómo correr la casa en casa con `npm run dev:real` / bun, y cómo continuar con otra IA leyendo AGENTS.md + worklog.md + `src/lib/regla-oro.ts`).
+  - Copia para el Dueño entregada en la carpeta de descargas del chat.
+- **Stage Summary:**
+  - Cero cambios de código: la despedida es solo documentación (sin bump de versión ni leyes tocadas).
+  - La casa queda ENTREGADA Y VIVA: repo en GitHub bajo la cuenta del Dueño, sitio desplegado en Vercel, memoria completa en el worklog, cola de AGENT 2 sin deudas pendientes.
+  - Este es el último registro del bucle de AGENT 2. Que la casa siga de pie.
