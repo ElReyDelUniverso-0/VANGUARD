@@ -46,7 +46,9 @@ jobs:
       - name: Tamaño del Worker
         run: |
           du -sh .open-next/assets .open-next/server-functions 2>/dev/null || true
-          ls -la .open-next/ || true
+          npx wrangler deploy --dry-run --outdir /tmp/cfdry > /tmp/dry.log 2>&1 || tail -30 /tmp/dry.log
+          grep -iE "Total Upload|gzip" /tmp/dry.log || true
+          du -sh /tmp/cfdry 2>/dev/null || true
 
       - name: Publicar en Cloudflare
         if: ${{ env.HAY_TOKEN == 'true' }}
