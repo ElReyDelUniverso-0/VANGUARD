@@ -91,7 +91,16 @@ function Pestanas({ ruta }: { ruta: string }) {
     // centra la pestaña activa dentro de su carril (sin mover la página)
     const el = refActiva.current;
     const carril = el?.parentElement;
-    if (el && carril) carril.scrollLeft = el.offsetLeft - carril.clientWidth / 2 + el.clientWidth / 2;
+    if (!el || !carril) return;
+    // v436.7d · si las pestañas caben enteras, el carril NO se mueve: centrar la
+    // activa empujaba la primera fuera por la izquierda («NTRO DE MAPAS»).
+    const sobra = carril.scrollWidth - carril.clientWidth;
+    if (sobra <= 4) {
+      carril.scrollLeft = 0;
+      return;
+    }
+    const destino = el.offsetLeft - carril.clientWidth / 2 + el.clientWidth / 2;
+    carril.scrollLeft = Math.max(0, Math.min(sobra, destino));
   }, [ruta]);
   if (!m) return null;
   // v436.7d · UNA SOLA PESTAÑA ENCENDIDA. Antes bastaba con que la ruta
