@@ -127,6 +127,19 @@ const nextConfig: NextConfig = {
   //   (/modo NO: es el selector de modo + la cuenta; vive como pestaña de Juego)
   async redirects() {
     return [
+      // v436.6 LAS DOS SALAS DEL VANGUARD ANTERIOR — medido con navegador real
+      // el 2026-11-21: /vanguard2 y /vertigo eran las DOS ÚNICAS rutas de la
+      // casa que todavía se pintaban con la piel vieja (fondo #050607, letra
+      // system-ui, sin carcasa ni cabecera) y con los nombres de secciones que
+      // ya no existen (Encuestas, Quiz, Noticias, Economía, Índice, Pronóstico,
+      // Negocios). Orden del Dueño: «hay módulos viejos que no están
+      // actualizados, están con los fondos anteriores de Vanguard».
+      // No se borra ni una línea de su código: se cierran con 308 a la sala de
+      // hoy que hace su trabajo — /vanguard2 (universo 3D) → /zona-cero (el ojo
+      // de la casa, también en 3D) y /vertigo (archivo en vivo por deslizamiento)
+      // → /en-vivo (el río de cables). Ningún enlace viejo muere.
+      { source: "/vanguard2", destination: "/zona-cero", permanent: true },
+      { source: "/vertigo", destination: "/en-vivo", permanent: true },
       // v405.0 LA CASA ÚNICA — LOS GEMELOS DEJAN DE SER DESTINO.
       // Medido en vivo (auditoría v404.0): el código declaraba canónica a
       // vanguard-u6b9 y la campaña entera empujaba a vanguard-kq9r; los dos
