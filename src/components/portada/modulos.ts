@@ -84,6 +84,7 @@ export const MODULOS: Modulo[] = [
     gancho: "El mapa, el atlas, los 200 países con sus medidas, las potencias con su arsenal y los rostros que firman las decisiones. Antes eran dos módulos (Terreno e Inteligencia) que se miraban de espaldas.",
     destacadas: ["/mapas", "/mapas/taller", "/mundos", "/mundo", "/tierra", "/rostros"],
     pestanas: [
+            { href: "/global-danger", label: "Global Danger", img: "/imagenes-reales/satelite.jpg", txt: "El observatorio mundial de riesgos: mapa en vivo, contaminación, brotes, hambre, desastres, ambiente y recursos, cada cifra con fecha, fuente y método." },
             { href: "/mundos", label: "Países", img: "/imagenes-reales/arco.jpg", txt: "El mapa de los mundos: la ficha de cada país con sus fronteras reales." },
             { href: "/war-humanity", label: "War & Humanity", img: "/imagenes-reales/khmer.jpg", txt: "El centro mundial de las guerras y las crisis: muertos en combate, desplazados y refugiados país por país, año por año, con su fuente — y lo que la fuente no mide, declarado." },
             { href: "/mundo", label: "Globo vivo", img: "/imagenes-reales/satelite.jpg", txt: "El globo 3D con los teatros encendidos y sus cables." },

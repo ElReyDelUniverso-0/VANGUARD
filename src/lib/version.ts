@@ -7478,8 +7478,33 @@
 //      importaba desde `MercadoPortada` (que vive en la portada de la casa), así
 //      que al entrar en /mercado el navegador NO bajaba esa hoja: la plaza
 //      entera se servía como texto plano. Ahora se importa en la página.
-export const APP_VERSION = "v440.4";
-export const APP_CODENAME = "EL ESCAPARATE DEL MERCADO";
+// v440.5 · GLOBAL DANGER — el observatorio mundial de riesgos y amenazas.
+// Encargo del Dueño: mapa mundial de riesgos, contaminación, enfermedades y
+// brotes, inseguridad alimentaria, crisis humanitarias, riesgos ambientales,
+// escasez de recursos, estadísticas y comparaciones, niveles explicados,
+// fuentes oficiales, actualización automática, y cada riesgo con fecha, fuente,
+// metodología y contexto. Sin falsas alarmas.
+//   ① EL MAPA: sismos (USGS, 7 días), desastres con impacto estimado (GDACS) y
+//      eventos naturales (NASA EONET), pintados en el servidor con la geografía
+//      de la casa. 320 puntos como mucho, cada uno con su fecha, su nombre y su
+//      enlace a la ficha oficial.
+//   ② LAS SEIS FAMILIAS: nueve fichas con fecha, fuente, metodología, contexto
+//      y nivel. El nivel 0–5 SÓLO se pone con escala publicada (OMS para el
+//      aire, FAO para el hambre y el agua, GDACS para desastres); donde no la
+//      hay, la ficha dice «sin clasificación oficial» y no se puntúa.
+//   ③ ESTADÍSTICAS: el aire de ocho ciudades en esta hora (Open-Meteo/CAMS) y
+//      tres indicadores comparados en siete países (Banco Mundial), con el año
+//      de cada dato a la vista.
+//   ④ SE ACTUALIZA SOLA cada 15 minutos (ISR). Cada fuente tiene 9 s; si no
+//      contesta se muestra su última lectura conocida —con fecha— y la barra de
+//      estado lo confiesa. Ninguna fuente se martillea.
+//   ⑤ LO QUE NO HACE, ESCRITO EN LA PÁGINA: no declara emergencias, no adelanta
+//      víctimas ni hectáreas, no inventa niveles, no fabrica un «índice mundial
+//      de peligro» sumando cosas distintas y no usa el miedo como reclamo.
+// (anterior) export const APP_VERSION = "v440.4";
+// (anterior) export const APP_CODENAME = "EL ESCAPARATE DEL MERCADO";
+export const APP_VERSION = "v440.5";
+export const APP_CODENAME = "GLOBAL DANGER";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7557,7 +7582,7 @@ export const APP_CODENAME = "EL ESCAPARATE DEL MERCADO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v440.3"; // VANGUARD CINEMATIC EXPERIENCE
+export const APP_VERSION_ANTERIOR = "v440.4"; // EL ESCAPARATE DEL MERCADO
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.2"; // EL SELLO, TAMBIÉN EN LA PORTADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA

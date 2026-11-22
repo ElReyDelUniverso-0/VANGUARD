@@ -21,6 +21,21 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v440.5",
+    nombre: "GLOBAL DANGER — el observatorio mundial de riesgos, con la fuente a la vista",
+    tipo: "mundo",
+    hitos: [
+      "EL DUEÑO: «Construye GLOBAL DANGER para Vanguard. Un centro mundial de observación de riesgos y amenazas para la humanidad… cada riesgo debe incluir fecha, fuente, metodología y contexto. No generes falsas alarmas».",
+      "EL MAPA, EN VIVO Y EN EL SERVIDOR: sismos de magnitud ≥4,5 de los últimos siete días (USGS), desastres con impacto estimado (GDACS, con su verde/naranja/rojo tal cual) y eventos naturales observados por satélite (NASA EONET). Hasta 320 puntos, cada uno con su fecha, su nombre al pasar el ratón y su enlace a la ficha oficial. Sin una línea de JavaScript en el cliente: el planeta llega pintado.",
+      "LAS SEIS FAMILIAS, NUEVE FICHAS: contaminación (PM2,5 mundial y el aire de ocho ciudades en esta hora), brotes (los partes de la OMS con su fecha), inseguridad alimentaria (prevalencia de subalimentación de la FAO), crisis humanitarias (desastres abiertos de GDACS), riesgos ambientales (eventos de EONET y superficie forestal) y escasez de recursos (extracción de agua dulce y acceso a electricidad).",
+      "CADA FICHA LLEVA LO QUE PIDIÓ: fecha, fuente con enlace, metodología (cómo se calcula el indicador) y contexto (qué significa y qué no). El nivel 0–5 sólo aparece cuando hay escala publicada —la escalera de la OMS para el aire (guía 5 y objetivos intermedios 10, 15, 25 y 35 µg/m³), las bandas de la FAO para el hambre, el umbral del 25 % de AQUASTAT para el agua, la alerta de GDACS—; donde no la hay, dice «sin clasificación oficial» y no se puntúa.",
+      "ESTADÍSTICAS Y COMPARACIONES: el aire de ocho ciudades de una hora (Open-Meteo/CAMS) y tres indicadores en siete países (Banco Mundial), con el año de cada dato en la cabecera y un asterisco cuando un valor viene de la última lectura conocida.",
+      "SE ACTUALIZA SOLA cada 15 minutos (ISR). Cada fuente tiene 9 segundos; si no contesta, se muestra su última lectura conocida con su fecha y la barra de estado lo dice fuente por fuente.",
+      "Y LO QUE NO HACE, ESCRITO EN LA PÁGINA: no declara emergencias (eso es de la autoridad), no adelanta víctimas ni hectáreas, no inventa niveles, no suma indicadores distintos en un «índice mundial de peligro» sin dueño y no usa el miedo como reclamo. Con aviso de que, ante una emergencia real, manda tu autoridad nacional y OCHA.",
+      "MEDIDO: 640 círculos pintados en el mapa (320 puntos), 9 fichas, 6 familias, 6 niveles explicados, 7 fuentes en la tabla, 0 errores de consola; primera lectura real: PM2,5 mundial 32,87 µg/m³ (2023), subalimentación 8,1 % (2024), 201 alertas de GDACS (0 rojas, 4 naranjas), 120 eventos de EONET, 8 partes de la OMS.",
+    ],
+  },
+  {
     version: "v440.3",
 
     nombre: "EL ESCAPARATE DEL MERCADO — los módulos de la casa pasan solos, con su descripción",

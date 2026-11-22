@@ -1,20 +1,20 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-22",
-  "paginas": 193,
+  "paginas": 194,
   "rutasApi": 142,
-  "total": 335,
+  "total": 336,
   "bienConectadas": 181,
   "huerfanas": [
     "/visita"
   ],
-  "paginasConReferencias": 192,
-  "mediaReferencias": 14.08,
+  "paginasConReferencias": 193,
+  "mediaReferencias": 14.13,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 125,
+      "referencias": 127,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -1493,7 +1493,7 @@
     {
       "ruta": "/atlas",
       "tipo": "pagina",
-      "referencias": 32,
+      "referencias": 33,
       "desde": [
         "app/labs/page.tsx",
         "app/mapas/page.tsx",
@@ -1537,12 +1537,12 @@
     {
       "ruta": "/catalogo",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
         "app/calidad/page.tsx",
         "app/perfil/page.tsx",
-        "components/portada/modulos.ts",
-        "lib/navegacion/espacios.ts"
+        "components/cine/cine-disparador.tsx",
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -2228,7 +2228,7 @@
     {
       "ruta": "/espia",
       "tipo": "pagina",
-      "referencias": 20,
+      "referencias": 21,
       "desde": [
         "app/en-vivo/page.tsx",
         "app/mundo/mundo-3d-vivo.tsx",
@@ -2267,6 +2267,14 @@
       ]
     },
     {
+      "ruta": "/global-danger",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "components/portada/modulos.ts"
+      ]
+    },
+    {
       "ruta": "/guerra-hoy",
       "tipo": "pagina",
       "referencias": 54,
@@ -2302,12 +2310,12 @@
     {
       "ruta": "/informacion",
       "tipo": "pagina",
-      "referencias": 4,
+      "referencias": 5,
       "desde": [
+        "components/cine/cine-disparador.tsx",
         "components/portada/foco-academia-motores.tsx",
         "components/portada/modulos.ts",
-        "components/vanguard/guia/GuiaVisualTactivaModal.tsx",
-        "lib/nucleo/fusiones.ts"
+        "components/vanguard/guia/GuiaVisualTactivaModal.tsx"
       ]
     },
     {
@@ -2648,7 +2656,7 @@
     {
       "ruta": "/mapas",
       "tipo": "pagina",
-      "referencias": 49,
+      "referencias": 51,
       "desde": [
         "app/espacio/page.tsx",
         "app/mapas/indice/page.tsx",
@@ -2763,12 +2771,12 @@
     {
       "ruta": "/mercado",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 8,
       "desde": [
+        "app/global-danger/page.tsx",
         "components/mercado/mercado-portada.tsx",
         "components/portada/cabecera.tsx",
-        "components/portada/modulos.ts",
-        "components/vanguard/muelle-movil.tsx"
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -2818,7 +2826,7 @@
     {
       "ruta": "/modulos",
       "tipo": "pagina",
-      "referencias": 16,
+      "referencias": 17,
       "desde": [
         "app/constelacion/[clave]/page.tsx",
         "app/inteligencia/page.tsx",
@@ -2903,7 +2911,7 @@
     {
       "ruta": "/mundo",
       "tipo": "pagina",
-      "referencias": 53,
+      "referencias": 55,
       "desde": [
         "app/audios/emisora-cliente.tsx",
         "app/audios/page.tsx",
@@ -2914,7 +2922,7 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 70,
+      "referencias": 72,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -2925,7 +2933,7 @@
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 70,
+      "referencias": 72,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -2969,12 +2977,12 @@
     {
       "ruta": "/novedades",
       "tipo": "pagina",
-      "referencias": 26,
+      "referencias": 27,
       "desde": [
         "app/descubrir/descubrir-cliente.tsx",
         "app/page.tsx",
         "components/ciencia/piezas.tsx",
-        "components/descubrimiento/descubrimiento.tsx"
+        "components/cine/cine-disparador.tsx"
       ]
     },
     {
@@ -3079,12 +3087,12 @@
     {
       "ruta": "/oscura",
       "tipo": "pagina",
-      "referencias": 9,
+      "referencias": 10,
       "desde": [
+        "components/cine/cine-disparador.tsx",
         "components/portada/modulos.ts",
         "components/vanguard/section-search.tsx",
-        "lib/catalogo-real.ts",
-        "lib/datos/catalogo.ts"
+        "lib/catalogo-real.ts"
       ]
     },
     {
@@ -3255,12 +3263,12 @@
     {
       "ruta": "/servicios",
       "tipo": "pagina",
-      "referencias": 12,
+      "referencias": 13,
       "desde": [
+        "components/cine/cine-disparador.tsx",
         "components/portada/areas.ts",
         "components/portada/modulos.ts",
-        "lib/catalogo-real.ts",
-        "lib/editorial/areas.ts"
+        "lib/catalogo-real.ts"
       ]
     },
     {
@@ -3300,12 +3308,12 @@
     {
       "ruta": "/tierra",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 10,
       "desde": [
         "app/atlas/page.tsx",
         "app/mundos/[iso]/page.tsx",
-        "components/portada/modulos.ts",
-        "lib/experiencia/registro.ts"
+        "components/cine/cine-disparador.tsx",
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -3424,18 +3432,18 @@
     {
       "ruta": "/worlds",
       "tipo": "pagina",
-      "referencias": 5,
+      "referencias": 7,
       "desde": [
+        "components/cine/cine-disparador.tsx",
+        "components/cine/cine-vanguard.tsx",
         "components/portada/modulos.ts",
-        "lib/mapas/indice.ts",
-        "lib/nucleo/fusiones.ts",
-        "lib/nucleo/registro.ts"
+        "lib/mapas/indice.ts"
       ]
     },
     {
       "ruta": "/zona-cero",
       "tipo": "pagina",
-      "referencias": 37,
+      "referencias": 38,
       "desde": [
         "app/conflicto/[tag]/page.tsx",
         "app/cuaderno/page.tsx",
