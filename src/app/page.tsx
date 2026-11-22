@@ -303,6 +303,7 @@ export default async function Portada() {
           <TituloSeccion sello={`Sección 06 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Países en cifras, conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
           <ModulosRejilla compacta />
           <BarraExplorar />
+        </section>
 
         {/* ── LO DEMÁS, PLEGADO ─────────────────────────────────────────
             Existe todo lo de antes (historias por frente, destacadas, descubre,
