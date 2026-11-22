@@ -83,7 +83,7 @@ export const ESPACIOS: Espacio[] = [
     color: "#e8c56a",
     icono: "newspaper",
     detecta: {
-      rutas: ["", "/cronica", "/en-vivo", "/noticia", "/lectura", "/galeria", "/audios", "/traductor", "/vertigo", "/musica", "/radio"],
+      rutas: ["", "/cronica", "/en-vivo", "/noticia", "/lectura", "/galeria", "/audios", "/traductor", "/musica", "/radio"],
       salas: ["centro", "inicio", "redaccion", "noticias", "verdades", "verifica", "cambios", "envivo", "pantalla", "foryou", "videos", "directos", "memes", "canalbrief", "briefings", "briefing", "galeria"],
       modulos: ["medios"],
       constelaciones: ["inicio", "emisora"],
@@ -96,7 +96,7 @@ export const ESPACIOS: Espacio[] = [
       { id: "guerra-hoy", nombre: "Guerra hoy", href: "/guerra-hoy", icono: "siren", desc: "El resumen de todos los frentes abiertos" },
       { id: "galeria", nombre: "Medios", href: "/galeria", icono: "images", desc: "Escucha y mira el mundo: imágenes, audio y directos" },
       { id: "traductor", nombre: "Traductor", href: "/traductor", icono: "languages", desc: "Las noticias del mundo en ocho idiomas" },
-      { id: "vertigo", nombre: "Vértigo", href: "/vertigo", icono: "flip-horizontal-2", desc: "El archivo en vivo, una pieza por deslizamiento" },
+      { id: "en-vivo", nombre: "En vivo", href: "/en-vivo", icono: "flip-horizontal-2", desc: "Los cables entrando, con hora y fuente" },
       { id: "redaccion-sala", nombre: "La Redacción", href: "/cuartel?sala=redaccion", icono: "newspaper", desc: "El lugar optimizado para leer: portada, porqués e investigación" },
     ],
     vecinos: ["geo", "investigar", "archivo"],

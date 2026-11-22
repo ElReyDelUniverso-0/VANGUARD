@@ -71,11 +71,11 @@ export const DIVISIONES: Division[] = [
 export type Rescatada = { href: string; nombre: string; nota: string; division: string };
 
 export const RESCATADAS: Rescatada[] = [
-  { href: "/teatro-3d", nombre: "Teatro 3D", nota: "Ahora dentro de Inteligencia: escuadrones, uniformes y armas en volumen", division: "inteligencia" },
-  { href: "/teatro-3d?modo=libre", nombre: "Teatro 3D · modo libre", nota: "Países y nuclear, sin guion", division: "inteligencia" },
-  { href: "/teatro-3d?modo=tiempo", nombre: "Máquina del tiempo 3D", nota: "La guerra contada en el mapa que cambia", division: "inteligencia" },
-  { href: "/zona-cero", nombre: "Zona Cero", nota: "El ojo de la casa, dentro de Terreno", division: "terreno" },
-  { href: "/vertigo", nombre: "El Vértigo", nota: "El archivo en vivo, dentro de Frente", division: "frente" },
+  { href: "/teatro-3d", nombre: "Teatro 3D", nota: "Ahora dentro de El saber: escuadrones, uniformes y armas en volumen", division: "saber" },
+  { href: "/teatro-3d?modo=libre", nombre: "Teatro 3D · modo libre", nota: "Países y nuclear, sin guion", division: "saber" },
+  { href: "/teatro-3d?modo=tiempo", nombre: "Máquina del tiempo 3D", nota: "La guerra contada en el mapa que cambia", division: "saber" },
+  { href: "/zona-cero", nombre: "Zona Cero", nota: "El ojo de la casa, dentro de El mundo", division: "mundo" },
+  { href: "/en-vivo", nombre: "En vivo", nota: "El río de cables, con hora y fuente, dentro de La redacción", division: "redaccion" },
   { href: "/mision", nombre: "Misión 100", nota: "Cien objetivos que enseñan la casa jugando, dentro de La casa", division: "casa" },
   { href: "/objetivos", nombre: "Objetivos", nota: "Lo que llevas hecho, medido", division: "casa" },
   { href: "/universo", nombre: "Colecciones", nota: "Las piezas que has ido reuniendo", division: "casa" },
@@ -145,8 +145,6 @@ export function divisionDe(ruta: string): string | null {
  */
 export const NAV_PRIMARIO = [
   { href: "/orden", label: "Orden" },
-  // v437.2 · una sola puerta al mercado (no diez): las familias se presentan allí
-  { href: "/mercado", label: "Mercado" },
   { href: "/buscar", label: "Buscar" },
   { href: "/guerra-hoy", label: "Redacción" },
   { href: "/mundos", label: "Mundo" },
