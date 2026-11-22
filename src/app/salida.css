@@ -11,68 +11,132 @@
 
 /* ─────────────────────────── 1 · EL SELLO ─────────────────────────── */
 
+/* v439.7 · EL PULIDO. El sello ya estaba en todas partes; ahora tiene que
+   parecer un objeto de la casa y no un botón pegado: vidrio ahumado con
+   desenfoque de lo que hay detrás, canto de medalla, marca de lacre de puntos,
+   cometa de oro que gira, sigilo de la casa girando despacio y la palabra
+   SALIR bajo un hilo de luz. En escritorio se abre en píldora al pasar por
+   encima: «SALIR A VANGUARD». */
+
 .vxs-sello {
   /* FLOTA. No cuelga de ninguna barra: la barra de pestañas no existe en todas
      las páginas (/mercado no la tenía) y el Dueño entraba a un módulo y no
      encontraba la puerta. Aquí está siempre, en el borde derecho, a media
      altura: el pulgar llega y el ojo la ve sin buscarla. */
   position: fixed;
-  right: 10px;
-  top: 46%;
+  right: 12px;
+  top: 45%;
   transform: translateY(-50%);
   z-index: 9500;
-  flex: 0 0 auto;
   display: grid;
+  grid-auto-flow: row;
   justify-items: center;
   align-content: center;
   gap: 3px;
-  width: 62px;
-  height: 62px;
+  width: 60px;
+  height: 60px;
   padding: 0;
-  border: 1px solid rgba(232, 197, 106, 0.62);
+  border: 1px solid rgba(232, 197, 106, 0.58);
   border-radius: 50%;
   background:
-    radial-gradient(120% 140% at 30% -10%, rgba(255, 228, 160, 0.24), transparent 58%),
-    linear-gradient(180deg, rgba(18, 22, 30, 0.97), rgba(6, 8, 12, 0.97));
-  color: #ffe3a3;
+    radial-gradient(140% 120% at 26% -18%, rgba(255, 232, 175, 0.3), transparent 56%),
+    radial-gradient(120% 100% at 50% 128%, rgba(142, 233, 245, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(17, 21, 29, 0.93), rgba(4, 6, 10, 0.97));
+  -webkit-backdrop-filter: blur(9px) saturate(1.3);
+  backdrop-filter: blur(9px) saturate(1.3);
+  color: #ffe7b0;
   font-family: var(--vx-mono, ui-monospace, monospace);
-  font-size: 8.5px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   line-height: 1;
   cursor: pointer;
   isolation: isolate;
   -webkit-tap-highlight-color: transparent;
   box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 10px 26px rgba(0, 0, 0, 0.55),
-    0 0 26px rgba(232, 197, 106, 0.28),
-    inset 0 0 18px rgba(232, 197, 106, 0.16);
-  transition: transform 180ms ease, box-shadow 220ms ease, border-color 180ms ease, color 160ms ease;
-  animation: vxs-aliento 4.6s ease-in-out infinite;
+    inset 0 0 0 1px rgba(232, 197, 106, 0.16),
+    0 0 0 1px rgba(0, 0, 0, 0.65),
+    0 12px 28px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(232, 197, 106, 0.26),
+    inset 0 0 22px rgba(232, 197, 106, 0.14);
+  animation: vxs-aliento 4.8s ease-in-out infinite;
+  transition:
+    width 240ms cubic-bezier(0.22, 0.9, 0.24, 1),
+    padding 240ms cubic-bezier(0.22, 0.9, 0.24, 1),
+    gap 240ms ease,
+    border-radius 240ms ease,
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 260ms ease,
+    color 180ms ease;
 }
 @keyframes vxs-aliento {
-  0%, 100% { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 10px 26px rgba(0, 0, 0, 0.55), 0 0 22px rgba(232, 197, 106, 0.22), inset 0 0 18px rgba(232, 197, 106, 0.14); }
-  50% { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.58), 0 0 40px rgba(255, 214, 120, 0.5), inset 0 0 22px rgba(255, 214, 120, 0.24); }
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px rgba(232, 197, 106, 0.16),
+      0 0 0 1px rgba(0, 0, 0, 0.65),
+      0 12px 26px rgba(0, 0, 0, 0.55),
+      0 0 24px rgba(232, 197, 106, 0.2),
+      inset 0 0 20px rgba(232, 197, 106, 0.12);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 228, 160, 0.3),
+      0 0 0 1px rgba(0, 0, 0, 0.65),
+      0 12px 32px rgba(0, 0, 0, 0.58),
+      0 0 46px rgba(255, 214, 120, 0.48),
+      inset 0 0 26px rgba(255, 214, 120, 0.24);
+  }
 }
+
+/* la marca de lacre: un anillo de puntos que nunca se está quieto */
+.vxs-sello::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px dashed rgba(232, 197, 106, 0.3);
+  pointer-events: none;
+  animation: vxs-lacre 34s linear infinite;
+}
+@keyframes vxs-lacre {
+  to { transform: rotate(360deg); }
+}
+
+/* el golpe del dedo: un anillo que sale del sello al pulsarlo */
+.vxs-sello[data-pulsado="1"]::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 232, 175, 0.9);
+  pointer-events: none;
+  animation: vxs-golpe-dedo 460ms ease-out both;
+}
+@keyframes vxs-golpe-dedo {
+  from { transform: scale(0.86); opacity: 0.95; }
+  to { transform: scale(2.05); opacity: 0; }
+}
+
 .vxs-sello:hover,
 .vxs-sello:focus-visible {
-  color: #fff6dc;
-  border-color: rgba(255, 228, 160, 1);
-  transform: translateY(-50%) scale(1.07);
+  color: #fff8e4;
+  border-color: rgba(255, 232, 175, 0.95);
+  transform: translateY(-50%) scale(1.04);
   box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 12px 34px rgba(0, 0, 0, 0.6),
-    0 0 54px rgba(255, 214, 120, 0.65),
-    inset 0 0 24px rgba(255, 214, 120, 0.3);
+    inset 0 0 0 1px rgba(255, 228, 160, 0.35),
+    0 0 0 1px rgba(0, 0, 0, 0.65),
+    0 14px 34px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(255, 214, 120, 0.6),
+    inset 0 0 26px rgba(255, 214, 120, 0.3);
   outline: none;
 }
 .vxs-sello:focus-visible {
-  outline: 2px solid rgba(255, 228, 160, 0.9);
-  outline-offset: 3px;
+  outline: 2px solid rgba(255, 232, 175, 0.9);
+  outline-offset: 4px;
 }
 .vxs-sello:active {
-  transform: translateY(-50%) scale(0.95);
+  transform: translateY(-50%) scale(0.94);
 }
 
 /* el aro de oro que gira: lo que hace que el ojo lo encuentre solo */
@@ -83,51 +147,98 @@
   padding: 2px;
   background: conic-gradient(
     from 0deg,
-    rgba(255, 226, 150, 0) 0 42%,
-    rgba(255, 236, 190, 0.95) 52%,
-    rgba(142, 233, 245, 0.75) 58%,
-    rgba(255, 226, 150, 0) 66% 100%
+    rgba(255, 226, 150, 0) 0 40%,
+    rgba(255, 240, 205, 1) 51%,
+    rgba(142, 233, 245, 0.8) 57%,
+    rgba(255, 226, 150, 0) 65% 100%
   );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   pointer-events: none;
-  animation: vxs-anillo 5.5s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 214, 120, 0.5));
+  animation: vxs-anillo 3.8s linear infinite;
 }
 @keyframes vxs-anillo {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
+/* el sigilo de la casa: gira despacio, sin marear */
 .vxs-sello-glifo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #ffdf9b;
-  filter: drop-shadow(0 0 6px rgba(255, 214, 120, 0.55));
-  animation: vxs-gira 9s linear infinite;
-  animation-duration: calc(6s + var(--vxs-vuelta, 0s));
+  filter: drop-shadow(0 0 7px rgba(255, 214, 120, 0.5));
+  animation: vxs-gira 16s linear infinite;
+  animation-duration: calc(13s + var(--vxs-vuelta, 0s));
   animation-direction: var(--vxs-sentido, normal);
 }
-.vxs-sello-glifo[data-giro="14"] { animation-duration: 7s; }
-.vxs-sello-glifo[data-giro="-20"] { animation-duration: 11s; animation-direction: reverse; }
-.vxs-sello-glifo[data-giro="9"] { animation-duration: 8.5s; }
-.vxs-sello-glifo[data-giro="-12"] { animation-duration: 6.4s; animation-direction: reverse; }
-.vxs-sello-glifo[data-giro="17"] { animation-duration: 9.6s; }
-.vxs-sello-glifo[data-giro="-25"] { animation-duration: 7.4s; animation-direction: reverse; }
-.vxs-sello-glifo[data-giro="11"] { animation-duration: 10.2s; }
-.vxs-sello-glifo[data-giro="-15"] { animation-duration: 6.8s; animation-direction: reverse; }
+.vxs-sello-glifo[data-giro="14"] { animation-duration: 15s; }
+.vxs-sello-glifo[data-giro="-20"] { animation-duration: 25s; animation-direction: reverse; }
+.vxs-sello-glifo[data-giro="9"] { animation-duration: 18s; }
+.vxs-sello-glifo[data-giro="-12"] { animation-duration: 13.4s; animation-direction: reverse; }
+.vxs-sello-glifo[data-giro="17"] { animation-duration: 21s; }
+.vxs-sello-glifo[data-giro="-25"] { animation-duration: 16s; animation-direction: reverse; }
+.vxs-sello-glifo[data-giro="11"] { animation-duration: 23s; }
+.vxs-sello-glifo[data-giro="-15"] { animation-duration: 14.4s; animation-direction: reverse; }
 @keyframes vxs-gira {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
+/* la palabra, bajo un hilo de luz: parece grabada, no escrita */
 .vxs-sello-txt {
+  position: relative;
   display: inline-block;
+  padding-top: 4px;
   white-space: nowrap;
+  text-shadow: 0 0 10px rgba(255, 214, 120, 0.45);
+}
+.vxs-sello-txt::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 15px;
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(255, 228, 160, 0.75), transparent);
+}
+/* la versión larga, que sólo se ve en escritorio al pasar por encima */
+.vxs-sello-largo {
+  display: none;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+  text-shadow: 0 0 12px rgba(255, 214, 120, 0.5);
+}
+
+/* Escritorio con ratón: el sello se abre en píldora y dice a dónde lleva. */
+@media (hover: hover) and (min-width: 760px) {
+  .vxs-sello {
+    grid-auto-flow: column;
+  }
+  .vxs-sello:hover,
+  .vxs-sello:focus-visible {
+    width: auto;
+    height: 60px;
+    padding: 0 18px 0 14px;
+    gap: 10px;
+    border-radius: 999px;
+  }
+  .vxs-sello:hover .vxs-sello-txt,
+  .vxs-sello:focus-visible .vxs-sello-txt {
+    display: none;
+  }
+  .vxs-sello:hover .vxs-sello-largo,
+  .vxs-sello:focus-visible .vxs-sello-largo {
+    display: inline-block;
+  }
+  .vxs-sello:hover::before,
+  .vxs-sello:focus-visible::before {
+    border-radius: 999px;
+  }
 }
 
 /* el pulso de la primera vez: tres latidos y el cartel que lo explica */
@@ -135,23 +246,31 @@
   animation: vxs-late 1.15s ease-out 3;
 }
 @keyframes vxs-late {
-  0% { box-shadow: 0 0 0 0 rgba(255, 214, 120, 0.75), 0 6px 18px rgba(0, 0, 0, 0.45); }
-  60% { box-shadow: 0 0 0 12px rgba(255, 214, 120, 0), 0 8px 26px rgba(0, 0, 0, 0.5); }
+  0% { box-shadow: 0 0 0 0 rgba(255, 214, 120, 0.8), 0 6px 18px rgba(0, 0, 0, 0.45); }
+  60% { box-shadow: 0 0 0 14px rgba(255, 214, 120, 0), 0 8px 26px rgba(0, 0, 0, 0.5); }
   100% { box-shadow: 0 0 0 0 rgba(255, 214, 120, 0), 0 6px 18px rgba(0, 0, 0, 0.45); }
 }
 
+/* el cartel de la primera vez: vidrio, hilo de oro y una mecha que se consume */
 .vxs-llama {
   position: fixed;
   z-index: 9998;
   margin: 0;
-  padding: 9px 13px 10px;
+  padding: 11px 15px 13px;
   max-width: min(78vw, 300px);
   display: grid;
-  gap: 3px;
-  border: 1px solid rgba(232, 197, 106, 0.6);
-  border-radius: 10px;
-  background: rgba(5, 7, 11, 0.96);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6), 0 0 34px rgba(232, 197, 106, 0.16);
+  gap: 4px;
+  border: 1px solid rgba(232, 197, 106, 0.55);
+  border-radius: 12px;
+  background:
+    radial-gradient(120% 140% at 8% -20%, rgba(255, 232, 175, 0.14), transparent 60%),
+    linear-gradient(180deg, rgba(14, 18, 25, 0.97), rgba(4, 6, 10, 0.98));
+  -webkit-backdrop-filter: blur(12px) saturate(1.25);
+  backdrop-filter: blur(12px) saturate(1.25);
+  box-shadow:
+    0 20px 54px rgba(0, 0, 0, 0.62),
+    0 0 40px rgba(232, 197, 106, 0.18),
+    inset 0 0 0 1px rgba(255, 228, 160, 0.06);
   color: #f7e9c6;
   font-family: var(--vx-mono, ui-monospace, monospace);
   line-height: 1.45;
@@ -162,13 +281,13 @@
   content: "";
   position: absolute;
   right: -6px;
-  top: 18px;
+  top: 20px;
   width: 10px;
   height: 10px;
   transform: rotate(45deg);
-  border-right: 1px solid rgba(232, 197, 106, 0.6);
-  border-top: 1px solid rgba(232, 197, 106, 0.6);
-  background: rgba(5, 7, 11, 0.96);
+  border-right: 1px solid rgba(232, 197, 106, 0.55);
+  border-top: 1px solid rgba(232, 197, 106, 0.55);
+  background: #0a0e14;
 }
 .vxs-llama b {
   font-size: 10.5px;
@@ -176,16 +295,36 @@
   text-transform: uppercase;
   color: #ffe3a3;
 }
+.vxs-llama b::before {
+  content: "◆ ";
+  color: rgba(255, 214, 120, 0.85);
+}
 .vxs-llama span {
   font-size: 10.5px;
   letter-spacing: 0.05em;
   color: #b9c4cc;
 }
+/* la mecha: el cartel dice cuánto le queda, sin números */
+.vxs-llama-hilo {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 1px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(255, 228, 160, 0.95), rgba(142, 233, 245, 0.75));
+  opacity: 0.7;
+  animation: vxs-hilo 5.2s linear both;
+}
+@keyframes vxs-hilo {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
 @keyframes vxs-llama {
-  0% { opacity: 0; transform: translateY(-6px); }
-  8% { opacity: 1; transform: translateY(0); }
-  88% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-6px); }
+  0% { opacity: 0; transform: translateX(12px); }
+  8% { opacity: 1; transform: translateX(0); }
+  88% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(8px); }
 }
 
 /* ─────────────────────── 2 · LA ESCENA DEL GOLPE ──────────────────── */
@@ -590,11 +729,16 @@ html[data-vg-salida-corta="1"] .vxs-sello {
   text-align: center;
   border: 1px solid rgba(232, 197, 106, 0.68);
   border-radius: 12px;
-  background: rgba(4, 6, 10, 0.97);
+  background:
+    radial-gradient(120% 160% at 50% -30%, rgba(255, 232, 175, 0.16), transparent 62%),
+    linear-gradient(180deg, rgba(12, 16, 23, 0.98), rgba(3, 5, 9, 0.99));
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
   box-shadow:
     0 0 0 1px rgba(4, 6, 10, 0.9),
     0 22px 60px rgba(0, 0, 0, 0.65),
-    0 0 60px rgba(232, 197, 106, 0.22);
+    0 0 70px rgba(232, 197, 106, 0.26),
+    inset 0 0 30px rgba(255, 214, 120, 0.06);
   pointer-events: none;
   isolation: isolate;
   transform: translate(-50%, -50%);
@@ -609,6 +753,7 @@ html[data-vg-salida-corta="1"] .vxs-sello {
   pointer-events: none;
 }
 .vxs-dicho-verbo {
+  position: relative;
   font-family: var(--vx-mono, ui-monospace, monospace);
   font-size: 15px;
   font-weight: 700;
@@ -616,6 +761,31 @@ html[data-vg-salida-corta="1"] .vxs-sello {
   color: #ffe9b8;
   text-shadow: 0 0 22px rgba(255, 214, 120, 0.45);
 }
+/* el degradado sólo donde se puede recortar el fondo a la letra: si no, el
+   texto se quedaría transparente y sin nada detrás */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .vxs-dicho-verbo {
+    background: linear-gradient(180deg, #fff8e6, #ffd98a 62%, #d9a94a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 0 14px rgba(255, 214, 120, 0.45));
+  }
+}
+/* dos filetes: arriba y abajo del verbo, como en un expediente */
+.vxs-dicho-verbo::before,
+.vxs-dicho-verbo::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 58%;
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(255, 228, 160, 0.65), transparent);
+}
+.vxs-dicho-verbo::before { top: -7px; }
+.vxs-dicho-verbo::after { bottom: -7px; }
 .vxs-dicho-linea {
   font-family: var(--vx-mono, ui-monospace, monospace);
   font-size: 11px;
@@ -636,6 +806,7 @@ html[data-vg-salida-corta="1"] .vxs-sello {
 @media (prefers-reduced-motion: reduce) {
   .vxs-sello-anillo,
   .vxs-sello-glifo,
+  .vxs-sello::before,
   .vxs-sello[data-late="1"] {
     animation: none;
   }
@@ -721,13 +892,13 @@ html[data-vg-salida-corta="1"] .vxs-dicho {
 
 @media (max-width: 640px) {
   .vxs-sello {
-    right: 8px;
-    top: 42%;
+    right: 10px;
+    top: 44%;
     width: 58px;
     height: 58px;
     gap: 2px;
-    font-size: 8px;
-    letter-spacing: 0.16em;
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
   }
   /* el suelo de v418.2 fija `min-width: 24px !important` en todo lo pulsable;
      este sello es un círculo de 58 y sube por encima del suelo con el mismo

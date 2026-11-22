@@ -112,6 +112,7 @@ export function SalidaModulo() {
   const [llama, setLlama] = useState(false); // el cartel de la primera vez
   const [punto, setPunto] = useState<{ x: number; y: number } | null>(null);
   const [late, setLate] = useState(false); // el pulso que pide que lo mires
+  const [pulsado, setPulsado] = useState(false); // el anillo del dedo
   const temporizadores = useRef<number[]>([]);
   const saliendo = useRef(false);
   const ultimoEfecto = useRef<EfectoId | null>(null);
@@ -190,6 +191,16 @@ export function SalidaModulo() {
     saliendo.current = true;
     setLlama(false);
     setLate(false);
+
+    // el golpe del dedo: un anillo sale del sello y el teléfono lo confirma.
+    // Es lo que separa «pulsé algo» de «la casa me oyó».
+    setPulsado(true);
+    window.setTimeout(() => setPulsado(false), 480);
+    try {
+      navigator.vibrate?.(14);
+    } catch {
+      /* sin motor de vibración: el anillo ya lo dice */
+    }
 
     const raiz = document.documentElement;
     let calma = false;
@@ -314,6 +325,7 @@ export function SalidaModulo() {
         type="button"
         className="vxs-sello"
         data-late={late ? "1" : undefined}
+        data-pulsado={pulsado ? "1" : undefined}
         data-efecto={efecto ?? undefined}
         onClick={salir}
         aria-label="Salir de este módulo y volver a Vanguard"
@@ -328,6 +340,10 @@ export function SalidaModulo() {
         <span className="vxs-sello-txt" aria-hidden="true">
           SALIR
         </span>
+        {/* en escritorio el sello se abre en píldora y dice a dónde lleva */}
+        <span className="vxs-sello-largo" aria-hidden="true">
+          SALIR A VANGUARD
+        </span>
       </button>
 
       {llama
@@ -339,6 +355,7 @@ export function SalidaModulo() {
             >
               <b>Salir del módulo</b>
               <span>y volver a Vanguard · el módulo se rompe por el camino</span>
+              <span className="vxs-llama-hilo" aria-hidden="true" />
             </p>,
             document.body
           )

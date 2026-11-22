@@ -21,6 +21,22 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+
+    version: "v439.9",
+    nombre: "EL SELLO, PULIDO — se le quita lo de botón y se le pone lo de medalla",
+    tipo: "nav",
+    hitos: [
+      "El Dueño, después de verlo funcionar: «pule más». Así que el sello deja de ser un círculo plano y pasa a ser un objeto: vidrio ahumado con desenfoque de lo que tiene detrás (el héroe del mercado se transparenta sin estorbar), hilo interior de medalla y un anillo de lacre de puntos que gira muy despacio (34 s).",
+      "EL COMETA DE ORO va ahora a 3,8 s y con un brillo que cae hacia el cian: es lo primero que ve el ojo al entrar en un módulo. El sigilo de la casa gira más despacio (13 a 25 s, según el sigilo), que a 6 s mareaba.",
+      "LA PALABRA GRABADA: SALIR va bajo un hilo de luz y con sombra dorada; ya no parece texto de botón, parece grabado en el lacre.",
+      "EN ESCRITORIO SE ABRE: al pasar el ratón (o al llegar con el tabulador) el círculo se estira en píldora y dice a dónde lleva — «SALIR A VANGUARD». En el teléfono manda el círculo de 58 px.",
+      "EL GOLPE DEL DEDO: al pulsar sale del sello un anillo dorado que se expande y se apaga (460 ms) y el teléfono vibra 14 ms, como ya hace la barra de pestañas. Es lo que separa «pulsé algo» de «la casa me oyó».",
+      "EL CARTEL DE LA PRIMERA VEZ, pulido: vidrio con desenfoque, rombo de oro delante del título y una mecha de 1 px que se consume durante los 5,2 s que dura — dice cuánto le queda sin poner números.",
+      "LA PLACA DEL FINAL, pulida: fondo con luz arriba, el verbo en degradado de oro y dos filetes de expediente por encima y por debajo.",
+      "Con «reduce» también se queda quieto el anillo de lacre. En modo ligero el desenfoque ya lo apaga la casa, así que no cuesta nada.",
+    ],
+  },
+  {
     version: "v439.8",
     nombre: "LAS FRASES DE VANGUARD — la entrada gana un acto, con voz",
     tipo: "luxe",

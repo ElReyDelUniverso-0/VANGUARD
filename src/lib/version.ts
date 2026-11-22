@@ -7344,6 +7344,16 @@
 // ④ EL SELLO TIENE SU PROPIA MUERTE: como ya es hijo de <body>, la firma de la
 //    página le habría movido el `transform` que lo centra; se le da su propia
 //    animación (se enciende, crece y se apaga) y se le excluye de las ocho.
+// v439.9 · EL SELLO, PULIDO — «pule más», dijo el Dueño, con el sello ya a la
+// vista. Deja de ser un círculo plano y pasa a ser un objeto de la casa:
+// vidrio ahumado con desenfoque de lo que tiene detrás, hilo interior de
+// medalla, anillo de lacre de puntos girando a 34 s, cometa de oro a 3,8 s
+// —el sigilo gira ahora a 13–25 s, que a 6 s mareaba—, la palabra SALIR
+// grabada bajo un hilo de luz, y en escritorio el sello se abre en píldora al
+// pasar por encima: «SALIR A VANGUARD». El dedo lo nota (anillo de 460 ms y
+// 14 ms de vibración) y el cartel de la primera vez lleva una mecha que se
+// consume mientras se lee. La placa del final: verbo en degradado de oro y dos
+// filetes de expediente.
 // (anterior) export const APP_VERSION = "v439.6";
 // (anterior) export const APP_CODENAME = "EL SELLO, EN TODAS PARTES";
 // v439.7 · LA CASA SE PONE PORTADA — orden del Dueño: «hay muchos módulos que
@@ -7383,10 +7393,20 @@
 // «El ojo que nunca duerme», dichas por la voz, cada una con su entrada
 // propia, raya de luz, onda desde la pupila, golpe y vibración; y el arranque
 // teclea su consola («Conectando 249 países… OK»). Audio nuevo de 11,4 s.
-// (anterior) export const APP_VERSION = "v439.7";
-// (anterior) export const APP_CODENAME = "LA CASA SE PONE PORTADA";
-export const APP_VERSION = "v439.8";
-export const APP_CODENAME = "LAS FRASES DE VANGUARD";
+// v439.9 · EL SELLO, PULIDO — «pule más», dijo el Dueño, con el sello ya a la
+// vista. Deja de ser un círculo plano y pasa a ser un objeto de la casa:
+// vidrio ahumado con desenfoque de lo que tiene detrás, hilo interior de
+// medalla, anillo de lacre de puntos girando a 34 s, cometa de oro a 3,8 s
+// —el sigilo gira ahora a 13–25 s, que a 6 s mareaba—, la palabra SALIR
+// grabada bajo un hilo de luz, y en escritorio el sello se abre en píldora al
+// pasar por encima: «SALIR A VANGUARD». El dedo lo nota (anillo de 460 ms y
+// 14 ms de vibración) y el cartel de la primera vez lleva una mecha que se
+// consume mientras se lee. La placa del final: verbo en degradado de oro y dos
+// filetes de expediente.
+// (anterior) export const APP_VERSION = "v439.8";
+// (anterior) export const APP_CODENAME = "LAS FRASES DE VANGUARD";
+export const APP_VERSION = "v439.9";
+export const APP_CODENAME = "EL SELLO, PULIDO";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7464,8 +7484,7 @@ export const APP_CODENAME = "LAS FRASES DE VANGUARD";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v439.7"; // LA CASA SE PONE PORTADA
-// (anterior) export const APP_VERSION_ANTERIOR = "v439.3"; // LA FERIA DE LOS AGENTES
+export const APP_VERSION_ANTERIOR = "v439.8"; // LAS FRASES DE VANGUARD
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE
