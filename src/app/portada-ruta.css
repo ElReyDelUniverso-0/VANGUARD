@@ -1,0 +1,177 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v439.4 · LA PORTADA DE CADA SALA — la piel
+   Marco de la casa + dibujo propio + (si la hay) fotografía detrás.
+   Sin gritos: a igual especificidad manda el orden, y esta hoja entra
+   la última en el layout.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.vp-portada {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 340px;
+  margin: 0 0 28px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 90% at 22% 0%, color-mix(in srgb, var(--vp-luz) 16%, transparent), transparent 62%),
+    linear-gradient(180deg, var(--vp-fondo), #07060a 92%);
+  border-bottom: 1px solid color-mix(in srgb, var(--vp-luz) 34%, transparent);
+  /* la cabecera de la casa mide ~52 px: la portada nace debajo */
+  padding-top: 54px;
+}
+
+.vp-escena {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.vp-foto {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.vp-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.34;
+  filter: saturate(0.85) contrast(1.05);
+}
+.vp-portada[data-foto="1"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(6, 5, 9, 0.92) 0%, rgba(6, 5, 9, 0.62) 46%, rgba(6, 5, 9, 0.24) 100%);
+}
+
+.vp-marco {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.vp-txt {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  padding: clamp(26px, 5vw, 58px) clamp(18px, 5vw, 58px) clamp(26px, 4vw, 44px);
+}
+
+.vp-et {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--vp-filo) 88%, #fff);
+}
+.vp-et i {
+  opacity: 0.5;
+}
+.vp-v {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--vp-luz);
+  border-radius: 3px;
+  color: var(--vp-filo);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--vp-luz) 45%, transparent) inset;
+}
+.vp-num {
+  color: color-mix(in srgb, var(--vp-filo) 62%, transparent);
+}
+
+.vp-titulo {
+  margin: 0 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(30px, 5.4vw, 62px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: #f6efe0;
+  text-shadow: 0 2px 40px color-mix(in srgb, var(--vp-luz) 40%, transparent);
+}
+
+.vp-lema {
+  margin: 0 0 18px;
+  max-width: 58ch;
+  font-size: clamp(14px, 1.5vw, 17px);
+  line-height: 1.55;
+  color: color-mix(in srgb, #efe6d3 76%, var(--vp-luz));
+}
+
+.vp-sello {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--vp-filo) 50%, #8d8478);
+}
+.vp-raya {
+  display: block;
+  width: 42px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--vp-luz), transparent);
+}
+
+/* ── el teléfono ─────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .vp-portada {
+    min-height: 260px;
+    padding-top: 46px;
+    margin-bottom: 18px;
+  }
+  .vp-txt {
+    padding: 22px 18px 24px;
+  }
+  .vp-titulo {
+    font-size: clamp(26px, 8vw, 38px);
+  }
+  .vp-lema {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .vp-sello {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* ── quietud: nada se mueve (aquí no hay animación, pero se declara) ── */
+@media (prefers-reduced-motion: reduce) {
+  .vp-portada * {
+    animation: none;
+    transition: none;
+  }
+}
+html[data-vg-anim="desactivadas"] .vp-portada *,
+html[data-vg-mov="quieto"] .vp-portada * {
+  animation: none;
+  transition: none;
+}
+
+/* ── que la portada no tape al sello de salida ni al dock ───────── */
+.vp-portada + * {
+  scroll-margin-top: 60px;
+}

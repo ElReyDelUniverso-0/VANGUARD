@@ -48,6 +48,9 @@ import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
 import { SalidaModulo } from "@/components/vanguard/salida-modulo";
+// v439.4 LA PORTADA DE CADA SALA — el atlas de portadas y su piel
+import "./portada-ruta.css";
+import { PortadaRuta } from "@/components/portada/portada-ruta";
 // v405.10 · LA BARRA ADAPTATIVA: las herramientas del espacio en el que estás.
 // Se monta una sola vez aquí y aparece en todas las salas que no son inmersivas.
 import { BarraAdaptativa } from "@/components/vanguard/navegacion/barra-adaptativa";
@@ -1003,6 +1006,8 @@ try{
             las perillas de sonido/movimiento en <html> para toda la casa. */}
         <Vivo />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />
+        {/* v439.4: la portada propia de la sala, si aún no tenía una */}
+        <PortadaRuta />
         {children}
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}
         {/* v132.0 LA GRAN AUDITORÍA: el REHIDRATADOR — los valores guardados

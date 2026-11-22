@@ -7344,8 +7344,41 @@
 // ④ EL SELLO TIENE SU PROPIA MUERTE: como ya es hijo de <body>, la firma de la
 //    página le habría movido el `transform` que lo centra; se le da su propia
 //    animación (se enciende, crece y se apaga) y se le excluye de las ocho.
-export const APP_VERSION = "v439.6";
-export const APP_CODENAME = "EL SELLO, EN TODAS PARTES";
+// (anterior) export const APP_VERSION = "v439.6";
+// (anterior) export const APP_CODENAME = "EL SELLO, EN TODAS PARTES";
+// v439.7 · LA CASA SE PONE PORTADA — orden del Dueño: «hay muchos módulos que
+// les falta portadas hermosas con estilo único de Vanguard, están en todos los
+// lugares o imágenes 4K». Y al preguntarle cómo: mixto (arte de la casa +
+// fotografía), todos los módulos, y «todo depende del módulo: sorprende con
+// cada módulo, uno único, o sea todos».
+// ① EL CENSO (lib/portadas/atlas.ts): 93 rutas con página, 93 fichas. Ni una
+//    sala sin nombre, sin lema, sin color, sin técnica y sin glifo. Se leyó la
+//    casa del disco, no de una lista escrita a mano.
+// ② NINGUNA IGUAL A OTRA: cada ficha trae su tono (color), su técnica de dibujo
+//    y su glifo; no hay dos con la misma combinación. Doce técnicas × 28 glifos,
+//    cada una con sus variantes por semilla (la red puede ser estrella, racimos
+//    o malla; el terreno, curvas de nivel, montaña en anillos o cordillera).
+// ③ EL DIBUJANTE (components/portada/escena.tsx): SVG puro y determinista
+//    —huella FNV de la ruta—, 90 motas de polvo, foco de luz y viñeteado. Cero
+//    imágenes descargadas en el dibujo y cero peticiones.
+// ④ EL MIXTO: las salas con fotografía la llevan DETRÁS como atmósfera, al 34%
+//    y con su degradado, y el dibujo encima como estructura. Primeras seis:
+//    ciencia, datos, demografía, galería, inteligencia e investigación
+//    (public/portadas, 1915×821, 120-280 KB cada una). El resto entra por tandas.
+// ⑤ LA PIEZA (components/portada/portada-ruta.tsx): se monta UNA vez en el
+//    layout, lee la ruta, pide su ficha y solo pinta donde la sala aún no tenía
+//    portada propia (35 salas hoy; las que ya la tenían quedan marcadas para
+//    rehacerse con este marco). Título en h2 —no roba el h1—, marco de la casa,
+//    numeración «SALA nn / 93», rótulo en monoespaciada y lema en serif.
+// ⑥ LA PIEL (app/portada-ruta.css): 340 px de alto en pantalla grande (se ve
+//    sin buscarla), 260 en el teléfono, sin un solo !important y con la quietud
+//    declarada.
+// ⑦ PRUEBA NUEVA (tools/portadas/probar.mts): 69 comprobaciones — censo contra
+//    el disco, unicidad de técnica/glifo/color, semillas, 28 glifos dibujados,
+//    fotografías que existen y son JPEG de verdad, y que el layout la monta una
+//    sola vez.
+export const APP_VERSION = "v439.7";
+export const APP_CODENAME = "LA CASA SE PONE PORTADA";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
