@@ -1037,10 +1037,15 @@ body::after {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1px;
-  background: var(--op-hair);
+  /* v436.8 · el relleno del grid pintaba una losa gris en las casillas vacías
+     (diez salas en una rejilla de cuatro columnas dejan dos huecos). El pelo va
+     ahora en el borde interior de cada sala: se ve la rejilla y no se ve el
+     hueco. */
+  background: transparent;
 }
 .op-rescatadas li {
   background: #070a0b;
+  box-shadow: inset 0 0 0 1px var(--op-hair);
 }
 .op-rescatadas a {
   display: block;

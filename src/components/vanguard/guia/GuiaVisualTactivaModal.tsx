@@ -366,8 +366,23 @@ export function BotonGuiaVisual() {
       const timer = setTimeout(() => {
         setMostrarToast(true);
       }, 1500);
+      // v436.8 · EL AVISO SE RETIRA SOLO. El cartel es fijo abajo a la derecha y
+      // tapaba contenido de verdad: la cuarta tarjeta de la portada, la tarjeta
+      // 03 de /mundos, el formulario del taller… Se sigue enseñando una vez, pero
+      // a los nueve segundos y medio se va solo y queda marcado como visto, así
+      // que no vuelve a molestar. El botón de la cabecera («GUÍA TÁCTICA»)
+      // sigue donde estaba para abrirla cuando el Dueño quiera.
+      const retirada = setTimeout(() => {
+        try {
+          window.localStorage.setItem("vg_guia_vista", "1");
+        } catch {
+          /* modo privado: se retira igual */
+        }
+        setMostrarToast(false);
+      }, 9500);
       return () => {
         clearTimeout(timer);
+        clearTimeout(retirada);
         window.removeEventListener("abrir-guia-vanguard", alPedirGuia);
       };
     }
@@ -408,7 +423,7 @@ export function BotonGuiaVisual() {
         <aside
           role="status"
           aria-live="polite"
-          className="vg-primera-vez fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-[#FFC94D]/45 bg-[#0B0906]/96 p-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.55)] animate-in fade-in slide-in-from-bottom-4 duration-300 max-w-sm"
+          className="vg-primera-vez fixed bottom-4 right-3 left-3 sm:left-auto sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 rounded-xl border border-[#FFC94D]/45 bg-[#0B0906]/96 p-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.55)] animate-in fade-in slide-in-from-bottom-4 duration-300 max-w-[calc(100vw-1.5rem)] sm:max-w-sm"
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/40">
             <HelpCircle size={18} />
