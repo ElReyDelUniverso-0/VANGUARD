@@ -13,24 +13,34 @@
 // mercaderes de `lib/mercado/puestos`: no hay una segunda lista de módulos.
 // ═══════════════════════════════════════════════════════════════════
 
+// v440.3 · LA PIEL DEL MERCADO, POR FIN EN EL MERCADO.
+// `components/mercado/mercado.css` sólo se importaba desde `MercadoPortada`,
+// que vive en la portada de la casa: al entrar en /mercado el navegador no
+// bajaba ni una línea de esa hoja. La plaza entera —toldos, mostrador, cesta,
+// buscador— se servía como texto plano. Se importa aquí, que es donde se usa.
+import "@/components/mercado/mercado.css";
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { MercadoCliente } from "@/components/mercado/mercado-cliente";
+import { VitrinaModulos } from "@/components/mercado/vitrina";
 import { PUESTOS, cifrasMercado, puestoDelDia } from "@/lib/mercado/puestos";
-import { DURACION_VUELTA, BPM } from "@/lib/mercado/musica";
+import { DURACION_VUELTA_SUAVE, BPM_SUAVE } from "@/lib/mercado/musica-suave";
+import { cifrasVitrina } from "@/lib/mercado/vitrina";
 import { pregonDelDia } from "@/lib/mercado/pregon";
 import { APP_VERSION_LABEL } from "@/lib/version";
 
 export const metadata: Metadata = {
-  title: "El mercado de Vanguard · las diez familias, puesto a puesto",
+  title: "El mercado de Vanguard · los módulos de la casa, uno detrás de otro",
   description:
-    "Diez puestos, diez mercaderes y todas las secciones de cada familia de Vanguard, con su música de plaza. Abre un puesto y mira lo que vende.",
+    "El escaparate de Vanguard: los cuatro módulos y todas sus salas con su descripción, rotando sin parar, y la plaza con sus diez puestos. Música suave.",
   alternates: { canonical: "/mercado" },
 };
 
 export default function MercadoPage() {
   const cifras = cifrasMercado();
+  const vitrina = cifrasVitrina();
   const delDia = puestoDelDia();
   const pregon = pregonDelDia();
 
@@ -41,16 +51,20 @@ export default function MercadoPage() {
         alt="Puestos de un bazar cubierto, con sus toldos y sus mercaderes atendiendo"
         volanta="Módulo · el mercado"
         titulo="El mercado de Vanguard"
-        sumario="Las diez familias de la casa, cada una en su puesto y con su mercader: abre uno y te enseña su puerta y todas sus secciones. Música de plaza, corta y tarareable."
+        sumario="Los módulos de Vanguard, uno detrás de otro y con lo que hace cada sala, pasando sin parar hasta que los hayas visto todos. Debajo, la plaza: diez puestos, un agente en cada uno y todas sus secciones. Música suave, sin prisa."
         cifras={[
           { valor: cifras.puestos, etiqueta: "puestos", nota: "uno por familia" },
           { valor: cifras.mercaderes, etiqueta: "mercaderes", nota: "con nombre y oficio" },
-          { valor: cifras.secciones, etiqueta: "secciones", nota: "rutas reales" },
-          { valor: `${BPM} ppm`, etiqueta: "la contradanza", nota: `${DURACION_VUELTA.toFixed(1)} s la vuelta` },
+          { valor: vitrina.salas, etiqueta: "salas en el escaparate", nota: "de los cuatro módulos" },
+          { valor: `${BPM_SUAVE} ppm`, etiqueta: "música suave", nota: `${DURACION_VUELTA_SUAVE.toFixed(0)} s la vuelta` },
         ]}
         acento="#e8c56a"
-        nota="Cada sección es una ruta que existe: la prueba del mercado recorre las rutas y comprueba una a una que están en src/app."
+        nota="Cada ficha del escaparate es una ruta que existe y su descripción es la de la casa: el mercado no escribe carteles nuevos, los recoge."
       />
+
+      {/* v440.3 · lo primero que se ve: los módulos de la casa, con su
+          descripción, pasando sin parar. La plaza viene después. */}
+      <VitrinaModulos />
 
       <MercadoCliente version={APP_VERSION_LABEL} />
 

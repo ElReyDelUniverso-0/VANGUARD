@@ -22,6 +22,21 @@ export interface EntradaBitacora {
 export const BITACORA: EntradaBitacora[] = [
   {
     version: "v440.3",
+
+    nombre: "EL ESCAPARATE DEL MERCADO — los módulos de la casa pasan solos, con su descripción",
+    tipo: "nav",
+    hitos: [
+      "EL DUEÑO: «el mercado necesita actualizarse, que verdaderamente literalmente módulos de Vanguard para que las personas los vean con una descripción y que vayan rotando infinitamente para que los vean y una música suave».",
+      "LA VITRINA: arriba, los CUATRO módulos —La redacción (16 salas), El mundo (25), El saber (37), La casa (27)— con su lema, su gancho y su cuenta real de salas. Debajo, las 105 salas de la casa, una por ruta y sin repetir, cada una con la descripción que la casa ya escribe en su puerta. Ni un cartel inventado: todo sale de components/portada/modulos.",
+      "LA CINTA NO SE PARA: dos filas de fichas que corren sin fin en sentidos contrarios (78 s y 92 s la vuelta, 62 s y 74 s en el teléfono). Se detiene al pasar el ratón, al tocar la pantalla (6 s) y al llegar con el tabulador, para poder leer. Con la casa en quietud o «reducir movimiento» no corre: queda una cinta que se arrastra con el dedo.",
+      "CORRE TAMBIÉN EN MODO LIGERO: es un transform sobre una capa propia, no repinta nada; la casa apaga ahí las animaciones que repintan, no ésta. La quietud pedida sí manda sobre ella.",
+      "MÚSICA SUAVE: la contradanza de feria a 120 pulsos con pandereta y campanas se cambia por una pieza de 64 pulsos, sin percusión, con pad de tres voces, bajo y una melodía que deja silencios; 30 s la vuelta y 0,024 de ganancia máxima. El botón dice «música suave» y sigue sin sonar solo: hace falta el toque.",
+      "UN FALLO GORDO QUE APARECIÓ AL MIRAR: components/mercado/mercado.css sólo se importaba desde MercadoPortada, que vive en la portada de la casa. Al entrar en /mercado el navegador no bajaba ni una línea de esa hoja — 323 reglas — y la plaza entera (toldos, mostrador, buscador, cesta) se servía como texto plano, sin una sola caja. Ahora se importa en la propia página.",
+      "MEDIDO: /mercado en el teléfono mide 1.455 px de escaparate, 210 tarjetas pintadas (105 × 2 para que la cinta no tenga costura), 4 tarjetas de módulo, transform en movimiento comprobado (62 s en el teléfono, 78 s en escritorio) y 10 osciladores reales al pulsar la música.",
+    ],
+  },
+  {
+    version: "v440.3",
     nombre: "VANGUARD CINEMATIC EXPERIENCE — cinco piezas que aparecen mientras exploras",
     tipo: "luxe",
     hitos: [

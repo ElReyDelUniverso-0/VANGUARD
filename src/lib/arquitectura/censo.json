@@ -1,20 +1,20 @@
 {
   "version": "v412.0",
   "fecha": "2026-11-22",
-  "paginas": 192,
+  "paginas": 193,
   "rutasApi": 142,
-  "total": 334,
+  "total": 335,
   "bienConectadas": 181,
   "huerfanas": [
     "/visita"
   ],
-  "paginasConReferencias": 191,
-  "mediaReferencias": 14.05,
+  "paginasConReferencias": 192,
+  "mediaReferencias": 14.08,
   "rutas": [
     {
       "ruta": "/",
       "tipo": "pagina",
-      "referencias": 123,
+      "referencias": 125,
       "desde": [
         "app/archivo-mundial/page.tsx",
         "app/armeria/page.tsx",
@@ -1482,12 +1482,12 @@
     {
       "ruta": "/arquitectura",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
         "app/labs/page.tsx",
         "app/sistema/page.tsx",
         "components/conocimiento/explorador.tsx",
-        "lib/arquitectura/departamentos.ts"
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -1515,12 +1515,12 @@
     {
       "ruta": "/buscar",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 8,
       "desde": [
         "app/descubrir/descubrir-cliente.tsx",
         "components/descubrimiento/descubrimiento.tsx",
-        "components/vanguard/muelle-movil.tsx",
-        "lib/descubrimiento/fichas.ts"
+        "components/portada/cabecera.tsx",
+        "components/vanguard/muelle-movil.tsx"
       ]
     },
     {
@@ -1783,7 +1783,7 @@
     {
       "ruta": "/conocimiento",
       "tipo": "pagina",
-      "referencias": 37,
+      "referencias": 38,
       "desde": [
         "app/conocimiento/aprender/page.tsx",
         "app/conocimiento/enciclopedia/[slug]/page.tsx",
@@ -1991,7 +1991,7 @@
     {
       "ruta": "/datos",
       "tipo": "pagina",
-      "referencias": 19,
+      "referencias": 20,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/datos-mundiales/page.tsx",
@@ -2111,12 +2111,12 @@
     {
       "ruta": "/ecosistema",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 8,
       "desde": [
         "app/radio/page.tsx",
         "components/experiencia/ecosistema.tsx",
-        "components/vida/orbita.tsx",
-        "components/vida/para-ti.tsx"
+        "components/portada/modulos.ts",
+        "components/vida/orbita.tsx"
       ]
     },
     {
@@ -2217,12 +2217,12 @@
     {
       "ruta": "/espacio",
       "tipo": "pagina",
-      "referencias": 16,
+      "referencias": 17,
       "desde": [
         "components/mundos/guardar-espacio.tsx",
         "components/planeta/guardar.tsx",
         "components/planeta/marco.tsx",
-        "components/vida/orbita.tsx"
+        "components/portada/modulos.ts"
       ]
     },
     {
@@ -2269,7 +2269,7 @@
     {
       "ruta": "/guerra-hoy",
       "tipo": "pagina",
-      "referencias": 53,
+      "referencias": 54,
       "desde": [
         "app/audios/page.tsx",
         "app/conflicto/[tag]/page.tsx",
@@ -2357,12 +2357,12 @@
     {
       "ruta": "/inteligencia",
       "tipo": "pagina",
-      "referencias": 7,
+      "referencias": 8,
       "desde": [
         "app/datos-mundiales/pais/[iso]/page.tsx",
         "app/investigacion/page.tsx",
-        "lib/experiencia/registro.ts",
-        "lib/navegacion/espacios.ts"
+        "components/portada/modulos.ts",
+        "lib/experiencia/registro.ts"
       ]
     },
     {
@@ -2390,7 +2390,7 @@
     {
       "ruta": "/labs",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -2401,7 +2401,7 @@
     {
       "ruta": "/labs/[modelo]",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/escenarios/page.tsx",
@@ -2681,7 +2681,7 @@
     {
       "ruta": "/memoria",
       "tipo": "pagina",
-      "referencias": 17,
+      "referencias": 18,
       "desde": [
         "app/memoria/acontecimiento/[slug]/page.tsx",
         "app/memoria/buscar/page.tsx",
@@ -2763,23 +2763,23 @@
     {
       "ruta": "/mercado",
       "tipo": "pagina",
-      "referencias": 5,
+      "referencias": 7,
       "desde": [
         "components/mercado/mercado-portada.tsx",
-        "components/vanguard/muelle-movil.tsx",
-        "lib/descubrimiento/fichas.ts",
-        "lib/mercado/pregon.ts"
+        "components/portada/cabecera.tsx",
+        "components/portada/modulos.ts",
+        "components/vanguard/muelle-movil.tsx"
       ]
     },
     {
       "ruta": "/mi-universo",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
+        "components/portada/cabecera.tsx",
         "components/portada/modulos.ts",
         "components/vida/orbita.tsx",
-        "components/vida/para-ti.tsx",
-        "lib/descubrimiento/fichas.ts"
+        "components/vida/para-ti.tsx"
       ]
     },
     {
@@ -2914,7 +2914,7 @@
     {
       "ruta": "/mundos",
       "tipo": "pagina",
-      "referencias": 69,
+      "referencias": 70,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -2925,7 +2925,7 @@
     {
       "ruta": "/mundos/[iso]",
       "tipo": "pagina",
-      "referencias": 69,
+      "referencias": 70,
       "desde": [
         "app/arquitectura/page.tsx",
         "app/atlas/page.tsx",
@@ -3266,12 +3266,12 @@
     {
       "ruta": "/sistema",
       "tipo": "pagina",
-      "referencias": 8,
+      "referencias": 9,
       "desde": [
         "app/datos/page.tsx",
         "app/oportunidades/page.tsx",
-        "lib/arquitectura/departamentos.ts",
-        "lib/datos/catalogo.ts"
+        "components/portada/modulos.ts",
+        "lib/arquitectura/departamentos.ts"
       ]
     },
     {
@@ -3401,6 +3401,14 @@
       "tipo": "pagina",
       "referencias": 0,
       "desde": []
+    },
+    {
+      "ruta": "/votacion",
+      "tipo": "pagina",
+      "referencias": 1,
+      "desde": [
+        "components/portada/votacion-tarjeta.tsx"
+      ]
     },
     {
       "ruta": "/voz",

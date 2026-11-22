@@ -1339,3 +1339,229 @@ html[data-vg-anim="desactivadas"] .pm-luces i {
   .pm-luces i:nth-child(2n) { display: none; }
   .mp-toldo-emblema { width: 22px; height: 28px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v440.3 · EL ESCAPARATE — los módulos de la casa pasando sin parar
+   ═══════════════════════════════════════════════════════════════════ */
+
+.vf-seccion {
+  margin: 26px 0 10px;
+  padding: 18px 0 6px;
+  border-top: 1px solid rgba(232, 197, 106, 0.22);
+  border-bottom: 1px solid rgba(232, 197, 106, 0.14);
+  background:
+    radial-gradient(900px 240px at 12% 0%, rgba(232, 197, 106, 0.07), transparent 70%),
+    radial-gradient(900px 240px at 88% 20%, rgba(93, 230, 247, 0.06), transparent 70%);
+}
+.vf-cabeza { max-width: 980px; margin: 0 auto 14px; padding: 0 16px; }
+.vf-volanta {
+  margin: 0 0 6px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #e8c56a;
+}
+.vf-h2 {
+  margin: 0 0 6px;
+  font-size: clamp(20px, 3.2vw, 30px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: #f6f7f9;
+}
+.vf-sumario { margin: 0; max-width: 68ch; font-size: 13.5px; line-height: 1.5; color: #a9b4bf; }
+
+/* los cuatro módulos, grandes y quietos para leerlos */
+.vf-modulos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 12px;
+  max-width: 1180px;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+  list-style: none;
+}
+.vf-modulo-enlace {
+  position: relative;
+  display: grid;
+  gap: 5px;
+  height: 100%;
+  padding: 15px 15px 13px;
+  border: 1px solid color-mix(in srgb, var(--vf-color) 42%, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 60%),
+    rgba(8, 10, 16, 0.72);
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 220ms ease;
+}
+.vf-modulo-enlace::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, var(--vf-color), transparent);
+  opacity: 0.85;
+}
+.vf-modulo-enlace:hover,
+.vf-modulo-enlace:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--vf-color);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 40px color-mix(in srgb, var(--vf-color) 26%, transparent);
+  outline: none;
+}
+.vf-modulo-num {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--vf-color);
+  text-shadow: 0 0 22px color-mix(in srgb, var(--vf-color) 45%, transparent);
+}
+.vf-modulo-nombre { font-size: 15.5px; font-weight: 700; color: #f4f6f8; }
+.vf-modulo-lema { font-size: 12.5px; line-height: 1.42; color: #cdd6de; }
+.vf-modulo-gancho { font-size: 12px; line-height: 1.45; color: #94a1ad; }
+.vf-modulo-pie {
+  margin-top: 4px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--vf-color) 78%, white);
+}
+
+/* la cinta infinita */
+.vf-vitrina {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 6px 0 14px;
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+.vf-cinta { overflow: hidden; }
+.vf-pista {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+  margin: 0;
+  padding: 0 5px;
+  list-style: none;
+  animation: vf-corre 78s linear infinite;
+  will-change: transform;
+}
+.vf-cinta[data-sentido="der"] .vf-pista {
+  animation-direction: reverse;
+  animation-duration: 92s;
+}
+.vf-vitrina:hover .vf-pista,
+.vf-vitrina:focus-within .vf-pista,
+.vf-vitrina[data-tocada="1"] .vf-pista {
+  animation-play-state: paused;
+}
+@keyframes vf-corre {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.vf-tarjeta { position: relative; flex: 0 0 auto; width: 268px; }
+.vf-enlace {
+  display: grid;
+  gap: 4px;
+  height: 100%;
+  padding: 12px 13px 11px;
+  border: 1px solid rgba(232, 197, 106, 0.18);
+  border-left: 2px solid color-mix(in srgb, var(--vf-color) 70%, transparent);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 55%),
+    rgba(7, 9, 14, 0.82);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 180ms ease, box-shadow 200ms ease, transform 180ms ease;
+}
+.vf-enlace:hover,
+.vf-enlace:focus-visible {
+  border-color: color-mix(in srgb, var(--vf-color) 70%, white);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 26px color-mix(in srgb, var(--vf-color) 22%, transparent);
+  transform: translateY(-2px);
+  outline: none;
+}
+.vf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--vf-color) 85%, white);
+}
+.vf-vivo {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff4d6d;
+  box-shadow: 0 0 10px #ff4d6d;
+}
+.vf-titulo { font-size: 14px; line-height: 1.2; color: #f5f7f9; }
+.vf-desc { font-size: 11.8px; line-height: 1.42; color: #9fabba; }
+.vf-pie {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: #6f7d8b;
+}
+.vf-abrir { color: color-mix(in srgb, var(--vf-color) 80%, white); }
+.vf-num {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.24);
+}
+
+/* quietud: la cinta no corre, se arrastra con el dedo */
+.vf-quieta .vf-pista { animation: none !important; }
+.vf-quieta .vf-cinta {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vf-pista { animation: none !important; }
+  .vf-cinta { overflow-x: auto; }
+}
+html[data-vg-mov="quieto"] .vf-pista,
+html[data-vg-anim="desactivadas"] .vf-pista { animation: none !important; }
+html[data-vg-mov="quieto"] .vf-cinta,
+html[data-vg-anim="desactivadas"] .vf-cinta { overflow-x: auto; }
+
+@media (max-width: 640px) {
+  .vf-tarjeta { width: 232px; }
+  .vf-pista { animation-duration: 62s; }
+  .vf-cinta[data-sentido="der"] .vf-pista { animation-duration: 74s; }
+  .vf-modulos { grid-template-columns: 1fr; }
+}
+
+/* La cinta corre TAMBIÉN en modo ligero. La casa apaga ahí toda animación
+   (pantallas.css/vivo.css) porque las de siempre repintan; ésta es un
+   `transform` sobre una capa propia y no repinta nada. Lo que sí se respeta es
+   la quietud pedida y el «reducir movimiento» del sistema, que van arriba y
+   mandan sobre esto. */
+html[data-vx-ligero="1"] .vf-pista {
+  animation-duration: 78s !important;
+  animation-iteration-count: infinite !important;
+}
+html[data-vx-ligero="1"] .vf-cinta[data-sentido="der"] .vf-pista { animation-duration: 92s !important; }
+@media (max-width: 640px) {
+  html[data-vx-ligero="1"] .vf-pista { animation-duration: 62s !important; }
+  html[data-vx-ligero="1"] .vf-cinta[data-sentido="der"] .vf-pista { animation-duration: 74s !important; }
+}

@@ -7460,8 +7460,26 @@
 // catálogo). Un lienzo, un rAF, escena perezosa, saltable, sin repetirse.
 // (anterior) export const APP_VERSION = "v440.2";
 // (anterior) export const APP_CODENAME = "EL SELLO, TAMBIÉN EN LA PORTADA";
-export const APP_VERSION = "v440.3";
-export const APP_CODENAME = "VANGUARD CINEMATIC EXPERIENCE";
+// (anterior) export const APP_VERSION = "v440.3";
+// (anterior) export const APP_CODENAME = "VANGUARD CINEMATIC EXPERIENCE";
+// v440.4 · EL ESCAPARATE DEL MERCADO — los módulos de la casa, pasando solos.
+// El Dueño: «el mercado necesita actualizarse, que verdaderamente literalmente
+// módulos de Vanguard para que las personas los vean con una descripción y que
+// vayan rotando infinitamente para que los vean y una música suave».
+//   ① LA VITRINA (`lib/mercado/vitrina` + `components/mercado/vitrina`): los
+//      cuatro módulos con su lema, su gancho y su cuenta de salas, y debajo las
+//      105 salas de la casa —una por ruta, sin repetir— con la descripción que
+//      ya escribe la casa, en dos cintas que corren sin fin en sentidos
+//      contrarios. Se paran al pasar el ratón, al tocar y con el tabulador.
+//   ② MÚSICA SUAVE (`lib/mercado/musica-suave`): 64 pulsos en vez de 120, sin
+//      pandereta ni campanas, pad de tres voces, bajo y una melodía que deja
+//      silencios. 30 s la vuelta y ganancia máxima 0,024.
+//   ③ UN FALLO GORDO, DE PASO: `components/mercado/mercado.css` sólo se
+//      importaba desde `MercadoPortada` (que vive en la portada de la casa), así
+//      que al entrar en /mercado el navegador NO bajaba esa hoja: la plaza
+//      entera se servía como texto plano. Ahora se importa en la página.
+export const APP_VERSION = "v440.4";
+export const APP_CODENAME = "EL ESCAPARATE DEL MERCADO";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7539,8 +7557,8 @@ export const APP_CODENAME = "VANGUARD CINEMATIC EXPERIENCE";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v440.2"; // EL SELLO, TAMBIÉN EN LA PORTADA
-// (anterior) export const APP_VERSION_ANTERIOR = "v440.1"; // LA ENTRADA, FLUIDA
+export const APP_VERSION_ANTERIOR = "v440.3"; // VANGUARD CINEMATIC EXPERIENCE
+// (anterior) export const APP_VERSION_ANTERIOR = "v440.2"; // EL SELLO, TAMBIÉN EN LA PORTADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.1";
 // (anterior) export const APP_VERSION_ANTERIOR = "v439.0"; // LA GRAN ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.3"; // EL MERCADO SE ENCIENDE

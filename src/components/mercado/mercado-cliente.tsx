@@ -39,7 +39,14 @@ import {
   type Puesto,
   type Seccion,
 } from "@/lib/mercado/puestos";
-import { BPM, DURACION_COMPAS, TOTAL_COMPASES, nombreDeGrado, notasDeCompas, partitura } from "@/lib/mercado/musica";
+import { nombreDeGrado } from "@/lib/mercado/musica";
+import {
+  BPM_SUAVE,
+  DURACION_COMPAS_SUAVE,
+  TOTAL_COMPASES_SUAVE,
+  notasDeCompasSuave,
+  partituraSuave,
+} from "@/lib/mercado/musica-suave";
 import { SEGUNDOS_PREGON, pregonDe, pregones } from "@/lib/mercado/pregon";
 import {
   CLAVE_CESTA,
@@ -174,11 +181,11 @@ export function MercadoCliente({ version }: { version?: string }) {
     desbloquearSonido();
     compas.current = 0;
     const paso = () => {
-      suenaNotas("mercado-musica", notasDeCompas(compas.current));
-      compas.current = (compas.current + 1) % TOTAL_COMPASES;
+      suenaNotas("mercado-musica", notasDeCompasSuave(compas.current));
+      compas.current = (compas.current + 1) % TOTAL_COMPASES_SUAVE;
     };
     paso();
-    reloj.current = setInterval(paso, Math.round(DURACION_COMPAS * 1000));
+    reloj.current = setInterval(paso, Math.round(DURACION_COMPAS_SUAVE * 1000));
     return () => {
       if (reloj.current) clearInterval(reloj.current);
       reloj.current = null;
@@ -408,8 +415,8 @@ export function MercadoCliente({ version }: { version?: string }) {
             <span>secciones</span>
           </li>
           <li>
-            <strong>{BPM}</strong>
-            <span>pulsos de la contradanza</span>
+            <strong>{BPM_SUAVE}</strong>
+            <span>pulsos de la música suave</span>
           </li>
         </ul>
       </header>
@@ -483,7 +490,7 @@ export function MercadoCliente({ version }: { version?: string }) {
               <i />
               <i />
             </span>
-            {sonando ? "la música suena" : "poner la música"}
+            {sonando ? "la música suave suena" : "música suave"}
           </button>
 
           <button type="button" className="pm-tecla" aria-pressed={voz} onClick={alternarVoz}>
@@ -497,7 +504,7 @@ export function MercadoCliente({ version }: { version?: string }) {
       </div>
 
       <p className="pm-partitura" aria-hidden>
-        {BPM} ppm · {TOTAL_COMPASES} compases · {partitura()[0]} · vuelta de {TOTAL_COMPASES} compases
+        música suave · {BPM_SUAVE} ppm · {TOTAL_COMPASES_SUAVE} compases · {partituraSuave()[0]} · vuelta de {TOTAL_COMPASES_SUAVE} compases
       </p>
 
       {copiado ? (
