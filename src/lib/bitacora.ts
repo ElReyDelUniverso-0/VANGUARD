@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v442.0",
+    nombre: "LA OSCURIDAD PROFUNDA — la casa se hunde en la sombra y el clima pasa por detrás",
+    tipo: "luxe",
+    hitos: [
+      "EL DUEÑO: «cambia la estética de Vanguard completa por una oscuridad profunda, con sombras detrás de las imágenes; que los módulos de la portada, al tocarlos, aparezcan lentamente como de la oscuridad; y que en el fondo pasen cosas con el tiempo, que se sienta pero no se vea bien: una lluvia, una tormenta, un día soleado y otras cosas aleatorias».",
+      "LA OSCURIDAD: el negro de la casa baja a #020203 y cada página queda envuelta por una viñeta que oscurece los bordes (más suave en el teléfono para no tapar el texto). Las imágenes y vídeos del contenido llevan una sombra honda detrás: flotan sobre la oscuridad. Logos, iconos, banderas y avatares se quedan como estaban.",
+      "EL CLIMA DE FONDO: ocho escenas que se turnan solas cada 70–140 s con un fundido de 6 s — lluvia, tormenta (con relámpagos lejanos y suaves, nunca un parpadeo), día de sol con rayos que se mecen y polvo dorado, niebla que se desliza, nieve, noche estrellada con estrellas fugaces, aurora boreal y brasas que suben. De día manda el sol; de noche, las estrellas. La viñeta toma el tono de la escena (cálido con sol, frío con lluvia).",
+      "SE SIENTE, NO SE MIRA: el lienzo va a media resolución, con opacidad baja y una máscara que deja el centro casi limpio: el clima vive en los bordes y no estorba la lectura. Para ver una escena concreta: ?clima=tormenta (o lluvia, sol, niebla, nieve, estrellas, aurora, brasas).",
+      "LOS MÓDULOS SALEN DE LA OSCURIDAD: las tarjetas de módulo (portada, /modulos y la portada de cada módulo) nacen hundidas en sombra y suben despacio la primera vez que aparecen. Al tocarlas o pasar el ratón emergen: la ilustración recupera su luz, el borde se enciende en oro y una luz sigue al dedo. En el teléfono se enciende sola la tarjeta que cruza el centro de la pantalla.",
+      "CUIDADO DEL APARATO: 30 fotogramas por segundo (20 en aparatos modestos), partículas reutilizadas y pintadas en lote, arranque cuando el navegador está libre, pausa con la pestaña oculta. Nunca durante la entrada; se apaga en el modo ligero y con las animaciones desactivadas; con «reducir movimiento» queda un fotograma quieto. Medido: 60 fps de página con la CPU a ¼ en plena tormenta.",
+    ],
+  },
+  {
     version: "v441.5",
     nombre: "GLOBAL DANGER — el observatorio mundial de riesgos, con la fuente a la vista",
     tipo: "mundo",

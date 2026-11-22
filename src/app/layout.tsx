@@ -44,6 +44,9 @@ import "./operacion.css";
 import "./pantallas.css";
 // v437.2 EL SELLO DE SALIDA — la puerta del módulo y sus ocho destrucciones.
 import "./salida.css";
+// v442.0 LA OSCURIDAD PROFUNDA — la piel nueva: viñeta, sombras tras las imágenes,
+// clima de fondo y módulos que salen de la oscuridad. La última hoja: gana por orden.
+import { OscuridadVanguard } from "@/components/oscuridad/oscuridad-vanguard";
 import { AplicarAnimacion } from "@/components/anim/aplicar-animacion";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
@@ -95,6 +98,7 @@ import { Aurora } from "@/components/vida/aurora";
 import { IntroVanguard } from "@/components/intro/intro-vanguard";
 import { CineVanguard } from "@/components/cine/cine-vanguard";
 import "@/components/intro/intro-vanguard.css";
+import "./oscuridad.css"; // v442.0 — la última hoja de la casa
 import { Orbita } from "@/components/vida/orbita";
 import { Clasificacion } from "@/components/operacion/clasificacion";
 import { PanelAjustes } from "@/components/config/panel-ajustes";
@@ -350,6 +354,11 @@ document.documentElement.setAttribute('data-vg-anim',n);}catch(e){document.docum
           <div className="casa-aire-horizonte" />
           <div className="casa-aire-polvo" />
         </div>
+        {/* v442.0 LA OSCURIDAD PROFUNDA — la viñeta y el clima de fondo (lluvia,
+            tormenta, sol, niebla, nieve, estrellas, aurora, brasas) que se
+            turnan al azar, tenues, sin eventos de puntero; nunca durante la
+            entrada. Y los módulos que salen de la oscuridad al tocarlos. */}
+        <OscuridadVanguard />
         {/* ════════════════════════════════════════════════════════════
             v155.0 LA CORTINA DE ARRANQUE — la ley contra la pantalla muerta.
             El Dueño (móvil) pasó 3 días viendo NADA: el servidor dev moría

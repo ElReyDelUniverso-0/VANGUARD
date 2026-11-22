@@ -7522,8 +7522,15 @@
 //   94 fotos de Wikimedia Commons con autor y licencia. No enseña a colarse.
 // (anterior) export const APP_VERSION = "v440.5";
 // (anterior) export const APP_CODENAME = "GLOBAL DANGER";
-export const APP_VERSION = "v441.5";
-export const APP_CODENAME = "GLOBAL DANGER, PULIDO";
+// v442.0 · LA OSCURIDAD PROFUNDA — la piel nueva de toda la casa
+//   Negro más hondo y viñeta en cada página; sombras detrás de las imágenes;
+//   un clima de fondo que se turna al azar (lluvia, tormenta, sol, niebla,
+//   nieve, estrellas, aurora, brasas), tenue y con máscara, nunca en la
+//   entrada; y los módulos que salen de la oscuridad al tocarlos.
+// (anterior) export const APP_VERSION = "v441.5";
+// (anterior) export const APP_CODENAME = "GLOBAL DANGER, PULIDO";
+export const APP_VERSION = "v442.0";
+export const APP_CODENAME = "LA OSCURIDAD PROFUNDA";
 // (anterior) export const APP_VERSION = "v439.3";
 // (anterior) export const APP_CODENAME = "LA FERIA DE LOS AGENTES";
 // (anterior) export const APP_VERSION = "v439.2";
@@ -7601,7 +7608,8 @@ export const APP_CODENAME = "GLOBAL DANGER, PULIDO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v441.4"; // la franja de portada dice cómo se actualiza
+export const APP_VERSION_ANTERIOR = "v441.5"; // GLOBAL DANGER, pulido
+// (anterior) export const APP_VERSION_ANTERIOR = "v441.4"; // la franja de portada dice cómo se actualiza
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.5"; // GLOBAL DANGER
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.4"; // EL ESCAPARATE DEL MERCADO
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.2"; // EL SELLO, TAMBIÉN EN LA PORTADA
