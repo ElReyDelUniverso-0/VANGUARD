@@ -146,6 +146,10 @@ export function divisionDe(ruta: string): string | null {
 export const NAV_PRIMARIO = [
   { href: "/orden", label: "Orden" },
   { href: "/buscar", label: "Buscar" },
+  // v438.3 · la puerta del mercado (una sola: las diez familias viven dentro).
+  // Se perdió en una de las podas de la cabecera; vuelve porque es la única
+  // entrada visible a /mercado desde el escritorio.
+  { href: "/mercado", label: "Mercado" },
   { href: "/guerra-hoy", label: "Redacción" },
   { href: "/mundos", label: "Mundo" },
   { href: "/conocimiento", label: "Saber" },

@@ -1,4 +1,4 @@
-# EL MERCADO DE VANGUARD · v437.2 → v438.1 LA PLAZA VIVA
+# EL MERCADO DE VANGUARD · v437.2 → v438.1 → v438.3 «EL MERCADO SE ENCIENDE»
 
 > Orden del Dueño, textual: *«veo las 10 familias de Vanguard, ocupan mucho
 > espacio, la verdad. Haz que la presentación sea un módulo aparte donde se llame
@@ -210,3 +210,72 @@ secciones de cada puesto y que su enlace sea el de su puesto · que la ronda ten
 reloj y se pueda parar · que el mercader use **su** persona y que cerrar corte la
 voz · que la cesta no acepte rutas inventadas, no duplique, respete el tope y
 sobreviva a un JSON roto · que el enlace directo abra el puesto sin recargar.
+
+---
+
+## 9 · v438.3 · EL MERCADO SE ENCIENDE — lo que se ve
+
+Palabras del Dueño: **«no he visto nada de los que agregaste, mejóralo tanto y
+púlelo más que diga wow»**. Tenía razón, y la culpa era de esta casa: lo añadido
+en v437.2 y v438.1 era **bueno pero pequeño** —una cinta fina, cuatro teclas
+grises, una cesta escondida—. Esta tanda cambia lo que **se ve al abrir la
+página**, sin quitar nada de lo anterior.
+
+### 9.1 · El arco
+
+Un arco de mercado en la entrada: **cuerdas de farolillos que se mecen**, los
+**diez banderines** de las familias colgando de una cuerda y el **rótulo de
+madera**. Con reducción de movimiento o la perilla en `quieto`, el arco se
+queda quieto y sigue entero.
+
+### 9.2 · El pregón, en grande
+
+La cinta fina pasa a **marquesina de cartel**: letras de 17 px, cada nombre en el
+color de su familia, desfilando sin cortes (dos vueltas idénticas para que el
+bucle no se note). Se para al pasar el ratón, con su botón y con la casa en
+movimiento quieto.
+
+### 9.3 · La barra grande
+
+Buscar y **las cuatro acciones de verdad** en una barra pegajosa: **dar una
+vuelta** (dorada, la principal), **poner la música**, **que hablen** y **tu
+cesta**. Arriba, cuatro cifras vivas: 10 puestos · 10 mercaderes · 47 secciones ·
+100 pulsos.
+
+### 9.4 · Los puestos tienen vida
+
+El toldo se inclina al pasar el ratón, el mercader saluda, **el farolillo se
+enciende** al abrir el puesto, la etiqueta de cartón se mueve y cuelga una
+guirnalda de frutos del color de la familia. Las filas van **alternas, como un
+zoco**. Al abrir: el **mostrador sube** y las secciones **caen en cascada**, con
+el foco de luz del color del puesto.
+
+### 9.5 · Papelitos
+
+Al pedir **dar una vuelta**, caen dieciocho papelitos de colores —una sola vez—.
+La capa va con `pointer-events: none`: **no tapa ni un botón**.
+
+### 9.6 · La franja de la portada
+
+También se ve desde fuera: **toldo de rayas de los diez colores**, el **pregón
+del día escrito en grande** y la entrada más grande.
+
+### 9.7 · Y la puerta
+
+«Mercado» vuelve a la cabecera (se había perdido en una poda de otra tanda), y el
+pie de la plaza dice **qué versión estás viendo** — para que no vuelva a haber
+dudas de si lo nuevo está o no está.
+
+### 9.8 · Comprobado
+
+```bash
+npx tsx tools/mercado/probar.mts          # 186 comprobaciones, 0 fallos
+npx tsx tools/interfaz/probar.mts         #  80 comprobaciones, 0 fallos
+npx tsx tools/descubrimiento/probar.mts   #  47 comprobaciones, 0 fallos
+```
+
+La prueba nueva vigila: que el arco, la marquesina, la barra y los papelitos
+existan en el código y en la piel · que la marquesina desfile de verdad
+(`@keyframes pm-desfila`) y se pare al pasar el ratón · que el toldo, el farolillo
+y el mercader respondan · que los papelitos no tapen nada · que la quietud apague
+**todo** lo que se mueve · que la franja de la portada tenga toldo y pregón.

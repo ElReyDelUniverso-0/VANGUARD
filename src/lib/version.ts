@@ -7218,8 +7218,35 @@
 // v438.2 · EL SELLO DE SALIDA — la puerta que le faltaba a cada módulo.
 // (anterior) export const APP_VERSION = "v437.2";
 // (anterior) export const APP_CODENAME = "EL MERCADO DE VANGUARD";
-export const APP_VERSION = "v438.2";
-export const APP_CODENAME = "EL SELLO DE SALIDA";
+// v438.3 · EL MERCADO SE ENCIENDE — que al entrar se diga «wow»
+// El Dueño, textual: «no he visto nada de los que agregaste, mejóralo tanto y
+// púlelo más que diga wow». Lo añadido en v437.2/v438.1 era bueno pero pequeño;
+// ahora cambia lo que se VE, no solo lo que funciona.
+// ① EL ARCO DE ENTRADA: cuerdas de farolillos que se mecen y los diez
+//    banderines de las familias colgando, con el rótulo de madera. Se entra al
+//    mercado, no a una rejilla de tarjetas.
+// ② EL PREGÓN EN GRANDE: la cinta fina pasa a marquesina de cartel que desfila
+//    con letras de 17 px y cada nombre en el color de su familia. Se para al
+//    pasar el ratón, con su botón y con la casa en movimiento quieto.
+// ③ LA BARRA GRANDE: buscar y las cuatro acciones de verdad —«dar una vuelta»
+//    (dorada, la principal), «poner la música», «que hablen» y la cesta—, en
+//    una barra pegajosa que se ve sin buscarla. Cuatro cifras vivas en la
+//    cabecera (10 · 10 · 47 · 100).
+// ④ LOS PUESTOS TIENEN VIDA: el toldo se inclina al pasar el ratón, el mercader
+//    saluda, el farolillo se enciende, la etiqueta de cartón se mueve y cuelga
+//    una guirnalda de frutos del color de cada familia. Las filas van alternas,
+//    como un zoco. Al abrir un puesto, el mostrador sube y las secciones caen en
+//    cascada, con el foco de luz de su color.
+// ⑤ PAPELITOS: al pedir la vuelta, caen dieciocho papelitos de colores una sola
+//    vez (capa con pointer-events:none: no tapa ni un botón).
+// ⑥ LA FRANJA DE LA PORTADA también se ve: toldo de rayas de los diez colores,
+//    el pregón del día escrito en grande y la entrada más grande.
+// ⑦ LA PUERTA DEL MENÚ VUELVE: «Mercado» en la cabecera (se perdió en una poda
+//    de otra tanda) y el pie de la plaza dice qué versión estás viendo.
+// Quietud respetada de punta a punta: sin movimiento no hay mecido, ni desfile,
+// ni papelitos, ni cascada, y el mercado sigue entero. 186 comprobaciones.
+export const APP_VERSION = "v438.3";
+export const APP_CODENAME = "EL MERCADO SE ENCIENDE";
 // (anterior) export const APP_VERSION = "v431.5";
 // (anterior) export const APP_CODENAME = "EL CUADERNO";
 // (anterior) export const APP_CODENAME = "UNA CASA, UNA VOZ";
@@ -7291,7 +7318,8 @@ export const APP_CODENAME = "EL SELLO DE SALIDA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v438.1"; // LA PLAZA VIVA
+export const APP_VERSION_ANTERIOR = "v438.2";
+// (anterior) export const APP_VERSION_ANTERIOR = "v438.1"; // LA PLAZA VIVA // LA PLAZA VIVA
 // (anterior) export const APP_VERSION_ANTERIOR = "v438.0"; // LA ENTRADA
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.2"; // EL MERCADO DE VANGUARD
 // (anterior) export const APP_VERSION_ANTERIOR = "v437.1"; // EL ESTUDIO EN TU IDIOMA

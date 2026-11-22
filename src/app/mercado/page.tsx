@@ -20,6 +20,7 @@ import { MercadoCliente } from "@/components/mercado/mercado-cliente";
 import { PUESTOS, cifrasMercado, puestoDelDia } from "@/lib/mercado/puestos";
 import { DURACION_VUELTA, BPM } from "@/lib/mercado/musica";
 import { pregonDelDia } from "@/lib/mercado/pregon";
+import { APP_VERSION_LABEL } from "@/lib/version";
 
 export const metadata: Metadata = {
   title: "El mercado de Vanguard · las diez familias, puesto a puesto",
@@ -51,7 +52,7 @@ export default function MercadoPage() {
         nota="Cada sección es una ruta que existe: la prueba del mercado recorre las rutas y comprueba una a una que están en src/app."
       />
 
-      <MercadoCliente />
+      <MercadoCliente version={APP_VERSION_LABEL} />
 
       <footer className="pm-pie">
         <span>

@@ -1,25 +1,31 @@
 "use client";
 
 // ═══════════════════════════════════════════════════════════════════
-// v438.1 · LA PLAZA VIVA — se pasea, se pregunta, se escucha y se apunta
+// v438.3 · EL MERCADO SE ENCIENDE — que al entrar se diga «wow»
 //
-// Lo que el Dueño pidió en v437.2 (interactivo, música pegadiza, cada módulo
-// con sus secciones) ya estaba. Esta tanda lo pone a vivir:
-//   ① EL PREGÓN: una cinta en la entrada que va soltando, puesto por puesto, lo
-//      que hay dentro — compuesta con los datos reales, nunca inventada.
-//   ② LA RONDA: «dar una vuelta» abre los diez puestos en orden, uno cada 4,5 s.
-//      Se para con su botón, con Escape o tocando cualquier puesto: no secuestra.
-//   ③ LA VOZ: si la enciendes, cada mercader DICE su saludo con la boca de la
-//      casa (lib/voz/decir) en su persona. Con el sonido apagado, no habla.
-//   ④ LA CESTA: apuntas las secciones que quieres volver a ver; viven en tu
-//      aparato (vg:mercado:v1) y se borran con un botón.
-//   ⑤ ENLACE DIRECTO: /mercado#puesto-geografia abre ese puesto (y se puede
-//      copiar el enlace para mandarlo).
+// El Dueño, textual: «no he visto nada de los que agregaste, mejóralo tanto y
+// púlelo más que diga wow». Y tenía razón: v437.2 y v438.1 añadieron cosas
+// buenas pero PEQUEÑAS —una cinta fina, cuatro teclas grises— y lo que se veía
+// seguía siendo una rejilla de tarjetas. Esta tanda cambia lo que se ve:
 //
-// LA LEY DEL SONIDO, intacta: nada suena antes de un toque, se calla con el
-// sonido apagado, con el modo calma, en pestaña oculta y al cerrar el puesto.
-// Con movimiento quieto no hay ronda ni pregón girando: la plaza se queda
-// quieta y sigue entera.
+//   ① EL ARCO DE ENTRADA: cuerdas de farolillos que se mecen y los diez
+//      banderines de las familias colgando. Se entra al mercado, no a una lista.
+//   ② EL PREGÓN, EN GRANDE: una marquesina que desfila con letras de cartel,
+//      cada nombre en el color de su familia. Se para sola al pasar el ratón,
+//      con su botón, y con la casa en movimiento quieto.
+//   ③ LAS CUATRO TECLAS DE VERDAD: «dar una vuelta», «poner la música», «que
+//      hablen» y la cesta, en una barra pegajosa grande (dorada la principal).
+//   ④ LOS PUESTOS TIENEN VIDA: el toldo se inclina al pasar el ratón, el
+//      mercader saluda, el farolillo se enciende y la etiqueta de cartón se
+//      mueve. Al abrir uno, el resto de la plaza se retira y el puesto se lleva
+//      un foco de luz de su color: el mostrador sube y las secciones caen en
+//      cascada.
+//   ⑤ PAPELITOS: al pedir la vuelta, la plaza tira papelitos de colores (una
+//      sola vez, y nada si la casa está en quietud).
+//
+// Todo respeta lo de siempre: nada suena antes de un toque, con movimiento
+// quieto no hay mecido ni desfile ni papelitos, y ninguna capa nueva tapa lo
+// que se puede pulsar (el arco, el pregón y la barra van en flujo normal).
 // ═══════════════════════════════════════════════════════════════════
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
@@ -85,9 +91,17 @@ function Tarjeta({
         onClick={onAbrir}
       >
         <span className="pm-toldo" aria-hidden />
+        <span className="pm-garlanda" aria-hidden>
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+        </span>
         <span className="pm-num">{p.numero}</span>
         <span className="pm-etiqueta">{p.secciones.length} secc.</span>
         <span className="pm-lona">
+          <span className="pm-farol" aria-hidden />
           <Personaje nombre={p.personaje.nombre} pieza={p.personaje.pieza} color={p.color} semilla={Number(p.numero)} />
         </span>
         <span className="pm-letrero">
@@ -106,7 +120,7 @@ function Tarjeta({
   );
 }
 
-export function MercadoCliente() {
+export function MercadoCliente({ version }: { version?: string }) {
   const [abierto, setAbierto] = useState<string | null>(null);
   const [consulta, setConsulta] = useState("");
   const [sonando, setSonando] = useState(false);
@@ -138,7 +152,7 @@ export function MercadoCliente() {
     }
   }, []);
 
-  // ① el arranque: el día, la cesta guardada y el enlace directo (#puesto-x)
+  // el arranque: el día, la cesta guardada y el enlace directo (#puesto-x)
   useEffect(() => {
     setMontado(true);
     setDelDia(puestoDelDia().id);
@@ -171,14 +185,14 @@ export function MercadoCliente() {
     };
   }, [sonando]);
 
-  // ② el pregón: pasa de puesto en puesto (y se queda quieto si la casa está quieta)
+  // el pregón: pasa de puesto en puesto (y se queda quieto si la casa está quieta)
   useEffect(() => {
     if (pregonPausa || quieto) return;
     const t = setInterval(() => setPregon((i) => i + 1), SEGUNDOS_PREGON * 1000);
     return () => clearInterval(t);
   }, [pregonPausa, quieto]);
 
-  // ③ la ronda: abre los puestos en orden, con su voz, y se para sola al final
+  // la ronda: abre los puestos en orden, con su voz, y se para sola al final
   useEffect(() => {
     if (ronda === null) return;
     const t = setInterval(() => {
@@ -226,7 +240,7 @@ export function MercadoCliente() {
     };
   }, []);
 
-  // ④ el mercader habla al abrir su puesto (solo si la voz está encendida)
+  // el mercader habla al abrir su puesto (solo si la voz está encendida)
   useEffect(() => {
     if (!puesto || !voz || !sonidoVivo()) return;
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -236,7 +250,7 @@ export function MercadoCliente() {
     return () => pararBoca();
   }, [puesto, voz, sonidoVivo]);
 
-  // ⑤ el enlace del puesto, en la barra del navegador (sin recargar)
+  // el enlace del puesto, en la barra del navegador (sin recargar)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const limpia = window.location.pathname + window.location.search;
@@ -292,6 +306,19 @@ export function MercadoCliente() {
     suena("puesto-abrir");
   };
 
+  const alternarMusica = () => {
+    const encender = !sonando;
+    setSonando(encender);
+    suena(encender ? "mercado-musica" : "puesto-cerrar");
+  };
+
+  const alternarVoz = () => {
+    const encender = !voz;
+    setVoz(encender);
+    if (!encender) pararBoca();
+    suena(encender ? "permiso-voz" : "puesto-cerrar");
+  };
+
   const guardar = (seccion: Seccion) => {
     const siguiente = alternarCesta(cesta, seccion.href);
     setCesta(siguiente);
@@ -329,30 +356,80 @@ export function MercadoCliente() {
   const lista = hallazgos ?? PUESTOS.map((p) => ({ puesto: p, secciones: p.secciones }));
   const enRonda = ronda !== null;
   const elPregon = pregonDe(pregon);
+  const indicePregon = ((pregon % cinta.length) + cinta.length) % cinta.length;
 
   return (
-    <div className="pm-pagina" id="plaza">
+    <div className={`pm-pagina${abierto ? " pm-foco" : ""}`} id="plaza">
+      {/* ① el arco: farolillos y los diez banderines de las familias */}
+      <div className="pm-arco" aria-hidden>
+        <span className="pm-arco-cuerda" />
+        <span className="pm-arco-luces">
+          {Array.from({ length: 14 }, (_, i) => (
+            <i key={i} style={{ ["--i" as string]: i } as CSSProperties} />
+          ))}
+        </span>
+        <span className="pm-arco-banderines">
+          {PUESTOS.map((p) => (
+            <i key={p.id} style={{ ["--pm-color" as string]: p.color } as CSSProperties} />
+          ))}
+        </span>
+        <span className="pm-arco-rotulo">mercado</span>
+      </div>
+
       <header className="pm-cabecera">
-        <p className="pm-volanta">
-          {cifras.puestos} puestos · {cifras.mercaderes} mercaderes · {cifras.secciones} secciones
-        </p>
-        <h2 className="pm-titulo">La plaza, abierta</h2>
+        <p className="pm-volanta">puesto a puesto · familia a familia</p>
+        <h2 className="pm-titulo">El mercado de Vanguard</h2>
         <p className="pm-sub">
-          Cada familia tiene aquí su puesto y su mercader. Abre uno y te enseña lo que vende: su
-          puerta y todas sus secciones, con su ruta a la vista. La música es de la casa, corta y
-          tarareable; si molesta, se calla.
+          Diez puestos, diez mercaderes y todas las secciones de cada familia. Abre un puesto y su
+          mercader te enseña lo que vende. Todo lo que se oye aquí es de la casa y se puede callar.
         </p>
+
+        <ul className="pm-vivo" aria-label="La plaza en cifras">
+          <li>
+            <strong>{cifras.puestos}</strong>
+            <span>puestos</span>
+          </li>
+          <li>
+            <strong>{cifras.mercaderes}</strong>
+            <span>mercaderes</span>
+          </li>
+          <li>
+            <strong>{cifras.secciones}</strong>
+            <span>secciones</span>
+          </li>
+          <li>
+            <strong>{BPM}</strong>
+            <span>pulsos de la contradanza</span>
+          </li>
+        </ul>
       </header>
 
-      {/* ② el pregón: lo que va cantando la plaza */}
-      <div className="pm-pregon" aria-live="off">
+      {/* ② el pregón, en grande */}
+      <div className={`pm-pregon${pregonPausa || quieto ? " pm-pregon-quieta" : ""}`} aria-live="off">
         <span className="pm-pregon-sello">pregón</span>
-        <Link href={elPregon.href} className="pm-pregon-txt" onClick={() => suena("moneda")}>
-          {elPregon.texto}
-        </Link>
+        <div className="pm-pregon-pista">
+          <div className="pm-pregon-cinta">
+            {[0, 1].map((vuelta) => (
+              <span key={vuelta} className="pm-pregon-vuelta" aria-hidden={vuelta === 1 || undefined}>
+                {cinta.map((x) => (
+                  <Link
+                    key={`${vuelta}-${x.puesto.id}`}
+                    href={x.href}
+                    className="pm-pregon-item"
+                    onClick={() => suena("moneda")}
+                    tabIndex={vuelta === 1 ? -1 : undefined}
+                  >
+                    <b style={{ color: x.puesto.color }}>¡{x.puesto.nombre}!</b> {x.puesto.personaje.nombre},{" "}
+                    {x.puesto.personaje.oficio} — {x.puesto.secciones.length} secciones
+                  </Link>
+                ))}
+              </span>
+            ))}
+          </div>
+        </div>
         <span className="pm-pregon-puntos" aria-hidden>
           {cinta.map((x, i) => (
-            <i key={x.puesto.id} className={i === ((pregon % cinta.length) + cinta.length) % cinta.length ? "pm-on" : undefined} />
+            <i key={x.puesto.id} className={i === indicePregon ? "pm-on" : undefined} />
           ))}
         </span>
         <button
@@ -361,13 +438,14 @@ export function MercadoCliente() {
           aria-pressed={pregonPausa || quieto}
           onClick={() => setPregonPausa((v) => !v)}
           disabled={quieto}
-          title={quieto ? "la casa está en movimiento quieto: el pregón no gira" : undefined}
+          title={quieto ? "la casa está en movimiento quieto: el pregón no desfila" : undefined}
         >
-          {pregonPausa || quieto ? "pregón parado" : "parar el pregón"}
+          {pregonPausa || quieto ? "parado" : "parar"}
         </button>
       </div>
 
-      <div className="pm-barra">
+      {/* ③ la barra: buscar y las cuatro teclas grandes */}
+      <div className="pm-dock">
         <label className="pm-buscador">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -383,50 +461,34 @@ export function MercadoCliente() {
           />
         </label>
 
-        <button
-          type="button"
-          className="pm-musica"
-          aria-pressed={sonando}
-          onClick={() => {
-            const encender = !sonando;
-            setSonando(encender);
-            suena(encender ? "mercado-musica" : "puesto-cerrar");
-          }}
-        >
-          <span className="pm-ecualizador" aria-hidden>
-            <i />
-            <i />
-            <i />
-          </span>
-          {sonando ? "la música suena" : "poner la música"}
-        </button>
+        <div className="pm-dock-teclas">
+          <button type="button" className="pm-cta" aria-pressed={enRonda} onClick={darUnaVuelta}>
+            <span aria-hidden>↻</span>
+            {enRonda ? `ronda ${(ronda ?? 0) + 1}/${PUESTOS.length} · parar` : "dar una vuelta"}
+          </button>
 
-        <button
-          type="button"
-          className="pm-tecla"
-          aria-pressed={voz}
-          onClick={() => {
-            const encender = !voz;
-            setVoz(encender);
-            if (!encender) pararBoca();
-            suena(encender ? "permiso-voz" : "puesto-cerrar");
-          }}
-        >
-          {voz ? "los mercaderes hablan" : "que hablen"}
-        </button>
+          <button type="button" className="pm-cta pm-cta-2" aria-pressed={sonando} onClick={alternarMusica}>
+            <span className="pm-ecualizador" aria-hidden>
+              <i />
+              <i />
+              <i />
+            </span>
+            {sonando ? "la música suena" : "poner la música"}
+          </button>
 
-        <button type="button" className="pm-tecla" aria-pressed={enRonda} onClick={darUnaVuelta}>
-          {enRonda ? `ronda ${(ronda ?? 0) + 1}/${PUESTOS.length} · parar` : "dar una vuelta"}
-        </button>
+          <button type="button" className="pm-tecla" aria-pressed={voz} onClick={alternarVoz}>
+            {voz ? "los mercaderes hablan" : "que hablen"}
+          </button>
 
-        <button type="button" className="pm-tecla pm-cesta-tecla" aria-expanded={verCesta} onClick={() => setVerCesta((v) => !v)}>
-          tu cesta · {contarCesta(cesta)}
-        </button>
-
-        <span className="pm-partitura" aria-hidden>
-          {BPM} ppm · {TOTAL_COMPASES} compases · {partitura()[0]}
-        </span>
+          <button type="button" className="pm-tecla pm-cesta-tecla" aria-expanded={verCesta} onClick={() => setVerCesta((v) => !v)}>
+            tu cesta · {contarCesta(cesta)}
+          </button>
+        </div>
       </div>
+
+      <p className="pm-partitura" aria-hidden>
+        {BPM} ppm · {TOTAL_COMPASES} compases · {partitura()[0]} · vuelta de {TOTAL_COMPASES} compases
+      </p>
 
       {copiado ? (
         <p className="pm-aviso" role="status">
@@ -441,7 +503,7 @@ export function MercadoCliente() {
           /academia…).
         </p>
       ) : (
-        <ul className={`pm-plaza${abierto ? " pm-con-abierto" : ""}`}>
+        <ul className={`pm-plaza${abierto ? " pm-con-abierto" : ""}${hallazgos ? " pm-buscando" : ""}`}>
           {lista.map(({ puesto: p, secciones }) => (
             <Tarjeta
               key={p.id}
@@ -455,6 +517,22 @@ export function MercadoCliente() {
           ))}
         </ul>
       )}
+
+      {enRonda ? (
+        <div className="pm-papelitos" aria-hidden>
+          {Array.from({ length: 18 }, (_, i) => (
+            <i
+              key={i}
+              style={
+                {
+                  ["--i" as string]: i,
+                  ["--c" as string]: PUESTOS[i % PUESTOS.length].color,
+                } as CSSProperties
+              }
+            />
+          ))}
+        </div>
+      ) : null}
 
       {verCesta ? (
         <section className="pm-cesta" aria-label="Tu cesta del mercado">
@@ -560,8 +638,12 @@ export function MercadoCliente() {
 
             <p className="pm-titulo-lista">Lo que vende este puesto</p>
             <ul className="pm-secciones">
-              {puesto.secciones.map((s) => (
-                <li key={s.href} className="pm-seccion">
+              {puesto.secciones.map((s, i) => (
+                <li
+                  key={s.href}
+                  className="pm-seccion pm-cae"
+                  style={{ ["--i" as string]: i } as CSSProperties}
+                >
                   <span className="pm-seccion-txt">
                     <Link href={s.href} onClick={() => suena("moneda")}>
                       {s.nombre}
@@ -596,9 +678,9 @@ export function MercadoCliente() {
             </ul>
           </section>
         ) : (
-          <p className="pm-vacio">
-            Elige un puesto y el mercader te atiende. Son diez: uno por familia, con su color y su
-            toldo. O pide «dar una vuelta» y la plaza te los enseña en orden.
+          <p className="pm-vacio pm-vacio-grande">
+            Toca un toldo y el mercader te atiende. O pulsa <strong>dar una vuelta</strong> y la
+            plaza te enseña los diez puestos en orden, uno por uno.
           </p>
         )}
       </div>
@@ -608,6 +690,7 @@ export function MercadoCliente() {
           {cifras.secciones} secciones en {cifras.puestos} puestos · todas las rutas de esta plaza
           existen en la casa y se comprueban en cada tanda.
         </span>
+        <span className="pm-pie-version">{version ? `mercado · ${version}` : null}</span>
         <Link href="/orden">ver el índice completo →</Link>
       </footer>
     </div>

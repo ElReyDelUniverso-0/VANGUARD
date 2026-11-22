@@ -430,6 +430,37 @@ comprueba(
 comprueba(new Set(PUESTOS.map((p) => p.personaje.voz)).size >= 3, "no hablan los diez igual");
 comprueba(new Set(PUESTOS.map((p) => p.personaje.voz)).size <= 4, "y no se inventan personas que la casa no tiene");
 
+
+console.log("\n── ⑫ que diga «wow»: arco, marquesina, barra grande y vida ────\n");
+
+const cssWow = lee("src/components/mercado/mercado.css");
+for (const marca of ["pm-arco", "pm-arco-luces", "pm-arco-banderines", "pm-pregon-cinta", "pm-dock", "pm-cta", "pm-farol", "pm-garlanda", "pm-papelitos", "pm-cae", "pm-foco"]) {
+  comprueba(cliente.includes(marca) || cssWow.includes(`.${marca}`), `la plaza tiene ${marca}`);
+}
+comprueba(cliente.includes("pm-arco-banderines") && cliente.includes("PUESTOS.map"), "los diez banderines salen de los diez puestos");
+comprueba((cliente.match(/pm-arco-luces[\s\S]{0,120}Array\.from/g) ?? []).length > 0, "la cuerda de farolillos se genera sola");
+comprueba(cliente.includes("pm-pregon-vuelta") && cliente.includes("vuelta === 1"), "la marquesina se repite dos veces para no cortarse");
+comprueba(cssWow.includes("@keyframes pm-desfila"), "la marquesina desfila de verdad (keyframes)");
+comprueba(cssWow.includes("pm-pregon-pista:hover .pm-pregon-cinta"), "el pregón se para al pasar el ratón");
+comprueba(cssWow.includes("@keyframes pm-mecen") && cssWow.includes("@keyframes pm-bandera"), "farolillos y banderines se mecen");
+comprueba(cssWow.includes("@keyframes pm-papel") && cssWow.includes("@keyframes pm-sube"), "los papelitos caen y el mostrador sube");
+comprueba(cssWow.includes(".pm-puesto:hover .pm-toldo"), "el toldo responde al ratón");
+comprueba(cssWow.includes('[aria-expanded="true"] .pm-farol'), "el farolillo se enciende con el puesto abierto");
+comprueba(cssWow.includes(".pm-puesto:hover .pm-personaje"), "el mercader saluda al pasar el ratón");
+comprueba(cssWow.includes(".pm-plaza > li:nth-child(3n + 2)"), "la plaza tiene filas alternas de zoco");
+comprueba(cliente.includes("pm-papelitos") && cssWow.includes("pointer-events: none"), "los papelitos no tapan lo pulsable");
+comprueba(cliente.includes("enRonda ? (") || /enRonda\s*\?\s*\(/.test(cliente), "los papelitos solo salen con la vuelta");
+comprueba(cssWow.includes('html[data-vg-mov="quieto"] .pm-arco-luces'), "con movimiento quieto el arco se queda quieto");
+comprueba(
+  /prefers-reduced-motion[\s\S]{0,400}pm-arco-banderines/.test(cssWow),
+  "y con reducir movimiento también",
+);
+const portadaWow = lee("src/components/mercado/mercado-portada.tsx");
+comprueba(portadaWow.includes("mp-toldo-grande") && cssWow.includes(".mp-toldo-grande"), "la franja de la portada lleva toldo de rayas");
+comprueba(portadaWow.includes("pregonDelDia"), "la franja enseña el pregón del día");
+comprueba(portadaWow.includes("/mercado#puesto-"), "y cada toldo abre su puesto");
+comprueba(lee("src/app/mercado/page.tsx").includes("MercadoCliente version"), "la plaza dice en el pie qué versión estás viendo");
+
 console.log(`\nRESULTADO: ${ok} comprobaciones, ${mal} fallos\n`);
 if (mal > 0) {
   console.log("FALLOS:");
