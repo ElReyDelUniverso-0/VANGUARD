@@ -21,7 +21,7 @@
 //   · nada se adelanta: ni víctimas, ni hectáreas, ni «emergencia» que la
 //     autoridad no haya declarado.
 //
-// Se regenera cada hora (ISR de 1 h, guardado en la caché de la casa). Sin JavaScript en el cliente: el mapa
+// Se genera al publicar la casa y viaja como estático. Sin JavaScript en el cliente: el mapa
 // y las tablas llegan pintados.
 // ═══════════════════════════════════════════════════════════════════
 
@@ -49,15 +49,15 @@ import {
 import type { PuntoMapa } from "@/lib/peligro/tipos";
 import { APP_VERSION_LABEL } from "@/lib/version";
 
-// v442.1 · CADA HORA, MEDIDO CON EL RELOJ: la casa vive en Cloudflare Workers
-// (plan gratis, 10 ms de CPU por petición) y este parte pesa 1 MB con 320 puntos
-// proyectados. Con `revalidate = 900` el render caía cada cuarto de hora y en la
-// primera medida se llevaba por delante una de cada tres peticiones (503). La
-// caché escribible de la casa (d78532e) ya guarda lo regenerado, así que el
-// render se paga una vez y se sirve hecho; aun así el parte baja a una hora:
-// las fuentes que lo alimentan —GDACS, EONET, USGS, OMS— no cambian más rápido
-// que eso, y decirlo es mejor que prometer minutos que nadie mira.
-export const revalidate = 3600; // 1 hora
+// v442.3 · ESTÁTICO, QUE ES COMO SIEMPRE CARGA: la casa vive en Cloudflare
+// Workers con el plan gratuito y su techo de 10 ms de CPU por petición. Con ISR
+// —aunque fuera de una hora— cada visita a un parte caducado obligaba al Worker a
+// volver a dibujar 1 MB con 320 puntos proyectados: en la prueba pública, 3 de
+// cada 30 peticiones se caían con 503 y una de cada dos con la caché fría.
+// Este parte no necesita servidor: se genera al publicar la casa (varias veces al
+// día) y viaja como archivo estático, gratis e instantáneo. Cada cifra lleva su
+// fecha y su hora de lectura, así que nada se disfraza de recién hecho.
+export const dynamic = "force-static";
 
 export const metadata: Metadata = {
   title: "Global Danger · el observatorio mundial de riesgos de Vanguard",
@@ -118,7 +118,7 @@ function EstadoFuentes({
         </span>
         <span className="gd-estado-hora">lectura {fecha(cuando)} UTC</span>
         <span className="gd-estado-nota">
-          se regenera cada hora · si una fuente no contesta se muestra su última lectura conocida, con
+          se genera al publicar la casa · cada fuente lleva su hora de lectura y, si no contesta, se dice,
           fecha
         </span>
       </div>
@@ -222,7 +222,7 @@ export default async function GlobalDangerPage() {
           },
           { valor: `${senales.length}`, etiqueta: "señales vivas", nota: "seis familias" },
           { valor: `${FUENTES.length}`, etiqueta: "fuentes oficiales", nota: "con su licencia" },
-          { valor: "1 h", etiqueta: "se regenera", nota: "un render por hora, guardado" },
+          { valor: "0 ms", etiqueta: "de servidor", nota: "viaja hecho: siempre carga" },
         ]}
         acento="#ff4d6d"
         nota="Cada nivel 0–5 que se muestra sale de una escala publicada por el organismo (OMS, FAO, GDACS). Donde no hay escala, la señal lo dice y no se puntúa."
@@ -569,9 +569,10 @@ export default async function GlobalDangerPage() {
             <h3 className="gd-h3">Cómo se actualiza</h3>
             <ul className="gd-lista">
               <li>
-                La página se regenera sola <b>cada hora</b> (ISR de Next.js sobre la caché de la casa): no hay botón
-                de «refrescar» ni se martillea a ninguna API. Las fuentes que la alimentan —GDACS, EONET, USGS, OMS—
-                no cambian más rápido que eso. Y cada cifra lleva su fecha: se ve de cuándo es lo que se lee.
+                Este parte <b>se genera al publicar la casa</b> y viaja ya hecho, como archivo estático: carga siempre,
+                incluso cuando el servidor está apretado, y no hay botón de «refrescar». No se martillea a ninguna
+                API. Y como cada cifra lleva su fecha y la franja de estado la hora exacta de la lectura, se ve sin
+                trampa de cuándo es lo que se está leyendo.
               </li>
               <li>
                 Cada fuente tiene <b>9 segundos</b> para contestar. Si no lo hace, se usa su{" "}

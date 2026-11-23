@@ -4,7 +4,9 @@
 //
 // Reglas:
 //   · 9 s de espera como mucho por fuente; si se pasa, se usa la instantánea;
-//   · `revalidate: 900` (15 min): la casa no martillea a nadie;
+//   · se lee UNA vez, al generar el parte: `revalidate: false` (caché
+//     permanente). La página es estática; volver a leer cada 15 min obligaba al
+//     Worker a rehacer 1 MB y se caía una de cada diez visitas;
 //   · ninguna función lanza: siempre devuelve `Lectura<T>` con `de: "vivo"` o
 //     `de: "instantanea"` y, si falló, el motivo en `error`;
 //   · nada de datos inventados: si no hay valor, el campo queda vacío.
@@ -14,7 +16,10 @@ import type { Lectura, PuntoMapa } from "./tipos";
 export type { Lectura } from "./tipos";
 import { BANCO_MUNDIAL, BROTES_INSTANTANEA } from "./instantanea";
 
-const REVALIDAR = 900; // segundos
+// v442.3 · una lectura, al generar: el parte es estático (ver page.tsx). Con
+// 900 s la página heredaba ISR de 15 minutos y volvía a pedir las nueve fuentes
+// cada cuarto de hora dentro de un Worker de 10 ms de CPU.
+const REVALIDAR: false = false;
 const ESPERA_MS = 9000;
 
 async function traer(url: string, tipo: "json" | "texto" = "json"): Promise<unknown> {
