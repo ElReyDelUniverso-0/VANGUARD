@@ -21,6 +21,16 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v442.1",
+    nombre: "GLOBAL DANGER baja a una hora (y lo dice)",
+    tipo: "mundo",
+    hitos: [
+      "LA CASA SE MUDÓ A CLOUDFLARE (plan gratis): 10 ms de CPU por petición. El parte del planeta pesa 1 MB y proyecta 320 puntos; con `revalidate` de 15 minutos el render caía cada cuarto de hora y, medido en el navegador, se caían 7 de 20 peticiones con 503.",
+      "AHORA SE REGENERA CADA HORA y se sirve desde la caché de la casa: un render, muchas visitas. Las fuentes que lo alimentan —GDACS, EONET, USGS, OMS, Banco Mundial— no cambian más rápido que eso, así que prometer minutos era vender humo.",
+      "Y SE DICE CON ESAS PALABRAS: la franja de estado, la cifra de portada y el método dicen «se regenera cada hora». Ninguna promesa que no se cumpla: cada cifra sigue llevando su fecha, su fuente, su metodología y su contexto.",
+    ],
+  },
+  {
     version: "v442.0",
     nombre: "LA OSCURIDAD PROFUNDA — la casa se hunde en la sombra y el clima pasa por detrás",
     tipo: "luxe",
