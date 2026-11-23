@@ -23,8 +23,9 @@ Ver el estado: https://github.com/ElReyDelUniverso-0/VANGUARD/actions
   (`npx wrangler d1 execute vanguard --remote --command "CREATE TABLE ..."`).
 - Imágenes sin optimizar en Cloudflare (no hay sharp): servir tamaños razonables.
 - **Plan gratis = 10 ms de CPU por visita.** Las páginas `force-dynamic` muy pesadas
-  pueden dar 503 a veces. Preferir `export const revalidate = N` (se cachea en la
-  Cache API) a `force-dynamic`, y no inflar el HTML.
+  pueden dar 503 a veces. Preferir `export const revalidate = N` a `force-dynamic`, y no inflar el HTML.
+  Desde v443.3 la caché ISR vive en D1 (tabla `occache`, gzip) vía
+  `cloudflare/cache-d1.ts` — la Cache API no guarda nada en *.workers.dev.
 - Tareas diarias (antes crons de Vercel): `.github/workflows/cloudflare-cron.yml`
   llama a `/api/news` (12:00 UTC) y `/api/agent-ping` (13:30 UTC).
 
