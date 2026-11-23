@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v442.4",
+    nombre: "GLOBAL DANGER se publica: estático, con una sola portada y sin ceros falsos",
+    tipo: "mundo",
+    hitos: [
+      "PUBLICADO: https://vanguard.vanguard-casa.workers.dev/global-danger (Cloudflare Workers). La casa se mudó allí porque Vercel pausó la cuenta por cuota: 136 % de la CPU del plan gratuito.",
+      "ESTÁTICO, QUE ES COMO SIEMPRE CARGA: `dynamic = \"force-static\"` y las nueve lecturas con `revalidate: false`. Con ISR, cada visita a un parte caducado obligaba al Worker a rehacer 1 MB con 320 puntos y se caían 3 de cada 30 peticiones con 503 (y 5 de 10 con la caché fría). Ahora el parte se genera al publicar la casa y viaja hecho: 0 fallos en la primera prueba pública de 30.",
+      "EL CERO QUE NO ERA UN CERO: la ficha de riesgos ambientales decía «0 abiertos · 0 incendios» cuando NASA EONET no contestaba —una falsa calma, peor que una falsa alarma—. Ahora dice «sin lectura ahora mismo», explica por qué y no se le pone número ni entra en el mapa.",
+      "UNA PORTADA, NO DOS: al entrar la sala en el atlas, el layout le montaba su portada encima de la de la página. `auto: false` deja lo bueno de las dos: número (SALA 40 DE 95), color, técnica y ojo, con una sola portada — la que lleva la foto real.",
+      "MEDIDO EN PÚBLICO, a 390 y 1440 px: 320 puntos, 640 círculos, 9 fichas con fecha, fuente, metodología y contexto, 7 fuentes, 0 errores de consola, 0 px de desbordamiento. Valores reales: PM2,5 32,87 µg/m³ (2023), subalimentación 8,1 % (2024), GDACS 179 alertas (0 rojas, 4 naranjas), EONET 120 abiertos.",
+    ],
+  },
+  {
     version: "v442.1",
     nombre: "GLOBAL DANGER baja a una hora (y lo dice)",
     tipo: "mundo",

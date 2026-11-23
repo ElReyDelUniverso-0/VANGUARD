@@ -7626,13 +7626,13 @@
 //   ⑥ LEYES: animación solo transform/opacity (60 FPS), se apaga con
 //      prefers-reduced-motion, cero dependencias nuevas y las cadenas nuevas
 //      en los 8 idiomas.
-// v442.1 · GLOBAL DANGER BAJA A UNA HORA — la casa vive en Cloudflare Workers
+// v442.4 · GLOBAL DANGER, ESTÁTICO Y CON UNA SOLA PORTADA — la casa vive en Cloudflare Workers
 // (plan gratis, 10 ms de CPU por petición) y el parte del planeta pesa 1 MB con
 // 320 puntos proyectados. Con `revalidate = 900` el render caía cada cuarto de
 // hora y en la primera medida en vivo se caían 7 de 20 peticiones con 503.
 // Ahora se regenera cada hora, se guarda en la caché de la casa y la página lo
 // dice con esas palabras: «se regenera cada hora».
-export const APP_VERSION = "v442.1";
+export const APP_VERSION = "v442.4";
 export const APP_CODENAME = "LOS SÍMBOLOS VIVOS";
 export const APP_VERSION_ANTERIOR = "v442.0"; // LA OSCURIDAD PROFUNDA
 // (anterior) export const APP_VERSION_ANTERIOR = "v441.5"; // GLOBAL DANGER, pulido
