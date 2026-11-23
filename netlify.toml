@@ -1,0 +1,36 @@
+# ═══════════════════════════════════════════════════════════════════
+# LA CASA EN NETLIFY (plan gratuito, sin tarjeta)
+#
+# Por qué existe este fichero: Vercel bloqueó la cuenta (402) y el plan
+# gratuito de Cloudflare Workers no puede renderizar esta casa —el Worker
+# devuelve «error code: 1102, exceeded resource limits» porque el plan Free
+# da 10 ms de CPU por petición—. Netlify sí ejecuta Next.js de verdad en su
+# plan gratuito: sin tarjeta, sin límite de CPU por petición.
+#
+# Cómo se publica (5 clics, sin token):
+#   1. netlify.com → «Add new site» → «Import an existing project»
+#   2. GitHub → ElReyDelUniverso-0/VANGUARD (autorizar si lo pide)
+#   3. Netlify detecta Next.js solo. Pulsar «Deploy».
+#   A partir de ahí, cada push a main se publica automáticamente.
+#
+# El comando de construcción es el del repo SIN los pasos de empaquetado a
+# mano: Netlify usa el plugin de Next y no quiere el .next/standalone copiado
+# encima. El resto (prisma generate + tsc + next build) es lo mismo que ya
+# se ejecuta en Cloudflare y en Vercel.
+# ═══════════════════════════════════════════════════════════════════
+[build]
+  command = "rm -f bun.lock bun.lockb && npx prisma generate && npx tsc --noEmit && npx next build --webpack"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--no-audit --no-fund"
+  NEXT_TELEMETRY_DISABLED = "1"
+  NODE_OPTIONS = "--max-old-space-size=8192"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# La casa responde igual en cualquier dominio que la sirva.
+[context.production.environment]
+  NEXT_PUBLIC_SITE_URL = "https://vanguard.netlify.app"
