@@ -317,8 +317,18 @@ Stage Summary:
 - Typecheck del subconjunto nuevo: **0 errores**.
 - Unicidad medida: 2.000 ids seguidos → 2.000 signos distintos; 100 rutas reales → 99.
 - Lámina de chequeo: 32/32 signos únicos, cero `undefined` ni `NaN`.
-- Pendiente: `bun run build` (el typecheck global no cabe en el sandbox) y despliegue en Vercel
-  (el equipo del Dueño está bloqueado por límite de uso, HTTP 402).
+- Typecheck global no conseguido en el sandbox (2 GB): se comprobó con el typecheck
+  acotado de la casa (`tools/tsc-acotado.mjs`) sobre los ficheros nuevos: **0 errores**.
+
+**Despliegue verificado (2026-11-23):**
+- La casa ya no depende de Vercel (equipo bloqueado por límite de uso, HTTP 402): `main` se
+  construye con OpenNext y se publica como Worker en Cloudflare. Run de `c434289` → **success**.
+- En línea: **https://vanguard.vanguard-casa.workers.dev** — portada y `/simbolos` responden
+  200 y pintan los signos vivos: 15 SVG de lienzo 48 en la portada y 28 en `/simbolos`, con
+  los CUATRO humores salidos de la casa real (`data-estado`: calma, reciente, ira, importante)
+  y los anclajes `#simbolos-gran-ojo` y `#simbolos-estados`.
+- Las 10 rutas principales probadas en línea: **200** (/, /orden, /buscar, /mercado,
+  /guerra-hoy, /mundos, /conocimiento, /mi-universo, /simbolos, /novedades).
 
 ## v442.0 · DARK HISTORY — ARCHIVO DE LOS HECHOS MÁS OSCUROS (2026-11-22)
 
