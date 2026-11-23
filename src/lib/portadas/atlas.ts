@@ -126,7 +126,7 @@ export const PORTADAS: FichaPortada[] = [
   { ruta: "espia", nombre: "El Espía", lema: "La información que no se publica, ordenada", tono: 176, tecnica: "ojo", glifo: "ojo", auto: false },
   { ruta: "estado", nombre: "El Estado", lema: "Cómo está la casa ahora mismo, sin adornos", tono: 146, tecnica: "diana", glifo: "reloj", auto: false },
   { ruta: "galeria", nombre: "Galería", lema: "La fotografía real de lo que contamos", tono: 20, tecnica: "prisma", glifo: "camara", auto: true, imagen: "/portadas/galeria.jpg" },
-  { ruta: "global-danger", nombre: "Global Danger", lema: "El mundo entero vigilado, con la fuente a la vista", tono: 348, tecnica: "diana", glifo: "ojo", auto: true },
+  { ruta: "global-danger", nombre: "Global Danger", lema: "El mundo entero vigilado, con la fuente a la vista", tono: 348, tecnica: "diana", glifo: "ojo", auto: false },
   { ruta: "guerra-hoy", nombre: "Hoy", lema: "El parte de todos los frentes abiertos", tono: 0, tecnica: "curvas", glifo: "escudo", auto: false },
   { ruta: "herramientas", nombre: "Herramientas", lema: "Instrumentos de la casa para trabajar un dato", tono: 200, tecnica: "reticula", glifo: "rayo", auto: false },
   { ruta: "historia", nombre: "Historia", lema: "De dónde viene lo que pasa hoy", tono: 36, tecnica: "curvas", glifo: "sello", auto: false },
