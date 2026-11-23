@@ -11,6 +11,10 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  // v443.1 LA MEMORIA EN D1 — la SQLite de la casa (db/custom.db) vive en D1.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "vanguard", "database_id": "0f521744-09b7-41cc-b8f2-236511375105" }
+  ],
   "services": [
     { "binding": "WORKER_SELF_REFERENCE", "service": "vanguard" }
   ],
