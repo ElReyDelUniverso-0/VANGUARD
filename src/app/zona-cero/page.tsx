@@ -68,7 +68,10 @@ function horaExacta(d: Date): string {
   }).format(d);
 }
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 // v54.0 ZONA CERO — TEATRO GLOBAL. Tres simuladores en una página:
 // · TEATRO GLOBAL 3D (nuevo): mesa de guerra MUNDIAL a nivel de PAÍSES —

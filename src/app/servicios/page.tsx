@@ -113,7 +113,10 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "La sala de los servicios — Vanguard", description: "36 expedientes reales de inteligencia: la Comunidad de EE. UU. y la red del resto del planeta." },
 };
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 // ── TODO derivado de las fuentes, nada a mano ──
 const COMUNIDAD = AGENCIAS;

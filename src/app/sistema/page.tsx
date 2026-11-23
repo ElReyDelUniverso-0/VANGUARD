@@ -23,7 +23,10 @@ import { configuracion as configuracionGsc } from "@/lib/busqueda-google/cliente
 // diagnóstico se ejecuta al abrir la página.
 // ============================================================
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 export const metadata: Metadata = {
   title: "El sistema — contratos, datos y diagnóstico | VANGUARD",

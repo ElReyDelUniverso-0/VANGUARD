@@ -1,23 +1,13 @@
 // v443.0 LA MUDANZA A CLOUDFLARE — configuración de OpenNext.
-// Las páginas prerenderizadas se sirven desde los archivos estáticos del Worker
-// (gratis e ilimitados en Cloudflare).
-// v443.2 LA CACHÉ QUE RESPIRA — encima va la Cache API de Cloudflare (gratis,
-// sin límite de escrituras): las páginas ISR y los fetch con revalidate se
-// regeneran como mucho una vez por ventana y se guardan ahí, en vez de
-// re-renderizarse en CADA visita (que agotaba los 10 ms de CPU del plan gratis).
-// shouldLazilyUpdateOnCacheHit=false: el almacén de abajo es de solo lectura
-// (el build) y no debe pisar lo regenerado.
+// v443.3 LA CASA LIGERA — la caché incremental vive en D1 (cloudflare/cache-d1.ts),
+// con lo prerenderizado del build como reserva. En *.workers.dev la Cache API no
+// guarda nada, por eso no se usa.
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache";
-import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-cache/regional-cache";
+import cacheD1 from "./cloudflare/cache-d1";
 
 const config = defineCloudflareConfig({
-  incrementalCache: withRegionalCache(staticAssetsIncrementalCache, {
-    mode: "long-lived",
-    shouldLazilyUpdateOnCacheHit: false,
-    bypassTagCacheOnCacheHit: false,
-    defaultLongLivedTtlSec: 86400,
-  }),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  incrementalCache: cacheD1 as any,
   enableCacheInterception: true,
 });
 

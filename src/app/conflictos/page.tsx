@@ -39,7 +39,10 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 export const metadata: Metadata = {
   title: "CONFLICTOS — las 33 regiones en seguimiento",

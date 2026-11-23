@@ -29,7 +29,10 @@ import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 // Google la indexa por búsquedas tipo "guerra hoy", "noticias de guerra",
 // "conflictos mundiales" y desde aquí el visitante entra al mando ("/").
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";

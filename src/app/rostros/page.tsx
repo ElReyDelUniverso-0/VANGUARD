@@ -103,7 +103,10 @@ const lineaCifras = `La colección en cifras — ${COLECCION_ROSTROS.total} fich
 // el número de expediente compuesto desde el num real de la fuente
 const placa = (n: number): string => String(n).padStart(2, "0");
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 export default async function RostrosPage() {
   // v287.0 — EL PULSO DEL ARCHIVO: una lectura pura de los títulos del

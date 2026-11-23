@@ -21,7 +21,10 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // nombre, resumen y palabras; sin líneas de peso (vacío honesto, ley de
 // la casa). La puerta nunca muere porque la señal pause (herencia v264).
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";

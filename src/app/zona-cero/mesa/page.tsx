@@ -13,7 +13,10 @@ import { MesaOrdenes } from "@/components/zona-cero/mesa-ordenes";
 // si se le pide una narración con /api/zona-cero/predecir.
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const dynamic = "force-dynamic";
+// v443.3 LA CASA LIGERA — antes force-dynamic: en Cloudflare gratis (10 ms de CPU)
+// renderizar en CADA visita daba 503. Ahora se regenera como mucho cada 2 min
+// y entre medias se sirve desde la caché.
+export const revalidate = 120
 
 export const metadata: Metadata = {
   title: "Zona Cero · Mesa de órdenes — VANGUARD",
