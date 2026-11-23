@@ -170,6 +170,7 @@ export default async function GlobalDangerPage() {
     brotes,
     aire: aires,
     desastres: {
+      ok: gdacs.ok,
       rojos,
       naranjas,
       verdes,
@@ -177,13 +178,14 @@ export default async function GlobalDangerPage() {
       ultimo: gdacs.datos[0]?.fecha ?? null,
     },
     eventos: {
+      ok: eonet.ok,
       total: eonet.datos.length,
       incendios,
       tormentas,
       otros: eonet.datos.length - incendios - tormentas,
       ultimo: eonet.datos[0]?.fecha ?? null,
     },
-    sismos: { total: sismos.datos.length, mayor: mayor?.peso ?? null, mayorLugar: mayor?.titulo ?? null },
+    sismos: { ok: sismos.ok, total: sismos.datos.length, mayor: mayor?.peso ?? null, mayorLugar: mayor?.titulo ?? null },
   };
 
   const senales = construirSenales(contexto);

@@ -75,9 +75,9 @@ export type Contexto = {
   indicadores: Record<string, Lectura<ValorIndicador>>;
   brotes: Lectura<Brote[]>;
   aire: Lectura<Aire>[];
-  desastres: { rojos: number; naranjas: number; verdes: number; total: number; ultimo: string | null };
-  eventos: { total: number; incendios: number; tormentas: number; otros: number; ultimo: string | null };
-  sismos: { total: number; mayor: number | null; mayorLugar: string | null };
+  desastres: { ok: boolean; rojos: number; naranjas: number; verdes: number; total: number; ultimo: string | null };
+  eventos: { ok: boolean; total: number; incendios: number; tormentas: number; otros: number; ultimo: string | null };
+  sismos: { ok: boolean; total: number; mayor: number | null; mayorLugar: string | null };
 };
 
 /** Las señales, montadas con lo que se ha leído. Orden fijo: seis familias. */
@@ -192,9 +192,13 @@ export function construirSenales(c: Contexto): Senal[] {
       id: "desastres-gdacs",
       categoria: "humanitaria",
       titulo: "Desastres abiertos con impacto estimado",
-      valor: `${d.rojos} rojos · ${d.naranjas} naranjas · ${d.total} en total`,
-      numero: d.total,
-      fecha: d.ultimo ? `última alerta ${d.ultimo.slice(0, 10)}` : "sin alertas legibles",
+      valor: d.ok ? `${d.rojos} rojos · ${d.naranjas} naranjas · ${d.total} en total` : "sin lectura ahora mismo",
+      numero: d.ok ? d.total : undefined,
+      fecha: d.ok
+        ? d.ultimo
+          ? `última alerta ${d.ultimo.slice(0, 10)}`
+          : "sin alertas legibles"
+        : "GDACS no contestó al generar el parte: no se pinta un cero que no es un cero",
       fuente: "GDACS · Comisión Europea (JRC) y OCHA",
       fuenteUrl: "https://www.gdacs.org/",
       metodologia:
@@ -214,9 +218,13 @@ export function construirSenales(c: Contexto): Senal[] {
       id: "eventos-naturales",
       categoria: "ambiental",
       titulo: "Eventos naturales abiertos observados por satélite",
-      valor: `${e.total} abiertos · ${e.incendios} incendios · ${e.tormentas} tormentas`,
-      numero: e.total,
-      fecha: e.ultimo ? `último ${e.ultimo.slice(0, 10)}` : "sin eventos legibles",
+      valor: e.ok ? `${e.total} abiertos · ${e.incendios} incendios · ${e.tormentas} tormentas` : "sin lectura ahora mismo",
+      numero: e.ok ? e.total : undefined,
+      fecha: e.ok
+        ? e.ultimo
+          ? `último ${e.ultimo.slice(0, 10)}`
+          : "sin eventos legibles"
+        : "EONET no contestó al generar el parte: se dice, no se rellena con ceros",
       fuente: "NASA EONET · Earth Observatory",
       fuenteUrl: "https://eonet.gsfc.nasa.gov/",
       metodologia:
