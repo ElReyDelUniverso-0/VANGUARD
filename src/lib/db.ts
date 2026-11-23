@@ -1,6 +1,8 @@
 import fs from "fs"
 import path from "path"
 import { PrismaClient } from '@prisma/client'
+import { PrismaD1 } from '@prisma/adapter-d1'
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 
 // v183.1 EL RELEVO — LA BD RESPIRA EN VERCEL:
 // la casa corre con SQLite (db/custom.db, 38 modelos, comprometida al repo),
@@ -80,10 +82,13 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// v443.0 LA MUDANZA A CLOUDFLARE — en un Worker (workerd) no hay motor nativo
-// de Prisma ni archivo SQLite: la BD se declara ausente con un cliente que
-// rechaza toda consulta, y las rutas caen en su fail-soft de siempre (igual que
-// cuando la BD no abría en Vercel). En Vercel/local nada cambia.
+// v443.1 LA MEMORIA EN D1 — en un Worker (workerd) no hay motor nativo de
+// Prisma ni archivo SQLite: la casa usa D1 (la SQLite de Cloudflare, binding
+// «DB» en wrangler.jsonc) con el adaptador oficial @prisma/adapter-d1. El
+// binding solo existe DENTRO de una petición, así que `db` es un proxy que
+// pide el cliente de la petición en curso (uno por binding, reutilizado).
+// Si D1 no está (sin binding), toda consulta se rechaza y las rutas caen en su
+// fail-soft de siempre. En Vercel/local nada cambia.
 const EN_WORKERD =
   typeof navigator !== "undefined" &&
   (navigator as { userAgent?: string }).userAgent === "Cloudflare-Workers"
@@ -97,10 +102,40 @@ function clienteAusente(): PrismaClient {
   return new Proxy(() => undefined, hoja) as unknown as PrismaClient
 }
 
+const clientesD1 = new WeakMap<object, PrismaClient>()
+const AUSENTE = EN_WORKERD ? clienteAusente() : (null as unknown as PrismaClient)
+
+function clienteD1(): PrismaClient {
+  try {
+    const env = getCloudflareContext().env as unknown as Record<string, unknown>
+    const binding = env.DB as object | undefined
+    if (!binding) return AUSENTE
+    let c = clientesD1.get(binding)
+    if (!c) {
+      c = new PrismaClient({ adapter: new PrismaD1(binding as never), log: ['error'] })
+      clientesD1.set(binding, c)
+    }
+    return c
+  } catch {
+    return AUSENTE
+  }
+}
+
+function clienteWorkerd(): PrismaClient {
+  return new Proxy({} as PrismaClient, {
+    get: (_t, prop) => {
+      if (prop === "then") return undefined
+      const c = clienteD1() as unknown as Record<string | symbol, unknown>
+      const v = c[prop]
+      return typeof v === "function" ? (v as (...a: unknown[]) => unknown).bind(c) : v
+    },
+  })
+}
+
 const urlResuelta = EN_WORKERD ? undefined : resolverDbUrl()
 
 export const db: PrismaClient = EN_WORKERD
-  ? clienteAusente()
+  ? clienteWorkerd()
   : globalForPrisma.prisma ??
   new PrismaClient({
     // v27 ESTABILIDAD: log de queries desactivado (llenaba el log y frenaba el server
@@ -128,4 +163,4 @@ export async function ensureDbPragmas(): Promise<void> {
   }
 }
 
-void ensureDbPragmas()
+if (!EN_WORKERD) void ensureDbPragmas()

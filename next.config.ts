@@ -23,7 +23,12 @@ const nextConfig: NextConfig = {
      nativo) para optimizar imágenes en el servidor; allí las imágenes se sirven
      tal cual. En Vercel/local nada cambia (VANGUARD_CF solo existe en el build
      de Cloudflare). */
-  ...(process.env.VANGUARD_CF === "1" ? { images: { unoptimized: true } } : {}),
+  /* v443.1 LA MEMORIA EN D1: Prisma queda fuera del bundle de webpack para que
+     OpenNext lo empaquete con la variante «workerd» (cliente wasm + adaptador
+     D1). Solo en el build de Cloudflare. */
+  ...(process.env.VANGUARD_CF === "1"
+    ? { images: { unoptimized: true }, serverExternalPackages: ["@prisma/client", ".prisma/client"] }
+    : {}),
   htmlLimitedBots: new RegExp(`${BOTS_DE_FABRICA}|${BUSCADORES}`, "i"),
   /* v244.0 LA FAMILIA REUNIDA — LA CURA DE LA DEUDA v240. Medido en el
      build v243 (censo con marcadores de clase que sobreviven a la
