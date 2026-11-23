@@ -42,7 +42,7 @@ type LayersPayload = {
 let CACHE: { at: number; data: LayersPayload } | null = null;
 const TTL = 5 * 60 * 1000; // 5 min
 
-const UA = { headers: { "User-Agent": "VANGUARD/41.0 (https://vanguard-kq9r.vercel.app; vanguard.ops@vanguard.world)" } };
+const UA = { headers: { "User-Agent": "VANGUARD/41.0 (https://vanguard.vanguard-casa.workers.dev; vanguard.ops@vanguard.world)" } };
 
 async function jget<T>(url: string, revalidate: number): Promise<T | null> {
   try {

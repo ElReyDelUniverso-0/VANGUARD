@@ -16,7 +16,7 @@ import { MODOS } from "@/lib/modos";
 import { SelectorAnimacion } from "@/components/anim/selector-animacion";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "TU MODO · TU CUENTA",

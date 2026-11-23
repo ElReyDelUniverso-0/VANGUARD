@@ -18,7 +18,7 @@ import { chequearDespliegue } from "@/lib/auto-despliegue";
 
 export const dynamic = "force-dynamic";
 
-const BASE = "https://vanguard-kq9r.vercel.app";
+const BASE = "https://vanguard.vanguard-casa.workers.dev";
 const KEY = "074b8db50cc83f0689a2211e3ff94db1";
 
 let _lastRun = 0;
@@ -47,7 +47,7 @@ async function runPings(): Promise<PingResult[]> {
       post(
         "https://api.indexnow.org/indexnow",
         JSON.stringify({
-          host: "vanguard-kq9r.vercel.app",
+          host: "vanguard.vanguard-casa.workers.dev",
           key: KEY,
           keyLocation: `${BASE}/${KEY}.txt`,
           urlList: [`${BASE}/?ref=VGD-AGENT`, `${BASE}/guerra-hoy`],

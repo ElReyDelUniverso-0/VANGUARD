@@ -24,7 +24,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 export const dynamic = "force-dynamic";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "Las salas del conflicto — los teatros de guerra en vivo",

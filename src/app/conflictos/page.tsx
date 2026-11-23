@@ -37,7 +37,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 // contra la BD fría al abrir: 6 de 6 guerras citadas por 398 titulares
 // (Oriente 190 · Ucrania 119 · Taiwán 61...).
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const dynamic = "force-dynamic";
 

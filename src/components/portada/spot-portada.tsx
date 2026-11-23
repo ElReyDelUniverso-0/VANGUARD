@@ -3,7 +3,7 @@
 // <video preload="none"> con póster, así no pesa nada hasta que alguien
 // pulsa ▶. El botón de WhatsApp convierte a cada visitante en mensajero.
 const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://vanguard.vanguard-casa.workers.dev";
 
 const MENSAJE = `El mundo está en guerra ahora mismo y casi nadie lo cuenta completo. Mira esto 👉 ${SITE}/?origen=whatsapp`;
 

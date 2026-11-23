@@ -79,7 +79,7 @@ const etiquetaLugar = (t: string): string => LUGAR_ES[t] ?? t;
 
 export const revalidate = 86400;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "War & Humanity — guerras, conflictos y crisis humanitarias, con su fuente",

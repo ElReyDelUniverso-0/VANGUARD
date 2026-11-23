@@ -2,13 +2,13 @@
 import { performance } from 'node:perf_hooks';
 
 export const COMPROBACIONES = Object.freeze([
-  { id: 'portada', tipo: 'pagina', url: 'https://vanguard-kq9r.vercel.app/', limiteMs: 8000 },
-  { id: 'mapas', tipo: 'pagina', url: 'https://vanguard-kq9r.vercel.app/mapas', limiteMs: 8000 },
-  { id: 'memoria', tipo: 'pagina', url: 'https://vanguard-kq9r.vercel.app/memoria', limiteMs: 8000 },
-  { id: 'mercado', tipo: 'pagina', url: 'https://vanguard-kq9r.vercel.app/mercado', limiteMs: 8000 },
-  { id: 'visita', tipo: 'pagina', url: 'https://vanguard-kq9r.vercel.app/visita', limiteMs: 8000 },
-  { id: 'salud', tipo: 'salud', url: 'https://vanguard-kq9r.vercel.app/api/health', limiteMs: 8000 },
-  { id: 'sitemap', tipo: 'sitemap', url: 'https://vanguard-kq9r.vercel.app/sitemap.xml', limiteMs: 8000 },
+  { id: 'portada', tipo: 'pagina', url: 'https://vanguard.vanguard-casa.workers.dev/', limiteMs: 8000 },
+  { id: 'mapas', tipo: 'pagina', url: 'https://vanguard.vanguard-casa.workers.dev/mapas', limiteMs: 8000 },
+  { id: 'memoria', tipo: 'pagina', url: 'https://vanguard.vanguard-casa.workers.dev/memoria', limiteMs: 8000 },
+  { id: 'mercado', tipo: 'pagina', url: 'https://vanguard.vanguard-casa.workers.dev/mercado', limiteMs: 8000 },
+  { id: 'visita', tipo: 'pagina', url: 'https://vanguard.vanguard-casa.workers.dev/visita', limiteMs: 8000 },
+  { id: 'salud', tipo: 'salud', url: 'https://vanguard.vanguard-casa.workers.dev/api/health', limiteMs: 8000 },
+  { id: 'sitemap', tipo: 'sitemap', url: 'https://vanguard.vanguard-casa.workers.dev/sitemap.xml', limiteMs: 8000 },
   { id: 'banco-mundial', tipo: 'banco', url: 'https://api.worldbank.org/v2/country/DOM/indicator/IT.NET.USER.ZS?format=json&per_page=2', limiteMs: 10000 },
 ]);
 

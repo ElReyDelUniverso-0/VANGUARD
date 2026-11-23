@@ -46,7 +46,7 @@ export const viewport: Viewport = {
 //   server-rendered con EnlacesNucleo reutilizado. Con JS encendido este
 //   bloque no existe: el canvas sigue siendo todo lo que hay.
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 // Las puertas son rutas REALES del censo v218 — cero invención.
 const PUERTAS_DEL_UNIVERSO: EnlaceContextual[] = [

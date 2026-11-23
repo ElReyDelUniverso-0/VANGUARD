@@ -29,7 +29,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 export const dynamic = "force-dynamic";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 /** v234.0 — las puertas REALES de la onda (censo v230: cero rutas
  * inventadas; cada destino responde 200 con datos reales). */

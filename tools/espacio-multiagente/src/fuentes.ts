@@ -20,7 +20,7 @@ export async function obtenerFuenteReal(url: string, timeoutMs = 15000): Promise
     const resp = await fetch(url, {
       redirect: "follow",
       signal: ctrl.signal,
-      headers: { "user-agent": "VANGUARD-EspacioMultiagente/1.0 (+https://vanguard-kq9r.vercel.app)", "accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8" },
+      headers: { "user-agent": "VANGUARD-EspacioMultiagente/1.0 (+https://vanguard.vanguard-casa.workers.dev)", "accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8" },
     });
     const texto = await resp.text();
     return {

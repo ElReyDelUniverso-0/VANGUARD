@@ -46,7 +46,7 @@ delete process.env.OWNER_PASSWORD;
 const A = await jiti.import(join(RAIZ, "src/lib/busqueda-google/analisis.ts"));
 const C = await jiti.import(join(RAIZ, "src/lib/busqueda-google/cliente.ts"));
 
-const BASE = "https://vanguard-kq9r.vercel.app";
+const BASE = "https://vanguard.vanguard-casa.workers.dev";
 const PAGINAS = [
   { ruta: "/", nombre: "Portada", categoria: "Portada", buscar: "portada conflictos mundiales", importante: true },
   { ruta: "/rankings", nombre: "Rankings mundiales", categoria: "Planeta", buscar: "ranking paises pib poblacion esperanza de vida", importante: true },
@@ -183,7 +183,7 @@ await prueba("sin filas no hay oportunidades de consulta (no se inventan)", () =
 await prueba("cliente sin variables GSC_*: «no configurado», sin token ni llamada", async () => {
   const cfg = C.configuracion();
   afirmar(cfg.lista === false && cfg.modo === null, JSON.stringify(cfg));
-  afirmar(cfg.sitio === "https://vanguard-kq9r.vercel.app/", `sitio por defecto: ${cfg.sitio}`);
+  afirmar(cfg.sitio === "https://vanguard.vanguard-casa.workers.dev/", `sitio por defecto: ${cfg.sitio}`);
   let error = null;
   try {
     await C.tokenDeAcceso();

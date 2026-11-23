@@ -2,7 +2,7 @@
 // v403.4 LA PUERTA BUENA — FUENTE ÚNICA DEL DOMINIO
 //
 // El diagnóstico de noticias cazó el defecto D3: `canonical`, `og:url` y los
-// enlaces del feed apuntaban a `vanguard-kq9r.vercel.app`, un ALIAS DE PREVIEW
+// enlaces del feed apuntaban a `vanguard.vanguard-casa.workers.dev`, un ALIAS DE PREVIEW
 // del proyecto, no al dominio donde vive la casa. Google consolida el sitio en
 // el dominio equivocado y cada cable compartido enseñaba la puerta de atrás.
 //
@@ -15,7 +15,7 @@
 //
 // Auditoría de la ronda (medida en vivo, no supuesta): el producto tenía TRES
 // puertas abiertas y no decían lo mismo.
-//   ① vanguard-kq9r.vercel.app — proyecto Vercel prj_uJKJQvYBrY8wRtsS82Jl73cmj1lB.
+//   ① vanguard.vanguard-casa.workers.dev — proyecto Vercel prj_uJKJQvYBrY8wRtsS82Jl73cmj1lB.
 //      Es la puerta de TODA la campaña (22 enlaces verificados, GitHub Pages,
 //      los packs de difusión). Tiene DATABASE_URL y NEXT_PUBLIC_REALTIME_URL
 //      configurados: es la casa con memoria.
@@ -39,7 +39,7 @@
 // ============================================================
 
 /** La casa con memoria y con todos los enlaces de la campaña (kq9r). */
-export const CASA_OFICIAL = "https://vanguard-kq9r.vercel.app";
+export const CASA_OFICIAL = "https://vanguard.vanguard-casa.workers.dev";
 
 /**
  * Gemelos del mismo código con OTRA base de datos: sirven la casa, pero su

@@ -60,7 +60,7 @@ export function TemaInteractivo({ tema }: TemaInteractivoProps) {
   );
 
   const copiarCita = () => {
-    const cita = `Vanguard Global Intelligence. (${tema.fechaActualizacion.slice(0, 4)}). "${tema.titulo}". Dossier de Investigación Sistémica. Consultado en https://vanguard-kq9r.vercel.app/investigacion/${tema.id}`;
+    const cita = `Vanguard Global Intelligence. (${tema.fechaActualizacion.slice(0, 4)}). "${tema.titulo}". Dossier de Investigación Sistémica. Consultado en https://vanguard.vanguard-casa.workers.dev/investigacion/${tema.id}`;
     navigator.clipboard.writeText(cita);
     setCopiadoCita(true);
     setTimeout(() => setCopiadoCita(false), 2500);

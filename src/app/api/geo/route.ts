@@ -39,7 +39,7 @@ type GeoPayload = {
 let CACHE: { at: number; data: GeoPayload } | null = null;
 const TTL = 15 * 60 * 1000; // 15 min
 
-const UA = { headers: { "User-Agent": "VANGUARD/40.0 (https://vanguard-kq9r.vercel.app; vanguard.ops@vanguard.world)" } };
+const UA = { headers: { "User-Agent": "VANGUARD/40.0 (https://vanguard.vanguard-casa.workers.dev; vanguard.ops@vanguard.world)" } };
 
 async function jget<T>(url: string, revalidate: number): Promise<T | null> {
   try {

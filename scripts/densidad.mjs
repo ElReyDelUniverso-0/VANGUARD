@@ -14,7 +14,7 @@
 // USO:
 //   node scripts/densidad.mjs                 # informe de la última instantánea
 //   node scripts/densidad.mjs --max 800       # falla si alguna sala pasa de 800
-//   node scripts/densidad.mjs --smoke https://vanguard-kq9r.vercel.app
+//   node scripts/densidad.mjs --smoke https://vanguard.vanguard-casa.workers.dev
 //   node scripts/densidad.mjs --json          # salida para máquinas
 //
 // NO SUSTITUYE A NADA: scripts/auditoria.mjs sigue siendo el auditor completo

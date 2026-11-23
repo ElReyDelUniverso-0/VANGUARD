@@ -109,7 +109,7 @@ function imagenDe(raw: string): string | null {
 async function leerMedio(m: Medio): Promise<Nota[]> {
   try {
     const res = await fetch(m.url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; Vanguard/4.0; +https://vanguard-kq9r.vercel.app)" },
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; Vanguard/4.0; +https://vanguard.vanguard-casa.workers.dev)" },
       next: { revalidate: 300 },
       signal: AbortSignal.timeout(6000),
     });
@@ -314,7 +314,7 @@ async function notaDesdeFuente(url: string, clave: string): Promise<Nota | null>
   if (!fuente) return null;
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; Vanguard/4.0; +https://vanguard-kq9r.vercel.app)", Accept: "text/html" },
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; Vanguard/4.0; +https://vanguard.vanguard-casa.workers.dev)", Accept: "text/html" },
       next: { revalidate: 3600 },
       signal: AbortSignal.timeout(5000),
     });

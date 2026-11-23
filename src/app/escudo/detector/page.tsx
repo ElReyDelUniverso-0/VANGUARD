@@ -28,7 +28,7 @@ import { DetectorClient, type FamiliaCatalogo } from "./detector-client";
 export const dynamic = "force-static";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 function hornearCatalogo(): FamiliaCatalogo[] | null {
   const script = join(process.cwd(), "scripts", "busca-apikeys.mjs");

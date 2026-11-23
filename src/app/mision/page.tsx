@@ -5,7 +5,7 @@ import { PlayerPing } from "@/components/vanguard/player-ping";
 import { PresencePing, LiveTitle } from "@/components/vanguard/presence-ping";
 
 // v37 MISIÓN 100 — centro de mando directo para la campaña de enlaces.
-// El comandante la abre en el móvil: https://vanguard-kq9r.vercel.app/mision
+// El comandante la abre en el móvil: https://vanguard.vanguard-casa.workers.dev/mision
 // Página utilitaria: no se indexa (el SEO vive en / y /guerra-hoy).
 
 export const metadata: Metadata = {

@@ -77,7 +77,7 @@ function huella(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9áéíóúñü ]/g, "").split(/\s+/).slice(0, 9).join(" ");
 }
 
-const APP_URL = "https://vanguard-kq9r.vercel.app";
+const APP_URL = "https://vanguard.vanguard-casa.workers.dev";
 
 export function TelegramPanel() {
   const [status, setStatus] = useState<TgStatus | null>(null);

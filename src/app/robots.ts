@@ -4,7 +4,7 @@ import { SITE_URL } from "@/lib/site";
 // v405.0 LA CASA ÚNICA — EL ROBOT DEJA DE TENER SU PROPIA OPINIÓN DEL DOMINIO.
 //
 // Antes esto era `public/robots.txt`, un archivo estático que declaraba a mano
-// «Sitemap: https://vanguard-kq9r.vercel.app/sitemap.xml» mientras el sitemap
+// «Sitemap: https://vanguard.vanguard-casa.workers.dev/sitemap.xml» mientras el sitemap
 // (src/app/sitemap.ts, v403.6) ya se generaba con `SITE_URL`. Dos verdades del
 // mismo dominio en dos archivos: si mañana cambia la casa, una de las dos
 // seguía apuntando a la vieja y nadie se enteraba. Ahora el robot se genera

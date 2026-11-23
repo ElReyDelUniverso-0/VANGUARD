@@ -21,7 +21,7 @@ const MODULO_ESTADO = MODULOS.find((m) => m.id === "estado")?.pestanas ?? [];
 // ═══════════════════════════════════════════════════════════════════════════
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "El Estado de la Casa — Latido Público",

@@ -16,7 +16,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 // recarga (ley v190) y jamás miente (exactitud: fuente + credibilidad
 // + hora exacta). JSON-LD CollectionPage para Google News.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "EN VIVO — Última hora del mundo, minuto a minuto",

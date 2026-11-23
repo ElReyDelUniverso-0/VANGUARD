@@ -53,7 +53,7 @@ let fallos = [];
 
 for (const ind of INDICADORES) {
   const url = `https://api.worldbank.org/v2/country/${iso3s};WLD/indicator/${ind.codigo}?format=json&per_page=1000&date=${ANIOS}`;
-  const res = await fetch(url, { headers: { "User-Agent": "Vanguard/2.0 (+https://vanguard-kq9r.vercel.app · atribución CC BY 4.0)" } });
+  const res = await fetch(url, { headers: { "User-Agent": "Vanguard/2.0 (+https://vanguard.vanguard-casa.workers.dev · atribución CC BY 4.0)" } });
   peticiones++;
   if (!res.ok) { fallos.push(`${ind.codigo}: HTTP ${res.status}`); continue; }
   const cuerpo = await res.json();

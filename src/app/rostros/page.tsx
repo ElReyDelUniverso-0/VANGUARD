@@ -44,7 +44,7 @@ import { FichasRostros } from "@/components/vanguard/fichas-rostros";
 //    dice — nunca un pulso fingido.
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder mundial",

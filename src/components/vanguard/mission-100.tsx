@@ -59,7 +59,7 @@ const PLATFORMS: Platform[] = [
 const LINKS_PER_PLATFORM = 10;
 const USED_KEY = "vanguard_m100_used";
 // QR de reclutamiento — URL canónica de producción (determinista, sin mismatch SSR)
-const QR_URL = "https://vanguard-kq9r.vercel.app/?ref=VGD-QRCODE";
+const QR_URL = "https://vanguard.vanguard-casa.workers.dev/?ref=VGD-QRCODE";
 
 interface MissionData {
   mission: number;

@@ -29,7 +29,7 @@ import { puntosDelNucleo, idPunto } from "@/lib/nucleo/puntos";
 export const dynamic = "force-dynamic";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 // v238.0 EL VELOCÍMETRO — la medición móvil mandó: los 6 fallbacks
 // originales pesaban 1,2 MB en la red para un hueco de 120×90 px (el

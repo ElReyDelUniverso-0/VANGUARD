@@ -24,7 +24,7 @@ import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 // real, el reloj que la mueve vive en el aparato — la sala declara la
 // puerta honesta.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "ARCHIVO MUNDIAL — curiosidades verídicas, eras, guerras y carteles",

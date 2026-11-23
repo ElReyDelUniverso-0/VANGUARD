@@ -21,7 +21,7 @@ async function traer(url: string, tipo: "json" | "texto" = "json"): Promise<unkn
   const r = await fetch(url, {
     next: { revalidate: REVALIDAR },
     signal: AbortSignal.timeout(ESPERA_MS),
-    headers: { "user-agent": "VanguardGlobalDanger/1.0 (+https://vanguard-kq9r.vercel.app)" },
+    headers: { "user-agent": "VanguardGlobalDanger/1.0 (+https://vanguard.vanguard-casa.workers.dev)" },
   });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return tipo === "json" ? r.json() : r.text();

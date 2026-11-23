@@ -24,7 +24,7 @@ import { MiniMapa } from "@/components/mapas/mini-mapa";
 // el índice; el contador de la barra lo dice antes de exportar.
 // ═══════════════════════════════════════════════════════════════════
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "El Taller de Mapas — crear mapas 2D y 3D con información, dentro de VANGUARD",

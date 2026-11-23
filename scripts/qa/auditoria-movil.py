@@ -6,7 +6,7 @@ peso, tiempos, textos diminutos, botones pequeños, metadatos y enlaces internos
 import json, sys, time, asyncio
 from playwright.async_api import async_playwright
 
-BASE = sys.argv[1] if len(sys.argv) > 1 else "https://vanguard-kq9r.vercel.app"
+BASE = sys.argv[1] if len(sys.argv) > 1 else "https://vanguard.vanguard-casa.workers.dev"
 RUTAS = """/ /guerra-hoy /en-vivo /conflictos /cronica /vertigo /escenarios /verdad-cruda /audios
 /mundo /ver-guerra /zona-cero /teatro-3d /vanguard2 /pulso-mundial /espia /atlas /rostros /servicios
 /poder /armeria /divisas /historia /archivo-mundial /oscura /galeria /traductor /centinela /voz /musica

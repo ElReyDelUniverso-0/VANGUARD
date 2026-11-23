@@ -10,7 +10,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 export const AGENTE =
-  "VANGUARD-MemoryArchive/1.0 (+https://vanguard-kq9r.vercel.app/memoria; archivo documental)";
+  "VANGUARD-MemoryArchive/1.0 (+https://vanguard.vanguard-casa.workers.dev/memoria; archivo documental)";
 
 export interface RespuestaCruda<T> {
   datos: T | null;

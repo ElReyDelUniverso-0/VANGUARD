@@ -32,7 +32,7 @@ import { tipoDeCambio } from "@/lib/herramientas-externas";
 // v293 · /atlas v294 · /verdad-cruda v295): prerenderizada ○, sin
 // cliente, sin BD, indexable para Google.
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "DIVISAS — las 247 monedas oficiales del planeta con su tasa real",

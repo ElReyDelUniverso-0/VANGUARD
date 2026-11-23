@@ -23,7 +23,7 @@
 import argparse, asyncio, json, os, sys, time
 from playwright.async_api import async_playwright
 
-BASE_POR_DEFECTO = "https://vanguard-kq9r.vercel.app"
+BASE_POR_DEFECTO = "https://vanguard.vanguard-casa.workers.dev"
 
 # Puertas de la casa: una por familia de módulo, no las 2.649 del sitemap.
 # La lista es el CONTROL: se repite entera después de cada actualización.

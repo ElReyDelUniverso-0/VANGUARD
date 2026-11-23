@@ -6,7 +6,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { TrailerVanguard } from "@/components/trailer/trailer-vanguard";
 import { TRAILER_POSTER, TRAILER_SRC } from "@/components/trailer/trailer-datos";
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://vanguard-kq9r.vercel.app";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "Tráiler — Vanguard explicado en 80 segundos",

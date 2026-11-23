@@ -49,7 +49,7 @@ export const COSAS_REALES: CosaReal[] = [
   { id: "real-018", tipo: "sala", nombre: "GALERÍA", ruta: "/galeria", archivo: "src/app/galeria/page.tsx", lema: "TOTAL) gana su sala server. La «Queda» de la v297 pedía clasificación" },
   { id: "real-019", tipo: "sala", nombre: "Guerra hoy en vivo", ruta: "/guerra-hoy", archivo: "src/app/guerra-hoy/page.tsx" },
   { id: "real-020", tipo: "sala", nombre: "El archivo de la historia", ruta: "/historia", archivo: "src/app/historia/page.tsx" },
-  { id: "real-021", tipo: "sala", nombre: "MISIÓN 100 ENLACES", ruta: "/mision", archivo: "src/app/mision/page.tsx", lema: "El comandante la abre en el móvil: https://vanguard-kq9r.vercel.app/mision" },
+  { id: "real-021", tipo: "sala", nombre: "MISIÓN 100 ENLACES", ruta: "/mision", archivo: "src/app/mision/page.tsx", lema: "El comandante la abre en el móvil: https://vanguard.vanguard-casa.workers.dev/mision" },
   { id: "real-022", tipo: "sala", nombre: "TU MODO · TU CUENTA", ruta: "/modo", archivo: "src/app/modo/page.tsx", lema: "La casa permanente del selector: «¿qué quieres hacer en Vanguard?»" },
   { id: "real-023", tipo: "sala", nombre: "EL MUNDO 3D", ruta: "/mundo", archivo: "src/app/mundo/page.tsx", lema: "Página server: la instantánea del planeta (cables reales de 24 h por" },
   { id: "real-024", tipo: "sala", nombre: "La Música con Forma", ruta: "/musica", archivo: "src/app/musica/page.tsx", lema: "El Dueño, textual: «la música de Vanguard se deforma con el tiempo, es" },

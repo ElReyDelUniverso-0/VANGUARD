@@ -40,7 +40,7 @@ import { Mundo3DVivo } from "./mundo-3d-vivo";
 export const revalidate = 60;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "EL MUNDO 3D — las guerras del planeta en vivo",

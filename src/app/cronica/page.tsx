@@ -24,7 +24,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // · Si la BD no responde, la sala dice SIN SEÑAL. No hay crónica falsa.
 // ============================================================
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "La Crónica del Día — qué pasó de verdad",

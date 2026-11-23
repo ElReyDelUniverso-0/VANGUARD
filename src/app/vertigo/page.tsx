@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description:
     "El feed infinito de VANGUARD: noticias de guerra del mundo entero a pantalla completa, desliza y no te paras nunca. Doble toque para latir, un toque para leer el cable completo. Gratis, en español.",
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app"}/vertigo`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev"}/vertigo`,
   },
 };
 
@@ -90,8 +90,8 @@ export default async function VertigoPage() {
     name: "El Vértigo — el feed infinito del mundo en vivo",
     description:
       "Feed a pantalla completa de noticias de conflicto en tiempo real: desliza sin fin, doble toque para latir, un toque para leer el cable completo.",
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app"}/vertigo`,
-    isPartOf: { "@type": "WebSite", name: "VANGUARD", url: process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app" },
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev"}/vertigo`,
+    isPartOf: { "@type": "WebSite", name: "VANGUARD", url: process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev" },
     inLanguage: "es",
   };
 

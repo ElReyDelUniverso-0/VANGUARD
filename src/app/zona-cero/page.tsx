@@ -87,7 +87,7 @@ export const dynamic = "force-dynamic";
 // · CIUDAD 2D CLÁSICA: el lienzo original de la ciudad que cae.
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "ZONA CERO — el ojo de Vanguard: busca en toda la casa · Teatro Global 3D",

@@ -32,7 +32,7 @@ import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 export const dynamic = "force-dynamic";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 // v239.0 EL FRENTE LIGERO — la lista entera cae en fallback (24 de las 24
 // últimas sin imageUrl en BD) y sus slots son de 220×140 px: las variantes

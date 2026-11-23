@@ -31,7 +31,7 @@ const CLIPS_VIDEOTECA: ClipVideoteca[] = Array.from({ length: 24 }, (_, i) => ({
   archivo: `V-${String(i + 1).padStart(3, "0")}.mp4`,
 }));
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "GALERÍA — las 50 fotografías reales del planeta",

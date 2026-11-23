@@ -14,7 +14,7 @@
 import { readdir } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 
-const BASE = (process.argv.find((a) => a.startsWith("http")) || "https://vanguard-kq9r.vercel.app").replace(/\/$/, "");
+const BASE = (process.argv.find((a) => a.startsWith("http")) || "https://vanguard.vanguard-casa.workers.dev").replace(/\/$/, "");
 const UA = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
 const RAIZ = new URL("../src/app", import.meta.url).pathname;
 
@@ -26,7 +26,7 @@ const idx = await (await pedir(`${BASE}/sitemap.xml`)).text();
 const hijos = /<sitemapindex[\s>]/.test(idx) ? locs(idx) : [];
 const paginas = new Set(/<urlset[\s>]/.test(idx) ? locs(idx) : []);
 for (const h of hijos) for (const l of locs(await (await pedir(h)).text())) paginas.add(l);
-const enMapa = (ruta) => paginas.has(`${BASE === "https://vanguard-kq9r.vercel.app" ? BASE : BASE}${ruta}`) || paginas.has(`${BASE}${ruta}/`);
+const enMapa = (ruta) => paginas.has(`${BASE === "https://vanguard.vanguard-casa.workers.dev" ? BASE : BASE}${ruta}`) || paginas.has(`${BASE}${ruta}/`);
 
 // ── 2. las rutas que el código sirve ─────────────────────────
 async function rutasDeCarpeta(dir) {

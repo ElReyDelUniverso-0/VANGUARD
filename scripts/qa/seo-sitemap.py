@@ -1,6 +1,6 @@
 # Recorre las URLs del sitemap (todas menos /noticia, + muestra de noticias) y compara canónica/robots/estado
 import re, sys, random, concurrent.futures as cf, urllib.request, ssl, json
-SM = sys.argv[1] if len(sys.argv) > 1 else "https://vanguard-kq9r.vercel.app/sitemap.xml"
+SM = sys.argv[1] if len(sys.argv) > 1 else "https://vanguard.vanguard-casa.workers.dev/sitemap.xml"
 UA = "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Mobile Safari/537.36 (compatible; Google-InspectionTool/1.0;)"
 def get(u):
     r = urllib.request.Request(u, headers={"User-Agent": UA})
@@ -30,4 +30,4 @@ def chk(u):
 with cf.ThreadPoolExecutor(8) as ex: res = list(ex.map(chk, otras + muestra))
 mal = [(u, p) for u, p in res if p]
 print(json.dumps({"urls_sitemap": len(locs), "revisadas": len(res), "con_problema": len(mal)}, ensure_ascii=False))
-for u, p in mal: print(u.replace("https://vanguard-kq9r.vercel.app", "") or "/", "→", "; ".join(p))
+for u, p in mal: print(u.replace("https://vanguard.vanguard-casa.workers.dev", "") or "/", "→", "; ".join(p))

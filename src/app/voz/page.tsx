@@ -28,7 +28,7 @@ import { NAVEGACION } from "@/lib/agente/maestro";
 // Server-rendered el marco; la voz vive en el aparato (cero audio enviado).
 // ============================================================
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "La Voz Maestra — la voz que explica la casa",

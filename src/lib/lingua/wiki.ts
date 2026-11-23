@@ -11,7 +11,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { motivoIdiomaIncorrecto } from "./verificacion";
-const UA = "VanguardLingua/1.0 (https://vanguard-kq9r.vercel.app/lingua; descubrimiento@vanguard.local)";
+const UA = "VanguardLingua/1.0 (https://vanguard.vanguard-casa.workers.dev/lingua; descubrimiento@vanguard.local)";
 const UN_DIA = 86_400;
 
 async function api<T>(host: string, params: Record<string, string>): Promise<T | null> {

@@ -181,7 +181,7 @@ async function pedirIndicador(codigo: string): Promise<{ iso3: string; date: str
   const t = setTimeout(() => ctrl.abort(), 8000);
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": "Vanguard/2.0 (+https://vanguard-kq9r.vercel.app · atribución CC BY 4.0)" },
+      headers: { "User-Agent": "Vanguard/2.0 (+https://vanguard.vanguard-casa.workers.dev · atribución CC BY 4.0)" },
       signal: ctrl.signal,
       cache: "no-store",
     });

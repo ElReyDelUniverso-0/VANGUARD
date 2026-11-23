@@ -93,7 +93,7 @@ import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 //    mano — la guardia del arco v282/v288 crece a (19|20)\d\d.
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "La sala de los servicios — los 36 expedientes de la inteligencia mundial",

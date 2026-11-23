@@ -28,7 +28,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 // EL NÚCLEO (patrón v230/v233/v234/v235) + noscript.
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "MODO TRADUCTOR — las noticias del mundo en tu idioma",

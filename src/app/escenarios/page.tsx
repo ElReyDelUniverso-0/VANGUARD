@@ -32,7 +32,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 export const dynamic = "force-dynamic";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 /** v233.0 — las puertas REALES de la cadena de procedencia (el
  * mismo censo de puertas de v230: cero rutas inventadas). */

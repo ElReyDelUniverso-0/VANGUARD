@@ -31,7 +31,7 @@ import { FichasCatalogo } from "@/components/vanguard/fichas-catalogo";
 // se escribe una cifra a mano.
 // ============================================================
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: `El catálogo de lo que ya existe — ${TOTAL_REAL} piezas`,

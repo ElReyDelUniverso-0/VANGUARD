@@ -42,7 +42,7 @@ jobs:
           # Medido el 2026-11-20: leer solo el índice devolvía 7 líneas (los
           # propios sitemaps, archivos XML) y el faro los anunciaba como si
           # fueran páginas. Ahora se recorre el índice: índice → hijo → <loc>.
-          curl -sS --fail --max-time 60 https://vanguard-kq9r.vercel.app/sitemap.xml \
+          curl -sS --fail --max-time 60 https://vanguard.vanguard-casa.workers.dev/sitemap.xml \
             | grep -o '<loc>[^<]*' | sed 's/<loc>//' | sort -u > hijos.txt
           : > urls.txt
           while read -r hijo; do
@@ -59,7 +59,7 @@ jobs:
           # llave del repo devuelve 403 porque Bing cacheó el 404 de su primera
           # comprobación; esta responde 200 en api.indexnow.org, Bing, Yandex y Seznam)
           LLAVE: "074b8db50cc83f0689a2211e3ff94db1"
-          HOST: "vanguard-kq9r.vercel.app"
+          HOST: "vanguard.vanguard-casa.workers.dev"
           TAMANO: "200"
         run: |
           python3 - <<'PY'

@@ -62,7 +62,7 @@ import { efemeridesDelDia, efemeridesEnLista } from "@/lib/herramientas-externas
 // Las puertas son enlaces server-rendered: funcionan sin JavaScript.
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "El archivo de la historia — las guerras que enseñaron a leer las de hoy",

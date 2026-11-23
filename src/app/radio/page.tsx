@@ -23,7 +23,7 @@ import { obtenerNotas, type Nota } from "@/lib/portada/notas";
 import { estadisticas } from "@/lib/radio/agrupar";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "Radio Vanguard · la casa en voz alta, editada",

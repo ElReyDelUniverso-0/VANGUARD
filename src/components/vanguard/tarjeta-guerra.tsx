@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { Share2, Download, Flame, ImageDown, CheckCircle2 } from "lucide-react";
 
 const SHARE_TEXT =
-  "Mi tarjeta de guerra de VANGUARD — el mundo en guerra, en tiempo real. Juega gratis buscando vanguard-kq9r.vercel.app";
+  "Mi tarjeta de guerra de VANGUARD — el mundo en guerra, en tiempo real. Juega gratis buscando vanguard.vanguard-casa.workers.dev";
 
 // Ojo reptil del abismo: triángulo omnisciente + iris ámbar + pupila vertical
 function OjoAbismo({ className }: { className?: string }) {
@@ -296,7 +296,7 @@ export function TarjetaGuerra({ compact = false }: { compact?: boolean }) {
           </div>
 
           <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between text-[8px] font-mono tracking-widest uppercase" style={{ color: "#5B6478" }}>
-            <span>JUEGA GRATIS · vanguard-kq9r.vercel.app</span>
+            <span>JUEGA GRATIS · vanguard.vanguard-casa.workers.dev</span>
             <span style={{ color: "#FFB800" }}>{referral}</span>
           </div>
           {hoy && (

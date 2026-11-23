@@ -70,7 +70,7 @@ export const REDES_VANGUARD: RedVanguard[] = [
 
 // ====== COMPARTIR VANGUARD: enlaces REALES que funcionan hoy ======
 
-export const APP_URL = "https://vanguard-kq9r.vercel.app";
+export const APP_URL = "https://vanguard.vanguard-casa.workers.dev";
 export const TEXTO_COMPARTIR = "Estoy dentro de VANGUARD — la agencia del mundo en vivo: noticias reales, mapa 3D, TV en vivo, apuestas y más. Entra conmigo:";
 
 export interface EnlaceCompartir {

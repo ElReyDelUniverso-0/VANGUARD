@@ -26,7 +26,7 @@ import {
 // entra como un documento sin tocar ni el globo ni el índice.
 // ═══════════════════════════════════════════════════════════════════
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "El índice de mapas — todas las superficies de mapa de VANGUARD, una por una",

@@ -35,7 +35,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { FORMAS, ICONOS, MARCA_INFO, MAX_PIEZAS, TIPO_INFO } from "@/lib/cuaderno/modelo";
 import { PIELES, TINTAS, VISTAS } from "@/lib/cuaderno/pieles";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.vanguard-casa.workers.dev";
 
 export const metadata: Metadata = {
   title: "EL CUADERNO — escribe, señala y anota el mundo · cuatro pieles y mapa 3D",

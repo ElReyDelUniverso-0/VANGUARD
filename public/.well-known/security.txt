@@ -8,5 +8,5 @@
 Contact: https://github.com/ElReyDelUniverso-0/VANGUARD/security/advisories/new
 Expires: 2027-11-07T00:00:00.000Z
 Preferred-Languages: es, en
-Canonical: https://vanguard-kq9r.vercel.app/.well-known/security.txt
+Canonical: https://vanguard.vanguard-casa.workers.dev/.well-known/security.txt
 Policy: https://github.com/ElReyDelUniverso-0/VANGUARD/blob/main/SECURITY.md
