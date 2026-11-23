@@ -32,6 +32,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # El repo trae bun.lock y OpenNext/wrangler usarían «bun» (que aquí no
+      # existe). En este runner la casa se construye y publica con npm.
+      - name: Usar npm (no bun)
+        run: rm -f bun.lock bun.lockb
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
