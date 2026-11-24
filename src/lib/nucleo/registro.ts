@@ -1179,6 +1179,22 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["mod:mapas"],
     alias: "abandoned world lugares abandonados ciudades fantasma pueblos fantasma ruinas hospitales abandonados sanatorios hoteles abandonados parques abandonados industria abandonada pripiat chernobil urbex historia",
   },
+  // ── v444.0 EL MUNDO MUERTO ─────────────────────────────────────────
+  // Esqueleto humano en 3D (238 huesos, CC0) con 13 módulos crudos
+  // repartidos por sus regiones. Cifras reales con fuente.
+  {
+    id: "mod:mundo-muerto",
+    nombre: "EL MUNDO MUERTO",
+    lema: "El esqueleto de lo que nos mata",
+    descripcion:
+      "Un esqueleto humano completo en 3D, hueso a hueso, con trece módulos crudos repartidos por sus regiones: trata de personas (costillas), rutas de órganos (lumbares), depredadores cerca y registros públicos oficiales (brazos), pena de muerte (cráneo), periodistas asesinados (mandíbula), sobredosis (cervicales), suicidio (hombros), muertes en el trabajo (manos), feminicidios (esternón), aire tóxico (torácicas), muerte materna (pelvis), carreteras (piernas) y migrantes muertos (pies). Cada cifra con su fuente, su fecha y lo que no mide; mapas de rutas documentadas, casos juzgados y líneas de ayuda de la República Dominicana. No publica nombres ni direcciones de personas. v444.0.",
+    categoria: "MUNDO",
+    ruta: "/mundo-muerto",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: [],
+    alias: "mundo muerto esqueleto 3d huesos muerte trata de personas trafico de personas rutas de organos trafico de organos riñones pedofilos depredadores agresores sexuales registro nsopw pena de muerte ejecuciones periodistas asesinados sobredosis fentanilo opioides suicidio muertes en el trabajo feminicidios aire toxico contaminacion muerte materna accidentes de trafico carreteras migrantes muertos mediterraneo",
+  },
   {
     id: "mod:infra-gran-obra",
     nombre: "EL CATALÓGO DE GRANDAS OBRAS",

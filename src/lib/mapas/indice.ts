@@ -173,6 +173,16 @@ export const MAPAS: MapaDeLaCasa[] = [
     modulo: "El mundo",
   },
   {
+    id: "mundo-muerto",
+    ruta: "/mundo-muerto",
+    nombre: "El Mundo Muerto",
+    pregunta: "¿qué mata a la gente, y en qué hueso del cuerpo lo guarda Vanguard?",
+    vista: "3D",
+    motor: "esqueleto humano 3D (238 huesos, CC0) con módulos por región y mapas de rutas documentadas",
+    fuente: "OMS, OIT, OIM, UNODC, ONU Mujeres, Amnistía, CPJ, NCMEC y fuentes citadas en cada ficha",
+    modulo: "El mundo",
+  },
+  {
     id: "lingua-mapa",
     ruta: "/lingua/mapa",
     nombre: "El mapa de las lenguas",

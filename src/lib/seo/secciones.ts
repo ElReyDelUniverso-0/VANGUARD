@@ -84,6 +84,8 @@ export const SECCIONES: Seccion[] = [
       "/infraestructura",
       // v441.3 ABANDONED WORLD — atlas de lugares abandonados
       "/abandonados",
+      // v444.0 EL MUNDO MUERTO — el esqueleto de lo que nos mata
+      "/mundo-muerto",
     ],
   },
   {

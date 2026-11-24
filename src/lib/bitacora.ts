@@ -21,6 +21,19 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v444.0",
+    nombre: "EL MUNDO MUERTO: un esqueleto en 3D con trece módulos crudos sobre lo que nos mata",
+    tipo: "mundo",
+    hitos: [
+      "NUEVA SALA: /mundo-muerto. Un esqueleto humano completo (238 huesos con su nombre anatómico, modelo CC0 de Innerscene) que se gira, se acerca y se toca. Cada región del cuerpo guarda un módulo.",
+      "TRECE MÓDULOS, DE LA CABEZA A LOS PIES: pena de muerte (cráneo), periodistas asesinados (mandíbula), sobredosis (cervicales), suicidio (hombros), depredadores cerca (brazos), muertes en el trabajo (manos), trata de personas (costillas), feminicidios (esternón), aire tóxico (torácicas), rutas de órganos (lumbares), muerte materna (pelvis), carreteras (piernas) y migrantes muertos (pies).",
+      "CIFRAS REALES CON FUENTE: OMS, OIT, OIM, UNODC, ONU Mujeres, Amnistía, CPJ, NCMEC y estudios citados uno a uno, con su fecha y con lo que cada cifra no mide.",
+      "DEPREDADORES CERCA, CON LEY: remite a los registros oficiales públicos (como NSOPW en EE. UU.) y a sus condiciones de uso; Vanguard no publica nombres ni direcciones y explica dónde denunciar en la República Dominicana.",
+      "RUTAS DE ÓRGANOS Y DE TRATA EN EL MAPA: cada arco es una ruta documentada en una fuente concreta (casos de Medicus en Kosovo, Netcare en Durban, Egipto, centros de estafa del sudeste asiático…).",
+      "LIGERO: 2,55 MB de modelo (antes 10,6), three.js solo cuando hace falta, páginas estáticas (cero CPU de servidor), pausa fuera de pantalla y respeto de «reducir movimiento». En el teléfono la lámina solo numera para dejar el esqueleto a la vista.",
+    ],
+  },
+  {
     version: "v442.4",
     nombre: "GLOBAL DANGER se publica: estático, con una sola portada y sin ceros falsos",
     tipo: "mundo",

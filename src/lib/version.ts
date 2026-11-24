@@ -7632,9 +7632,38 @@
 // hora y en la primera medida en vivo se caían 7 de 20 peticiones con 503.
 // Ahora se regenera cada hora, se guarda en la caché de la casa y la página lo
 // dice con esas palabras: «se regenera cada hora».
-export const APP_VERSION = "v442.4";
-export const APP_CODENAME = "LOS SÍMBOLOS VIVOS";
-export const APP_VERSION_ANTERIOR = "v442.0"; // LA OSCURIDAD PROFUNDA
+// v444.0 · EL MUNDO MUERTO — el esqueleto de lo que nos mata. Mandato del
+// Dueño: «un nuevo diseño del mundo muerto: un esqueleto recreado a la
+// perfección hasta el mínimo detalle», con los módulos crudos de tráfico de
+// personas, rutas de órganos y «ver pedófilos cerca», y «otros 10 módulos
+// dentro del esqueleto repartidos por sus partes», todos sobre la muerte.
+//   ① EL ESQUELETO: «Full adult skeleton, standing» (Innerscene, CC0), 238
+//      huesos con su nombre anatómico (C1…L5, costillas 1-12, carpos,
+//      falanges, dientes). 10,6 MB → 2,55 MB (texturas WebP 1024 + meshopt),
+//      servido desde /public/mundo-muerto. three.js por import() dentro del
+//      visor: la página no lo carga hasta que hace falta.
+//   ② LA ESCENA (components/mundo-muerto/escena.ts): luces que siguen a la
+//      cámara, material por región con brillo propio, raycast al pasar y al
+//      tocar, lámina anatómica con punto, línea y número; al elegir, la
+//      cámara vuela a la región y el resto del cuerpo se hunde en la sombra.
+//      Tiempo real (no por fotograma), DPR ≤ 1,75, pausa fuera de pantalla y
+//      con la pestaña oculta, reducir movimiento y limpieza total.
+//   ③ LOS TRECE MÓDULOS (lib/mundo-muerto/modulos.ts), de la cabeza a los
+//      pies: pena de muerte, periodistas asesinados, sobredosis, suicidio,
+//      depredadores cerca (solo registros oficiales, sin nombres ni
+//      direcciones), muertes en el trabajo, trata de personas, feminicidios,
+//      aire tóxico, rutas de órganos, muerte materna, carreteras y migrantes.
+//      Cada cifra con su fuente y fecha; lo que no mide, dicho.
+//   ④ LAS PÁGINAS: /mundo-muerto (visor, reloj de ritmo medio, lámina) y
+//      /mundo-muerto/[modulo] (13 fichas estáticas con mapa SVG de rutas
+//      documentadas, casos, registros, señales y líneas de ayuda RD).
+//      force-static: cero CPU de servidor en el plan gratis.
+export const APP_VERSION = "v444.0";
+export const APP_CODENAME = "EL MUNDO MUERTO";
+export const APP_VERSION_ANTERIOR = "v442.4"; // GLOBAL DANGER, estático
+// (anterior) export const APP_VERSION = "v442.4";
+// (anterior) export const APP_CODENAME = "LOS SÍMBOLOS VIVOS";
+// (anterior) export const APP_VERSION_ANTERIOR = "v442.0"; // LA OSCURIDAD PROFUNDA
 // (anterior) export const APP_VERSION_ANTERIOR = "v441.5"; // GLOBAL DANGER, pulido
 // (anterior) export const APP_VERSION_ANTERIOR = "v441.4"; // la franja de portada dice cómo se actualiza
 // (anterior) export const APP_VERSION_ANTERIOR = "v440.5"; // GLOBAL DANGER

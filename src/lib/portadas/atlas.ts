@@ -145,6 +145,7 @@ export const PORTADAS: FichaPortada[] = [
   { ruta: "modulos", nombre: "Los módulos", lema: "El índice de la casa: cuatro mundos y sus salas", tono: 254, tecnica: "red", glifo: "uve", auto: true },
   { ruta: "motores", nombre: "Motores", lema: "Lo que calcula la casa por detrás", tono: 174, tecnica: "espiral", glifo: "rayo", auto: true },
   { ruta: "mundo", nombre: "El Mundo", lema: "Dónde pasa y quién manda ahí", tono: 150, tecnica: "curvas", glifo: "orbe", auto: true },
+  { ruta: "mundo-muerto", nombre: "El Mundo Muerto", lema: "El esqueleto de lo que nos mata", tono: 352, tecnica: "diana", glifo: "cruz", auto: false },
   { ruta: "mundos", nombre: "Mundos", lema: "Tierras que no existen, con sus reglas escritas", tono: 312, tecnica: "orbita", glifo: "orbe", auto: false },
   { ruta: "musica", nombre: "Música", lema: "La casa que suena: piezas hechas aquí", tono: 296, tecnica: "onda", glifo: "nota", auto: false },
   { ruta: "navegacion", nombre: "Navegación", lema: "Cómo moverte por la casa sin perderte", tono: 194, tecnica: "red", glifo: "brújula", auto: false },

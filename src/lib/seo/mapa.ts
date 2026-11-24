@@ -36,6 +36,8 @@ import { COLECCIONES } from "@/lib/planeta/directorio";
 import { CATALOGO_INFRA } from "@/lib/infraestructura/catalogo";
 // v441.3 ABANDONED WORLD — el atlas y una ficha por lugar
 import { LUGARES as LUGARES_ABANDONADOS } from "@/lib/abandonados/lugares";
+// v444.0 EL MUNDO MUERTO — el esqueleto y una ficha por hueso
+import { MODULOS as MODULOS_MUNDO_MUERTO } from "@/lib/mundo-muerto/modulos";
 // v421.0 LAS FICHAS DE DATOS DE CADA PAÍS — el catálogo del Banco Mundial ya
 // dice qué países tienen hoja de datos; el mapa no inventa ni uno.
 import { catalogoPaises } from "@/lib/mundial/banco";
@@ -722,6 +724,19 @@ export async function construirMapa(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    // v444.0 EL MUNDO MUERTO — el esqueleto y sus trece fichas
+    {
+      url: `${SITE_URL}/mundo-muerto`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    },
+    ...MODULOS_MUNDO_MUERTO.map((m) => ({
+      url: `${SITE_URL}/mundo-muerto/${m.id}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.65,
     })),
     // v441.3 ABANDONED WORLD — el atlas y una entrada por ficha de lugar
     {
