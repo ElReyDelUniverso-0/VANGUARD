@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v445.0",
+    nombre: "LOS MÓDULOS AL MENÚ — los cuatro módulos y sus signos vivos mandan en el menú principal",
+    tipo: "nav",
+    hitos: [
+      "EL DUEÑO: «los símbolos y los módulos siguen normales y todo debe estar en el menú principal».",
+      "EL MENÚ DE ARRIBA: las cuatro puertas que son MÓDULO (Redacción, Mundo, Saber, Casa) llevan su signo vivo más grande y con sus ojos; Orden, Buscar y Mercado quedan más pequeñas. El orden del menú sigue FIJO: nunca se reordena.",
+      "EL MENÚ DEL MÓVIL: la barra inferior pasa a ser Inicio + los cuatro módulos, cada uno con su signo único y vivo. En vivo no se pierde: entra en la hoja de MÁS.",
+      "LA PORTADA: el signo del módulo crece a 42 y manda en su tarjeta; la franja «Los signos de la casa tienen vida» queda al lado.",
+      "NUEVO SIGNO ÚNICO: INICIO (la V del expediente del piloto), el decimosexto sigilo dibujado a mano.",
+    ],
+  },
+  {
     version: "v444.0",
     nombre: "EL MUNDO MUERTO: un esqueleto en 3D con trece módulos crudos sobre lo que nos mata",
     tipo: "mundo",

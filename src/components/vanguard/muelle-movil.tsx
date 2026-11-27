@@ -51,6 +51,9 @@ const GRUPOS: { titulo: string; destinos: Destino[] }[] = [
       { href: "/orden", etiqueta: "Salas y orden", nota: "todas las salas y el tablero" },
       // v437.2 · el mercado, en el muelle: las diez familias ya no van en el menú
       { href: "/mercado", etiqueta: "El mercado", nota: "las diez familias, puesto a puesto" },
+      // v443.0 · EN VIVO salió de la barra del módulo (ahora son los módulos);
+      // sigue a un toque desde la hoja, junto a las demás puertas.
+      { href: "/en-vivo", etiqueta: "En vivo", nota: "la casa, en directo" },
     ],
   },
   {

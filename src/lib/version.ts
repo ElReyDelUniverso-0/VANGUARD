@@ -7658,9 +7658,24 @@
 //      /mundo-muerto/[modulo] (13 fichas estáticas con mapa SVG de rutas
 //      documentadas, casos, registros, señales y líneas de ayuda RD).
 //      force-static: cero CPU de servidor en el plan gratis.
-export const APP_VERSION = "v444.0";
-export const APP_CODENAME = "EL MUNDO MUERTO";
-export const APP_VERSION_ANTERIOR = "v442.4"; // GLOBAL DANGER, estático
+// v445.0 · LOS MÓDULOS AL MENÚ — el Dueño: «los símbolos y los módulos siguen
+//   normales y todo debe estar en el menú principal».
+//   ① EL MENÚ DE ARRIBA: las cuatro puertas que son MÓDULO (Redacción, Mundo,
+//      Saber, Casa) llevan su signo vivo más grande (28, marco 38) y con sus
+//      ojos; Orden, Buscar y Mercado quedan más pequeños (22). El orden
+//      sigue FIJO: nunca se reordena ni se reshufflea.
+//   ② EL MENÚ DEL MÓVIL: la barra inferior pasa a ser Inicio + los cuatro
+//      módulos, cada uno con su signo único y vivo. En vivo no se pierde:
+//      entra en la hoja de MÁS.
+//   ③ LA PORTADA: el signo del módulo crece a 42 y manda en su tarjeta;
+//      la franja «Los signos de la casa tienen vida» queda al lado.
+//   ④ NUEVO SIGNO: INICIO (la V del expediente del piloto), el decimosexto
+//      sigilo único dibujado a mano.
+export const APP_VERSION = "v445.0";
+export const APP_CODENAME = "LOS MÓDULOS AL MENÚ";
+export const APP_VERSION_ANTERIOR = "v444.0"; // EL MUNDO MUERTO
+// (anterior) export const APP_VERSION = "v444.0";
+// (anterior) export const APP_CODENAME = "EL MUNDO MUERTO";
 // (anterior) export const APP_VERSION = "v442.4";
 // (anterior) export const APP_CODENAME = "LOS SÍMBOLOS VIVOS";
 // (anterior) export const APP_VERSION_ANTERIOR = "v442.0"; // LA OSCURIDAD PROFUNDA

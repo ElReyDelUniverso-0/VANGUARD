@@ -391,3 +391,27 @@ expedientes, mapa SVG, cronología, fuentes). Ver worklog de la verificación en
 - Lámina de chequeo: 32/32 signos únicos, cero `undefined` ni `NaN`.
 - Pendiente: `bun run build` (el build global OOM/typecheck global no caben en el sandbox)
   y despliegue en Vercel (el equipo del Dueño está bloqueado por límite de uso, HTTP 402).
+
+## v445.0 · LOS MÓDULOS AL MENÚ (2026-11-23)
+
+Task ID: v445.0-modulos-al-menu
+Agent: AGENTE de Arena — encargo directo del Dueño
+Task: el Dueño, desde el móvil, vio que los símbolos y los módulos seguían normales y pidió:
+«todo debe estar en el menú principal».
+
+Work Log:
+- `cabecera.tsx`: las cuatro puertas que son MÓDULO (Redacción, Mundo, Saber, Casa) llevan su
+  signo vivo a 28 px (marco 38) y con sus ojos; Orden, Buscar y Mercado se quedan en 22 px.
+  El orden del menú sigue FIJO: nunca se reordena.
+- `cabecera.tsx` · `BarraMovil`: la barra inferior del móvil pasa a ser Inicio + los cuatro
+  módulos, cada uno con su signo único y vivo. En vivo no se pierde: se muda a la hoja de
+  MÁS (`muelle-movil.tsx`).
+- `modulos-rejilla.tsx`: el signo del módulo crece de 30 a 42 y manda en su tarjeta.
+- `modelo.ts`: NUEVO sigilo INICIO (la V del expediente del piloto), el decimosexto signo
+  dibujado a mano.
+- `portada.css`: tamaños de `.vx-nav-ico`, `.vx-nav-ico--mod` y `.vx-tabbar a svg`.
+- Versión: v444.0 → **v445.0 LOS MÓDULOS AL MENÚ** (`version.ts` + entrada en `bitacora.ts`).
+
+Stage Summary:
+- Cero rutas tocadas: solo cambia qué puerta lleva cada signo y cuánto mide.
+- El menú del móvil deja de ser iconos genéricos: ahora son los cuatro signos únicos vivos.

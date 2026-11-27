@@ -10,9 +10,6 @@ import { LogoVanguard } from "./logo";
 import { Reloj } from "./reloj";
 import { MODULOS_PUBLICOS, entradaDe, moduloDe } from "./modulos";
 import { NAV_PRIMARIO } from "@/lib/operacion/orden";
-import {
-  IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo,
-} from "./iconos";
 // v442.0 · LOS SÍMBOLOS VIVOS — cada puerta del menú lleva su signo único
 // y el signo tiene vida: respira, echa chispas de «?», tiembla de ira o
 // despierta con energía y los ojos mirando a los lados.
@@ -57,8 +54,23 @@ const SIMBOLOS: Record<string, string> = {
   "/mi-universo": "casa",
 };
 
+// v443.0 · LOS MÓDULOS MANDAN EN EL MENÚ — el Dueño: «los símbolos y los
+// módulos siguen normales y todo debe estar en el menú principal». Las cuatro
+// puertas que son MÓDULO llevan su signo más grande (30) y con sus ojos; las
+// tres de uso diario (Orden, Buscar, Mercado), más pequeñas (22). El orden
+// sigue siendo FIJO: nunca se reordena.
+const MODOS = new Set(["redaccion", "mundo", "saber", "casa"]);
+
 function Simbolo({ href }: { href: string }) {
-  return <SigiloVivo id={SIMBOLOS[href] ?? href} tam={21} ojos={false} className="vx-nav-ico" />;
+  const id = SIMBOLOS[href] ?? href;
+  const esMod = MODOS.has(id);
+  return (
+    <SigiloVivo
+      id={id}
+      tam={esMod ? 30 : 22}
+      className={`vx-nav-ico${esMod ? " vx-nav-ico--mod" : ""}`}
+    />
+  );
 }
 
 /** la lista vieja (13 módulos) queda disponible por compatibilidad; ya no se pinta */
@@ -137,14 +149,17 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
   );
 }
 
+// v443.0 · EL MENÚ PRINCIPAL DEL MÓVIL SON LOS MÓDULOS — el Dueño: «todo debe
+// estar en el menú principal». Cinco puestos: Inicio + los cuatro módulos, cada
+// uno con su signo único y VIVO. Lo que antes ocupaba la barra (Mapa, En vivo,
+// Explorar, Orden) no se pierde: En vivo entra en la hoja de MÁS y Orden ya
+// vivía allí como «Salas y orden».
 const TABS = [
-  { href: "/", label: "Inicio", Ico: IcoInicio },
-  { href: "/mundo", label: "Mapa", Ico: IcoMapa },
-  { href: "/en-vivo", label: "En vivo", Ico: IcoVivo, vivo: true },
-  // v406.0 LA TRAVESÍA: la pestaña de módulos lleva ahora a la entrada que los
-  // recorre todos (el índice /modulos sigue vivo dentro de ella: «El mapa de la casa»)
-  { href: "/entrar", label: "Explorar", Ico: IcoModulos },
-  { href: "/orden", label: "Orden", Ico: IcoJuego },
+  { href: "/", label: "Inicio", id: "inicio" },
+  { href: "/guerra-hoy", label: "Redacción", id: "redaccion" },
+  { href: "/mundos", label: "Mundo", id: "mundo" },
+  { href: "/conocimiento", label: "Saber", id: "saber" },
+  { href: "/mi-universo", label: "Casa", id: "casa" },
 ];
 
 /** Barra inferior tipo app (solo móvil) */
@@ -153,9 +168,9 @@ export function BarraMovil({ ruta: rutaFija }: { ruta?: string } = {}) {
   const ruta = rutaFija ?? (actual === "/index" ? "/" : actual) ?? "/";
   return (
     <nav className="vx-tabbar" aria-label="Navegación principal">
-      {TABS.map(({ href, label, Ico, vivo }) => (
-        <Link key={href} href={href} data-on={activo(ruta, href) ? "1" : "0"} data-vivo={vivo ? "1" : "0"} aria-current={activo(ruta, href) ? "page" : undefined}>
-          <Ico />
+      {TABS.map(({ href, label, id }) => (
+        <Link key={href} href={href} data-on={activo(ruta, href) ? "1" : "0"} aria-current={activo(ruta, href) ? "page" : undefined}>
+          <SigiloVivo id={id} tam={26} />
           {label}
         </Link>
       ))}

@@ -28,7 +28,10 @@ export function ModulosRejilla({ excepto, compacta = false }: { excepto?: string
             </div>
             <div className="vx-mod-cab">
               <span className="vx-mod-num">{String(n).padStart(2, "0")}</span>
-              <SigiloVivo id={m.id} tam={30} />
+              {/* v443.0 · el signo del módulo manda en su tarjeta: más grande
+                  y con sus ojos, porque el Dueño lo pidió («los símbolos y los
+                  módulos siguen normales»). */}
+              <SigiloVivo id={m.id} tam={42} />
               {vivos > 0 && (
                 <span className="vx-mod-vivo">
                   <span className="vx-punto" /> En vivo

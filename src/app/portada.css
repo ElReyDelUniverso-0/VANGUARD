@@ -120,7 +120,11 @@ body:has(.vx) { background: #06080c; }
   border: 1px solid transparent;
   transition: border-color .22s ease, background .22s ease, transform .22s ease, box-shadow .22s ease;
 }
-.vx-nav-ico { width: 21px; height: 21px; transition: transform .22s ease, color .22s ease; }
+.vx-nav-ico { width: 22px; height: 22px; transition: transform .22s ease, color .22s ease; }
+/* v443.0 · LOS MÓDULOS MANDAN EN EL MENÚ: las cuatro puertas que son módulo
+   llevan su signo vivo más grande (y su marco crece para respirar). */
+.vx-nav-ico--mod { width: 28px; height: 28px; }
+.vx-nav a:has(.vx-nav-ico--mod) .vx-nav-icowrap { width: 38px; height: 38px; }
 .vx-nav-t { line-height: 1; }
 .vx-nav a:hover {
   color: var(--vx-tx);
@@ -474,7 +478,9 @@ body:has(.vx) { background: #06080c; }
 .vx-tabbar a:hover { color: var(--vx-tx); transform: translateY(-2px); }
 .vx-tabbar a:hover svg { color: var(--vx-gold); transform: scale(1.12); }
 .vx-tabbar a svg { transition: transform .22s ease, color .22s ease; }
-.vx-tabbar a svg { width: 22px; height: 22px; }
+/* v443.0 · en el móvil el menú principal son los módulos: sus signos vivos
+   se pintan más grandes para que se les vea de verdad. */
+.vx-tabbar a svg { width: 26px; height: 26px; }
 .vx-tabbar a[data-on="1"] { color: var(--vx-gold); }
 .vx-tabbar a[data-on="1"]::before { content: ""; position: absolute; top: -7px; left: 30%; right: 30%; height: 2px; background: var(--vx-gold); box-shadow: 0 0 10px var(--vx-gold); }
 .vx-tabbar a[data-vivo="1"] svg { color: var(--vx-red); }

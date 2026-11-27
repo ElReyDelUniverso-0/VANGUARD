@@ -108,6 +108,12 @@ export const SIGILOS: Record<string, Sigilo> = {
   // componente (para que pueda mirar a los lados). Cero piezas propias.
   vanguard: { forma: "ojo", giro: 0, piezas: [], acento: "#FFC94D", ojo: false },
 
+  // INICIO — la portada: la casa vista de frente, con la V del expediente.
+  inicio: {
+    forma: "escudo", giro: 0, acento: "#E8C476", ojo: true,
+    piezas: [{ d: "M15 15 L24 33 L33 15" }, { d: circ(24, 21, 1.9), relleno: true }],
+  },
+
   // LA REDACCIÓN — el cable que late: una línea de pulso que cruza la moneda.
   redaccion: {
     forma: "circulo", giro: 0, acento: "#FFB020", ojo: true,
